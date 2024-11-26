@@ -18,11 +18,13 @@ set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (CMAKE_BUILD_TYPE STREQUAL "Dist")
     option(VULKIT_BUILD_TESTS "Build the demos" OFF)
+    option(VULKIT_VALIDATION_LAYERS "Enable Vulkan validation layers" OFF)
 else()
     option(VULKIT_BUILD_TESTS "Build the demos" ON)
+    option(VULKIT_VALIDATION_LAYERS "Enable Vulkan validation layers" ON)
 endif()
 
-message(STATUS "ONYX: Build tests: ${VULKIT_BUILD_TESTS}")
+message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 
 # Compiler flags, linker flags etcetera, those should all be handled when making available the toolkit library through the global CMAKE flag variables
 add_subdirectory(vulkit)
