@@ -4,8 +4,9 @@ project(vulkit)
 set(SOURCES
     vkit/core/pch.cpp
     vkit/core/core.cpp
-    vkit/core/device.cpp
-    vkit/core/instance.cpp
+    vkit/backend/device.cpp
+    vkit/backend/instance.cpp
+    vkit/backend/system.cpp
     vkit/buffer/buffer.cpp
     vkit/buffer/vertex_buffer.cpp
     vkit/buffer/index_buffer.cpp
@@ -74,9 +75,6 @@ target_link_libraries(vulkit PUBLIC toolkit VulkanMemoryAllocator)
 
 target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vulkit/core/pch.hpp)
 target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}" VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
-if (VULKIT_VALIDATION_LAYERS)
-    target_compile_definitions(vulkit PUBLIC VKIT_VALIDATION_LAYERS)
-endif()
 
 if (MSVC)
     configure_compile_link_options(vulkit FLAGS /W4 /WX)

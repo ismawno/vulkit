@@ -50,7 +50,7 @@ void Shader::compileShader(const std::string_view p_SourcePath, const std::strin
 
     const std::string compileCommand = VKIT_GLSL_BINARY " " + std::string(p_SourcePath) + " -o " + binaryPath.string();
 
-    const int result = std::system(compileCommand.c_str());
+    const i32 result = std::system(compileCommand.c_str());
     TKIT_ASSERT(result == 0, "Failed to compile shader at path: {}", p_SourcePath);
     if (result != 0)
         std::terminate();

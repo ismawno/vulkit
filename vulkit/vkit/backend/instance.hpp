@@ -32,55 +32,55 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         const VkAllocationCallbacks *AllocationCallbacks;
     };
 
-    class Specs
+    class Builder
     {
       public:
-        Result<Instance> Create() const noexcept;
+        Result<Instance> Build() const noexcept;
 
-        Specs &SetApplicationName(const char *p_Name) noexcept;
-        Specs &SetEngineName(const char *p_Name) noexcept;
+        Builder &SetApplicationName(const char *p_Name) noexcept;
+        Builder &SetEngineName(const char *p_Name) noexcept;
 
-        Specs &SetApplicationVersion(u32 p_Version) noexcept;
-        Specs &SetEngineVersion(u32 p_Version) noexcept;
+        Builder &SetApplicationVersion(u32 p_Version) noexcept;
+        Builder &SetEngineVersion(u32 p_Version) noexcept;
 
-        Specs &SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
-        Specs &SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
 
-        Specs &RequireApiVersion(u32 p_Version) noexcept;
-        Specs &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &RequireApiVersion(u32 p_Version) noexcept;
+        Builder &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
 
-        Specs &RequestApiVersion(u32 p_Version) noexcept;
-        Specs &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &RequestApiVersion(u32 p_Version) noexcept;
+        Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
 
-        Specs &RequireExtension(const char *p_Extension) noexcept;
-        Specs &RequireExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Builder &RequireExtension(const char *p_Extension) noexcept;
+        Builder &RequireExtensions(std::span<const char *const> p_Extensions) noexcept;
 
-        Specs &RequestExtension(const char *p_Extension) noexcept;
-        Specs &RequestExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Builder &RequestExtension(const char *p_Extension) noexcept;
+        Builder &RequestExtensions(std::span<const char *const> p_Extensions) noexcept;
 
-        Specs &RequireLayer(const char *p_Layer) noexcept;
-        Specs &RequireLayers(std::span<const char *const> p_Layers) noexcept;
+        Builder &RequireLayer(const char *p_Layer) noexcept;
+        Builder &RequireLayers(std::span<const char *const> p_Layers) noexcept;
 
-        Specs &RequestLayer(const char *p_Layer) noexcept;
-        Specs &RequestLayers(std::span<const char *const> p_Layers) noexcept;
+        Builder &RequestLayer(const char *p_Layer) noexcept;
+        Builder &RequestLayers(std::span<const char *const> p_Layers) noexcept;
 
-        Specs &RequireValidationLayers() noexcept;
-        Specs &RequestValidationLayers() noexcept;
+        Builder &RequireValidationLayers() noexcept;
+        Builder &RequestValidationLayers() noexcept;
 
-        Specs &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback) noexcept;
-        Specs &SetHeadless(bool p_Headless = true) noexcept;
+        Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback) noexcept;
+        Builder &SetHeadless(bool p_Headless = true) noexcept;
 
-        Specs &SetDebugMessengerUserData(void *p_Data) noexcept;
-        Specs &SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks) noexcept;
+        Builder &SetDebugMessengerUserData(void *p_Data) noexcept;
+        Builder &SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks) noexcept;
 
       private:
         const char *m_ApplicationName = nullptr;
         const char *m_EngineName = nullptr;
 
-        u32 m_ApplicationVersion = VK_API_VERSION_1_0;
-        u32 m_EngineVersion = VK_API_VERSION_1_0;
-        u32 m_RequiredApiVersion = VK_API_VERSION_1_0;
-        u32 m_RequestedApiVersion = VK_API_VERSION_1_0;
+        u32 m_ApplicationVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+        u32 m_EngineVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+        u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+        u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
         DynamicArray<const char *> m_RequiredExtensions;
         DynamicArray<const char *> m_RequestedExtensions;
@@ -98,12 +98,12 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
     };
 
-    static void Destroy(const Instance &p_Instance) noexcept;
-
+    void Destroy() noexcept;
     VkInstance GetInstance() const noexcept;
     const Info &GetInfo() const noexcept;
 
     explicit(false) operator VkInstance() const noexcept;
+    explicit(false) operator bool() const noexcept;
 
   private:
     Instance(VkInstance p_Instance, const Info &p_Info) noexcept;

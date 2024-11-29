@@ -1,8 +1,8 @@
 #pragma once
 
 #include "vkit/core/dimension.hpp"
-#include "vkit/core/instance.hpp"
-#include "vkit/core/device.hpp"
+#include "vkit/backend/instance.hpp"
+#include "vkit/backend/device.hpp"
 #include "vkit/core/vma.hpp"
 #include "tkit/core/literals.hpp"
 
@@ -40,7 +40,7 @@ struct VKIT_API Core
         Instance::Specs Instance;
     };
 
-    static void Initialize(const Specs &p_Specs) noexcept;
+    static VkResult Initialize(const Specs &p_Specs) noexcept;
     static void Terminate() noexcept;
 
     static TKit::StackAllocator *GetStackAllocator() noexcept;

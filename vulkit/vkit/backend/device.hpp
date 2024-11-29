@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/core/instance.hpp"
+#include "vkit/backend/instance.hpp"
 #include "vkit/core/alias.hpp"
 #include <vulkan/vulkan.hpp>
 #include "tkit/profiling/vulkan.hpp"
@@ -9,7 +9,6 @@ namespace VKit
 {
 class VKIT_API Device : public TKit::RefCounted<Device>
 {
-    TKIT_NON_COPYABLE(Device)
   public:
     struct Specs
     {

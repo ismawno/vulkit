@@ -54,10 +54,132 @@ static bool contains(const DynamicArray<const char *> &p_Extensions, const char 
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
-Result<Instance> Instance::Specs::Create() const noexcept
+Instance::Builder &Instance::Builder::SetApplicationName(const char *p_Name) noexcept
+{
+    m_ApplicationName = p_Name;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetEngineName(const char *p_Name) noexcept
+{
+    m_EngineName = p_Name;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Version) noexcept
+{
+    m_ApplicationVersion = p_Version;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Version) noexcept
+{
+    m_EngineVersion = p_Version;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    m_ApplicationVersion = VKIT_MAKE_VERSION(p_Major, p_Minor, p_Patch, 0);
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    m_EngineVersion = VKIT_MAKE_VERSION(p_Major, p_Minor, p_Patch, 0);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Version) noexcept
+{
+    m_RequiredApiVersion = p_Version;
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    m_RequiredApiVersion = VKIT_MAKE_VERSION(p_Major, p_Minor, p_Patch, 0);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Version) noexcept
+{
+    m_RequestedApiVersion = p_Version;
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    m_RequestedApiVersion = VKIT_MAKE_VERSION(p_Major, p_Minor, p_Patch, 0);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension) noexcept
+{
+    m_RequiredExtensions.push_back(p_Extension);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireExtensions(std::span<const char *const> p_Extensions) noexcept
+{
+    m_RequiredExtensions.insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension) noexcept
+{
+    m_RequestedExtensions.push_back(p_Extension);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestExtensions(std::span<const char *const> p_Extensions) noexcept
+{
+    m_RequestedExtensions.insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer) noexcept
+{
+    m_RequiredLayers.push_back(p_Layer);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireLayers(std::span<const char *const> p_Layers) noexcept
+{
+    m_RequiredLayers.insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer) noexcept
+{
+    m_RequestedLayers.push_back(p_Layer);
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestLayers(std::span<const char *const> p_Layers) noexcept
+{
+    m_RequestedLayers.insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequireValidationLayers() noexcept
+{
+    m_RequireValidationLayers = true;
+    return *this;
+}
+Instance::Builder &Instance::Builder::RequestValidationLayers() noexcept
+{
+    m_RequestValidationLayers = true;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback) noexcept
+{
+    m_DebugCallback = p_Callback;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetHeadless(bool p_Headless) noexcept
+{
+    m_Headless = p_Headless;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *p_Data) noexcept
+{
+    m_DebugMessengerUserData = p_Data;
+    return *this;
+}
+Instance::Builder &Instance::Builder::SetAllocationCallbacks(
+    const VkAllocationCallbacks *p_AllocationCallbacks) noexcept
+{
+    m_AllocationCallbacks = p_AllocationCallbacks;
+    return *this;
+}
+
+Result<Instance> Instance::Builder::Build() const noexcept
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
-        if (p_Version < VK_API_VERSION_1_1)
+        if (p_Version < VKIT_MAKE_VERSION(0, 1, 1, 0))
             return Result<u32>::Ok(p_Version); // You just cant check versions at this point
 
         const auto enumerateVersion =
@@ -101,12 +223,17 @@ Result<Instance> Instance::Specs::Create() const noexcept
             return Result<Instance>::Error(
                 VKIT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
 
-    DynamicArray<const char *> extensions{m_RequiredExtensions.begin(), m_RequiredExtensions.end()};
+    DynamicArray<const char *> extensions;
+    extensions.reserve(m_RequiredExtensions.size() + m_RequestedExtensions.size());
+    for (const char *extension : m_RequiredExtensions)
+        if (!contains(extensions, extension))
+            extensions.push_back(extension);
+
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = System::IsExtensionSupported(extension);
         TKIT_LOG_WARNING_IF(!supported, "The extension {} is not suported", extension);
-        if (supported)
+        if (supported && !contains(extensions, extension))
             extensions.push_back(extension);
     }
 
@@ -131,7 +258,7 @@ Result<Instance> Instance::Specs::Create() const noexcept
     }
 
     const bool properties2Support =
-        apiVersion < VK_API_VERSION_1_1 &&
+        apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
         System::IsExtensionSupported(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
     if (properties2Support && !contains(extensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
@@ -276,19 +403,20 @@ Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Insta
 {
 }
 
-void Instance::Destroy(const Instance &p_Instance) noexcept
+void Instance::Destroy() noexcept
 {
+    TKIT_ASSERT(m_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
     const auto destroyInstance = System::GetVulkanFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
-    if (p_Instance.m_Info.HasValidationLayers)
+    if (m_Info.HasValidationLayers)
     {
         const auto destroyDebugMessenger =
             System::GetVulkanFunction<PFN_vkDestroyDebugUtilsMessengerEXT>("vkDestroyDebugUtilsMessengerEXT");
         TKIT_ASSERT(destroyDebugMessenger, "Failed to get the vkDestroyDebugUtilsMessengerEXT function");
-        destroyDebugMessenger(p_Instance.m_Instance, p_Instance.m_Info.DebugMessenger,
-                              p_Instance.m_Info.AllocationCallbacks);
+        destroyDebugMessenger(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
     }
-    destroyInstance(p_Instance.m_Instance, p_Instance.m_Info.AllocationCallbacks);
+    destroyInstance(m_Instance, m_Info.AllocationCallbacks);
+    m_Instance = VK_NULL_HANDLE;
 }
 
 VkInstance Instance::GetInstance() const noexcept
@@ -298,6 +426,14 @@ VkInstance Instance::GetInstance() const noexcept
 const Instance::Info &Instance::GetInfo() const noexcept
 {
     return m_Info;
+}
+Instance::operator VkInstance() const noexcept
+{
+    return m_Instance;
+}
+Instance::operator bool() const noexcept
+{
+    return m_Instance != VK_NULL_HANDLE;
 }
 
 } // namespace VKit
