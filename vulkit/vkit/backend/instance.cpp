@@ -61,7 +61,7 @@ Result<Instance> Instance::Builder::Build() const noexcept
             return Result<u32>::Ok(p_Version); // You just cant check versions at this point
 
         const auto enumerateVersion =
-            System::GetVulkanFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
+            System::GetInstanceFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
         if (!enumerateVersion)
             return Result<u32>::Error(
                 VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkEnumerateInstanceVersion function"));
@@ -230,8 +230,8 @@ Result<Instance> Instance::Builder::Build() const noexcept
 #endif
 
     VkInstance vkinstance;
-    const auto createInstance = System::GetVulkanFunction<PFN_vkCreateInstance>("vkCreateInstance");
-    const auto destroyInstance = System::GetVulkanFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
+    const auto createInstance = System::GetInstanceFunction<PFN_vkCreateInstance>("vkCreateInstance");
+    const auto destroyInstance = System::GetInstanceFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
 
     if (!createInstance)
         return Result<Instance>::Error(
@@ -248,7 +248,7 @@ Result<Instance> Instance::Builder::Build() const noexcept
     if (validationLayers)
     {
         const auto createDebugMessenger =
-            System::GetVulkanFunction<PFN_vkCreateDebugUtilsMessengerEXT>("vkCreateDebugUtilsMessengerEXT");
+            System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>("vkCreateDebugUtilsMessengerEXT");
         if (!createDebugMessenger)
             return Result<Instance>::Error(VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
                                                       "Failed to get the vkCreateDebugUtilsMessengerEXT function"));
@@ -267,8 +267,8 @@ Result<Instance> Instance::Builder::Build() const noexcept
     info.EngineName = m_EngineName;
     info.EngineVersion = m_EngineVersion;
     info.ApiVersion = apiVersion;
-    info.Extensions = extensions;
-    info.Layers = layers;
+    info.EnabledExtensions = extensions;
+    info.EnabledLayers = layers;
     info.AllocationCallbacks = m_AllocationCallbacks;
     info.DebugMessenger = debugMessenger;
     if (m_Headless)
@@ -281,8 +281,7 @@ Result<Instance> Instance::Builder::Build() const noexcept
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
                 "The debug messenger must be available if validation layers are enabled");
 
-    const Instance instance{vkinstance, info};
-    return Result<Instance>::Ok(instance);
+    return Result<Instance>::Ok(vkinstance, info);
 }
 
 Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Instance(p_Instance), m_Info(p_Info)
@@ -293,11 +292,13 @@ void Instance::Destroy() noexcept
 {
     TKIT_ASSERT(m_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
-    const auto destroyInstance = System::GetVulkanFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
+    const auto destroyInstance = GetFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
+    TKIT_ASSERT(destroyInstance, "Failed to get the vkDestroyInstance function");
+
     if ((m_Info.Flags & InstanceFlags_ValidationLayers) && m_Info.DebugMessenger)
     {
         const auto destroyDebugMessenger =
-            System::GetVulkanFunction<PFN_vkDestroyDebugUtilsMessengerEXT>("vkDestroyDebugUtilsMessengerEXT");
+            GetFunction<PFN_vkDestroyDebugUtilsMessengerEXT>("vkDestroyDebugUtilsMessengerEXT");
         TKIT_ASSERT(destroyDebugMessenger, "Failed to get the vkDestroyDebugUtilsMessengerEXT function");
         destroyDebugMessenger(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
     }

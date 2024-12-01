@@ -25,7 +25,7 @@ VulkanResult::operator bool() const noexcept
 VulkanResult System::Initialize() noexcept
 {
     const auto enumerateExtensions =
-        GetVulkanFunction<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
+        GetInstanceFunction<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
     if (!enumerateExtensions)
         return VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
                           "Failed to get the vkEnumerateInstanceExtensionProperties function");
@@ -36,13 +36,13 @@ VulkanResult System::Initialize() noexcept
     if (result != VK_SUCCESS)
         return VKIT_ERROR(result, "Failed to get the number of instance extensions");
 
-    Extensions.resize(extensionCount);
-    result = enumerateExtensions(nullptr, &extensionCount, Extensions.data());
+    AvailableExtensions.resize(extensionCount);
+    result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.data());
     if (result != VK_SUCCESS)
         return VKIT_ERROR(result, "Failed to get the instance extensions");
 
     const auto enumerateLayers =
-        GetVulkanFunction<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
+        GetInstanceFunction<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
     if (!enumerateLayers)
         return VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
                           "Failed to get the vkEnumerateInstanceLayerProperties function");
@@ -52,8 +52,8 @@ VulkanResult System::Initialize() noexcept
     if (result != VK_SUCCESS)
         return VKIT_ERROR(result, "Failed to get the number of instance layers");
 
-    Layers.resize(layerCount);
-    result = enumerateLayers(&layerCount, Layers.data());
+    AvailableLayers.resize(layerCount);
+    result = enumerateLayers(&layerCount, AvailableLayers.data());
     if (result != VK_SUCCESS)
         return VKIT_ERROR(result, "Failed to get the instance layers");
 
@@ -62,7 +62,7 @@ VulkanResult System::Initialize() noexcept
 
 const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept
 {
-    for (const VkExtensionProperties &extension : Extensions)
+    for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
             return &extension;
     return nullptr;
@@ -70,7 +70,7 @@ const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept
 
 const VkLayerProperties *System::GetLayer(const char *p_Name) noexcept
 {
-    for (const VkLayerProperties &layer : Layers)
+    for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
             return &layer;
     return nullptr;
@@ -78,7 +78,7 @@ const VkLayerProperties *System::GetLayer(const char *p_Name) noexcept
 
 bool System::IsExtensionSupported(const char *p_Name) noexcept
 {
-    for (const VkExtensionProperties &extension : Extensions)
+    for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
             return true;
     return false;
@@ -86,7 +86,7 @@ bool System::IsExtensionSupported(const char *p_Name) noexcept
 
 bool System::IsLayerSupported(const char *p_Name) noexcept
 {
-    for (const VkLayerProperties &layer : Layers)
+    for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
             return true;
     return false;

@@ -30,8 +30,8 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
 
         u8 Flags;
 
-        DynamicArray<const char *> Extensions;
-        DynamicArray<const char *> Layers;
+        DynamicArray<const char *> EnabledExtensions;
+        DynamicArray<const char *> EnabledLayers;
 
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;
@@ -110,7 +110,7 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
     explicit(false) operator VkInstance() const noexcept;
     explicit(false) operator bool() const noexcept;
 
-    template <typename F> F GetVulkanFunction(const char *p_Name) const noexcept
+    template <typename F> F GetFunction(const char *p_Name) const noexcept
     {
         return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));
     }

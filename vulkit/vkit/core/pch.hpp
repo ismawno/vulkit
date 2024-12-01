@@ -27,4 +27,5 @@
 #include <fstream>
 #include <cstdlib>
 #include <filesystem>
+#include <vulkan/vulkan.hpp>
 #include "vkit/core/vma.hpp"

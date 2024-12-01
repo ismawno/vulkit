@@ -51,11 +51,11 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
 PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Instance(p_Instance)
 {
 #ifdef VKIT_API_VERSION_1_2
-    m_Features11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    m_Features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+    m_RequiredFeatures.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    m_Features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 #endif
 
     if ((p_Instance.GetInfo().Flags & InstanceFlags_Headless))
@@ -78,7 +78,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
 Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const noexcept
 {
     using EnumerateResult = Result<DynamicArray<PhysicalDevice>>;
-    const Instance::Info &info = m_Instance.GetInfo();
+    const Instance::Info &instanceInfo = m_Instance.GetInfo();
 
     const auto checkFlag = [this](const u16 p_Flag) -> bool { return m_Flags & p_Flag; };
 
@@ -87,8 +87,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
                                       "The surface must be set if the instance is not headless");
 
     DynamicArray<VkPhysicalDevice> vkdevices;
-    const auto enumerateDevices =
-        m_Instance.GetVulkanFunction<PFN_vkEnumeratePhysicalDevices>("vkEnumeratePhysicalDevices");
+    const auto enumerateDevices = m_Instance.GetFunction<PFN_vkEnumeratePhysicalDevices>("vkEnumeratePhysicalDevices");
     if (!enumerateDevices)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkEnumeratePhysicalDevices function");
@@ -107,31 +106,30 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
     const auto enumerateExtensions =
-        m_Instance.GetVulkanFunction<PFN_vkEnumerateDeviceExtensionProperties>("vkEnumerateDeviceExtensionProperties");
+        m_Instance.GetFunction<PFN_vkEnumerateDeviceExtensionProperties>("vkEnumerateDeviceExtensionProperties");
     if (!enumerateExtensions)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkEnumerateDeviceExtensionProperties function");
 
-    const auto queryFamilies = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(
+    const auto queryFamilies = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(
         "vkGetPhysicalDeviceQueueFamilyProperties");
     if (!queryFamilies)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkGetPhysicalDeviceQueueFamilyProperties function");
 
     const auto getProperties =
-        m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceProperties>("vkGetPhysicalDeviceProperties");
+        m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties>("vkGetPhysicalDeviceProperties");
     if (!getProperties)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkGetPhysicalDeviceProperties function");
 
-    const auto getFeatures =
-        m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceFeatures>("vkGetPhysicalDeviceFeatures");
+    const auto getFeatures = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures>("vkGetPhysicalDeviceFeatures");
     if (!getFeatures)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkGetPhysicalDeviceFeatures function");
 
     const auto getMemoryProperties =
-        m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceMemoryProperties>("vkGetPhysicalDeviceMemoryProperties");
+        m_Instance.GetFunction<PFN_vkGetPhysicalDeviceMemoryProperties>("vkGetPhysicalDeviceMemoryProperties");
     if (!getMemoryProperties)
         return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                       "Failed to get the vkGetPhysicalDeviceMemoryProperties function");
@@ -179,6 +177,8 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
 
         if (checkFlag(PhysicalDeviceSelectorFlags_PortabilitySubset))
             enabledExtensions.push_back("VK_KHR_portability_subset");
+        if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
+            enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
         u32 familyCount;
         queryFamilies(vkdevice, &familyCount, nullptr);
@@ -219,7 +219,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
             if (!p_Surface)
                 return UINT32_MAX;
 
-            const auto queryPresentSupport = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(
+            const auto queryPresentSupport = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(
                 "vkGetPhysicalDeviceSurfaceSupportKHR");
             if (!queryPresentSupport)
                 return UINT32_MAX;
@@ -278,8 +278,11 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
             deviceFlags |= PhysicalDeviceFlags_SeparateComputeQueue;
             deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
         }
-
-        VkPhysicalDeviceVulkan12Features;
+        else if (computeCompatible != UINT32_MAX)
+        {
+            computeIndex = computeCompatible;
+            deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
+        }
 
         if (dedicatedTransfer != UINT32_MAX)
         {
@@ -291,6 +294,11 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         {
             transferIndex = separateTransfer;
             deviceFlags |= PhysicalDeviceFlags_SeparateTransferQueue;
+            deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
+        }
+        else if (transferCompatible != UINT32_MAX)
+        {
+            transferIndex = transferCompatible;
             deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
         }
 
@@ -318,9 +326,9 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
 
         if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
         {
-            const auto querySurfaceFormats = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(
+            const auto querySurfaceFormats = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(
                 "vkGetPhysicalDeviceSurfaceFormatsKHR");
-            const auto queryPresentModes = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
+            const auto queryPresentModes = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
                 "vkGetPhysicalDeviceSurfacePresentModesKHR");
             if (!querySurfaceFormats || !queryPresentModes)
                 continue;
@@ -334,27 +342,21 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
                 continue;
         }
 
-        const bool v11 = info.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
-        const bool prop2 = info.Flags & InstanceFlags_Properties2Extension;
+        const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+        const bool prop2 = instanceInfo.Flags & InstanceFlags_Properties2Extension;
 
-        VkPhysicalDeviceFeatures features{};
-        VkPhysicalDeviceProperties properties{};
+        Features features{};
+        Properties properties{};
+
 #ifdef VKIT_API_VERSION_1_2
-        VkPhysicalDeviceVulkan11Features features11{};
-        VkPhysicalDeviceVulkan11Properties properties11{};
-        features11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-        properties11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
-
-        VkPhysicalDeviceVulkan12Features features12{};
-        VkPhysicalDeviceVulkan12Properties properties12{};
-        features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-        properties12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+        features.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+        properties.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+        features.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+        properties.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
 #endif
 #ifdef VKIT_API_VERSION_1_3
-        VkPhysicalDeviceVulkan13Features features13{};
-        VkPhysicalDeviceVulkan13Properties properties13{};
-        features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-        properties13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
+        features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+        properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
 #endif
 
         if (v11 || prop2)
@@ -370,82 +372,80 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
 
             if (v11)
             {
-                getFeatures2 =
-                    m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
+                getFeatures2 = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
                 getProperties2 =
-                    m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
+                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
             }
             else
             {
-                getFeatures2 = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>(
-                    "vkGetPhysicalDeviceFeatures2KHR");
-                getProperties2 = m_Instance.GetVulkanFunction<PFN_vkGetPhysicalDeviceProperties2KHR>(
-                    "vkGetPhysicalDeviceProperties2KHR");
+                getFeatures2 =
+                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
+                getProperties2 =
+                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
             }
             if (!getFeatures2 || !getProperties2)
                 return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                               "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function");
 
 #ifdef VKIT_API_VERSION_1_2
-            featuresChain.pNext = &features11;
-            propertiesChain.pNext = &properties11;
+            featuresChain.pNext = &features.Vulkan11;
+            propertiesChain.pNext = &properties.Vulkan11;
 
-            features11.pNext = &features12;
-            properties11.pNext = &properties12;
+            features.Vulkan11.pNext = &features.Vulkan12;
+            properties.Vulkan11.pNext = &properties.Vulkan12;
 #endif
 #ifdef VKIT_API_VERSION_1_3
-            features12.pNext = &features13;
-            properties12.pNext = &properties13;
+            features.Vulkan12.pNext = &features.Vulkan13;
+            properties.Vulkan12.pNext = &properties.Vulkan13;
 #endif
 
             getFeatures2(vkdevice, &featuresChain);
             getProperties2(vkdevice, &propertiesChain);
 
-            features = featuresChain.features;
-            properties = propertiesChain.properties;
+            features.Core = featuresChain.features;
+            properties.Core = propertiesChain.properties;
         }
         else
         {
-            getFeatures(vkdevice, &features);
-            getProperties(vkdevice, &properties);
+            getFeatures(vkdevice, &features.Core);
+            getProperties(vkdevice, &properties.Core);
         }
 
-        if (!compareFeatureStructs(features, m_Features))
+        if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
             continue;
 
 #ifdef VKIT_API_VERSION_1_2
-        if (!compareFeatureStructs(features11, m_Features11) || !compareFeatureStructs(features12, m_Features12))
+        if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
+            !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
             continue;
 #endif
 #ifdef VKIT_API_VERSION_1_3
-        if (!compareFeatureStructs(features13, m_Features13))
+        if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
             continue;
 #endif
 
-        if (m_Name != nullptr && strcmp(m_Name, properties.deviceName) != 0)
+        if (m_Name != nullptr && strcmp(m_Name, properties.Core.deviceName) != 0)
             continue;
-        if (properties.apiVersion < info.ApiVersion)
+        if (properties.Core.apiVersion < instanceInfo.ApiVersion)
             continue;
-        if (!contains(m_PreferredType, Type(properties.deviceType)))
+        if (!contains(m_PreferredType, Type(properties.Core.deviceType)))
         {
             if (!checkFlag(PhysicalDeviceSelectorFlags_AnyType))
                 continue;
             fullySuitable = false;
         }
 
-        VkPhysicalDeviceMemoryProperties memoryProperties;
-        getMemoryProperties(vkdevice, &memoryProperties);
-
+        getMemoryProperties(vkdevice, &properties.Memory);
         TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
                     "Requested memory must be greater than or equal to required memory");
 
         skipDevice = false;
-        for (u32 i = 0; i < memoryProperties.memoryHeapCount; ++i)
+        for (u32 i = 0; i < properties.Memory.memoryHeapCount; ++i)
         {
-            if (!(memoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
+            if (!(properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
                 continue;
 
-            const VkDeviceSize size = memoryProperties.memoryHeaps[i].size;
+            const VkDeviceSize size = properties.Memory.memoryHeaps[i].size;
             if (m_RequiredMemory > 0 && size < m_RequiredMemory)
             {
                 skipDevice = true;
@@ -460,6 +460,14 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         if (fullySuitable)
             deviceFlags |= PhysicalDeviceFlags_Optimal;
 
+#ifdef VKIT_API_VERSION_1_2
+        features.Vulkan11.pNext = nullptr;
+        features.Vulkan12.pNext = nullptr;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+        features.Vulkan13.pNext = nullptr;
+#endif
+
         PhysicalDevice::Info deviceInfo{};
         deviceInfo.AvailableExtensions = availableExtensions;
         deviceInfo.EnabledExtensions = enabledExtensions;
@@ -469,22 +477,11 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         deviceInfo.ComputeIndex = computeIndex;
         deviceInfo.TransferIndex = transferIndex;
         deviceInfo.PresentIndex = presentIndex;
-        deviceInfo.FamilyCount = familyCount;
-        deviceInfo.Type = Type(properties.deviceType);
-        deviceInfo.Features = features;
+        deviceInfo.QueueFamilies = families;
+        deviceInfo.Type = Type(properties.Core.deviceType);
+        deviceInfo.AvailableFeatures = features;
+        deviceInfo.EnabledFeatures = m_RequiredFeatures;
         deviceInfo.Properties = properties;
-        deviceInfo.MemoryProperties = memoryProperties;
-#ifdef VKIT_API_VERSION_1_2
-        deviceInfo.Features11 = features11;
-        deviceInfo.Features12 = features12;
-        deviceInfo.Properties11 = properties11;
-        deviceInfo.Properties12 = properties12;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        deviceInfo.Features13 = features13;
-        deviceInfo.Properties13 = properties13;
-#endif
-
         devices.emplace_back(vkdevice, deviceInfo);
     }
 
@@ -563,9 +560,9 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDevice
         m_RequiredMemory = m_RequestedMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFeatures(const VkPhysicalDeviceFeatures &p_Features) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Features &p_Features) noexcept
 {
-    m_Features = p_Features;
+    m_RequiredFeatures = p_Features;
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const u16 p_Flags) noexcept
@@ -588,27 +585,5 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::SetSurface(const VkSurfaceKH
     m_Surface = p_Surface;
     return *this;
 }
-#ifdef VKIT_API_VERSION_1_2
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFeatures(
-    const VkPhysicalDeviceVulkan11Features &p_Features) noexcept
-{
-    m_Features11 = p_Features;
-    return *this;
-}
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFeatures(
-    const VkPhysicalDeviceVulkan12Features &p_Features) noexcept
-{
-    m_Features12 = p_Features;
-    return *this;
-}
-#endif
-#ifdef VKIT_API_VERSION_1_3
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFeatures(
-    const VkPhysicalDeviceVulkan13Features &p_Features) noexcept
-{
-    m_Features13 = p_Features;
-    return *this;
-}
-#endif
 
 } // namespace VKit

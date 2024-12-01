@@ -44,6 +44,31 @@ class PhysicalDevice
         Other = VK_PHYSICAL_DEVICE_TYPE_OTHER
     };
 
+    struct Features
+    {
+        VkPhysicalDeviceFeatures Core{};
+#ifdef VKIT_API_VERSION_1_2
+        VkPhysicalDeviceVulkan11Features Vulkan11{};
+        VkPhysicalDeviceVulkan12Features Vulkan12{};
+#endif
+#ifdef VKIT_API_VERSION_1_3
+        VkPhysicalDeviceVulkan13Features Vulkan13{};
+#endif
+    };
+
+    struct Properties
+    {
+        VkPhysicalDeviceProperties Core{};
+        VkPhysicalDeviceMemoryProperties Memory{};
+#ifdef VKIT_API_VERSION_1_2
+        VkPhysicalDeviceVulkan11Properties Vulkan11{};
+        VkPhysicalDeviceVulkan12Properties Vulkan12{};
+#endif
+#ifdef VKIT_API_VERSION_1_3
+        VkPhysicalDeviceVulkan13Properties Vulkan13{};
+#endif
+    };
+
     struct Info
     {
         Type Type;
@@ -53,28 +78,16 @@ class PhysicalDevice
         u32 ComputeIndex;
         u32 TransferIndex;
         u32 PresentIndex;
-        u32 FamilyCount;
-
-        VkDeviceSize Memory;
+        DynamicArray<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
         DynamicArray<std::string> EnabledExtensions;
         DynamicArray<std::string> AvailableExtensions;
 
-        VkPhysicalDeviceFeatures Features{};
-        VkPhysicalDeviceProperties Properties{};
-        VkPhysicalDeviceMemoryProperties MemoryProperties{};
-#ifdef VKIT_API_VERSION_1_2
-        VkPhysicalDeviceVulkan11Features Features11{};
-        VkPhysicalDeviceVulkan11Properties Properties11{};
+        Features EnabledFeatures{};
+        Features AvailableFeatures{};
 
-        VkPhysicalDeviceVulkan12Features Features12{};
-        VkPhysicalDeviceVulkan12Properties Properties12{};
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        VkPhysicalDeviceVulkan13Features Features13{};
-        VkPhysicalDeviceVulkan13Properties Properties13{};
-#endif
+        Properties Properties{};
     };
 
     class Selector
@@ -97,21 +110,13 @@ class PhysicalDevice
         Selector &RequireMemory(const VkDeviceSize p_Size) noexcept;
         Selector &RequestMemory(const VkDeviceSize p_Size) noexcept;
 
-        Selector &SetFeatures(const VkPhysicalDeviceFeatures &p_Features) noexcept;
+        Selector &RequireFeatures(const Features &p_Features) noexcept;
 
         Selector &SetFlags(u16 p_Flags) noexcept;
         Selector &AddFlags(u16 p_Flags) noexcept;
         Selector &RemoveFlags(u16 p_Flags) noexcept;
 
         Selector &SetSurface(VkSurfaceKHR p_Surface) noexcept;
-        Selector &SetFeatures(const VkPhysicalDeviceFeatures &p_Features) noexcept;
-#ifdef VKIT_API_VERSION_1_2
-        Selector &SetFeatures(const VkPhysicalDeviceVulkan11Features &p_Features) noexcept;
-        Selector &SetFeatures(const VkPhysicalDeviceVulkan12Features &p_Features) noexcept;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        Selector &SetFeatures(const VkPhysicalDeviceVulkan13Features &p_Features) noexcept;
-#endif
 
       private:
         Instance m_Instance;
@@ -128,16 +133,7 @@ class PhysicalDevice
         DynamicArray<std::string> m_RequiredExtensions;
         DynamicArray<std::string> m_RequestedExtensions;
 
-        // Required features, these
-        VkPhysicalDeviceFeatures m_Features{};
-
-#ifdef VKIT_API_VERSION_1_2
-        VkPhysicalDeviceVulkan11Features m_Features11{};
-        VkPhysicalDeviceVulkan12Features m_Features12{};
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        VkPhysicalDeviceVulkan13Features m_Features13{};
-#endif
+        Features m_RequiredFeatures{};
     };
 
     VkPhysicalDevice GetDevice() const noexcept;

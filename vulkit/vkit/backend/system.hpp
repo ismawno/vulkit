@@ -63,12 +63,16 @@ struct System
     static const VkLayerProperties *GetLayer(const char *p_Name) noexcept;
 
     template <typename F>
-    static F GetVulkanFunction(const char *p_Name, const VkInstance p_Instance = VK_NULL_HANDLE) noexcept
+    static F GetInstanceFunction(const char *p_Name, const VkInstance p_Instance = VK_NULL_HANDLE) noexcept
     {
         return reinterpret_cast<F>(vkGetInstanceProcAddr(p_Instance, p_Name));
     }
+    template <typename F> static F GetDeviceFunction(const char *p_Name, const VkDevice p_Device) noexcept
+    {
+        return reinterpret_cast<F>(vkGetDeviceProcAddr(p_Device, p_Name));
+    }
 
-    static DynamicArray<VkExtensionProperties> Extensions;
-    static DynamicArray<VkLayerProperties> Layers;
+    static DynamicArray<VkExtensionProperties> AvailableExtensions;
+    static DynamicArray<VkLayerProperties> AvailableLayers;
 };
 } // namespace VKit
