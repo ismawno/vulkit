@@ -48,6 +48,55 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
+static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Instance &p_Instance,
+                                                                             const VkPhysicalDevice p_Device,
+                                                                             const VkSurfaceKHR p_Surface) noexcept
+{
+    using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
+    const auto querySurfaceFormats =
+        p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR");
+    const auto queryPresentModes = p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
+        "vkGetPhysicalDeviceSurfacePresentModesKHR");
+    const auto queryCapabilities = p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>(
+        "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+
+    if (!querySurfaceFormats || !queryPresentModes || !queryCapabilities)
+        return Res::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                          "Failed to get the required functions to query swap chain support");
+
+    u32 formatCount = 0;
+    u32 modeCount = 0;
+
+    VkResult result = querySurfaceFormats(p_Device, p_Surface, &formatCount, nullptr);
+    if (result != VK_SUCCESS)
+        return Res::Error(result, "Failed to get the number of surface formats");
+
+    result = queryPresentModes(p_Device, p_Surface, &modeCount, nullptr);
+    if (result != VK_SUCCESS)
+        return Res::Error(result, "Failed to get the number of present modes");
+
+    if (formatCount == 0 || modeCount == 0)
+        return Res::Error(VK_ERROR_INITIALIZATION_FAILED, "No surface formats or present modes found");
+
+    PhysicalDevice::SwapChainSupportDetails details;
+    result = queryCapabilities(p_Device, p_Surface, &details.Capabilities);
+    if (result != VK_SUCCESS)
+        return Res::Error(result, "Failed to get the surface capabilities");
+
+    details.Formats.resize(formatCount);
+    details.PresentModes.resize(modeCount);
+
+    result = querySurfaceFormats(p_Device, p_Surface, &formatCount, details.Formats.data());
+    if (result != VK_SUCCESS)
+        return Res::Error(result, "Failed to get the surface formats");
+
+    result = queryPresentModes(p_Device, p_Surface, &modeCount, details.PresentModes.data());
+    if (result != VK_SUCCESS)
+        return Res::Error(result, "Failed to get the present modes");
+
+    return Res::Ok(details);
+}
+
 PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Instance(p_Instance)
 {
 #ifdef VKIT_API_VERSION_1_2
@@ -326,20 +375,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
 
         if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
         {
-            const auto querySurfaceFormats = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(
-                "vkGetPhysicalDeviceSurfaceFormatsKHR");
-            const auto queryPresentModes = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
-                "vkGetPhysicalDeviceSurfacePresentModesKHR");
-            if (!querySurfaceFormats || !queryPresentModes)
-                continue;
-
-            u32 formatCount = 0;
-            u32 modeCount = 0;
-
-            const VkResult result1 = querySurfaceFormats(vkdevice, m_Surface, &formatCount, nullptr);
-            const VkResult result2 = queryPresentModes(vkdevice, m_Surface, &modeCount, nullptr);
-            if (result1 != VK_SUCCESS || result2 != VK_SUCCESS || formatCount == 0 || modeCount == 0)
-                continue;
+            const auto result = querySwapChainSupport(m_Instance, vkdevice, m_Surface);
         }
 
         const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
@@ -512,6 +548,12 @@ VkPhysicalDevice PhysicalDevice::GetDevice() const noexcept
 const PhysicalDevice::Info &PhysicalDevice::GetInfo() const noexcept
 {
     return m_Info;
+}
+
+Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
+    const Instance &p_Instance, const VkSurfaceKHR p_Surface) const noexcept
+{
+    return querySwapChainSupport(p_Instance, m_Device, p_Surface);
 }
 
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name) noexcept

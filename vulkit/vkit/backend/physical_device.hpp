@@ -69,6 +69,13 @@ class PhysicalDevice
 #endif
     };
 
+    struct SwapChainSupportDetails
+    {
+        VkSurfaceCapabilitiesKHR Capabilities;
+        DynamicArray<VkSurfaceFormatKHR> Formats;
+        DynamicArray<VkPresentModeKHR> PresentModes;
+    };
+
     struct Info
     {
         Type Type;
@@ -138,6 +145,9 @@ class PhysicalDevice
 
     VkPhysicalDevice GetDevice() const noexcept;
     const Info &GetInfo() const noexcept;
+
+    Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance &p_Instance,
+                                                          VkSurfaceKHR p_Surface) const noexcept;
 
     explicit(false) operator VkPhysicalDevice() const noexcept;
     explicit(false) operator bool() const noexcept;
