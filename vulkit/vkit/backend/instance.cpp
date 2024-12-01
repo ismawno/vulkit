@@ -288,22 +288,34 @@ Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Insta
 {
 }
 
-void Instance::Destroy() noexcept
+static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) noexcept
 {
-    TKIT_ASSERT(m_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
+    TKIT_ASSERT(p_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
-    const auto destroyInstance = GetFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
+    const auto destroyInstance = System::GetInstanceFunction<PFN_vkDestroyInstance>("vkDestroyInstance", p_Instance);
     TKIT_ASSERT(destroyInstance, "Failed to get the vkDestroyInstance function");
 
-    if ((m_Info.Flags & InstanceFlags_ValidationLayers) && m_Info.DebugMessenger)
+    if ((p_Info.Flags & InstanceFlags_ValidationLayers) && p_Info.DebugMessenger)
     {
-        const auto destroyDebugMessenger =
-            GetFunction<PFN_vkDestroyDebugUtilsMessengerEXT>("vkDestroyDebugUtilsMessengerEXT");
+        const auto destroyDebugMessenger = System::GetInstanceFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
+            "vkDestroyDebugUtilsMessengerEXT", p_Instance);
         TKIT_ASSERT(destroyDebugMessenger, "Failed to get the vkDestroyDebugUtilsMessengerEXT function");
-        destroyDebugMessenger(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
+        destroyDebugMessenger(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
     }
-    destroyInstance(m_Instance, m_Info.AllocationCallbacks);
+    destroyInstance(p_Instance, p_Info.AllocationCallbacks);
+}
+
+void Instance::Destroy() noexcept
+{
+    destroy(m_Instance, m_Info);
     m_Instance = VK_NULL_HANDLE;
+}
+
+void Instance::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const VkInstance instance = m_Instance;
+    const Info info = m_Info;
+    p_Queue.Push([instance, info]() { destroy(instance, info); });
 }
 
 VkInstance Instance::GetInstance() const noexcept

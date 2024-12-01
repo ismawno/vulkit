@@ -58,6 +58,8 @@ class LogicalDevice
         return reinterpret_cast<F>(vkGetDeviceProcAddr(m_Device, p_Name));
     }
 
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+
   private:
     using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
 

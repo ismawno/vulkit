@@ -115,6 +115,8 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));
     }
 
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+
   private:
     Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
 

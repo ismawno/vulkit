@@ -112,14 +112,26 @@ LogicalDevice::LogicalDevice(const VkDevice p_Device, const QueueArray &p_Queues
 {
 }
 
-void LogicalDevice::Destroy() noexcept
+static void destroy(const VkDevice p_Device) noexcept
 {
-    const auto destroyDevice = GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
+    const auto destroyDevice = System::GetDeviceFunction<PFN_vkDestroyDevice>("vkDestroyDevice", p_Device);
     TKIT_ASSERT(destroyDevice, "Failed to get the vkDestroyDevice function");
 
-    destroyDevice(m_Device, nullptr);
+    destroyDevice(p_Device, nullptr);
+}
+
+void LogicalDevice::Destroy() noexcept
+{
+    destroy(m_Device);
     m_Device = VK_NULL_HANDLE;
 }
+
+void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const VkDevice device = m_Device;
+    p_Queue.Push([device]() { destroy(device); });
+}
+
 VkDevice LogicalDevice::GetDevice() const noexcept
 {
     return m_Device;
