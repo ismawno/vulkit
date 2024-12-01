@@ -1,6 +1,5 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/buffer/buffer.hpp"
-#include "vkit/core/core.hpp"
 
 namespace VKit
 {
@@ -10,34 +9,38 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
 }
 
 Buffer::Buffer(const Specs &p_Specs) noexcept
-    : m_InstanceSize(p_Specs.InstanceSize),
+    : m_Allocator(p_Specs.Allocator), m_InstanceSize(p_Specs.InstanceSize),
       m_AlignedInstanceSize(alignedSize(p_Specs.InstanceSize, p_Specs.MinimumAlignment)),
       m_Size(m_AlignedInstanceSize * p_Specs.InstanceCount)
 {
-    m_Device = Core::GetDevice();
     createBuffer(p_Specs.Usage, p_Specs.AllocationInfo);
 }
 
-Buffer::~Buffer() noexcept
+void Buffer::Destroy() noexcept
 {
-    if (m_Data)
-        Unmap();
-    vmaDestroyBuffer(Core::GetVulkanAllocator(), m_Buffer, m_Allocation);
+    vmaDestroyBuffer(m_Allocator, m_Buffer, m_Allocation);
+}
+
+void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const VmaAllocator allocator = m_Allocator;
+    const VkBuffer buffer = m_Buffer;
+    const VmaAllocation allocation = m_Allocation;
+    p_Queue.Push([allocator, buffer, allocation]() { vmaDestroyBuffer(allocator, buffer, allocation); });
 }
 
 void Buffer::Map() noexcept
 {
     if (m_Data)
         Unmap();
-    TKIT_ASSERT_RETURNS(vmaMapMemory(Core::GetVulkanAllocator(), m_Allocation, &m_Data), VK_SUCCESS,
-                        "Failed to map buffer memory");
+    TKIT_ASSERT_RETURNS(vmaMapMemory(m_Allocator, m_Allocation, &m_Data), VK_SUCCESS, "Failed to map buffer memory");
 }
 
 void Buffer::Unmap() noexcept
 {
     if (!m_Data)
         return;
-    vmaUnmapMemory(Core::GetVulkanAllocator(), m_Allocation);
+    vmaUnmapMemory(m_Allocator, m_Allocation);
     m_Data = nullptr;
 }
 
@@ -64,7 +67,7 @@ void Buffer::WriteAt(const usize p_Index, const void *p_Data) noexcept
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "Cannot flush unmapped buffer");
-    TKIT_ASSERT_RETURNS(vmaFlushAllocation(Core::GetVulkanAllocator(), m_Allocation, p_Offset, p_Size), VK_SUCCESS,
+    TKIT_ASSERT_RETURNS(vmaFlushAllocation(m_Allocator, m_Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "Failed to flush buffer memory");
 }
 void Buffer::FlushAt(const usize p_Index) noexcept
@@ -76,7 +79,7 @@ void Buffer::FlushAt(const usize p_Index) noexcept
 void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "Cannot invalidate unmapped buffer");
-    TKIT_ASSERT_RETURNS(vmaInvalidateAllocation(Core::GetVulkanAllocator(), m_Allocation, p_Offset, p_Size), VK_SUCCESS,
+    TKIT_ASSERT_RETURNS(vmaInvalidateAllocation(m_Allocator, m_Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "Failed to invalidate buffer memory");
 }
 void Buffer::InvalidateAt(const usize p_Index) noexcept
@@ -149,9 +152,8 @@ void Buffer::createBuffer(const VkBufferUsageFlags p_Usage, const VmaAllocationC
     bufferInfo.usage = p_Usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    TKIT_ASSERT_RETURNS(
-        vmaCreateBuffer(Core::GetVulkanAllocator(), &bufferInfo, &p_AllocationInfo, &m_Buffer, &m_Allocation, nullptr),
-        VK_SUCCESS, "Failed to create buffer");
+    TKIT_ASSERT_RETURNS(vmaCreateBuffer(m_Allocator, &bufferInfo, &p_AllocationInfo, &m_Buffer, &m_Allocation, nullptr),
+                        VK_SUCCESS, "Failed to create buffer");
 }
 
 } // namespace VKit

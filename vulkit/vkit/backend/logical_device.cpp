@@ -16,7 +16,7 @@ LogicalDevice::Builder::Builder(const Instance &p_Instance, const PhysicalDevice
     }
 }
 
-Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
+RawResult<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
 {
     const Instance::Info &instanceInfo = m_Instance.GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice.GetInfo();
@@ -70,25 +70,25 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
 
     const auto createDevice = m_Instance.GetFunction<PFN_vkCreateDevice>("vkCreateDevice");
     if (!createDevice)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkCreateDevice function");
+        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                               "Failed to get the vkCreateDevice function");
 
     const auto destroyDevice = m_Instance.GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
     if (!destroyDevice)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkDestroyDevice function");
+        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                               "Failed to get the vkDestroyDevice function");
 
     VkDevice device;
     const VkResult result = createDevice(m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
-        return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
+        return RawResult<LogicalDevice>::Error(result, "Failed to create the logical device");
 
     const auto getQueue = System::GetDeviceFunction<PFN_vkGetDeviceQueue>("vkGetDeviceQueue", device);
     if (!getQueue)
     {
         destroyDevice(device, instanceInfo.AllocationCallbacks);
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkGetDeviceQueue function");
+        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                               "Failed to get the vkGetDeviceQueue function");
     }
 
     QueueArray queues;
@@ -96,7 +96,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
         for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
             getQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
 
-    return Result<LogicalDevice>::Ok(device, queues);
+    return RawResult<LogicalDevice>::Ok(m_Instance, m_PhysicalDevice, device, queues);
 }
 
 LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(
@@ -107,29 +107,51 @@ LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(
     return *this;
 }
 
-LogicalDevice::LogicalDevice(const VkDevice p_Device, const QueueArray &p_Queues) noexcept
-    : m_Device(p_Device), m_Queues(p_Queues)
+LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
+                             const VkDevice p_Device, const QueueArray &p_Queues) noexcept
+    : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Device(p_Device), m_Queues(p_Queues)
 {
 }
 
-static void destroy(const VkDevice p_Device) noexcept
+static void destroy(const VkDevice p_Device, const VkAllocationCallbacks *p_Callbacks) noexcept
 {
     const auto destroyDevice = System::GetDeviceFunction<PFN_vkDestroyDevice>("vkDestroyDevice", p_Device);
     TKIT_ASSERT(destroyDevice, "Failed to get the vkDestroyDevice function");
 
-    destroyDevice(p_Device, nullptr);
+    destroyDevice(p_Device, p_Callbacks);
 }
 
 void LogicalDevice::Destroy() noexcept
 {
-    destroy(m_Device);
+    destroy(m_Device, m_Instance.GetInfo().AllocationCallbacks);
     m_Device = VK_NULL_HANDLE;
+}
+
+const Instance &LogicalDevice::GetInstance() const noexcept
+{
+    return m_Instance;
+}
+const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const noexcept
+{
+    return m_PhysicalDevice;
+}
+void LogicalDevice::WaitIdle(VkDevice p_Device) noexcept
+{
+    TKIT_ASSERT_RETURNS(vkDeviceWaitIdle(p_Device), VK_SUCCESS, "Failed to wait for the logical device to be idle");
+}
+void LogicalDevice::WaitIdle() const noexcept
+{
+    WaitIdle(m_Device);
 }
 
 void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
     const VkDevice device = m_Device;
-    p_Queue.Push([device]() { destroy(device); });
+    const VkAllocationCallbacks *alloc = m_Instance.GetInfo().AllocationCallbacks;
+    p_Queue.Push([device, alloc]() {
+        WaitIdle(device);
+        destroy(device, alloc);
+    });
 }
 
 VkDevice LogicalDevice::GetDevice() const noexcept

@@ -3,61 +3,63 @@
 
 namespace VKit
 {
-VulkanResult::VulkanResult(VkResult p_Result, std::string_view p_Message) noexcept
+template <String MessageType>
+VulkanResult<MessageType>::VulkanResult(VkResult p_Result, const MessageType &p_Message) noexcept
     : Result(p_Result), Message(p_Message)
 {
 }
 
-VulkanResult VulkanResult::Success() noexcept
+template <String MessageType> VulkanResult<MessageType> VulkanResult<MessageType>::Success() noexcept
 {
     return VulkanResult{};
 }
-VulkanResult VulkanResult::Error(VkResult p_Result, std::string_view p_Message) noexcept
+template <String MessageType>
+VulkanResult<MessageType> VulkanResult<MessageType>::Error(VkResult p_Result, const MessageType &p_Message) noexcept
 {
     return VulkanResult(p_Result, p_Message);
 }
 
-VulkanResult::operator bool() const noexcept
+template <String MessageType> VulkanResult<MessageType>::operator bool() const noexcept
 {
     return Result == VK_SUCCESS;
 }
 
-VulkanResult System::Initialize() noexcept
+VulkanRawResult System::Initialize() noexcept
 {
     const auto enumerateExtensions =
         GetInstanceFunction<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
     if (!enumerateExtensions)
-        return VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                          "Failed to get the vkEnumerateInstanceExtensionProperties function");
+        return VulkanRawResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                      "Failed to get the vkEnumerateInstanceExtensionProperties function");
 
     u32 extensionCount = 0;
     VkResult result;
     result = enumerateExtensions(nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
-        return VKIT_ERROR(result, "Failed to get the number of instance extensions");
+        return VulkanRawResult::Error(result, "Failed to get the number of instance extensions");
 
     AvailableExtensions.resize(extensionCount);
     result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.data());
     if (result != VK_SUCCESS)
-        return VKIT_ERROR(result, "Failed to get the instance extensions");
+        return VulkanRawResult::Error(result, "Failed to get the instance extensions");
 
     const auto enumerateLayers =
         GetInstanceFunction<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
     if (!enumerateLayers)
-        return VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                          "Failed to get the vkEnumerateInstanceLayerProperties function");
+        return VulkanRawResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                      "Failed to get the vkEnumerateInstanceLayerProperties function");
 
     u32 layerCount = 0;
     result = enumerateLayers(&layerCount, nullptr);
     if (result != VK_SUCCESS)
-        return VKIT_ERROR(result, "Failed to get the number of instance layers");
+        return VulkanRawResult::Error(result, "Failed to get the number of instance layers");
 
     AvailableLayers.resize(layerCount);
     result = enumerateLayers(&layerCount, AvailableLayers.data());
     if (result != VK_SUCCESS)
-        return VKIT_ERROR(result, "Failed to get the instance layers");
+        return VulkanRawResult::Error(result, "Failed to get the instance layers");
 
-    return VulkanResult::Success();
+    return VulkanRawResult::Success();
 }
 
 const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept

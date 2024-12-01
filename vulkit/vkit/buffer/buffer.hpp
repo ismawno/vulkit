@@ -1,10 +1,9 @@
 #pragma once
 
+#include "vkit/backend/system.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/core/device.hpp"
 #include "vkit/core/vma.hpp"
 
-#include "tkit/core/non_copyable.hpp"
 #include "tkit/memory/block_allocator.hpp"
 
 #include <vulkan/vulkan.hpp>
@@ -13,10 +12,10 @@ namespace VKit
 {
 class VKIT_API Buffer
 {
-    TKIT_NON_COPYABLE(Buffer)
   public:
     struct Specs
     {
+        VmaAllocator Allocator = VK_NULL_HANDLE;
         VkDeviceSize InstanceCount;
         VkDeviceSize InstanceSize;
         VkBufferUsageFlags Usage;
@@ -26,7 +25,8 @@ class VKIT_API Buffer
 
     explicit Buffer(const Specs &p_Specs) noexcept;
 
-    ~Buffer() noexcept;
+    void Destroy() noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
     void Map() noexcept;
     void Unmap() noexcept;
@@ -58,10 +58,10 @@ class VKIT_API Buffer
   private:
     void createBuffer(VkBufferUsageFlags p_Usage, const VmaAllocationCreateInfo &p_AllocationInfo) noexcept;
 
-    TKit::Ref<Device> m_Device;
     void *m_Data = nullptr;
 
     VkBuffer m_Buffer = VK_NULL_HANDLE;
+    VmaAllocator m_Allocator = VK_NULL_HANDLE;
     VmaAllocation m_Allocation = VK_NULL_HANDLE;
 
     VkDeviceSize m_InstanceSize;

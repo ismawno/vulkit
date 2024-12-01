@@ -54,52 +54,52 @@ static bool contains(const DynamicArray<const char *> &p_Extensions, const char 
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
-Result<Instance> Instance::Builder::Build() const noexcept
+FormattedResult<Instance> Instance::Builder::Build() const noexcept
 {
-    const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
+    const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
         if (p_Version < VKIT_MAKE_VERSION(0, 1, 1, 0))
-            return Result<u32>::Ok(p_Version); // You just cant check versions at this point
+            return FormattedResult<u32>::Ok(p_Version); // You just cant check versions at this point
 
         const auto enumerateVersion =
             System::GetInstanceFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
         if (!enumerateVersion)
-            return Result<u32>::Error(
-                VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkEnumerateInstanceVersion function"));
+            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
+                VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkEnumerateInstanceVersion function"));
 
         u32 version;
         const VkResult result = enumerateVersion(&version);
         if (result != VK_SUCCESS)
-            return Result<u32>::Error(VKIT_ERROR(result, "Failed to get the vulkan instance version"));
+            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(result, "Failed to get the vulkan instance version"));
 
         if (version < p_Version)
-            return Result<u32>::Error(VKIT_ERROR(
+            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_INCOMPATIBLE_DRIVER,
                 "The vulkan instance version {} is not supported, the required version is {}", version, p_Version));
 
-        return Result<u32>::Ok(p_IsRequested ? p_Version : version);
+        return FormattedResult<u32>::Ok(p_IsRequested ? p_Version : version);
     };
 
     TKIT_ASSERT(m_RequestedApiVersion >= m_RequiredApiVersion,
                 "The requested api version must be greater than or equal to the required api version");
 
-    Result<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
+    FormattedResult<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
     {
         vresult = checkApiVersion(m_RequiredApiVersion, false);
         if (!vresult)
-            return Result<Instance>::Error(vresult.GetError());
+            return FormattedResult<Instance>::Error(vresult.GetError());
     }
     const u32 apiVersion = vresult.GetValue();
 
     for (const char *extension : m_RequiredExtensions)
         if (!System::IsExtensionSupported(extension))
-            return Result<Instance>::Error(
-                VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "The extension {} is not suported", extension));
+            return FormattedResult<Instance>::Error(
+                VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "The extension {} is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!System::IsLayerSupported(layer))
-            return Result<Instance>::Error(
-                VKIT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
+            return FormattedResult<Instance>::Error(
+                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
 
     DynamicArray<const char *> extensions;
     extensions.reserve(m_RequiredExtensions.size() + m_RequestedExtensions.size());
@@ -134,8 +134,8 @@ Result<Instance> Instance::Builder::Build() const noexcept
     {
         validationLayers = System::IsLayerSupported(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         if (!validationLayers && m_RequireValidationLayers)
-            return Result<Instance>::Error(
-                VKIT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "Validation layers are not suported"));
+            return FormattedResult<Instance>::Error(
+                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "Validation layers are not suported"));
         if (!contains(layers, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
             layers.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
@@ -163,10 +163,10 @@ Result<Instance> Instance::Builder::Build() const noexcept
             return true;
         };
 
-        const auto generateError = [](const char *p_Extension) -> Result<Instance> {
-            return Result<Instance>::Error(
-                VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                           "The extension {}, required for windowing capabilities, is not suported", p_Extension));
+        const auto generateError = [](const char *p_Extension) -> FormattedResult<Instance> {
+            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
+                VK_ERROR_EXTENSION_NOT_PRESENT,
+                "The extension {}, required for windowing capabilities, is not suported", p_Extension));
         };
 
         if (!checkWindowingSupport(VK_KHR_SURFACE_EXTENSION_NAME))
@@ -234,15 +234,15 @@ Result<Instance> Instance::Builder::Build() const noexcept
     const auto destroyInstance = System::GetInstanceFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
 
     if (!createInstance)
-        return Result<Instance>::Error(
-            VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateInstance function"));
+        return FormattedResult<Instance>::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateInstance function"));
     if (!destroyInstance)
-        return Result<Instance>::Error(
-            VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkDestroyInstance function"));
+        return FormattedResult<Instance>::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkDestroyInstance function"));
 
     VkResult result = createInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
-        return Result<Instance>::Error(VKIT_ERROR(result, "Failed to create the vulkan instance"));
+        return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the vulkan instance"));
 
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
@@ -250,14 +250,14 @@ Result<Instance> Instance::Builder::Build() const noexcept
         const auto createDebugMessenger =
             System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>("vkCreateDebugUtilsMessengerEXT");
         if (!createDebugMessenger)
-            return Result<Instance>::Error(VKIT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                                      "Failed to get the vkCreateDebugUtilsMessengerEXT function"));
+            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
+                VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateDebugUtilsMessengerEXT function"));
 
         result = createDebugMessenger(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
             destroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(VKIT_ERROR(result, "Failed to create the debug messenger"));
+            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the debug messenger"));
         }
     }
 
@@ -281,7 +281,7 @@ Result<Instance> Instance::Builder::Build() const noexcept
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
                 "The debug messenger must be available if validation layers are enabled");
 
-    return Result<Instance>::Ok(vkinstance, info);
+    return FormattedResult<Instance>::Ok(vkinstance, info);
 }
 
 Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Instance(p_Instance), m_Info(p_Info)

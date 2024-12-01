@@ -30,7 +30,7 @@ class LogicalDevice
       public:
         explicit Builder(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
-        Result<LogicalDevice> Build() const noexcept;
+        RawResult<LogicalDevice> Build() const noexcept;
 
         Builder &SetQueuePriorities(std::span<const QueuePriorities> p_QueuePriorities) noexcept;
 
@@ -43,7 +43,13 @@ class LogicalDevice
     };
 
     void Destroy() noexcept;
+
+    const Instance &GetInstance() const noexcept;
+    const PhysicalDevice &GetPhysicalDevice() const noexcept;
     VkDevice GetDevice() const noexcept;
+
+    static void WaitIdle(VkDevice p_Device) noexcept;
+    void WaitIdle() const noexcept;
 
     VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const noexcept;
 
@@ -63,8 +69,11 @@ class LogicalDevice
   private:
     using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
 
-    LogicalDevice(VkDevice p_Device, const QueueArray &p_Queues) noexcept;
+    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device,
+                  const QueueArray &p_Queues) noexcept;
 
+    Instance m_Instance;
+    PhysicalDevice m_PhysicalDevice;
     VkDevice m_Device;
     QueueArray m_Queues;
 };

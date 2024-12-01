@@ -40,7 +40,7 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
     class Builder
     {
       public:
-        Result<Instance> Build() const noexcept;
+        FormattedResult<Instance> Build() const noexcept;
 
         Builder &SetApplicationName(const char *p_Name) noexcept;
         Builder &SetEngineName(const char *p_Name) noexcept;
