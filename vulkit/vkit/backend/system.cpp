@@ -107,4 +107,15 @@ bool System::AreLayersSupported(std::span<const char *const> p_Names) noexcept
     return true;
 }
 
+void DeletionQueue::Push(std::function<void()> &&p_Deleter) noexcept
+{
+    m_Deleters.push_back(std::move(p_Deleter));
+}
+void DeletionQueue::Flush() noexcept
+{
+    for (auto it = m_Deleters.rbegin(); it != m_Deleters.rend(); ++it)
+        (*it)();
+    m_Deleters.clear();
+}
+
 } // namespace VKit

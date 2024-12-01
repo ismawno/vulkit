@@ -73,12 +73,30 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
         return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
                                             "Failed to get the vkCreateDevice function");
 
+    const auto destroyDevice = m_Instance.GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
+    if (!destroyDevice)
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "Failed to get the vkDestroyDevice function");
+
     VkDevice device;
     const VkResult result = createDevice(m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
-    return Result<LogicalDevice>::Ok(device);
+    const auto getQueue = System::GetDeviceFunction<PFN_vkGetDeviceQueue>("vkGetDeviceQueue", device);
+    if (!getQueue)
+    {
+        destroyDevice(device, instanceInfo.AllocationCallbacks);
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "Failed to get the vkGetDeviceQueue function");
+    }
+
+    QueueArray queues;
+    for (u32 i = 0; i < 4; ++i)
+        for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
+            getQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
+
+    return Result<LogicalDevice>::Ok(device, queues);
 }
 
 LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(
@@ -89,9 +107,11 @@ LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(
     return *this;
 }
 
-LogicalDevice::LogicalDevice(VkDevice p_Device) noexcept : m_Device(p_Device)
+LogicalDevice::LogicalDevice(const VkDevice p_Device, const QueueArray &p_Queues) noexcept
+    : m_Device(p_Device), m_Queues(p_Queues)
 {
 }
+
 void LogicalDevice::Destroy() noexcept
 {
     const auto destroyDevice = GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
@@ -99,6 +119,32 @@ void LogicalDevice::Destroy() noexcept
 
     destroyDevice(m_Device, nullptr);
     m_Device = VK_NULL_HANDLE;
+}
+VkDevice LogicalDevice::GetDevice() const noexcept
+{
+    return m_Device;
+}
+
+VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const noexcept
+{
+    const u32 index = static_cast<u32>(p_Type) * VKIT_MAX_QUEUES_PER_FAMILY + p_QueueIndex;
+    return m_Queues[index];
+}
+
+VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const noexcept
+{
+    VkQueue queue;
+    vkGetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
+    return queue;
+}
+
+LogicalDevice::operator VkDevice() const noexcept
+{
+    return m_Device;
+}
+LogicalDevice::operator bool() const noexcept
+{
+    return m_Device != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

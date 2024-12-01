@@ -4,6 +4,7 @@
 #include "tkit/utilities/result.hpp"
 #include <vulkan/vulkan.hpp>
 #include <span>
+#include <functional>
 
 #ifdef VK_MAKE_API_VERSION
 #    define VKIT_MAKE_VERSION(variant, major, minor, patch) VK_MAKE_API_VERSION(variant, major, minor, patch)
@@ -75,4 +76,15 @@ struct System
     static DynamicArray<VkExtensionProperties> AvailableExtensions;
     static DynamicArray<VkLayerProperties> AvailableLayers;
 };
+
+class DeletionQueue
+{
+  public:
+    void Push(std::function<void()> &&p_Deleter) noexcept;
+    void Flush() noexcept;
+
+  private:
+    DynamicArray<std::function<void()>> m_Deleters;
+};
+
 } // namespace VKit
