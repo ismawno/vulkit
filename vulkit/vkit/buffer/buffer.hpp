@@ -24,7 +24,7 @@ class VKIT_API Buffer
         VkDeviceSize MinimumAlignment = 1;
     };
 
-    Buffer(const Specs &p_Specs) noexcept;
+    explicit Buffer(const Specs &p_Specs) noexcept;
 
     ~Buffer() noexcept;
 

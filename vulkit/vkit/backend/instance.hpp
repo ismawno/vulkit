@@ -9,6 +9,13 @@
 
 namespace VKit
 {
+enum InstanceFlags : u8
+{
+    InstanceFlags_Headless = 1 << 0,
+    InstanceFlags_ValidationLayers = 1 << 1,
+    InstanceFlags_Properties2Extension = 1 << 2
+};
+
 class VKIT_API Instance : public TKit::RefCounted<Instance>
 {
   public:
@@ -21,9 +28,7 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         u32 EngineVersion;
         u32 ApiVersion;
 
-        bool HasValidationLayers;
-        bool Properties2Extension;
-        bool Headless;
+        u8 Flags;
 
         DynamicArray<const char *> Extensions;
         DynamicArray<const char *> Layers;
@@ -105,10 +110,15 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
     explicit(false) operator VkInstance() const noexcept;
     explicit(false) operator bool() const noexcept;
 
+    template <typename F> F GetVulkanFunction(const char *p_Name) const noexcept
+    {
+        return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));
+    }
+
   private:
     Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
 
     VkInstance m_Instance;
-    Info m_Info{};
+    Info m_Info;
 };
 } // namespace VKit

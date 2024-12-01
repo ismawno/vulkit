@@ -11,7 +11,7 @@ template <typename T> class StorageBuffer : public Buffer
 {
     TKIT_NON_COPYABLE(StorageBuffer)
   public:
-    StorageBuffer(const std::span<const T> p_Data) noexcept : Buffer(createBufferSpecs(p_Data.size()))
+    explicit StorageBuffer(const std::span<const T> p_Data) noexcept : Buffer(createBufferSpecs(p_Data.size()))
     {
         Map();
         // Cant use a plain write because of alignment issues

@@ -15,7 +15,7 @@ class VKIT_API IndexBuffer : public DeviceBuffer<Index>
 {
     TKIT_NON_COPYABLE(IndexBuffer)
   public:
-    IndexBuffer(const std::span<const Index> p_Vertices) noexcept;
+    explicit IndexBuffer(const std::span<const Index> p_Vertices) noexcept;
 
     void Bind(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
 };
@@ -24,8 +24,8 @@ class VKIT_API MutableIndexBuffer : public Buffer
 {
     TKIT_NON_COPYABLE(MutableIndexBuffer)
   public:
-    MutableIndexBuffer(const std::span<const Index> p_Vertices) noexcept;
-    MutableIndexBuffer(usize p_Size) noexcept;
+    explicit MutableIndexBuffer(const std::span<const Index> p_Vertices) noexcept;
+    explicit MutableIndexBuffer(usize p_Size) noexcept;
 
     void Bind(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
 
