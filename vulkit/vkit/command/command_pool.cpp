@@ -42,16 +42,16 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
     });
 }
 
-VulkanRawResult CommandPool::Allocate(const u32 p_Count, VkCommandBuffer *p_CommandBuffers,
+VulkanRawResult CommandPool::Allocate(const std::span<VkCommandBuffer> p_CommandBuffers,
                                       const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBufferAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.commandPool = m_Pool;
     allocateInfo.level = p_Level;
-    allocateInfo.commandBufferCount = p_Count;
+    allocateInfo.commandBufferCount = static_cast<u32>(p_CommandBuffers.size());
 
-    const VkResult result = vkAllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers);
+    const VkResult result = vkAllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.data());
     if (result != VK_SUCCESS)
         return VulkanRawResult::Error(result, "Failed to allocate command buffers");
     return VulkanRawResult::Success();
@@ -59,19 +59,22 @@ VulkanRawResult CommandPool::Allocate(const u32 p_Count, VkCommandBuffer *p_Comm
 RawResult<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBuffer commandBuffer;
-    const VulkanRawResult result = Allocate(1, &commandBuffer, p_Level);
+    const std::span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
+
+    const VulkanRawResult result = Allocate(commandBuffers, p_Level);
     if (result)
         return RawResult<VkCommandBuffer>::Ok(commandBuffer);
     return RawResult<VkCommandBuffer>::Error(result);
 }
 
-void CommandPool::Deallocate(const u32 p_Count, const VkCommandBuffer *p_CommandBuffers) const noexcept
+void CommandPool::Deallocate(const std::span<const VkCommandBuffer> p_CommandBuffers) const noexcept
 {
-    vkFreeCommandBuffers(m_Device, m_Pool, p_Count, p_CommandBuffers);
+    vkFreeCommandBuffers(m_Device, m_Pool, static_cast<u32>(p_CommandBuffers.size()), p_CommandBuffers.data());
 }
 void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexcept
 {
-    Deallocate(1, &p_CommandBuffer);
+    const std::span<const VkCommandBuffer> commandBuffers(&p_CommandBuffer, 1);
+    Deallocate(commandBuffers);
 }
 
 RawResult<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept

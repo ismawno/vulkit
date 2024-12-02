@@ -15,11 +15,11 @@ class CommandPool
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
     RawResult<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
-    VulkanRawResult Allocate(u32 p_Count, VkCommandBuffer *p_CommandBuffers,
+    VulkanRawResult Allocate(std::span<VkCommandBuffer> p_CommandBuffers,
                              VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
 
     void Deallocate(VkCommandBuffer p_CommandBuffer) const noexcept;
-    void Deallocate(u32 p_Count, const VkCommandBuffer *p_CommandBuffers) const noexcept;
+    void Deallocate(std::span<const VkCommandBuffer> p_CommandBuffers) const noexcept;
 
     RawResult<VkCommandBuffer> BeginSingleTimeCommands() const noexcept;
     VulkanRawResult EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
