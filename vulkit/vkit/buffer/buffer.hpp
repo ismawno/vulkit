@@ -10,6 +10,7 @@
 
 namespace VKit
 {
+class CommandPool;
 class VKIT_API Buffer
 {
   public:
@@ -23,7 +24,18 @@ class VKIT_API Buffer
         VkDeviceSize MinimumAlignment = 1;
     };
 
-    explicit Buffer(const Specs &p_Specs) noexcept;
+    struct Info
+    {
+        VmaAllocator Allocator;
+        VmaAllocation Allocation;
+
+        VkDeviceSize InstanceSize;
+        VkDeviceSize InstanceCount;
+        VkDeviceSize AlignedInstanceSize;
+        VkDeviceSize Size;
+    };
+
+    static RawResult<Buffer> Create(const Specs &p_Specs) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
@@ -47,25 +59,17 @@ class VKIT_API Buffer
     void *GetData() const noexcept;
     void *ReadAt(usize p_Index) const noexcept;
 
-    void CopyFrom(const Buffer &p_Source) noexcept;
+    VulkanRawResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;
 
-    VkDeviceSize GetSize() const noexcept;
-    VkDeviceSize GetInstanceSize() const noexcept;
-    VkDeviceSize GetInstanceCount() const noexcept;
+    const Info &GetInfo() const noexcept;
 
   private:
-    void createBuffer(VkBufferUsageFlags p_Usage, const VmaAllocationCreateInfo &p_AllocationInfo) noexcept;
+    explicit Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
 
     void *m_Data = nullptr;
-
     VkBuffer m_Buffer = VK_NULL_HANDLE;
-    VmaAllocator m_Allocator = VK_NULL_HANDLE;
-    VmaAllocation m_Allocation = VK_NULL_HANDLE;
-
-    VkDeviceSize m_InstanceSize;
-    VkDeviceSize m_AlignedInstanceSize;
-    VkDeviceSize m_Size;
+    Info m_Info;
 };
 } // namespace VKit
