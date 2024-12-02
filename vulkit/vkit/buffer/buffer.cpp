@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/buffer/buffer.hpp"
 #include "vkit/command/command_pool.hpp"
+#include "vkit/backend/system.hpp"
 
 namespace VKit
 {

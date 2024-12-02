@@ -1,26 +1,46 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/descriptors/descriptor_pool.hpp"
-#include "vkit/core/core.hpp"
 
 namespace VKit
 {
-DescriptorPool::DescriptorPool(const Specs &p_Specs) noexcept
+DescriptorPool::Builder::Builder(const LogicalDevice *p_Device) noexcept : m_Device(p_Device)
 {
-    m_Device = Core::GetDevice();
-    VkDescriptorPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = static_cast<u32>(p_Specs.PoolSizes.size());
-    poolInfo.pPoolSizes = p_Specs.PoolSizes.data();
-    poolInfo.maxSets = p_Specs.MaxSets;
-    poolInfo.flags = p_Specs.PoolFlags;
-
-    TKIT_ASSERT_RETURNS(vkCreateDescriptorPool(m_Device->GetDevice(), &poolInfo, nullptr, &m_Pool), VK_SUCCESS,
-                        "Failed to create descriptor pool");
 }
 
-DescriptorPool::~DescriptorPool() noexcept
+Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
 {
-    vkDestroyDescriptorPool(m_Device->GetDevice(), m_Pool, nullptr);
+    VkDescriptorPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = static_cast<u32>(m_PoolSizes.size());
+    poolInfo.pPoolSizes = m_PoolSizes.data();
+    poolInfo.maxSets = m_MaxSets;
+    poolInfo.flags = m_Flags;
+
+    VkDescriptorPool pool;
+    const VkResult result = vkCreateDescriptorPool(m_Device->GetDevice(), &poolInfo,
+                                                   m_Device->GetInstance().GetInfo().AllocationCallbacks, &pool);
+    if (result != VK_SUCCESS)
+        return Result<DescriptorPool>::Error(result, "Failed to create descriptor pool");
+
+    return Result<DescriptorPool>::Ok(*m_Device, pool);
+}
+
+DescriptorPool::DescriptorPool(const LogicalDevice &p_Device, const VkDescriptorPool p_Pool,
+                               const Info &p_Info) noexcept
+    : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
+{
+}
+
+void DescriptorPool::Destroy() noexcept
+{
+    vkDestroyDescriptorPool(m_Device.GetDevice(), m_Pool, m_Device.GetInstance().GetInfo().AllocationCallbacks);
+}
+void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const VkDescriptorPool pool = m_Pool;
+    const VkDevice device = m_Device.GetDevice();
+    const VkAllocationCallbacks *alloc = m_Device.GetInstance().GetInfo().AllocationCallbacks;
+    p_Queue.Push([pool, device, alloc]() { vkDestroyDescriptorPool(device, pool, alloc); });
 }
 
 VkDescriptorSet DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
@@ -32,33 +52,25 @@ VkDescriptorSet DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) c
     allocInfo.descriptorSetCount = 1;
     allocInfo.pSetLayouts = &p_Layout;
 
-    {
-        std::scoped_lock lock(m_Mutex);
-        TKIT_PROFILE_MARK_LOCK(m_Mutex);
-        if (vkAllocateDescriptorSets(m_Device->GetDevice(), &allocInfo, &set) != VK_SUCCESS)
-            return VK_NULL_HANDLE;
-    }
+    if (vkAllocateDescriptorSets(m_Device, &allocInfo, &set) != VK_SUCCESS)
+        return VK_NULL_HANDLE;
 
     return set;
 }
 
 void DescriptorPool::Deallocate(const std::span<const VkDescriptorSet> p_Sets) const noexcept
 {
-    std::scoped_lock lock(m_Mutex);
-    TKIT_PROFILE_MARK_LOCK(m_Mutex);
-    vkFreeDescriptorSets(m_Device->GetDevice(), m_Pool, static_cast<u32>(p_Sets.size()), p_Sets.data());
+    vkFreeDescriptorSets(m_Device, m_Pool, static_cast<u32>(p_Sets.size()), p_Sets.data());
 }
 
 void DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
 {
-    std::scoped_lock lock(m_Mutex);
-    TKIT_PROFILE_MARK_LOCK(m_Mutex);
-    vkFreeDescriptorSets(m_Device->GetDevice(), m_Pool, 1, &p_Set);
+    vkFreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
 }
 
 void DescriptorPool::Reset() noexcept
 {
-    vkResetDescriptorPool(m_Device->GetDevice(), m_Pool, 0);
+    vkResetDescriptorPool(m_Device, m_Pool, 0);
 }
 
 } // namespace VKit

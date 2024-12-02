@@ -13,15 +13,36 @@ namespace VKit
 class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
 {
   public:
-    struct Specs
+    struct Info
     {
         u32 MaxSets;
-        std::span<const VkDescriptorPoolSize> PoolSizes;
-        VkDescriptorPoolCreateFlags PoolFlags = 0;
+        DynamicArray<VkDescriptorPoolSize> PoolSizes;
     };
 
-    DescriptorPool(const Specs &p_Specs) noexcept;
-    ~DescriptorPool() noexcept;
+    class Builder
+    {
+      public:
+        explicit Builder(const LogicalDevice *p_Device) noexcept;
+
+        Result<DescriptorPool> Build() const noexcept;
+
+        Builder &SetMaxSets(u32 p_MaxSets) noexcept;
+        Builder &SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
+        Builder &AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
+        Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept;
+
+      private:
+        const LogicalDevice *m_Device;
+
+        u32 m_MaxSets = 8;
+        VkDescriptorPoolCreateFlags m_Flags = 0;
+        DynamicArray<VkDescriptorPoolSize> m_PoolSizes{};
+    };
+
+    void Destroy() noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+
+    const Info &GetInfo() const noexcept;
 
     VkDescriptorSet Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
 
@@ -30,7 +51,10 @@ class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
     void Reset() noexcept;
 
   private:
+    DescriptorPool(const LogicalDevice &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
+
     LogicalDevice m_Device;
     VkDescriptorPool m_Pool;
+    Info m_Info;
 };
 } // namespace VKit
