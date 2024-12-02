@@ -37,7 +37,7 @@ class VKIT_API Buffer
         VkDeviceSize Size;
     };
 
-    static RawResult<Buffer> Create(const Specs &p_Specs) noexcept;
+    static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
@@ -61,7 +61,7 @@ class VKIT_API Buffer
     void *GetData() const noexcept;
     void *ReadAt(usize p_Index) const noexcept;
 
-    VulkanRawResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
+    VulkanResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;
 
@@ -83,7 +83,7 @@ template <typename T> struct DeviceLocalBufferSpecs
     VkQueue Queue;
 };
 
-template <typename T> RawResult<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBufferSpecs<T> &p_Specs) noexcept
+template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBufferSpecs<T> &p_Specs) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Specs.Data.size();
@@ -93,7 +93,7 @@ template <typename T> RawResult<Buffer> CreateDeviceLocalBuffer(const DeviceLoca
 
     const auto result1 = Buffer::Create(specs);
     if (!result1)
-        return RawResult<Buffer>::Error(result1.GetError().Result, "Failed to create main device buffer");
+        return Result<Buffer>::Error(result1.GetError().Result, "Failed to create main device buffer");
 
     const Buffer &buffer = result1.GetValue();
 
@@ -104,7 +104,7 @@ template <typename T> RawResult<Buffer> CreateDeviceLocalBuffer(const DeviceLoca
 
     auto result2 = Buffer::Create(stagingSpecs);
     if (!result2)
-        return RawResult<Buffer>::Error(result2.GetError().Result, "Failed to create staging buffer");
+        return Result<Buffer>::Error(result2.GetError().Result, "Failed to create staging buffer");
 
     Buffer &stagingBuffer = result2.GetValue();
     stagingBuffer.Map();
@@ -115,9 +115,9 @@ template <typename T> RawResult<Buffer> CreateDeviceLocalBuffer(const DeviceLoca
     const auto result3 = buffer.CopyFrom(stagingBuffer, *p_Specs.CommandPool, p_Specs.Queue);
     stagingBuffer.Destroy();
     if (!result3)
-        return RawResult<Buffer>::Error(result3.GetError().Result, "Failed to copy data to main buffer");
+        return Result<Buffer>::Error(result3.GetError().Result, "Failed to copy data to main buffer");
 
-    return RawResult<Buffer>::Ok(buffer);
+    return Result<Buffer>::Ok(buffer);
 }
 
 template <std::integral Index> struct IndexBufferSpecs
@@ -127,7 +127,7 @@ template <std::integral Index> struct IndexBufferSpecs
     VkQueue Queue;
 };
 
-template <std::integral Index> RawResult<Buffer> CreateIndexBuffer(const IndexBufferSpecs<Index> &p_Specs) noexcept
+template <std::integral Index> Result<Buffer> CreateIndexBuffer(const IndexBufferSpecs<Index> &p_Specs) noexcept
 {
     DeviceLocalBufferSpecs<Index> specs{};
     specs.Data = p_Specs.Data;
@@ -137,7 +137,7 @@ template <std::integral Index> RawResult<Buffer> CreateIndexBuffer(const IndexBu
     return CreateDeviceLocalBuffer(specs);
 }
 
-template <std::integral Index> RawResult<Buffer> CreateMutableIndexBuffer(const usize p_Capacity) noexcept
+template <std::integral Index> Result<Buffer> CreateMutableIndexBuffer(const usize p_Capacity) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;
@@ -156,7 +156,7 @@ template <typename Vertex> struct VertexBufferSpecs
     VkQueue Queue;
 };
 
-template <typename Vertex> RawResult<Buffer> CreateVertexBuffer(const VertexBufferSpecs<Vertex> &p_Specs) noexcept
+template <typename Vertex> Result<Buffer> CreateVertexBuffer(const VertexBufferSpecs<Vertex> &p_Specs) noexcept
 {
     DeviceLocalBufferSpecs<Vertex> specs{};
     specs.Data = p_Specs.Data;
@@ -166,7 +166,7 @@ template <typename Vertex> RawResult<Buffer> CreateVertexBuffer(const VertexBuff
     return CreateDeviceLocalBuffer(specs);
 }
 
-template <typename Vertex> RawResult<Buffer> CreateMutableVertexBuffer(const usize p_Capacity) noexcept
+template <typename Vertex> Result<Buffer> CreateMutableVertexBuffer(const usize p_Capacity) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;
@@ -179,7 +179,7 @@ template <typename Vertex> RawResult<Buffer> CreateMutableVertexBuffer(const usi
 }
 
 template <typename T>
-RawResult<Buffer> CreateUniformBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
+Result<Buffer> CreateUniformBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;
@@ -193,7 +193,7 @@ RawResult<Buffer> CreateUniformBuffer(const usize p_Capacity, const VkDeviceSize
 }
 
 template <typename T>
-RawResult<Buffer> CreateStorageBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
+Result<Buffer> CreateStorageBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;

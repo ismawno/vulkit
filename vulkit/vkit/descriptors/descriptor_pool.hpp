@@ -2,10 +2,7 @@
 
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/core/device.hpp"
-#include "tkit/core/non_copyable.hpp"
-#include "tkit/container/static_array.hpp"
-#include "tkit/profiling/macros.hpp"
+#include "vkit/backend/logical_device.hpp"
 #include "tkit/profiling/vulkan.hpp"
 
 #include <vulkan/vulkan.hpp>
@@ -15,7 +12,6 @@ namespace VKit
 {
 class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
 {
-    TKIT_NON_COPYABLE(DescriptorPool)
   public:
     struct Specs
     {
@@ -34,10 +30,7 @@ class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
     void Reset() noexcept;
 
   private:
-    TKit::Ref<Device> m_Device;
+    LogicalDevice m_Device;
     VkDescriptorPool m_Pool;
-
-    // consider a pool per thread?
-    mutable TKIT_PROFILE_DECLARE_MUTEX(std::mutex, m_Mutex);
 };
 } // namespace VKit

@@ -28,15 +28,15 @@ class LogicalDevice
     class Builder
     {
       public:
-        explicit Builder(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
+        explicit Builder(const Instance *p_Instance, const PhysicalDevice *p_PhysicalDevice) noexcept;
 
-        RawResult<LogicalDevice> Build() const noexcept;
+        Result<LogicalDevice> Build() const noexcept;
 
         Builder &SetQueuePriorities(std::span<const QueuePriorities> p_QueuePriorities) noexcept;
 
       private:
-        Instance m_Instance;
-        PhysicalDevice m_PhysicalDevice;
+        const Instance *m_Instance;
+        const PhysicalDevice *m_PhysicalDevice;
 
         // Will default to one queue per type with priority 1.0f
         DynamicArray<QueuePriorities> m_QueuePriorities;

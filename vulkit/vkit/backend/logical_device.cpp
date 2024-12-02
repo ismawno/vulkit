@@ -3,12 +3,12 @@
 
 namespace VKit
 {
-LogicalDevice::Builder::Builder(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
+LogicalDevice::Builder::Builder(const Instance *p_Instance, const PhysicalDevice *p_PhysicalDevice) noexcept
     : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice)
 {
-    for (usize i = 0; i < p_PhysicalDevice.GetInfo().QueueFamilies.size(); ++i)
+    for (usize i = 0; i < p_PhysicalDevice->GetInfo().QueueFamilies.size(); ++i)
     {
-        const auto &family = p_PhysicalDevice.GetInfo().QueueFamilies[i];
+        const auto &family = p_PhysicalDevice->GetInfo().QueueFamilies[i];
         QueuePriorities priorities;
         priorities.Index = i;
         priorities.Priorities.resize(1, 1.0f);
@@ -16,10 +16,10 @@ LogicalDevice::Builder::Builder(const Instance &p_Instance, const PhysicalDevice
     }
 }
 
-RawResult<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
+Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
 {
-    const Instance::Info &instanceInfo = m_Instance.GetInfo();
-    PhysicalDevice::Info devInfo = m_PhysicalDevice.GetInfo();
+    const Instance::Info &instanceInfo = m_Instance->GetInfo();
+    PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
 
     DynamicArray<VkDeviceQueueCreateInfo> queueCreateInfos;
     queueCreateInfos.reserve(m_QueuePriorities.size());
@@ -68,27 +68,28 @@ RawResult<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
     createInfo.enabledLayerCount = static_cast<u32>(instanceInfo.EnabledLayers.size());
     createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.data();
 
-    const auto createDevice = m_Instance.GetFunction<PFN_vkCreateDevice>("vkCreateDevice");
+    const auto createDevice = m_Instance->GetFunction<PFN_vkCreateDevice>("vkCreateDevice");
     if (!createDevice)
-        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                               "Failed to get the vkCreateDevice function");
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "Failed to get the vkCreateDevice function");
 
-    const auto destroyDevice = m_Instance.GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
+    const auto destroyDevice = m_Instance->GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
     if (!destroyDevice)
-        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                               "Failed to get the vkDestroyDevice function");
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "Failed to get the vkDestroyDevice function");
 
     VkDevice device;
-    const VkResult result = createDevice(m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
+    const VkResult result =
+        createDevice(m_PhysicalDevice->GetDevice(), &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
-        return RawResult<LogicalDevice>::Error(result, "Failed to create the logical device");
+        return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
     const auto getQueue = System::GetDeviceFunction<PFN_vkGetDeviceQueue>("vkGetDeviceQueue", device);
     if (!getQueue)
     {
         destroyDevice(device, instanceInfo.AllocationCallbacks);
-        return RawResult<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                               "Failed to get the vkGetDeviceQueue function");
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "Failed to get the vkGetDeviceQueue function");
     }
 
     QueueArray queues;
@@ -96,7 +97,7 @@ RawResult<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
         for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
             getQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
 
-    return RawResult<LogicalDevice>::Ok(m_Instance, m_PhysicalDevice, device, queues);
+    return Result<LogicalDevice>::Ok(*m_Instance, *m_PhysicalDevice, device, queues);
 }
 
 LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(

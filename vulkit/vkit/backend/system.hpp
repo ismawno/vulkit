@@ -28,18 +28,18 @@
 #    define VKIT_API_VERSION_1_0 VKIT_MAKE_VERSION(0, 1, 0, 0)
 #endif
 
-#define VKIT_FORMAT_ERROR(p_Result, ...) VulkanResult<std::string>::Error(p_Result, TKIT_FORMAT(__VA_ARGS__))
+#define VKIT_FORMAT_ERROR(p_Result, ...) VulkanResultInfo<std::string>::Error(p_Result, TKIT_FORMAT(__VA_ARGS__))
 
 namespace VKit
 {
 template <typename T>
 concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::string>;
 
-template <String MessageType> class VulkanResult
+template <String MessageType> class VulkanResultInfo
 {
   public:
-    static VulkanResult Success() noexcept;
-    static VulkanResult Error(VkResult p_Result, const MessageType &p_Message) noexcept;
+    static VulkanResultInfo Success() noexcept;
+    static VulkanResultInfo Error(VkResult p_Result, const MessageType &p_Message) noexcept;
 
     explicit(false) operator bool() const noexcept;
 
@@ -47,19 +47,19 @@ template <String MessageType> class VulkanResult
     MessageType Message;
 
   private:
-    VulkanResult() noexcept = default;
-    VulkanResult(VkResult p_Result, const MessageType &p_Message) noexcept;
+    VulkanResultInfo() noexcept = default;
+    VulkanResultInfo(VkResult p_Result, const MessageType &p_Message) noexcept;
 };
 
-using VulkanRawResult = VulkanResult<const char *>;
-using VulkanFormattedResult = VulkanResult<std::string>;
+using VulkanResult = VulkanResultInfo<const char *>;
+using VulkanFormattedResult = VulkanResultInfo<std::string>;
 
-template <typename T> using RawResult = TKit::Result<T, VulkanRawResult>;
+template <typename T> using Result = TKit::Result<T, VulkanResult>;
 template <typename T> using FormattedResult = TKit::Result<T, VulkanFormattedResult>;
 
 struct System
 {
-    static VulkanRawResult Initialize() noexcept;
+    static VulkanResult Initialize() noexcept;
 
     static bool IsExtensionSupported(const char *p_Name) noexcept;
     static bool IsLayerSupported(const char *p_Name) noexcept;

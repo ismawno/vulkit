@@ -102,8 +102,8 @@ class PhysicalDevice
       public:
         explicit Selector(const Instance &p_Instance) noexcept;
 
-        RawResult<PhysicalDevice> Select() const noexcept;
-        RawResult<DynamicArray<PhysicalDevice>> Enumerate() const noexcept;
+        Result<PhysicalDevice> Select() const noexcept;
+        Result<DynamicArray<PhysicalDevice>> Enumerate() const noexcept;
 
         Selector &SetName(const char *p_Name) noexcept;
         Selector &PreferType(Type p_Type) noexcept;
@@ -146,8 +146,8 @@ class PhysicalDevice
     VkPhysicalDevice GetDevice() const noexcept;
     const Info &GetInfo() const noexcept;
 
-    RawResult<SwapChainSupportDetails> QuerySwapChainSupport(const Instance &p_Instance,
-                                                             VkSurfaceKHR p_Surface) const noexcept;
+    Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance &p_Instance,
+                                                          VkSurfaceKHR p_Surface) const noexcept;
 
     explicit(false) operator VkPhysicalDevice() const noexcept;
     explicit(false) operator bool() const noexcept;

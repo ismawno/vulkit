@@ -48,11 +48,11 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
-static RawResult<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Instance &p_Instance,
-                                                                                const VkPhysicalDevice p_Device,
-                                                                                const VkSurfaceKHR p_Surface) noexcept
+static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Instance &p_Instance,
+                                                                             const VkPhysicalDevice p_Device,
+                                                                             const VkSurfaceKHR p_Surface) noexcept
 {
-    using Res = RawResult<PhysicalDevice::SwapChainSupportDetails>;
+    using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
     const auto querySurfaceFormats =
         p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR");
     const auto queryPresentModes = p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
@@ -111,22 +111,22 @@ PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Inst
         m_Flags |= PhysicalDeviceSelectorFlags_RequirePresentQueue;
 }
 
-RawResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
+Result<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
 {
     const auto result = Enumerate();
     if (!result)
-        return RawResult<PhysicalDevice>::Error(result.GetError());
+        return Result<PhysicalDevice>::Error(result.GetError());
 
     const DynamicArray<PhysicalDevice> &devices = result.GetValue();
     if (devices.empty())
-        return RawResult<PhysicalDevice>::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
+        return Result<PhysicalDevice>::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
-    return RawResult<PhysicalDevice>::Ok(devices[0]);
+    return Result<PhysicalDevice>::Ok(devices[0]);
 }
 
-RawResult<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const noexcept
+Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const noexcept
 {
-    using EnumerateResult = RawResult<DynamicArray<PhysicalDevice>>;
+    using EnumerateResult = Result<DynamicArray<PhysicalDevice>>;
     const Instance::Info &instanceInfo = m_Instance.GetInfo();
 
     const auto checkFlag = [this](const u16 p_Flag) -> bool { return m_Flags & p_Flag; };
@@ -550,7 +550,7 @@ const PhysicalDevice::Info &PhysicalDevice::GetInfo() const noexcept
     return m_Info;
 }
 
-RawResult<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
+Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
     const Instance &p_Instance, const VkSurfaceKHR p_Surface) const noexcept
 {
     return querySwapChainSupport(p_Instance, m_Device, p_Surface);

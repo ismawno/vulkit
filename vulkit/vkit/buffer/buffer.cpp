@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/buffer/buffer.hpp"
-#include "vkit/backend/command_pool.hpp"
+#include "vkit/command/command_pool.hpp"
 
 namespace VKit
 {
@@ -9,7 +9,7 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
 }
 
-RawResult<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
+Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
 {
     Info info{};
     info.Allocator = p_Specs.Allocator;
@@ -28,9 +28,9 @@ RawResult<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
     const VkResult result =
         vmaCreateBuffer(p_Specs.Allocator, &bufferInfo, &p_Specs.AllocationInfo, &buffer, &info.Allocation, nullptr);
     if (result != VK_SUCCESS)
-        return RawResult<Buffer>::Error(result, "Failed to create buffer");
+        return Result<Buffer>::Error(result, "Failed to create buffer");
 
-    return RawResult<Buffer>::Ok(buffer, info);
+    return Result<Buffer>::Ok(buffer, info);
 }
 
 Buffer::Buffer(const VkBuffer p_Buffer, const Info &p_Info) noexcept : m_Buffer(p_Buffer), m_Info(p_Info)
@@ -134,7 +134,7 @@ void *Buffer::ReadAt(const usize p_Index) const noexcept
     return static_cast<std::byte *>(m_Data) + m_Info.AlignedInstanceSize * p_Index;
 }
 
-VulkanRawResult Buffer::CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
+VulkanResult Buffer::CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
 {
     TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "Cannot copy buffers of different sizes");
     const auto result1 = p_Pool.BeginSingleTimeCommands();
