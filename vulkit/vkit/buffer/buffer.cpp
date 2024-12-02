@@ -160,5 +160,11 @@ const Buffer::Info &Buffer::GetInfo() const noexcept
 {
     return m_Info;
 }
+void BindVertexBuffer(const Buffer &p_Buffer, const VkCommandBuffer p_CommandBuffer, const u32 p_BindingCount,
+                      const u32 p_FirstBinding, const VkDeviceSize p_Offset) noexcept
+{
+    const VkBuffer buffer = p_Buffer.GetBuffer();
+    vkCmdBindVertexBuffers(p_CommandBuffer, p_BindingCount, p_FirstBinding, &buffer, &p_Offset);
+}
 
 } // namespace VKit
