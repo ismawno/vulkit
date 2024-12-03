@@ -64,6 +64,8 @@ class VKIT_API Buffer
     VulkanResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;
+    explicit(false) operator VkBuffer() const noexcept;
+    explicit(false) operator bool() const noexcept;
 
     const Info &GetInfo() const noexcept;
 

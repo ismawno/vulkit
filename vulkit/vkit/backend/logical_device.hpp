@@ -25,6 +25,14 @@ enum class QueueType : u32
 class LogicalDevice
 {
   public:
+    struct Proxy
+    {
+        VkDevice Device;
+        const VkAllocationCallbacks *AllocationCallbacks;
+
+        explicit(false) operator VkDevice() const noexcept;
+    };
+
     class Builder
     {
       public:
@@ -55,6 +63,8 @@ class LogicalDevice
 
     // This requires a call to vkGetDeviceQueue
     VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const noexcept;
+
+    Proxy CreateProxy() const noexcept;
 
     explicit(false) operator VkDevice() const noexcept;
     explicit(false) operator bool() const noexcept;

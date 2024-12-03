@@ -9,7 +9,7 @@ class CommandPool
   public:
     struct Specs
     {
-        const LogicalDevice *Device;
+        LogicalDevice::Proxy Device;
         u32 QueueFamilyIndex;
         VkCommandPoolCreateFlags Flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     };
@@ -29,10 +29,14 @@ class CommandPool
     Result<VkCommandBuffer> BeginSingleTimeCommands() const noexcept;
     VulkanResult EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
 
-  private:
-    CommandPool(const LogicalDevice &p_Device, VkCommandPool p_Pool) noexcept;
+    VkCommandPool GetPool() const noexcept;
+    explicit(false) operator VkCommandPool() const noexcept;
+    explicit(false) operator bool() const noexcept;
 
-    LogicalDevice m_Device;
+  private:
+    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
+
+    LogicalDevice::Proxy m_Device;
     VkCommandPool m_Pool;
 };
 }; // namespace VKit

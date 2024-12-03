@@ -22,7 +22,7 @@ class VKIT_API DescriptorPool
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice *p_Device) noexcept;
+        explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
 
         Result<DescriptorPool> Build() const noexcept;
 
@@ -33,7 +33,7 @@ class VKIT_API DescriptorPool
         Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept;
 
       private:
-        const LogicalDevice *m_Device;
+        LogicalDevice::Proxy m_Device;
 
         u32 m_MaxSets = 8;
         VkDescriptorPoolCreateFlags m_Flags = 0;
@@ -51,10 +51,14 @@ class VKIT_API DescriptorPool
     void Deallocate(VkDescriptorSet p_Set) const noexcept;
     void Reset() noexcept;
 
-  private:
-    DescriptorPool(const LogicalDevice &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
+    VkDescriptorPool GetPool() const noexcept;
+    explicit(false) operator VkDescriptorPool() const noexcept;
+    explicit(false) operator bool() const noexcept;
 
-    LogicalDevice m_Device;
+  private:
+    DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
+
+    LogicalDevice::Proxy m_Device;
     VkDescriptorPool m_Pool;
     Info m_Info;
 };

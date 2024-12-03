@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-DescriptorPool::Builder::Builder(const LogicalDevice *p_Device) noexcept : m_Device(p_Device)
+DescriptorPool::Builder::Builder(const LogicalDevice::Proxy &p_Device) noexcept : m_Device(p_Device)
 {
 }
 
@@ -17,15 +17,14 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
     poolInfo.flags = m_Flags;
 
     VkDescriptorPool pool;
-    const VkResult result = vkCreateDescriptorPool(m_Device->GetDevice(), &poolInfo,
-                                                   m_Device->GetInstance().GetInfo().AllocationCallbacks, &pool);
+    const VkResult result = vkCreateDescriptorPool(m_Device, &poolInfo, m_Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
         return Result<DescriptorPool>::Error(result, "Failed to create descriptor pool");
 
     return Result<DescriptorPool>::Ok(*m_Device, pool);
 }
 
-DescriptorPool::DescriptorPool(const LogicalDevice &p_Device, const VkDescriptorPool p_Pool,
+DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool,
                                const Info &p_Info) noexcept
     : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
 {
@@ -33,14 +32,15 @@ DescriptorPool::DescriptorPool(const LogicalDevice &p_Device, const VkDescriptor
 
 void DescriptorPool::Destroy() noexcept
 {
-    vkDestroyDescriptorPool(m_Device.GetDevice(), m_Pool, m_Device.GetInstance().GetInfo().AllocationCallbacks);
+    TKIT_ASSERT(m_Pool, "The descriptor pool is already destroyed");
+    vkDestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
+    m_Pool = VK_NULL_HANDLE;
 }
 void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
     const VkDescriptorPool pool = m_Pool;
-    const VkDevice device = m_Device.GetDevice();
-    const VkAllocationCallbacks *alloc = m_Device.GetInstance().GetInfo().AllocationCallbacks;
-    p_Queue.Push([pool, device, alloc]() { vkDestroyDescriptorPool(device, pool, alloc); });
+    const LogicalDevice::Proxy device = m_Device;
+    p_Queue.Push([pool, device]() { vkDestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
 }
 
 const DescriptorPool::Info &DescriptorPool::GetInfo() const noexcept
@@ -77,6 +77,19 @@ void DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
 void DescriptorPool::Reset() noexcept
 {
     vkResetDescriptorPool(m_Device, m_Pool, 0);
+}
+
+VkDescriptorPool DescriptorPool::GetPool() const noexcept
+{
+    return m_Pool;
+}
+DescriptorPool::operator VkDescriptorPool() const noexcept
+{
+    return m_Pool;
+}
+DescriptorPool::operator bool() const noexcept
+{
+    return m_Pool != VK_NULL_HANDLE;
 }
 
 DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets) noexcept

@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-DescriptorSetLayout::Builder::Builder(const LogicalDevice *p_Device) noexcept : m_Device(p_Device)
+DescriptorSetLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) noexcept : m_Device(p_Device)
 {
 }
 
@@ -15,14 +15,13 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
     layoutInfo.pBindings = m_Bindings.data();
 
     VkDescriptorSetLayout layout;
-    const VkResult result = vkCreateDescriptorSetLayout(m_Device->GetDevice(), &layoutInfo,
-                                                        m_Device->GetInstance().GetInfo().AllocationCallbacks, &layout);
+    const VkResult result = vkCreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
         return Result<DescriptorSetLayout>::Error(result, "Failed to create descriptor set layout");
     return Result<DescriptorSetLayout>::Ok(*m_Device, layout, m_Bindings);
 }
 
-DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice &p_Device, const VkDescriptorSetLayout p_Layout,
+DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, const VkDescriptorSetLayout p_Layout,
                                          const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept
     : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
 {
@@ -30,14 +29,15 @@ DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice &p_Device, const Vk
 
 void DescriptorSetLayout::Destroy() noexcept
 {
-    vkDestroyDescriptorSetLayout(m_Device.GetDevice(), m_Layout, m_Device.GetInstance().GetInfo().AllocationCallbacks);
+    TKIT_ASSERT(m_Layout, "The descriptor set layout is already destroyed");
+    vkDestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
+    m_Layout = VK_NULL_HANDLE;
 }
 void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
     const VkDescriptorSetLayout layout = m_Layout;
-    const VkDevice device = m_Device.GetDevice();
-    const VkAllocationCallbacks *alloc = m_Device.GetInstance().GetInfo().AllocationCallbacks;
-    p_Queue.Push([layout, device, alloc]() { vkDestroyDescriptorSetLayout(device, layout, alloc); });
+    const LogicalDevice::Proxy device = m_Device;
+    p_Queue.Push([layout, device]() { vkDestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
 }
 
 const DynamicArray<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const noexcept
@@ -47,6 +47,14 @@ const DynamicArray<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindin
 VkDescriptorSetLayout DescriptorSetLayout::GetLayout() const noexcept
 {
     return m_Layout;
+}
+DescriptorSetLayout::operator VkDescriptorSetLayout() const noexcept
+{
+    return m_Layout;
+}
+DescriptorSetLayout::operator bool() const noexcept
+{
+    return m_Layout != VK_NULL_HANDLE;
 }
 
 DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,

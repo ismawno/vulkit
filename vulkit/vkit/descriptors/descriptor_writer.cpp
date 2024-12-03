@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-DescriptorWriter::DescriptorWriter(const LogicalDevice *p_Device, const DescriptorSetLayout *p_Layout,
+DescriptorWriter::DescriptorWriter(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout,
                                    const DescriptorPool *p_Pool) noexcept
     : m_Device(p_Device), m_Layout(p_Layout), m_Pool(p_Pool)
 {
@@ -55,7 +55,7 @@ void DescriptorWriter::Overwrite(const VkDescriptorSet p_Set) noexcept
 {
     for (VkWriteDescriptorSet &write : m_Writes)
         write.dstSet = p_Set;
-    vkUpdateDescriptorSets(m_Device->GetDevice(), static_cast<u32>(m_Writes.size()), m_Writes.data(), 0, nullptr);
+    vkUpdateDescriptorSets(m_Device, static_cast<u32>(m_Writes.size()), m_Writes.data(), 0, nullptr);
 }
 
 } // namespace VKit

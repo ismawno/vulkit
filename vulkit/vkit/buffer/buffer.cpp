@@ -40,7 +40,9 @@ Buffer::Buffer(const VkBuffer p_Buffer, const Info &p_Info) noexcept : m_Buffer(
 
 void Buffer::Destroy() noexcept
 {
+    // No check bc vma says it is safe to pass nulls
     vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
+    m_Buffer = VK_NULL_HANDLE;
 }
 
 void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
@@ -157,6 +159,15 @@ VkBuffer Buffer::GetBuffer() const noexcept
 {
     return m_Buffer;
 }
+Buffer::operator VkBuffer() const noexcept
+{
+    return m_Buffer;
+}
+Buffer::operator bool() const noexcept
+{
+    return m_Buffer != VK_NULL_HANDLE;
+}
+
 const Buffer::Info &Buffer::GetInfo() const noexcept
 {
     return m_Info;

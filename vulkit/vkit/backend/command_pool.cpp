@@ -11,23 +11,23 @@ Result<CommandPool> CommandPool::Create(const Specs &p_Specs) noexcept
     createInfo.flags = p_Specs.Flags;
 
     VkCommandPool pool;
-    const VkResult result = vkCreateCommandPool(p_Specs.Device->GetDevice(), &createInfo,
-                                                p_Specs.Device->GetInstance().GetInfo().AllocationCallbacks, &pool);
+    const VkResult result = vkCreateCommandPool(p_Specs.Device, &createInfo, p_Specs.Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
         return Result<CommandPool>::Error(result, "Failed to create the command pool");
 
     return Result<CommandPool>::Ok(*p_Specs.Device, pool);
 }
 
-CommandPool::CommandPool(const LogicalDevice &p_Device, const VkCommandPool p_Pool) noexcept
+CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool) noexcept
     : m_Device(p_Device), m_Pool(p_Pool)
 {
 }
 
 void CommandPool::Destroy() noexcept
 {
+    TKIT_ASSERT(m_Pool, "The command pool is already destroyed");
     LogicalDevice::WaitIdle(m_Device);
-    vkDestroyCommandPool(m_Device, m_Pool, m_Device.GetInstance().GetInfo().AllocationCallbacks);
+    vkDestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;
 }
 
@@ -35,7 +35,7 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
     const VkDevice device = m_Device;
     const VkCommandPool pool = m_Pool;
-    const VkAllocationCallbacks *alloc = m_Device.GetInstance().GetInfo().AllocationCallbacks;
+    const VkAllocationCallbacks *alloc = m_Device.AllocationCallbacks;
     p_Queue.Push([device, pool, alloc]() {
         LogicalDevice::WaitIdle(device);
         vkDestroyCommandPool(device, pool, alloc);
@@ -117,6 +117,19 @@ VulkanResult CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandB
 
     Deallocate(p_CommandBuffer);
     return VulkanResult::Success();
+}
+
+VkCommandPool CommandPool::GetPool() const noexcept
+{
+    return m_Pool;
+}
+CommandPool::operator VkCommandPool() const noexcept
+{
+    return m_Pool;
+}
+CommandPool::operator bool() const noexcept
+{
+    return m_Pool != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

@@ -16,14 +16,14 @@ class VKIT_API DescriptorSetLayout
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice *p_Device) noexcept;
+        explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
 
         Result<DescriptorSetLayout> Build() const noexcept;
 
         Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1) noexcept;
 
       private:
-        const LogicalDevice *m_Device;
+        LogicalDevice::Proxy m_Device;
 
         DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
     };
@@ -32,13 +32,16 @@ class VKIT_API DescriptorSetLayout
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
     VkDescriptorSetLayout GetLayout() const noexcept;
+    explicit(false) operator VkDescriptorSetLayout() const noexcept;
+    explicit(false) operator bool() const noexcept;
+
     const DynamicArray<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
 
   private:
-    DescriptorSetLayout(const LogicalDevice &p_Device, VkDescriptorSetLayout p_Layout,
+    DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
                         const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
 
-    LogicalDevice m_Device;
+    LogicalDevice::Proxy m_Device;
     VkDescriptorSetLayout m_Layout;
     DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
 };

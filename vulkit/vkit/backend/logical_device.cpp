@@ -114,17 +114,17 @@ LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p
 {
 }
 
-static void destroy(const VkDevice p_Device, const VkAllocationCallbacks *p_Callbacks) noexcept
+static void destroy(const LogicalDevice::Proxy &p_Device) noexcept
 {
     const auto destroyDevice = System::GetDeviceFunction<PFN_vkDestroyDevice>("vkDestroyDevice", p_Device);
     TKIT_ASSERT(destroyDevice, "Failed to get the vkDestroyDevice function");
 
-    destroyDevice(p_Device, p_Callbacks);
+    destroyDevice(p_Device, p_Device.AllocationCallbacks);
 }
 
 void LogicalDevice::Destroy() noexcept
 {
-    destroy(m_Device, m_Instance.GetInfo().AllocationCallbacks);
+    destroy(CreateProxy());
     m_Device = VK_NULL_HANDLE;
 }
 
@@ -136,7 +136,7 @@ const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const noexcept
 {
     return m_PhysicalDevice;
 }
-void LogicalDevice::WaitIdle(VkDevice p_Device) noexcept
+void LogicalDevice::WaitIdle(const VkDevice p_Device) noexcept
 {
     TKIT_ASSERT_RETURNS(vkDeviceWaitIdle(p_Device), VK_SUCCESS, "Failed to wait for the logical device to be idle");
 }
@@ -147,11 +147,10 @@ void LogicalDevice::WaitIdle() const noexcept
 
 void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
-    const VkDevice device = m_Device;
-    const VkAllocationCallbacks *alloc = m_Instance.GetInfo().AllocationCallbacks;
-    p_Queue.Push([device, alloc]() {
-        WaitIdle(device);
-        destroy(device, alloc);
+    const Proxy proxy = CreateProxy();
+    p_Queue.Push([proxy]() {
+        WaitIdle(proxy);
+        destroy(proxy);
     });
 }
 
@@ -164,6 +163,16 @@ VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) 
 {
     const u32 index = static_cast<u32>(p_Type) * VKIT_MAX_QUEUES_PER_FAMILY + p_QueueIndex;
     return m_Queues[index];
+}
+
+LogicalDevice::Proxy::operator VkDevice() const noexcept
+{
+    return Device;
+}
+
+LogicalDevice::Proxy LogicalDevice::CreateProxy() const noexcept
+{
+    return {m_Device, m_Instance.GetInfo().AllocationCallbacks};
 }
 
 VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const noexcept
