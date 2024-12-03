@@ -68,34 +68,16 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
     createInfo.enabledLayerCount = static_cast<u32>(instanceInfo.EnabledLayers.size());
     createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.data();
 
-    const auto createDevice = m_Instance->GetFunction<PFN_vkCreateDevice>("vkCreateDevice");
-    if (!createDevice)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkCreateDevice function");
-
-    const auto destroyDevice = m_Instance->GetFunction<PFN_vkDestroyDevice>("vkDestroyDevice");
-    if (!destroyDevice)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkDestroyDevice function");
-
     VkDevice device;
     const VkResult result =
-        createDevice(m_PhysicalDevice->GetDevice(), &createInfo, instanceInfo.AllocationCallbacks, &device);
+        vkCreateDevice(m_PhysicalDevice->GetDevice(), &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
-
-    const auto getQueue = System::GetDeviceFunction<PFN_vkGetDeviceQueue>("vkGetDeviceQueue", device);
-    if (!getQueue)
-    {
-        destroyDevice(device, instanceInfo.AllocationCallbacks);
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "Failed to get the vkGetDeviceQueue function");
-    }
 
     QueueArray queues;
     for (u32 i = 0; i < 4; ++i)
         for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
-            getQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
+            vkGetDeviceQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
 
     return Result<LogicalDevice>::Ok(*m_Instance, *m_PhysicalDevice, device, queues);
 }
@@ -116,10 +98,7 @@ LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p
 
 static void destroy(const LogicalDevice::Proxy &p_Device) noexcept
 {
-    const auto destroyDevice = System::GetDeviceFunction<PFN_vkDestroyDevice>("vkDestroyDevice", p_Device);
-    TKIT_ASSERT(destroyDevice, "Failed to get the vkDestroyDevice function");
-
-    destroyDevice(p_Device, p_Device.AllocationCallbacks);
+    vkDestroyDevice(p_Device, p_Device.AllocationCallbacks);
 }
 
 void LogicalDevice::Destroy() noexcept

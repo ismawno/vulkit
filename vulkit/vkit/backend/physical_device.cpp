@@ -136,63 +136,30 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
                                       "The surface must be set if the instance is not headless");
 
     DynamicArray<VkPhysicalDevice> vkdevices;
-    const auto enumerateDevices = m_Instance.GetFunction<PFN_vkEnumeratePhysicalDevices>("vkEnumeratePhysicalDevices");
-    if (!enumerateDevices)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkEnumeratePhysicalDevices function");
 
     u32 deviceCount = 0;
-    VkResult result = enumerateDevices(m_Instance, &deviceCount, nullptr);
+    VkResult result = vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the number of physical devices");
 
     vkdevices.resize(deviceCount);
-    result = enumerateDevices(m_Instance, &deviceCount, vkdevices.data());
+    result = vkEnumeratePhysicalDevices(m_Instance, &deviceCount, vkdevices.data());
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the physical devices");
 
     if (vkdevices.empty())
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
-    const auto enumerateExtensions =
-        m_Instance.GetFunction<PFN_vkEnumerateDeviceExtensionProperties>("vkEnumerateDeviceExtensionProperties");
-    if (!enumerateExtensions)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkEnumerateDeviceExtensionProperties function");
-
-    const auto queryFamilies = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(
-        "vkGetPhysicalDeviceQueueFamilyProperties");
-    if (!queryFamilies)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkGetPhysicalDeviceQueueFamilyProperties function");
-
-    const auto getProperties =
-        m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties>("vkGetPhysicalDeviceProperties");
-    if (!getProperties)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkGetPhysicalDeviceProperties function");
-
-    const auto getFeatures = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures>("vkGetPhysicalDeviceFeatures");
-    if (!getFeatures)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkGetPhysicalDeviceFeatures function");
-
-    const auto getMemoryProperties =
-        m_Instance.GetFunction<PFN_vkGetPhysicalDeviceMemoryProperties>("vkGetPhysicalDeviceMemoryProperties");
-    if (!getMemoryProperties)
-        return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                      "Failed to get the vkGetPhysicalDeviceMemoryProperties function");
-
     DynamicArray<PhysicalDevice> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         u32 extensionCount;
-        result = enumerateExtensions(vkdevice, nullptr, &extensionCount, nullptr);
+        result = vkEnumerateDeviceExtensionProperties(vkdevice, nullptr, &extensionCount, nullptr);
         if (result != VK_SUCCESS)
             return EnumerateResult::Error(result, "Failed to get the number of device extensions");
 
         DynamicArray<VkExtensionProperties> extensionsProps{extensionCount};
-        result = enumerateExtensions(vkdevice, nullptr, &extensionCount, extensionsProps.data());
+        result = vkEnumerateDeviceExtensionProperties(vkdevice, nullptr, &extensionCount, extensionsProps.data());
         if (result != VK_SUCCESS)
             return EnumerateResult::Error(result, "Failed to get the device extensions");
 
@@ -230,10 +197,10 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
             enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
         u32 familyCount;
-        queryFamilies(vkdevice, &familyCount, nullptr);
+        vkGetPhysicalDeviceQueueFamilyProperties(vkdevice, &familyCount, nullptr);
 
         DynamicArray<VkQueueFamilyProperties> families{familyCount};
-        queryFamilies(vkdevice, &familyCount, families.data());
+        vkGetPhysicalDeviceQueueFamilyProperties(vkdevice, &familyCount, families.data());
 
         const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
             for (u32 i = 0; i < familyCount; ++i)
@@ -443,8 +410,8 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         }
         else
         {
-            getFeatures(vkdevice, &features.Core);
-            getProperties(vkdevice, &properties.Core);
+            vkGetPhysicalDeviceFeatures(vkdevice, &features.Core);
+            vkGetPhysicalDeviceProperties(vkdevice, &properties.Core);
         }
 
         if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
@@ -471,7 +438,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
             fullySuitable = false;
         }
 
-        getMemoryProperties(vkdevice, &properties.Memory);
+        vkGetPhysicalDeviceMemoryProperties(vkdevice, &properties.Memory);
         TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
                     "Requested memory must be greater than or equal to required memory");
 

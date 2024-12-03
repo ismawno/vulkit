@@ -60,14 +60,8 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         if (p_Version < VKIT_MAKE_VERSION(0, 1, 1, 0))
             return FormattedResult<u32>::Ok(p_Version); // You just cant check versions at this point
 
-        const auto enumerateVersion =
-            System::GetInstanceFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
-        if (!enumerateVersion)
-            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkEnumerateInstanceVersion function"));
-
         u32 version;
-        const VkResult result = enumerateVersion(&version);
+        const VkResult result = vkEnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
             return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(result, "Failed to get the vulkan instance version"));
 
@@ -230,17 +224,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
 #endif
 
     VkInstance vkinstance;
-    const auto createInstance = System::GetInstanceFunction<PFN_vkCreateInstance>("vkCreateInstance");
-    const auto destroyInstance = System::GetInstanceFunction<PFN_vkDestroyInstance>("vkDestroyInstance");
-
-    if (!createInstance)
-        return FormattedResult<Instance>::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateInstance function"));
-    if (!destroyInstance)
-        return FormattedResult<Instance>::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkDestroyInstance function"));
-
-    VkResult result = createInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
+    VkResult result = vkCreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
         return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the vulkan instance"));
 
@@ -256,7 +240,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         result = createDebugMessenger(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
-            destroyInstance(vkinstance, m_AllocationCallbacks);
+            vkDestroyInstance(vkinstance, m_AllocationCallbacks);
             return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the debug messenger"));
         }
     }
@@ -292,8 +276,6 @@ static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) n
 {
     TKIT_ASSERT(p_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
-    const auto destroyInstance = System::GetInstanceFunction<PFN_vkDestroyInstance>("vkDestroyInstance", p_Instance);
-    TKIT_ASSERT(destroyInstance, "Failed to get the vkDestroyInstance function");
 
     if ((p_Info.Flags & InstanceFlags_ValidationLayers) && p_Info.DebugMessenger)
     {
@@ -302,7 +284,7 @@ static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) n
         TKIT_ASSERT(destroyDebugMessenger, "Failed to get the vkDestroyDebugUtilsMessengerEXT function");
         destroyDebugMessenger(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
     }
-    destroyInstance(p_Instance, p_Info.AllocationCallbacks);
+    vkDestroyInstance(p_Instance, p_Info.AllocationCallbacks);
 }
 
 void Instance::Destroy() noexcept
