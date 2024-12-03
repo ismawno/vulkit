@@ -2,7 +2,7 @@
 
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/core/device.hpp"
+#include "vkit/backend/logical_device.hpp"
 #include "tkit/core/non_copyable.hpp"
 
 #include <vulkan/vulkan.hpp>
@@ -10,23 +10,35 @@
 
 namespace VKit
 {
-class VKIT_API DescriptorSetLayout : public TKit::RefCounted<DescriptorSetLayout>
+class VKIT_API DescriptorSetLayout
 {
-    TKIT_NON_COPYABLE(DescriptorSetLayout)
   public:
-    DescriptorSetLayout(std::span<const VkDescriptorSetLayoutBinding> p_Bindings) noexcept;
-    ~DescriptorSetLayout() noexcept;
+    class Builder
+    {
+      public:
+        explicit Builder(const LogicalDevice *p_Device) noexcept;
 
-    static VkDescriptorSetLayoutBinding CreateBinding(u32 p_Binding, VkDescriptorType p_DescriptorType,
-                                                      VkShaderStageFlags p_StageFlags, u32 p_Count = 1) noexcept;
+        Result<DescriptorSetLayout> Build() const noexcept;
 
-    const VkDescriptorSetLayoutBinding &GetBinding(usize p_Index) const noexcept;
+        Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1) noexcept;
+
+      private:
+        const LogicalDevice *m_Device;
+
+        DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
+    };
+
+    void Destroy() noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+
     VkDescriptorSetLayout GetLayout() const noexcept;
-
-    usize GetBindingCount() const noexcept;
+    const DynamicArray<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
 
   private:
-    TKit::Ref<Device> m_Device;
+    DescriptorSetLayout(const LogicalDevice &p_Device, VkDescriptorSetLayout p_Layout,
+                        const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
+
+    LogicalDevice m_Device;
     VkDescriptorSetLayout m_Layout;
     DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
 };

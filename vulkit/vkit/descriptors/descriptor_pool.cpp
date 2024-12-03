@@ -7,32 +7,6 @@ DescriptorPool::Builder::Builder(const LogicalDevice *p_Device) noexcept : m_Dev
 {
 }
 
-DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets) noexcept
-{
-    m_MaxSets = p_MaxSets;
-    return *this;
-}
-DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
-{
-    m_Flags = p_Flags;
-    return *this;
-}
-DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
-{
-    m_Flags |= p_Flags;
-    return *this;
-}
-DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
-{
-    m_Flags &= ~p_Flags;
-    return *this;
-}
-DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept
-{
-    m_PoolSizes.push_back({p_Type, p_Size});
-    return *this;
-}
-
 Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
 {
     VkDescriptorPoolCreateInfo poolInfo{};
@@ -74,7 +48,7 @@ const DescriptorPool::Info &DescriptorPool::GetInfo() const noexcept
     return m_Info;
 }
 
-VkDescriptorSet DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
+Result<VkDescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
 {
     VkDescriptorSet set;
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -83,10 +57,11 @@ VkDescriptorSet DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) c
     allocInfo.descriptorSetCount = 1;
     allocInfo.pSetLayouts = &p_Layout;
 
-    if (vkAllocateDescriptorSets(m_Device, &allocInfo, &set) != VK_SUCCESS)
-        return VK_NULL_HANDLE;
+    const VkResult result = vkAllocateDescriptorSets(m_Device, &allocInfo, &set);
+    if (result != VK_SUCCESS)
+        return Result<VkDescriptorSet>::Error(result, "Failed to allocate descriptor set");
 
-    return set;
+    return Result<VkDescriptorSet>::Ok(set);
 }
 
 void DescriptorPool::Deallocate(const std::span<const VkDescriptorSet> p_Sets) const noexcept
@@ -102,6 +77,32 @@ void DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
 void DescriptorPool::Reset() noexcept
 {
     vkResetDescriptorPool(m_Device, m_Pool, 0);
+}
+
+DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets) noexcept
+{
+    m_MaxSets = p_MaxSets;
+    return *this;
+}
+DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+{
+    m_Flags = p_Flags;
+    return *this;
+}
+DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+{
+    m_Flags |= p_Flags;
+    return *this;
+}
+DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+{
+    m_Flags &= ~p_Flags;
+    return *this;
+}
+DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept
+{
+    m_PoolSizes.push_back({p_Type, p_Size});
+    return *this;
 }
 
 } // namespace VKit

@@ -10,7 +10,7 @@
 
 namespace VKit
 {
-class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
+class VKIT_API DescriptorPool
 {
   public:
     struct Info
@@ -45,7 +45,7 @@ class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
 
     const Info &GetInfo() const noexcept;
 
-    VkDescriptorSet Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
+    Result<VkDescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
 
     void Deallocate(std::span<const VkDescriptorSet> p_Sets) const noexcept;
     void Deallocate(VkDescriptorSet p_Set) const noexcept;

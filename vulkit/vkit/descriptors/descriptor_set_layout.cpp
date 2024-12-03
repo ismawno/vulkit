@@ -1,53 +1,65 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/descriptors/descriptor_set_layout.hpp"
-#include "vkit/core/core.hpp"
 
 namespace VKit
 {
-DescriptorSetLayout::DescriptorSetLayout(const std::span<const VkDescriptorSetLayoutBinding> p_Bindings) noexcept
-    : m_Bindings{p_Bindings.begin(), p_Bindings.end()}
+DescriptorSetLayout::Builder::Builder(const LogicalDevice *p_Device) noexcept : m_Device(p_Device)
 {
-    m_Device = Core::GetDevice();
+}
+
+Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
+{
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = static_cast<u32>(m_Bindings.size());
     layoutInfo.pBindings = m_Bindings.data();
 
-    TKIT_ASSERT_RETURNS(vkCreateDescriptorSetLayout(m_Device->GetDevice(), &layoutInfo, nullptr, &m_Layout), VK_SUCCESS,
-                        "Failed to create descriptor set layout");
+    VkDescriptorSetLayout layout;
+    const VkResult result = vkCreateDescriptorSetLayout(m_Device->GetDevice(), &layoutInfo,
+                                                        m_Device->GetInstance().GetInfo().AllocationCallbacks, &layout);
+    if (result != VK_SUCCESS)
+        return Result<DescriptorSetLayout>::Error(result, "Failed to create descriptor set layout");
+    return Result<DescriptorSetLayout>::Ok(*m_Device, layout, m_Bindings);
 }
 
-DescriptorSetLayout::~DescriptorSetLayout() noexcept
+DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice &p_Device, const VkDescriptorSetLayout p_Layout,
+                                         const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept
+    : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
 {
-    vkDestroyDescriptorSetLayout(m_Device->GetDevice(), m_Layout, nullptr);
 }
 
-VkDescriptorSetLayoutBinding DescriptorSetLayout::CreateBinding(const u32 p_Binding,
-                                                                const VkDescriptorType p_DescriptorType,
-                                                                const VkShaderStageFlags p_StageFlags,
-                                                                const u32 p_Count) noexcept
+void DescriptorSetLayout::Destroy() noexcept
 {
-    VkDescriptorSetLayoutBinding binding{};
-    binding.binding = p_Binding;
-    binding.descriptorType = p_DescriptorType;
-    binding.descriptorCount = p_Count;
-    binding.stageFlags = p_StageFlags;
-    return binding;
+    vkDestroyDescriptorSetLayout(m_Device.GetDevice(), m_Layout, m_Device.GetInstance().GetInfo().AllocationCallbacks);
 }
-
-const VkDescriptorSetLayoutBinding &DescriptorSetLayout::GetBinding(const usize p_Index) const noexcept
+void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
-    return m_Bindings[p_Index];
+    const VkDescriptorSetLayout layout = m_Layout;
+    const VkDevice device = m_Device.GetDevice();
+    const VkAllocationCallbacks *alloc = m_Device.GetInstance().GetInfo().AllocationCallbacks;
+    p_Queue.Push([layout, device, alloc]() { vkDestroyDescriptorSetLayout(device, layout, alloc); });
 }
 
+const DynamicArray<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const noexcept
+{
+    return m_Bindings;
+}
 VkDescriptorSetLayout DescriptorSetLayout::GetLayout() const noexcept
 {
     return m_Layout;
 }
 
-usize DescriptorSetLayout::GetBindingCount() const noexcept
+DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,
+                                                                       VkShaderStageFlags p_StageFlags,
+                                                                       u32 p_Count) noexcept
 {
-    return m_Bindings.size();
+    VkDescriptorSetLayoutBinding binding{};
+    binding.binding = static_cast<u32>(m_Bindings.size());
+    binding.descriptorType = p_Type;
+    binding.descriptorCount = p_Count;
+    binding.stageFlags = p_StageFlags;
+    m_Bindings.push_back(binding);
+    return *this;
 }
 
 } // namespace VKit
