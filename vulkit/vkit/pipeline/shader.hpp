@@ -1,27 +1,15 @@
 #pragma once
 
-#include "vkit/core/device.hpp"
-
+#include "vkit/backend/logical_device.hpp"
 #include <vulkan/vulkan.hpp>
 
 namespace VKit
 {
-class Shader
-{
-    TKIT_NON_COPYABLE(Shader)
-  public:
-    Shader(std::string_view p_BinaryPath) noexcept;
-    Shader(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
+FormattedResult<VkShaderModule> CreateShaderModule(const LogicalDevice &p_Device,
+                                                   std::string_view p_BinaryPath) noexcept;
+void DestroyShaderModule(const LogicalDevice &p_Device, VkShaderModule p_ShaderModule) noexcept;
+void SubmitShaderModuleForDeletion(const LogicalDevice &p_Device, DeletionQueue &p_Queue,
+                                   VkShaderModule p_ShaderModule) noexcept;
 
-    ~Shader() noexcept;
-
-    VkShaderModule GetModule() const noexcept;
-
-  private:
-    void compileShader(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
-    void createShaderModule(std::string_view p_BinaryPath) noexcept;
-
-    TKit::Ref<Device> m_Device;
-    VkShaderModule m_Module;
-};
+i32 CompileShader(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
 } // namespace VKit

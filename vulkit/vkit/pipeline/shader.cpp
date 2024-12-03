@@ -1,7 +1,5 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/pipeline/shader.hpp"
-#include "vkit/core/core.hpp"
-#include "tkit/memory/stack_allocator.hpp"
 
 #include <fstream>
 #include <filesystem>
@@ -9,39 +7,50 @@
 
 namespace VKit
 {
-Shader::Shader(const std::string_view p_BinaryPath) noexcept
+FormattedResult<VkShaderModule> CreateShaderModule(const LogicalDevice &p_Device,
+                                                   std::string_view p_BinaryPath) noexcept
 {
-    m_Device = Core::GetDevice();
-    TKIT_ASSERT(
-        m_Device,
-        "A shader requires an already initialized device, which in turns needs a first window to be already created.");
+    std::ifstream file{p_BinaryPath, std::ios::ate | std::ios::binary};
+    if (!file.is_open())
+        return FormattedResult<VkShaderModule>::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path {} not found", p_BinaryPath));
 
-    createShaderModule(p_BinaryPath);
+    const auto fileSize = file.tellg();
+
+    DynamicArray<char> code(fileSize);
+    file.seekg(0);
+    file.read(code.data(), fileSize);
+
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = fileSize;
+    createInfo.pCode = reinterpret_cast<const u32 *>(code.data());
+
+    VkShaderModule module;
+    const VkResult result = vkCreateShaderModule(p_Device.GetDevice(), &createInfo,
+                                                 p_Device.GetInstance().GetInfo().AllocationCallbacks, &module);
+    if (result != VK_SUCCESS)
+        return FormattedResult<VkShaderModule>::Error(VKIT_FORMAT_ERROR(result, "Failed to create shader module"));
+
+    return FormattedResult<VkShaderModule>::Ok(module);
 }
 
-Shader::Shader(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+void DestroyShaderModule(const LogicalDevice &p_Device, VkShaderModule p_ShaderModule) noexcept
 {
-    m_Device = Core::GetDevice();
-    TKIT_ASSERT(
-        m_Device,
-        "A shader requires an already initialized device, which in turns needs a first window to be already created.");
-
-    if (!std::filesystem::exists(p_BinaryPath))
-        compileShader(p_SourcePath, p_BinaryPath);
-    createShaderModule(p_BinaryPath);
+    vkDestroyShaderModule(p_Device.GetDevice(), p_ShaderModule, p_Device.GetInstance().GetInfo().AllocationCallbacks);
 }
 
-Shader::~Shader() noexcept
+void SubmitShaderModuleForDeletion(const LogicalDevice &p_Device, DeletionQueue &p_Queue,
+                                   VkShaderModule p_ShaderModule) noexcept
 {
-    vkDestroyShaderModule(m_Device->GetDevice(), m_Module, nullptr);
+    const VkDevice device = p_Device.GetDevice();
+    const VkAllocationCallbacks *allocationCallbacks = p_Device.GetInstance().GetInfo().AllocationCallbacks;
+    p_Queue.Push([device, allocationCallbacks, p_ShaderModule]() {
+        vkDestroyShaderModule(device, p_ShaderModule, allocationCallbacks);
+    });
 }
 
-VkShaderModule Shader::GetModule() const noexcept
-{
-    return m_Module;
-}
-
-void Shader::compileShader(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+i32 CompileShader(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept
 {
     namespace fs = std::filesystem;
     const fs::path binaryPath = p_BinaryPath;
@@ -51,36 +60,10 @@ void Shader::compileShader(const std::string_view p_SourcePath, const std::strin
     const std::string compileCommand = VKIT_GLSL_BINARY " " + std::string(p_SourcePath) + " -o " + binaryPath.string();
 
     const i32 result = std::system(compileCommand.c_str());
-    TKIT_ASSERT(result == 0, "Failed to compile shader at path: {}", p_SourcePath);
     if (result != 0)
-        std::terminate();
+        return result;
 
-    TKIT_LOG_INFO("Compiled shader at: {}", p_SourcePath);
-}
-
-void Shader::createShaderModule(const std::string_view p_Path) noexcept
-{
-    std::ifstream file{p_Path, std::ios::ate | std::ios::binary};
-    TKIT_ASSERT(file.is_open(), "File at path {} not found", p_Path);
-    const auto fileSize = file.tellg();
-
-    TKit::StackAllocator *allocator = Core::GetStackAllocator();
-
-    char *code = static_cast<char *>(allocator->Push(fileSize * sizeof(char), alignof(u32)));
-    file.seekg(0);
-    file.read(code, fileSize);
-
-    // TKIT_LOG_INFO("Creating shader module from file: {} with size: {}", p_Path, static_cast<usize>(fileSize));
-
-    VkShaderModuleCreateInfo createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = fileSize;
-    createInfo.pCode = reinterpret_cast<const u32 *>(code);
-
-    TKIT_ASSERT_RETURNS(vkCreateShaderModule(m_Device->GetDevice(), &createInfo, nullptr, &m_Module), VK_SUCCESS,
-                        "Failed to create shader module");
-
-    allocator->Pop();
+    return result;
 }
 
 } // namespace VKit
