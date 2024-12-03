@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-Result<CommandPool> CommandPool::Create(const Specs &p_Specs) noexcept
+Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
 {
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -11,11 +11,11 @@ Result<CommandPool> CommandPool::Create(const Specs &p_Specs) noexcept
     createInfo.flags = p_Specs.Flags;
 
     VkCommandPool pool;
-    const VkResult result = vkCreateCommandPool(p_Specs.Device, &createInfo, p_Specs.Device.AllocationCallbacks, &pool);
+    const VkResult result = vkCreateCommandPool(p_Device, &createInfo, p_Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
         return Result<CommandPool>::Error(result, "Failed to create the command pool");
 
-    return Result<CommandPool>::Ok(*p_Specs.Device, pool);
+    return Result<CommandPool>::Ok(p_Device, pool);
 }
 
 CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool) noexcept

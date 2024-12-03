@@ -9,12 +9,11 @@ class CommandPool
   public:
     struct Specs
     {
-        LogicalDevice::Proxy Device;
         u32 QueueFamilyIndex;
         VkCommandPoolCreateFlags Flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     };
 
-    static Result<CommandPool> Create(const Specs &p_Specs) noexcept;
+    static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
