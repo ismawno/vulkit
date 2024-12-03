@@ -29,6 +29,7 @@ class VKIT_API DescriptorPool : public TKit::RefCounted<DescriptorPool>
         Builder &SetMaxSets(u32 p_MaxSets) noexcept;
         Builder &SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
         Builder &AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
+        Builder &RemoveFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
         Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept;
 
       private:
