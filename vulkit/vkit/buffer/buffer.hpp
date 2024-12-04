@@ -83,6 +83,7 @@ template <typename T> struct DeviceLocalBufferSpecs
     VkBufferUsageFlags Usage;
     CommandPool *CommandPool;
     VkQueue Queue;
+    VkDeviceSize MinimumAlignment = 1;
 };
 
 template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBufferSpecs<T> &p_Specs) noexcept
@@ -92,6 +93,7 @@ template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBu
     specs.InstanceSize = sizeof(T);
     specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
     specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+    specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 
     const auto result1 = Buffer::Create(specs);
     if (!result1)
@@ -102,7 +104,9 @@ template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBu
     Buffer::Specs stagingSpecs = specs;
     stagingSpecs.Usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     stagingSpecs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
-    stagingSpecs.AllocationInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+
+    // WARNING: Is this a good option even when MinimumAlignment is not 1?
+    stagingSpecs.AllocationInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
 
     auto result2 = Buffer::Create(stagingSpecs);
     if (!result2)
@@ -110,7 +114,11 @@ template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBu
 
     Buffer &stagingBuffer = result2.GetValue();
     stagingBuffer.Map();
-    stagingBuffer.Write(p_Specs.Data.data());
+    if (p_Specs.MinimumAlignment == 1)
+        stagingBuffer.Write(p_Specs.Data.data());
+    else
+        for (usize i = 0; i < p_Specs.Data.size(); ++i)
+            stagingBuffer.WriteAt(i, &p_Specs.Data[i]);
     stagingBuffer.Flush();
     stagingBuffer.Unmap();
 

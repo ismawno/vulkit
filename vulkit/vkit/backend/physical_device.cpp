@@ -129,7 +129,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
     using EnumerateResult = Result<DynamicArray<PhysicalDevice>>;
     const Instance::Info &instanceInfo = m_Instance.GetInfo();
 
-    const auto checkFlag = [this](const u16 p_Flag) -> bool { return m_Flags & p_Flag; };
+    const auto checkFlag = [this](const PhysicalDeviceSelectorFlags p_Flag) -> bool { return m_Flags & p_Flag; };
 
     if (!checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,

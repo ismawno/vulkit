@@ -3,27 +3,15 @@
 
 namespace VKit
 {
-LogicalDevice::Builder::Builder(const Instance *p_Instance, const PhysicalDevice *p_PhysicalDevice) noexcept
-    : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice)
+Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
+                                            std::span<const QueuePriorities> p_QueuePriorities) noexcept
 {
-    for (usize i = 0; i < p_PhysicalDevice->GetInfo().QueueFamilies.size(); ++i)
-    {
-        const auto &family = p_PhysicalDevice->GetInfo().QueueFamilies[i];
-        QueuePriorities priorities;
-        priorities.Index = i;
-        priorities.Priorities.resize(1, 1.0f);
-        m_QueuePriorities.push_back(priorities);
-    }
-}
-
-Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
-{
-    const Instance::Info &instanceInfo = m_Instance->GetInfo();
-    PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
+    const Instance::Info &instanceInfo = p_Instance.GetInfo();
+    PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
 
     DynamicArray<VkDeviceQueueCreateInfo> queueCreateInfos;
-    queueCreateInfos.reserve(m_QueuePriorities.size());
-    for (const QueuePriorities &priorities : m_QueuePriorities)
+    queueCreateInfos.reserve(p_QueuePriorities.size());
+    for (const QueuePriorities &priorities : p_QueuePriorities)
     {
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -69,8 +57,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
     createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.data();
 
     VkDevice device;
-    const VkResult result =
-        vkCreateDevice(m_PhysicalDevice->GetDevice(), &createInfo, instanceInfo.AllocationCallbacks, &device);
+    const VkResult result = vkCreateDevice(p_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
@@ -79,15 +66,22 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const noexcept
         for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
             vkGetDeviceQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
 
-    return Result<LogicalDevice>::Ok(*m_Instance, *m_PhysicalDevice, device, queues);
+    return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, device, queues);
 }
 
-LogicalDevice::Builder &LogicalDevice::Builder::SetQueuePriorities(
-    std::span<const QueuePriorities> p_QueuePriorities) noexcept
+Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
 {
-    m_QueuePriorities.clear();
-    m_QueuePriorities.insert(m_QueuePriorities.end(), p_QueuePriorities.begin(), p_QueuePriorities.end());
-    return *this;
+    const usize queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.size();
+    DynamicArray<QueuePriorities> queuePriorities;
+    queuePriorities.reserve(queueFamilyCount);
+    for (usize i = 0; i < queueFamilyCount; ++i)
+    {
+        QueuePriorities priorities;
+        priorities.Index = i;
+        priorities.Priorities.resize(1, 1.0f);
+        queuePriorities.push_back(priorities);
+    }
+    return Create(p_Instance, p_PhysicalDevice, queuePriorities);
 }
 
 LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
@@ -136,6 +130,29 @@ void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 VkDevice LogicalDevice::GetDevice() const noexcept
 {
     return m_Device;
+}
+
+Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(
+    const VkSurfaceKHR p_Surface) const noexcept
+{
+    return m_PhysicalDevice.QuerySwapChainSupport(m_Instance, p_Surface);
+}
+
+Result<VkFormat> LogicalDevice::FindSupportedFormat(std::span<const VkFormat> p_Candidates,
+                                                    const VkImageTiling p_Tiling,
+                                                    const VkFormatFeatureFlags p_Features) const noexcept
+{
+    for (const VkFormat format : p_Candidates)
+    {
+        VkFormatProperties props;
+        vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &props);
+
+        if (p_Tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & p_Features) == p_Features)
+            return Result<VkFormat>::Ok(format);
+        if (p_Tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & p_Features) == p_Features)
+            return Result<VkFormat>::Ok(format);
+    }
+    return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
 
 VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const noexcept

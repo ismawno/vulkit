@@ -33,28 +33,22 @@ class LogicalDevice
         explicit(false) operator VkDevice() const noexcept;
     };
 
-    class Builder
-    {
-      public:
-        explicit Builder(const Instance *p_Instance, const PhysicalDevice *p_PhysicalDevice) noexcept;
+    // QueuePriorities Will default to one queue per type with priority 1.0f
 
-        Result<LogicalDevice> Build() const noexcept;
+    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
+                                        std::span<const QueuePriorities> p_QueuePriorities) noexcept;
 
-        Builder &SetQueuePriorities(std::span<const QueuePriorities> p_QueuePriorities) noexcept;
-
-      private:
-        const Instance *m_Instance;
-        const PhysicalDevice *m_PhysicalDevice;
-
-        // Will default to one queue per type with priority 1.0f
-        DynamicArray<QueuePriorities> m_QueuePriorities;
-    };
+    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
     void Destroy() noexcept;
 
     const Instance &GetInstance() const noexcept;
     const PhysicalDevice &GetPhysicalDevice() const noexcept;
     VkDevice GetDevice() const noexcept;
+
+    Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const noexcept;
+    Result<VkFormat> FindSupportedFormat(std::span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
+                                         VkFormatFeatureFlags p_Features) const noexcept;
 
     static void WaitIdle(VkDevice p_Device) noexcept;
     void WaitIdle() const noexcept;
