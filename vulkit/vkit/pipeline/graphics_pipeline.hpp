@@ -51,15 +51,19 @@ class VKIT_API GraphicsPipeline
         VkRenderPass RenderPass = VK_NULL_HANDLE;
 
         u32 Subpass = 0;
-        std::string_view VertexShaderBinaryPath;
-        std::string_view FragmentShaderBinaryPath;
+
+        // Do not need to remain alive on the user end
+        const Shader *VertexShader = nullptr;
+        const Shader *FragmentShader = nullptr;
 
         DynamicArray<VkDynamicState> DynamicStates;
         DynamicArray<VkVertexInputBindingDescription> BindingDescriptions;
         DynamicArray<VkVertexInputAttributeDescription> AttributeDescriptions;
     };
 
-    static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, Specs p_Specs) noexcept;
+    static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
+    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
+                               std::span<GraphicsPipeline> p_Pipelines) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
@@ -86,9 +90,6 @@ class VKIT_API GraphicsPipeline
     explicit GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline,
                               VkPipelineLayout p_PipelineLayout, const Shader &p_VertexShader,
                               const Shader &p_FragmentShader) noexcept;
-
-    void createPipeline(const Specs &p_Specs) noexcept;
-    void createShaders(const char *p_VertexPath, const char *p_FragmentPath) noexcept;
 
     LogicalDevice::Proxy m_Device;
     VkPipeline m_Pipeline;

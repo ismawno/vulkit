@@ -27,6 +27,6 @@ message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 # Compiler flags, linker flags etcetera, those should all be handled when making available the toolkit library through the global CMAKE flag variables
 add_subdirectory(vulkit)
 
-# if (VULKIT_BUILD_TESTS)
-#     add_subdirectory(tests)
-# endif()
+if (VULKIT_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

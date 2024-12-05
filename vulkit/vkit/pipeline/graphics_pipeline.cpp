@@ -7,24 +7,23 @@
 
 namespace VKit
 {
-Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, Specs p_Specs) noexcept
+static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPipeline::Specs &p_Specs) noexcept
 {
-    p_Specs.Populate();
-    TKIT_ASSERT(p_Specs.RenderPass, "Render pass must be provided to create graphics pipeline");
-    TKIT_ASSERT(p_Specs.Layout, "Pipeline layout must be provided to create graphics pipeline");
+    GraphicsPipeline::Specs specs = p_Specs;
+    specs.Populate();
 
-    auto shaderResult = Shader::Create(p_Device, p_Specs.VertexShaderBinaryPath);
-    if (!shaderResult)
-        return Result<GraphicsPipeline>::Error(shaderResult.GetError());
-    const Shader vertexShader = shaderResult.GetValue();
+    if (!specs.RenderPass)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Render pass must be provided");
+    if (!specs.Layout)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Pipeline layout must be provided");
+    if (!specs.VertexShader || !specs.FragmentShader)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Vertex and fragment shaders must be provided");
 
-    shaderResult = Shader::Create(p_Device, p_Specs.FragmentShaderBinaryPath);
-    if (!shaderResult)
-        return Result<GraphicsPipeline>::Error(shaderResult.GetError());
-    const Shader fragmentShader = shaderResult.GetValue();
-
-    const bool hasAttributes = !p_Specs.AttributeDescriptions.empty();
-    const bool hasBindings = !p_Specs.BindingDescriptions.empty();
+    const bool hasAttributes = !specs.AttributeDescriptions.empty();
+    const bool hasBindings = !specs.BindingDescriptions.empty();
 
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
     for (auto &shaderStage : shaderStages)
@@ -36,19 +35,19 @@ Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_
         shaderStage.pSpecializationInfo = nullptr;
     }
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = vertexShader;
+    shaderStages[0].module = specs.VertexShader->GetModule();
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = fragmentShader;
+    shaderStages[1].module = specs.FragmentShader->GetModule();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
     if (hasAttributes || hasBindings)
     {
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(p_Specs.AttributeDescriptions.size());
-        vertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(p_Specs.BindingDescriptions.size());
-        vertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? p_Specs.AttributeDescriptions.data() : nullptr;
-        vertexInputInfo.pVertexBindingDescriptions = hasBindings ? p_Specs.BindingDescriptions.data() : nullptr;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(specs.AttributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(specs.BindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? specs.AttributeDescriptions.data() : nullptr;
+        vertexInputInfo.pVertexBindingDescriptions = hasBindings ? specs.BindingDescriptions.data() : nullptr;
     }
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
@@ -56,20 +55,28 @@ Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_
     pipelineInfo.stageCount = 2;
     pipelineInfo.pStages = shaderStages.data();
     pipelineInfo.pVertexInputState = &vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = &p_Specs.InputAssemblyInfo;
-    pipelineInfo.pViewportState = &p_Specs.ViewportInfo;
-    pipelineInfo.pRasterizationState = &p_Specs.RasterizationInfo;
-    pipelineInfo.pMultisampleState = &p_Specs.MultisampleInfo;
-    pipelineInfo.pColorBlendState = &p_Specs.ColorBlendInfo;
-    pipelineInfo.pDepthStencilState = &p_Specs.DepthStencilInfo;
-    pipelineInfo.pDynamicState = &p_Specs.DynamicStateInfo;
+    pipelineInfo.pInputAssemblyState = &specs.InputAssemblyInfo;
+    pipelineInfo.pViewportState = &specs.ViewportInfo;
+    pipelineInfo.pRasterizationState = &specs.RasterizationInfo;
+    pipelineInfo.pMultisampleState = &specs.MultisampleInfo;
+    pipelineInfo.pColorBlendState = &specs.ColorBlendInfo;
+    pipelineInfo.pDepthStencilState = &specs.DepthStencilInfo;
+    pipelineInfo.pDynamicState = &specs.DynamicStateInfo;
 
-    pipelineInfo.layout = p_Specs.Layout;
-    pipelineInfo.renderPass = p_Specs.RenderPass;
-    pipelineInfo.subpass = p_Specs.Subpass;
+    pipelineInfo.layout = specs.Layout;
+    pipelineInfo.renderPass = specs.RenderPass;
+    pipelineInfo.subpass = specs.Subpass;
 
     pipelineInfo.basePipelineIndex = -1;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+}
+
+Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
+{
+    const auto result = createPipelineInfo(p_Specs);
+    if (!result)
+        return Result<GraphicsPipeline>::Error(result.GetError());
+    const VkGraphicsPipelineCreateInfo &pipelineInfo = result.GetValue();
 
     VkPipeline pipeline;
     const VkResult result =
@@ -77,7 +84,38 @@ Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_
     if (result != VK_SUCCESS)
         return Result<GraphicsPipeline>::Error(result, "Failed to create graphics pipeline");
 
-    return Result<GraphicsPipeline>::Ok(p_Device, pipeline, p_Specs.Layout, vertexShader, fragmentShader);
+    return Result<GraphicsPipeline>::Ok(p_Device, pipeline, p_Specs.Layout, *p_Specs.VertexShader,
+                                        *p_Specs.FragmentShader);
+}
+VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
+                                      const std::span<GraphicsPipeline> p_Pipelines) noexcept
+{
+    if (p_Specs.size() != p_Pipelines.size())
+        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
+    if (p_Specs.size() == 0)
+        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
+
+    DynamicArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
+    pipelineInfos.reserve(p_Specs.size());
+    for (const Specs &specs : p_Specs)
+    {
+        const auto result = createPipelineInfo(specs);
+        if (!result)
+            return result.GetError();
+        const VkGraphicsPipelineCreateInfo &pipelineInfo = result.GetValue();
+        pipelineInfos.push_back(pipelineInfo);
+    }
+
+    DynamicArray<VkPipeline> pipelines{p_Specs.size()};
+    const VkResult result =
+        vkCreateGraphicsPipelines(p_Device, p_Specs[0].Cache, static_cast<u32>(p_Specs.size()), pipelineInfos.data(),
+                                  p_Device.AllocationCallbacks, pipelines.data());
+    if (result != VK_SUCCESS)
+        return VulkanResult::Error(result, "Failed to create graphics pipelines");
+    for (usize i = 0; i < p_Specs.size(); ++i)
+        p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i], p_Specs[i].Layout, *p_Specs[i].VertexShader,
+                                          *p_Specs[i].FragmentShader);
+    return VulkanResult::Success();
 }
 
 GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline,
@@ -91,8 +129,6 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const V
 void GraphicsPipeline::Destroy() noexcept
 {
     TKIT_ASSERT(m_Pipeline, "The graphics pipeline is already destroyed");
-    m_VertexShader.Destroy();
-    m_FragmentShader.Destroy();
     vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
@@ -100,8 +136,6 @@ void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
-    m_VertexShader.SubmitForDeletion(p_Queue);
-    m_FragmentShader.SubmitForDeletion(p_Queue);
     p_Queue.Push([pipeline, device]() { vkDestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 

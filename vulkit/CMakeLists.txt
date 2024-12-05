@@ -3,12 +3,14 @@ project(vulkit)
 
 set(SOURCES
     vkit/core/pch.cpp
-    vkit/backend/device.cpp
+    vkit/backend/logical_device.cpp
+    vkit/backend/physical_device.cpp
     vkit/backend/instance.cpp
     vkit/backend/system.cpp
     vkit/backend/command_pool.cpp
     vkit/buffer/buffer.cpp
     vkit/pipeline/compute_pipeline.cpp
+    vkit/pipeline/graphics_pipeline.cpp
     vkit/pipeline/shader.cpp
     vkit/descriptors/descriptor_pool.cpp
     vkit/descriptors/descriptor_set_layout.cpp
