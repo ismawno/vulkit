@@ -86,6 +86,25 @@ template <typename T> struct DeviceLocalBufferSpecs
     VkDeviceSize MinimumAlignment = 1;
 };
 
+template <typename T> struct TightBufferSpecs
+{
+    std::span<const T> Data;
+    CommandPool *CommandPool;
+    VkQueue Queue;
+};
+template <typename T> struct AlignedBufferSpecs
+{
+    std::span<const T> Data;
+    CommandPool *CommandPool;
+    VkQueue Queue;
+    VkDeviceSize MinimumAlignment;
+};
+
+template <std::integral Index> using IndexBufferSpecs = TightBufferSpecs<Index>;
+template <typename Vertex> using VertexBufferSpecs = TightBufferSpecs<Vertex>;
+template <typename T> using UniformBufferSpecs = AlignedBufferSpecs<T>;
+template <typename T> using StorageBufferSpecs = AlignedBufferSpecs<T>;
+
 template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBufferSpecs<T> &p_Specs) noexcept
 {
     Buffer::Specs specs{};
@@ -130,13 +149,6 @@ template <typename T> Result<Buffer> CreateDeviceLocalBuffer(const DeviceLocalBu
     return Result<Buffer>::Ok(buffer);
 }
 
-template <std::integral Index> struct IndexBufferSpecs
-{
-    std::span<const T> Data;
-    CommandPool *CommandPool;
-    VkQueue Queue;
-};
-
 template <std::integral Index> Result<Buffer> CreateIndexBuffer(const IndexBufferSpecs<Index> &p_Specs) noexcept
 {
     DeviceLocalBufferSpecs<Index> specs{};
@@ -158,13 +170,6 @@ template <std::integral Index> Result<Buffer> CreateMutableIndexBuffer(const usi
     specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
     return Buffer::Create(specs);
 }
-
-template <typename Vertex> struct VertexBufferSpecs
-{
-    std::span<const Vertex> Data;
-    CommandPool *CommandPool;
-    VkQueue Queue;
-};
 
 template <typename Vertex> Result<Buffer> CreateVertexBuffer(const VertexBufferSpecs<Vertex> &p_Specs) noexcept
 {
@@ -188,8 +193,19 @@ template <typename Vertex> Result<Buffer> CreateMutableVertexBuffer(const usize 
     return Buffer::Create(specs);
 }
 
+template <typename T> Result<Buffer> CreateUniformBuffer(const UniformBufferSpecs<T> &p_Specs) noexcept
+{
+    DeviceLocalBufferSpecs<T> specs{};
+    specs.Data = p_Specs.Data;
+    specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+    specs.CommandPool = p_Specs.CommandPool;
+    specs.Queue = p_Specs.Queue;
+    specs.MinimumAlignment = p_Specs.MinimumAlignment;
+    return CreateDeviceLocalBuffer(specs);
+}
+
 template <typename T>
-Result<Buffer> CreateUniformBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
+Result<Buffer> CreateMutableUniformBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;
@@ -202,8 +218,19 @@ Result<Buffer> CreateUniformBuffer(const usize p_Capacity, const VkDeviceSize p_
     return Buffer::Create(specs);
 }
 
+template <typename T> Result<Buffer> CreateStorageBuffer(const StorageBufferSpecs<T> &p_Specs) noexcept
+{
+    DeviceLocalBufferSpecs<T> specs{};
+    specs.Data = p_Specs.Data;
+    specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    specs.CommandPool = p_Specs.CommandPool;
+    specs.Queue = p_Specs.Queue;
+    specs.MinimumAlignment = p_Specs.MinimumAlignment;
+    return CreateDeviceLocalBuffer(specs);
+}
+
 template <typename T>
-Result<Buffer> CreateStorageBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
+Result<Buffer> CreateMutableStorageBuffer(const usize p_Capacity, const VkDeviceSize p_Alignment) noexcept
 {
     Buffer::Specs specs{};
     specs.InstanceCount = p_Capacity;
