@@ -39,6 +39,8 @@ class VKIT_API Buffer
 
     static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 
+    explicit Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -70,8 +72,6 @@ class VKIT_API Buffer
     const Info &GetInfo() const noexcept;
 
   private:
-    explicit Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
-
     void *m_Data = nullptr;
     VkBuffer m_Buffer = VK_NULL_HANDLE;
     Info m_Info;
@@ -253,7 +253,9 @@ void BindIndexBuffer(const Buffer &p_Buffer, VkCommandBuffer p_CommandBuffer, Vk
     else if constexpr (std::is_same_v<Index, u32>)
         vkCmdBindIndexBuffer(p_CommandBuffer, p_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT32);
     else
-        static_assert(false, "Invalid index type");
+    {
+        TKIT_ERROR("Invalid index type");
+    }
 }
 void BindVertexBuffer(const Buffer &p_Buffer, VkCommandBuffer p_CommandBuffer, u32 p_BindingCount = 1,
                       u32 p_FirstBinding = 0, VkDeviceSize p_Offset = 0) noexcept;

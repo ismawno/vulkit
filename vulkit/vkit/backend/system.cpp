@@ -98,21 +98,6 @@ bool System::IsLayerSupported(const char *p_Name) noexcept
     return false;
 }
 
-bool System::AreExtensionsSupported(std::span<const char *const> p_Names) noexcept
-{
-    for (const char *name : p_Names)
-        if (!IsExtensionSupported(name))
-            return false;
-    return true;
-}
-bool System::AreLayersSupported(std::span<const char *const> p_Names) noexcept
-{
-    for (const char *name : p_Names)
-        if (!IsLayerSupported(name))
-            return false;
-    return true;
-}
-
 void DeletionQueue::Push(std::function<void()> &&p_Deleter) noexcept
 {
     m_Deleters.push_back(std::move(p_Deleter));

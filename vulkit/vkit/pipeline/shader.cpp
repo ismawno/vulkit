@@ -7,6 +7,11 @@
 
 namespace VKit
 {
+Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) noexcept
+    : m_Device(p_Device), m_Module(p_Module)
+{
+}
+
 FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
                                        const std::string_view p_BinaryPath) noexcept
 {
@@ -31,7 +36,7 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
     if (result != VK_SUCCESS)
         return FormattedResult<Shader>::Error(VKIT_FORMAT_ERROR(result, "Failed to create shader module"));
 
-    return FormattedResult<Shader>::Ok(module);
+    return FormattedResult<Shader>::Ok(p_Device, module);
 }
 
 i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept

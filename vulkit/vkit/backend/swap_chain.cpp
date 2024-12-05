@@ -182,6 +182,9 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     info.DepthFormat = depthFormat;
     info.PresentMode = presentMode;
     info.ImageUsage = m_ImageUsage;
+    info.Allocator = m_Allocator;
+    info.Flags = m_Flags;
+    info.ImageUsage = m_ImageUsage;
 
     u32 imageCount;
     result = getImages(proxy, swapChain, &imageCount, nullptr);
@@ -295,23 +298,25 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                 return Result<SwapChain>::Error(result, "Failed to create the depth image view");
             }
         }
+    }
 
-        const auto cleanup = [&](const u32 p_Index) {
-            if (checkFlag(SwapChainBuilderFlags_CreateImageViews))
-                for (u32 j = 0; j <= p_Index; ++j)
-                    vkDestroyImageView(proxy, info.ImageData[j].ImageView, proxy.AllocationCallbacks);
-            if (checkFlag(SwapChainBuilderFlags_CreateDefaultDepthResources))
-                for (u32 j = 0; j <= p_Index; ++j)
-                {
-                    vmaDestroyImage(m_Allocator, info.ImageData[j].DepthImage, info.ImageData[j].DepthAllocation);
-                    vkDestroyImageView(proxy, info.ImageData[j].DepthImageView, proxy.AllocationCallbacks);
-                }
-
-            destroySwapChain(proxy, swapChain, proxy.AllocationCallbacks);
-        };
-
-        if (checkFlag(SwapChainBuilderFlags_CreateDefaultSyncObjects))
+    if (checkFlag(SwapChainBuilderFlags_CreateDefaultSyncObjects))
+        for (u32 i = 0; i < VKIT_MAX_FRAMES_IN_FLIGHT; ++i)
         {
+            const auto cleanup = [&](const u32 p_Index) {
+                if (checkFlag(SwapChainBuilderFlags_CreateImageViews))
+                    for (u32 j = 0; j <= p_Index; ++j)
+                        vkDestroyImageView(proxy, info.ImageData[j].ImageView, proxy.AllocationCallbacks);
+                if (checkFlag(SwapChainBuilderFlags_CreateDefaultDepthResources))
+                    for (u32 j = 0; j <= p_Index; ++j)
+                    {
+                        vmaDestroyImage(m_Allocator, info.ImageData[j].DepthImage, info.ImageData[j].DepthAllocation);
+                        vkDestroyImageView(proxy, info.ImageData[j].DepthImageView, proxy.AllocationCallbacks);
+                    }
+
+                destroySwapChain(proxy, swapChain, proxy.AllocationCallbacks);
+            };
+
             VkSemaphoreCreateInfo semaphoreInfo{};
             semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -362,8 +367,6 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                 return Result<SwapChain>::Error(result, "Failed to create the image available semaphore");
             }
         }
-    }
-
     return Result<SwapChain>::Ok(proxy, swapChain, info);
 }
 
@@ -392,7 +395,65 @@ VulkanResult SwapChain::CreateDefaultFrameBuffers(const VkRenderPass p_RenderPas
             return VulkanResult::Error(result, "Failed to create the frame buffer");
         }
     }
+    m_Info.Flags |= SwapChainFlags_HasDefaultFrameBuffers;
     return VulkanResult::Success();
+}
+
+void SwapChain::Destroy() noexcept
+{
+    TKIT_ASSERT(m_SwapChain, "The swap chain is already destroyed");
+
+    const auto destroySwapChain =
+        System::GetDeviceFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR", m_Device);
+    TKIT_ASSERT(destroySwapChain, "Failed to get the vkDestroySwapchainKHR function");
+
+    if (m_Info.Flags & SwapChainFlags_HasImageViews)
+        for (const ImageData &data : m_Info.ImageData)
+            vkDestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
+
+    destroySwapChain(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
+
+    if (m_Info.Flags & SwapChainFlags_HasDefaultDepthResources)
+        for (const ImageData &data : m_Info.ImageData)
+        {
+            vkDestroyImageView(m_Device, data.DepthImageView, m_Device.AllocationCallbacks);
+            vmaDestroyImage(m_Info.Allocator, data.DepthImage, data.DepthAllocation);
+        }
+
+    if (m_Info.Flags & SwapChainFlags_HasDefaultFrameBuffers)
+        for (const ImageData &data : m_Info.ImageData)
+            vkDestroyFramebuffer(m_Device, data.FrameBuffer, m_Device.AllocationCallbacks);
+
+    if (m_Info.Flags & SwapChainFlags_HasDefaultSyncObjects)
+        for (SyncData &data : m_Info.SyncData)
+        {
+            vkDestroySemaphore(m_Device, data.RenderFinishedSemaphore, m_Device.AllocationCallbacks);
+            vkDestroySemaphore(m_Device, data.ImageAvailableSemaphore, m_Device.AllocationCallbacks);
+            vkDestroyFence(m_Device, data.InFlightFence, m_Device.AllocationCallbacks);
+        }
+    m_SwapChain = VK_NULL_HANDLE;
+}
+void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const SwapChain swapChain = *this;
+    p_Queue.Push([swapChain]() { SwapChain{swapChain}.Destroy(); }); // That is stupid...
+}
+
+VkSwapchainKHR SwapChain::GetSwapChain() const noexcept
+{
+    return m_SwapChain;
+}
+const SwapChain::Info &SwapChain::GetInfo() const noexcept
+{
+    return m_Info;
+}
+SwapChain::operator VkSwapchainKHR() const noexcept
+{
+    return m_SwapChain;
+}
+SwapChain::operator bool() const noexcept
+{
+    return m_SwapChain != VK_NULL_HANDLE;
 }
 
 SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format) noexcept
@@ -433,6 +494,11 @@ SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u
 {
     m_Width = p_Width;
     m_Height = p_Height;
+    return *this;
+}
+SwapChain::Builder &SwapChain::Builder::SetAllocator(VmaAllocator p_Allocator) noexcept
+{
+    m_Allocator = p_Allocator;
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::SetFlags(const u8 p_Flags) noexcept

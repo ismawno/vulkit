@@ -143,6 +143,13 @@ class PhysicalDevice
         Features m_RequiredFeatures{};
     };
 
+    explicit PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
+
+    bool IsExtensionSupported(const char *p_Extension) const noexcept;
+    bool IsExtensionEnabled(const char *p_Extension) const noexcept;
+
+    bool EnableExtension(const char *p_Extension) noexcept;
+
     VkPhysicalDevice GetDevice() const noexcept;
     const Info &GetInfo() const noexcept;
 
@@ -153,8 +160,6 @@ class PhysicalDevice
     explicit(false) operator bool() const noexcept;
 
   private:
-    explicit PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
-
     VkPhysicalDevice m_Device;
     Info m_Info;
 };

@@ -28,6 +28,9 @@ class VKIT_API DescriptorSetLayout
         DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
+    DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
+                        const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -38,9 +41,6 @@ class VKIT_API DescriptorSetLayout
     const DynamicArray<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
 
   private:
-    DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
-                        const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkDescriptorSetLayout m_Layout;
     DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;

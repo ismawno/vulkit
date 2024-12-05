@@ -103,7 +103,14 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
     };
 
+    Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
+
+    bool IsExtensionEnabled(const char *p_Extension) const noexcept;
+    bool IsLayerEnabled(const char *p_Layer) const noexcept;
+
     void Destroy() noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+
     VkInstance GetInstance() const noexcept;
     const Info &GetInfo() const noexcept;
 
@@ -115,11 +122,7 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
         return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));
     }
 
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
-
   private:
-    Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
-
     VkInstance m_Instance;
     Info m_Info;
 };

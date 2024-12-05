@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vkit/pipeline/shader.hpp"
+#include "vkit/pipeline/shader.hpp"
 
 namespace VKit
 {
@@ -18,6 +18,9 @@ class ComputePipeline
     static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
                                std::span<ComputePipeline> p_Pipelines) noexcept;
+
+    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
+                    const Shader &p_ComputeShader) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
@@ -41,9 +44,6 @@ class ComputePipeline
     explicit(false) operator bool() const noexcept;
 
   private:
-    explicit ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline,
-                             VkPipelineLayout p_PipelineLayout, const Shader &p_ComputeShader) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkPipeline m_Pipeline;
     VkPipelineLayout m_Layout;

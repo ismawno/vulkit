@@ -21,7 +21,11 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
     if (result != VK_SUCCESS)
         return Result<DescriptorPool>::Error(result, "Failed to create descriptor pool");
 
-    return Result<DescriptorPool>::Ok(*m_Device, pool);
+    DescriptorPool::Info info{};
+    info.MaxSets = m_MaxSets;
+    info.PoolSizes = m_PoolSizes;
+
+    return Result<DescriptorPool>::Ok(m_Device, pool, info);
 }
 
 DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool,

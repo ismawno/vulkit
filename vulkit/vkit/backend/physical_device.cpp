@@ -8,21 +8,21 @@ template <typename C, typename T> static bool contains(const C &p_Container, con
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
 }
 
-template <typename T> std::pair<VkBool32 *, usize> getFeatureIterable(const T &p_Features) noexcept
+template <typename T> std::pair<const VkBool32 *, usize> getFeatureIterable(const T &p_Features) noexcept
 {
     usize size;
-    VkBool32 *ptr;
+    const VkBool32 *ptr;
     if constexpr (std::is_same_v<T, VkPhysicalDeviceFeatures>)
     {
         size = sizeof(VkPhysicalDeviceFeatures) / sizeof(VkBool32);
-        ptr = reinterpret_cast<VkBool32 *>(&p_Features);
+        ptr = reinterpret_cast<const VkBool32 *>(&p_Features);
     }
     else
     {
         const usize offset = sizeof(VkStructureType) + sizeof(void *);
         size = (sizeof(T) - offset) / sizeof(VkBool32);
-        std::byte *rawPtr = reinterpret_cast<std::byte *>(&p_Features) + offset;
-        ptr = reinterpret_cast<VkBool32 *>(&p_Features);
+        const std::byte *rawPtr = reinterpret_cast<const std::byte *>(&p_Features) + offset;
+        ptr = reinterpret_cast<const VkBool32 *>(rawPtr);
     }
     return {ptr, size};
 }
@@ -231,7 +231,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
                 }
             return index;
         };
-        const auto presentQueueIndex = [this, &families, familyCount, vkdevice](const VkSurfaceKHR p_Surface) -> u32 {
+        const auto presentQueueIndex = [this, familyCount, vkdevice](const VkSurfaceKHR p_Surface) -> u32 {
             if (!p_Surface)
                 return UINT32_MAX;
 
@@ -431,7 +431,7 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
             continue;
         if (properties.Core.apiVersion < instanceInfo.ApiVersion)
             continue;
-        if (!contains(m_PreferredType, Type(properties.Core.deviceType)))
+        if (m_PreferredType != Type(properties.Core.deviceType))
         {
             if (!checkFlag(PhysicalDeviceSelectorFlags_AnyType))
                 continue;
@@ -497,6 +497,24 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
 PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept
     : m_Device(p_Device), m_Info(p_Info)
 {
+}
+
+bool PhysicalDevice::IsExtensionSupported(const char *p_Extension) const noexcept
+{
+    return contains(m_Info.AvailableExtensions, p_Extension);
+}
+bool PhysicalDevice::IsExtensionEnabled(const char *p_Extension) const noexcept
+{
+    return contains(m_Info.EnabledExtensions, p_Extension);
+}
+bool PhysicalDevice::EnableExtension(const char *p_Extension) noexcept
+{
+    if (IsExtensionEnabled(p_Extension))
+        return true;
+    if (!IsExtensionSupported(p_Extension))
+        return false;
+    m_Info.EnabledExtensions.push_back(p_Extension);
+    return true;
 }
 
 PhysicalDevice::operator VkPhysicalDevice() const noexcept

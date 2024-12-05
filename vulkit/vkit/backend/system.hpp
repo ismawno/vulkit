@@ -41,6 +41,7 @@ template <String MessageType> class VulkanResultInfo
     static VulkanResultInfo Success() noexcept;
     static VulkanResultInfo Error(VkResult p_Result, const MessageType &p_Message) noexcept;
 
+    VulkanResultInfo(VkResult p_Result, const MessageType &p_Message) noexcept;
     explicit(false) operator bool() const noexcept;
 
     VkResult Result = VK_SUCCESS;
@@ -48,7 +49,6 @@ template <String MessageType> class VulkanResultInfo
 
   private:
     VulkanResultInfo() noexcept = default;
-    VulkanResultInfo(VkResult p_Result, const MessageType &p_Message) noexcept;
 };
 
 using VulkanResult = VulkanResultInfo<const char *>;
@@ -64,9 +64,6 @@ struct System
     static bool IsExtensionSupported(const char *p_Name) noexcept;
     static bool IsLayerSupported(const char *p_Name) noexcept;
 
-    static bool AreExtensionsSupported(std::span<const char *const> p_Names) noexcept;
-    static bool AreLayersSupported(std::span<const char *const> p_Names) noexcept;
-
     static const VkExtensionProperties *GetExtension(const char *p_Name) noexcept;
     static const VkLayerProperties *GetLayer(const char *p_Name) noexcept;
 
@@ -80,8 +77,8 @@ struct System
         return reinterpret_cast<F>(vkGetDeviceProcAddr(p_Device, p_Name));
     }
 
-    static DynamicArray<VkExtensionProperties> AvailableExtensions;
-    static DynamicArray<VkLayerProperties> AvailableLayers;
+    static inline DynamicArray<VkExtensionProperties> AvailableExtensions{};
+    static inline DynamicArray<VkLayerProperties> AvailableLayers{};
 };
 
 class DeletionQueue

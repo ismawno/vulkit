@@ -30,7 +30,8 @@ enum SwapChainFlags : u8
     SwapChainFlags_Clipped = 1 << 0,
     SwapChainFlags_HasImageViews = 1 << 1,
     SwapChainFlags_HasDefaultDepthResources = 1 << 2,
-    SwapChainFlags_HasDefaultSyncObjects = 1 << 3
+    SwapChainFlags_HasDefaultSyncObjects = 1 << 3,
+    SwapChainFlags_HasDefaultFrameBuffers = 1 << 4
 };
 
 class SwapChain
@@ -46,7 +47,6 @@ class SwapChain
         VmaAllocation DepthAllocation = VK_NULL_HANDLE;
 
         VkFramebuffer FrameBuffer = VK_NULL_HANDLE;
-        VkFence InFlightImage = VK_NULL_HANDLE;
     };
 
     struct SyncData
@@ -60,6 +60,7 @@ class SwapChain
     {
         VkSurfaceFormatKHR SurfaceFormat;
         VkFormat DepthFormat; // Optional, undefined if not created
+        VmaAllocator Allocator;
 
         VkPresentModeKHR PresentMode;
         VkExtent2D Extent;
@@ -135,6 +136,8 @@ class SwapChain
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     };
 
+    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -148,8 +151,6 @@ class SwapChain
     explicit(false) operator bool() const noexcept;
 
   private:
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkSwapchainKHR m_SwapChain;
     Info m_Info;

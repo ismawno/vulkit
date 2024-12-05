@@ -3,6 +3,12 @@
 
 namespace VKit
 {
+ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_Layout,
+                                 const Shader &p_ComputeShader) noexcept
+    : m_Device(p_Device), m_Pipeline(p_Pipeline), m_Layout(p_Layout), m_ComputeShader(p_ComputeShader)
+{
+}
+
 static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs) noexcept
 {
     if (!p_Specs.Layout)
@@ -26,14 +32,19 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
 
 Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
 {
-    const auto result = createPipelineInfo(p_Specs);
-    if (!result)
-        return Result<ComputePipeline>::Error(result.GetError());
+    const auto presult = createPipelineInfo(p_Specs);
+    if (!presult)
+        return Result<ComputePipeline>::Error(presult.GetError());
 
-    const VkComputePipelineCreateInfo &pipelineInfo = result.GetValue();
+    const VkComputePipelineCreateInfo &pipelineInfo = presult.GetValue();
+
     VkPipeline pipeline;
     const VkResult result =
         vkCreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo, p_Device.AllocationCallbacks, &pipeline);
+    if (result != VK_SUCCESS)
+        return Result<ComputePipeline>::Error(result, "Failed to create compute pipeline");
+
+    return Result<ComputePipeline>::Ok(p_Device, pipeline, p_Specs.Layout, *p_Specs.ComputeShader);
 }
 VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
                                      const std::span<ComputePipeline> p_Pipelines) noexcept
@@ -64,6 +75,42 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
     for (usize i = 0; i < p_Specs.size(); ++i)
         p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i], p_Specs[i].Layout, *p_Specs[i].ComputeShader);
     return VulkanResult::Success();
+}
+
+void ComputePipeline::Destroy() noexcept
+{
+    TKIT_ASSERT(m_Pipeline, "The compute pipeline is already destroyed");
+    vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
+    m_Pipeline = VK_NULL_HANDLE;
+}
+
+void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+{
+    const VkPipeline pipeline = m_Pipeline;
+    const LogicalDevice::Proxy device = m_Device;
+    p_Queue.Push([pipeline, device]() { vkDestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+}
+
+void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
+{
+    vkCmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
+}
+
+VkPipelineLayout ComputePipeline::GetLayout() const noexcept
+{
+    return m_Layout;
+}
+VkPipeline ComputePipeline::GetPipeline() const noexcept
+{
+    return m_Pipeline;
+}
+ComputePipeline::operator VkPipeline() const noexcept
+{
+    return m_Pipeline;
+}
+ComputePipeline::operator bool() const noexcept
+{
+    return m_Pipeline != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

@@ -69,14 +69,16 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPip
 
     pipelineInfo.basePipelineIndex = -1;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+    return Result<VkGraphicsPipelineCreateInfo>::Ok(pipelineInfo);
 }
 
 Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
 {
-    const auto result = createPipelineInfo(p_Specs);
-    if (!result)
-        return Result<GraphicsPipeline>::Error(result.GetError());
-    const VkGraphicsPipelineCreateInfo &pipelineInfo = result.GetValue();
+    const auto presult = createPipelineInfo(p_Specs);
+    if (!presult)
+        return Result<GraphicsPipeline>::Error(presult.GetError());
+    const VkGraphicsPipelineCreateInfo &pipelineInfo = presult.GetValue();
 
     VkPipeline pipeline;
     const VkResult result =

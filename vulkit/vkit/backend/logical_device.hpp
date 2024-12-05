@@ -40,7 +40,12 @@ class LogicalDevice
 
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
+    using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
+    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device,
+                  const QueueArray &p_Queues) noexcept;
+
     void Destroy() noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
     const Instance &GetInstance() const noexcept;
     const PhysicalDevice &GetPhysicalDevice() const noexcept;
@@ -68,14 +73,7 @@ class LogicalDevice
         return reinterpret_cast<F>(vkGetDeviceProcAddr(m_Device, p_Name));
     }
 
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
-
   private:
-    using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
-
-    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device,
-                  const QueueArray &p_Queues) noexcept;
-
     Instance m_Instance;
     PhysicalDevice m_PhysicalDevice;
     VkDevice m_Device;

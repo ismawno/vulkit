@@ -2,7 +2,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "vkit/backend/logical_device.hpp"
-#include "Vkit/pipeline/shader.hpp"
+#include "vkit/pipeline/shader.hpp"
 #include "tkit/core/non_copyable.hpp"
 
 #include <vulkan/vulkan.hpp>
@@ -65,6 +65,9 @@ class VKIT_API GraphicsPipeline
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
                                std::span<GraphicsPipeline> p_Pipelines) noexcept;
 
+    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
+                     const Shader &p_VertexShader, const Shader &p_FragmentShader) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -87,10 +90,6 @@ class VKIT_API GraphicsPipeline
     explicit(false) operator bool() const noexcept;
 
   private:
-    explicit GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline,
-                              VkPipelineLayout p_PipelineLayout, const Shader &p_VertexShader,
-                              const Shader &p_FragmentShader) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkPipeline m_Pipeline;
     VkPipelineLayout m_Layout;

@@ -15,6 +15,7 @@ class CommandPool
 
     static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 
+    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -33,8 +34,6 @@ class CommandPool
     explicit(false) operator bool() const noexcept;
 
   private:
-    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkCommandPool m_Pool;
 };

@@ -34,6 +34,8 @@ class PipelineLayout
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 
+    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
 
@@ -42,8 +44,6 @@ class PipelineLayout
     explicit(false) operator bool() const noexcept;
 
   private:
-    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout) noexcept;
-
     LogicalDevice::Proxy m_Device;
     VkPipelineLayout m_Layout;
 };

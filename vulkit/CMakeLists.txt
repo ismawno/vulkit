@@ -37,43 +37,16 @@ FetchContent_MakeAvailable(vma)
 # It is set to required for now even though there is a fallback mechanism with FetchContent (the latter seems to provide very few extensions and I am not sure if it will work well for now)
 # TODO: Check if the fallback mechanism works well
 find_package(Vulkan REQUIRED)
-
-if (NOT Vulkan_FOUND)
-    message(STATUS "VULKIT: A global Vulkan installation was not found. Fetching the Vulkan SDK...")
-    message(STATUS "VULKIT: Manually fetching the Vulkan SDK may not provide the necessary extensions. A global installation is recommended")
-    set(VULKIT_LOCAL_VULKAN_SDK ON CACHE BOOL "Use the local Vulkan SDK" FORCE)
-
-    FetchContent_Declare(
-        VulkanHeaders
-        GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
-        GIT_TAG        sdk-1.3.250.1  # Use the appropriate version tag
-    )
-    FetchContent_MakeAvailable(VulkanHeaders)
-
-    # Fetch Vulkan-Loader
-    FetchContent_Declare(
-        VulkanLoader
-        GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Loader.git
-        GIT_TAG        sdk-1.3.250.1  # Use the appropriate version tag
-    )
-    FetchContent_MakeAvailable(VulkanLoader)
-else()
-    message(STATUS "VULKIT: Vulkan SDK found")
-endif()
+message(STATUS "VULKIT: Vulkan SDK found")
 
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
-if (VULKIT_LOCAL_VULKAN_SDK)
-    target_include_directories(vulkit PUBLIC ${Vulkan_INCLUDE_DIRS})
-    target_link_libraries(vulkit PUBLIC ${Vulkan_LIBRARIES} Vulkan::Headers Vulkan::Vulkan)
-endif()
-
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # Vulkan and GLFW are already linked with imgui
-target_link_libraries(vulkit PUBLIC toolkit VulkanMemoryAllocator)
+target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan VulkanMemoryAllocator)
 
-target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vulkit/core/pch.hpp)
+target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
 target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}" VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
 
 if (MSVC)

@@ -272,6 +272,15 @@ Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Insta
 {
 }
 
+bool Instance::IsExtensionEnabled(const char *p_Extension) const noexcept
+{
+    return contains(m_Info.EnabledExtensions, p_Extension);
+}
+bool Instance::IsLayerEnabled(const char *p_Layer) const noexcept
+{
+    return contains(m_Info.EnabledLayers, p_Layer);
+}
+
 static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) noexcept
 {
     TKIT_ASSERT(p_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
