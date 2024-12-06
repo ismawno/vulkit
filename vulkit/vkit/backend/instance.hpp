@@ -16,7 +16,7 @@ enum InstanceFlags : u8
     InstanceFlags_Properties2Extension = 1 << 2
 };
 
-class VKIT_API Instance : public TKit::RefCounted<Instance>
+class VKIT_API Instance
 {
   public:
     struct Info

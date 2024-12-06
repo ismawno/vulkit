@@ -1,13 +1,11 @@
+#include "tests/utils.hpp"
 #include "vkit/backend/instance.hpp"
-#include <catch2/catch_test_macros.hpp>
 
 namespace VKit
 {
 TEST_CASE("Minimal headless instance", "[instance][headless]")
 {
-    const auto sysres = System::Initialize();
-    REQUIRE(sysres);
-
+    SetupSystem();
     auto result = Instance::Builder().SetHeadless().Build();
     REQUIRE(result);
 
@@ -29,9 +27,7 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
 
 TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
 {
-    const auto sysres = System::Initialize();
-    REQUIRE(sysres);
-
+    SetupSystem();
     auto result = Instance::Builder().SetHeadless().RequireExtension("VK_KHR_non_existent").Build();
     REQUIRE(!result);
     REQUIRE(result.GetError().Result == VK_ERROR_EXTENSION_NOT_PRESENT);
@@ -43,9 +39,7 @@ TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
 
 TEST_CASE("Validation layers", "[instance][validation]")
 {
-    const auto sysres = System::Initialize();
-    REQUIRE(sysres);
-
+    SetupSystem();
     auto result = Instance::Builder().SetHeadless().RequestValidationLayers().Build();
     REQUIRE(result);
 
@@ -53,6 +47,7 @@ TEST_CASE("Validation layers", "[instance][validation]")
     const Instance::Info &info = instance.GetInfo();
 
     REQUIRE(info.Flags & InstanceFlags_HasValidationLayers);
+    REQUIRE(info.Flags & InstanceFlags_Headless);
     REQUIRE(info.EnabledLayers.size() > 0);
     REQUIRE(info.DebugMessenger);
 

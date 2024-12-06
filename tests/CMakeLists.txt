@@ -20,6 +20,7 @@ set(SOURCES
 add_executable(vulkit-tests ${SOURCES})
 
 target_link_libraries(vulkit-tests PRIVATE Catch2::Catch2WithMain vulkit)
+target_include_directories(vulkit-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (MSVC)
     configure_compile_link_options(vulkit-tests FLAGS /W4 /WX)
