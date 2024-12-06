@@ -433,7 +433,7 @@ void SwapChain::Destroy() noexcept
         }
     m_SwapChain = VK_NULL_HANDLE;
 }
-void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const SwapChain swapChain = *this;
     p_Queue.Push([swapChain]() { SwapChain{swapChain}.Destroy(); }); // That is stupid...

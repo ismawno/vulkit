@@ -14,7 +14,7 @@ class Shader
     Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     VkShaderModule GetModule() const noexcept;
     explicit(false) operator VkShaderModule() const noexcept;

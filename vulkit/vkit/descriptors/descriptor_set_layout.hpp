@@ -32,7 +32,7 @@ class VKIT_API DescriptorSetLayout
                         const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     VkDescriptorSetLayout GetLayout() const noexcept;
     explicit(false) operator VkDescriptorSetLayout() const noexcept;

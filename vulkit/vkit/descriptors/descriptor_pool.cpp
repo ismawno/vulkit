@@ -40,7 +40,7 @@ void DescriptorPool::Destroy() noexcept
     vkDestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;
 }
-void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkDescriptorPool pool = m_Pool;
     const LogicalDevice::Proxy device = m_Device;

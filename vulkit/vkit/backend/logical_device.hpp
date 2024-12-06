@@ -45,7 +45,7 @@ class LogicalDevice
                   const QueueArray &p_Queues) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     const Instance &GetInstance() const noexcept;
     const PhysicalDevice &GetPhysicalDevice() const noexcept;

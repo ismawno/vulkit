@@ -45,7 +45,7 @@ void Buffer::Destroy() noexcept
     m_Buffer = VK_NULL_HANDLE;
 }
 
-void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VmaAllocator allocator = m_Info.Allocator;
     const VkBuffer buffer = m_Buffer;

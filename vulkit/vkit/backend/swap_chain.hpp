@@ -139,7 +139,7 @@ class SwapChain
     SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     const Info &GetInfo() const noexcept;
     VkSwapchainKHR GetSwapChain() const noexcept;

@@ -36,7 +36,7 @@ void PipelineLayout::Destroy() noexcept
     m_Layout = VK_NULL_HANDLE;
 }
 
-void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipelineLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;

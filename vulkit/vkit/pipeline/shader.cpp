@@ -60,7 +60,7 @@ void Shader::Destroy() noexcept
     vkDestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
     m_Module = VK_NULL_HANDLE;
 }
-void Shader::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkShaderModule module = m_Module;
     const LogicalDevice::Proxy device = m_Device;

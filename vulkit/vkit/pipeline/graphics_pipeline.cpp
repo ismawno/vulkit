@@ -134,7 +134,7 @@ void GraphicsPipeline::Destroy() noexcept
     vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
-void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;

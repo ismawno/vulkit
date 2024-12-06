@@ -43,7 +43,7 @@ class VKIT_API DescriptorPool
     DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     const Info &GetInfo() const noexcept;
 

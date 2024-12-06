@@ -89,7 +89,7 @@ template <typename T> class HostVisibleBuffer
     {
         m_Buffer.Destroy();
     }
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     {
         m_Buffer.SubmitForDeletion(p_Queue);
     }

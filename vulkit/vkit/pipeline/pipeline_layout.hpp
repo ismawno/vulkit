@@ -37,7 +37,7 @@ class PipelineLayout
     PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     VkPipelineLayout GetLayout() const noexcept;
     explicit(false) operator VkPipelineLayout() const noexcept;

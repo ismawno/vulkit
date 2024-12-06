@@ -17,7 +17,7 @@ class CommandPool
 
     CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     Result<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
     VulkanResult Allocate(std::span<VkCommandBuffer> p_CommandBuffers,

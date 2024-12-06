@@ -31,7 +31,7 @@ void CommandPool::Destroy() noexcept
     m_Pool = VK_NULL_HANDLE;
 }
 
-void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkDevice device = m_Device;
     const VkCommandPool pool = m_Pool;

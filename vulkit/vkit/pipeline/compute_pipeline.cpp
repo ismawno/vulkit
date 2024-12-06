@@ -84,7 +84,7 @@ void ComputePipeline::Destroy() noexcept
     m_Pipeline = VK_NULL_HANDLE;
 }
 
-void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;

@@ -23,7 +23,7 @@ class ComputePipeline
                     const Shader &p_ComputeShader) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     /**
      * @brief Binds the pipeline to the specified command buffer.

@@ -109,7 +109,7 @@ class VKIT_API Instance : public TKit::RefCounted<Instance>
     bool IsLayerEnabled(const char *p_Layer) const noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     VkInstance GetInstance() const noexcept;
     const Info &GetInfo() const noexcept;

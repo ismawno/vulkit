@@ -42,7 +42,7 @@ class VKIT_API Buffer
     explicit Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     void Map() noexcept;
     void Unmap() noexcept;

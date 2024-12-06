@@ -69,7 +69,7 @@ class VKIT_API GraphicsPipeline
                      const Shader &p_VertexShader, const Shader &p_FragmentShader) noexcept;
 
     void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) noexcept;
+    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     /**
      * @brief Binds the pipeline to the specified command buffer.

@@ -8,10 +8,10 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
     const auto sysres = System::Initialize();
     REQUIRE(sysres);
 
-    const auto result = Instance::Builder().SetHeadless().Build();
+    auto result = Instance::Builder().SetHeadless().Build();
     REQUIRE(result);
 
-    const Instance &instance = result.GetValue();
+    Instance &instance = result.GetValue();
     const Instance::Info &info = instance.GetInfo();
 
     REQUIRE(!info.ApplicationName);
@@ -23,5 +23,21 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
     REQUIRE(info.EnabledLayers.size() == 0);
     REQUIRE(!info.DebugMessenger);
     REQUIRE(!info.AllocationCallbacks);
+
+    instance.Destroy();
+}
+
+TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
+{
+    const auto sysres = System::Initialize();
+    REQUIRE(sysres);
+
+    auto result = Instance::Builder().SetHeadless().RequireExtension("VK_KHR_non_existent").Build();
+    REQUIRE(!result);
+    REQUIRE(result.GetError().Result == VK_ERROR_EXTENSION_NOT_PRESENT);
+
+    result = Instance::Builder().SetHeadless().RequireLayer("VK_LAYER_non_existent").Build();
+    REQUIRE(!result);
+    REQUIRE(result.GetError().Result == VK_ERROR_LAYER_NOT_PRESENT);
 }
 } // namespace VKit

@@ -302,7 +302,7 @@ void Instance::Destroy() noexcept
     m_Instance = VK_NULL_HANDLE;
 }
 
-void Instance::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkInstance instance = m_Instance;
     const Info info = m_Info;

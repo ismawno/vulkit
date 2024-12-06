@@ -118,7 +118,7 @@ void LogicalDevice::WaitIdle() const noexcept
     WaitIdle(m_Device);
 }
 
-void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const Proxy proxy = CreateProxy();
     p_Queue.Push([proxy]() {

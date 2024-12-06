@@ -33,7 +33,7 @@ void DescriptorSetLayout::Destroy() noexcept
     vkDestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }
-void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) noexcept
+void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkDescriptorSetLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
