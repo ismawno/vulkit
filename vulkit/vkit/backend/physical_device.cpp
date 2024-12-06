@@ -251,13 +251,13 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         };
 
         TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireComputeQueue) ||
-                        (!checkFlag(PhysicalDeviceSelectorFlags_DedicatedComputeQueue) &&
-                         !checkFlag(PhysicalDeviceSelectorFlags_SeparateComputeQueue)),
+                        (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue) &&
+                         !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue)),
                     "Flags mismatch: Must require compute queue to request dedicated or separate compute queue");
 
         TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireTransferQueue) ||
-                        (!checkFlag(PhysicalDeviceSelectorFlags_DedicatedTransferQueue) &&
-                         !checkFlag(PhysicalDeviceSelectorFlags_SeparateTransferQueue)),
+                        (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue) &&
+                         !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue)),
                     "Flags mismatch: Must require transfer queue to request dedicated or separate transfer queue");
 
         u16 deviceFlags = 0;
@@ -285,13 +285,13 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         if (dedicatedCompute != UINT32_MAX)
         {
             computeIndex = dedicatedCompute;
-            deviceFlags |= PhysicalDeviceFlags_DedicatedComputeQueue;
+            deviceFlags |= PhysicalDeviceFlags_HasDedicatedComputeQueue;
             deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
         }
         else if (separateCompute != UINT32_MAX)
         {
             computeIndex = separateCompute;
-            deviceFlags |= PhysicalDeviceFlags_SeparateComputeQueue;
+            deviceFlags |= PhysicalDeviceFlags_HasSeparateComputeQueue;
             deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
         }
         else if (computeCompatible != UINT32_MAX)
@@ -303,13 +303,13 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         if (dedicatedTransfer != UINT32_MAX)
         {
             transferIndex = dedicatedTransfer;
-            deviceFlags |= PhysicalDeviceFlags_DedicatedTransferQueue;
+            deviceFlags |= PhysicalDeviceFlags_HasDedicatedTransferQueue;
             deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
         }
         else if (separateTransfer != UINT32_MAX)
         {
             transferIndex = separateTransfer;
-            deviceFlags |= PhysicalDeviceFlags_SeparateTransferQueue;
+            deviceFlags |= PhysicalDeviceFlags_HasSeparateTransferQueue;
             deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
         }
         else if (transferCompatible != UINT32_MAX)
@@ -331,13 +331,17 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
         if (!checkFlags(PhysicalDeviceSelectorFlags_RequirePresentQueue, PhysicalDeviceFlags_HasPresentQueue))
             continue;
 
-        if (!checkFlags(PhysicalDeviceSelectorFlags_DedicatedComputeQueue, PhysicalDeviceFlags_DedicatedComputeQueue))
+        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue,
+                        PhysicalDeviceFlags_HasDedicatedComputeQueue))
             continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_DedicatedTransferQueue, PhysicalDeviceFlags_DedicatedTransferQueue))
+        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue,
+                        PhysicalDeviceFlags_HasDedicatedTransferQueue))
             continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_SeparateComputeQueue, PhysicalDeviceFlags_SeparateComputeQueue))
+        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue,
+                        PhysicalDeviceFlags_HasSeparateComputeQueue))
             continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_SeparateTransferQueue, PhysicalDeviceFlags_SeparateTransferQueue))
+        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue,
+                        PhysicalDeviceFlags_HasSeparateTransferQueue))
             continue;
 
         if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))

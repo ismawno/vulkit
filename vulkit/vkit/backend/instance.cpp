@@ -126,12 +126,19 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     bool validationLayers = false;
     if (m_RequestValidationLayers)
     {
-        validationLayers = System::IsLayerSupported(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        validationLayers = System::IsExtensionSupported(VK_EXT_DEBUG_UTILS_EXTENSION_NAME) &&
+                           System::IsLayerSupported("VK_LAYER_KHRONOS_validation");
+
         if (!validationLayers && m_RequireValidationLayers)
             return FormattedResult<Instance>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "Validation layers are not suported"));
-        if (!contains(layers, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
-            layers.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT,
+                                  "Validation layers (along with the debug utils extension) are not suported"));
+
+        if (validationLayers && !contains(extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+        if (validationLayers && !contains(layers, "VK_LAYER_KHRONOS_validation"))
+            layers.push_back("VK_LAYER_KHRONOS_validation");
     }
 
     const bool properties2Support =
@@ -231,8 +238,8 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
     {
-        const auto createDebugMessenger =
-            System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>("vkCreateDebugUtilsMessengerEXT");
+        const auto createDebugMessenger = System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>(
+            "vkCreateDebugUtilsMessengerEXT", vkinstance);
         if (!createDebugMessenger)
             return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateDebugUtilsMessengerEXT function"));
@@ -258,7 +265,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     if (m_Headless)
         info.Flags |= InstanceFlags_Headless;
     if (validationLayers)
-        info.Flags |= InstanceFlags_ValidationLayers;
+        info.Flags |= InstanceFlags_HasValidationLayers;
     if (properties2Support)
         info.Flags |= InstanceFlags_Properties2Extension;
 
@@ -286,7 +293,7 @@ static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) n
     TKIT_ASSERT(p_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
 
-    if ((p_Info.Flags & InstanceFlags_ValidationLayers) && p_Info.DebugMessenger)
+    if ((p_Info.Flags & InstanceFlags_HasValidationLayers) && p_Info.DebugMessenger)
     {
         const auto destroyDebugMessenger = System::GetInstanceFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
             "vkDestroyDebugUtilsMessengerEXT", p_Instance);

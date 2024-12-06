@@ -12,7 +12,7 @@ namespace VKit
 enum InstanceFlags : u8
 {
     InstanceFlags_Headless = 1 << 0,
-    InstanceFlags_ValidationLayers = 1 << 1,
+    InstanceFlags_HasValidationLayers = 1 << 1,
     InstanceFlags_Properties2Extension = 1 << 2
 };
 

@@ -7,10 +7,10 @@ namespace VKit
 enum PhysicalDeviceFlags : u16
 {
     PhysicalDeviceFlags_Optimal = 1 << 0,
-    PhysicalDeviceFlags_DedicatedComputeQueue = 1 << 1,
-    PhysicalDeviceFlags_DedicatedTransferQueue = 1 << 2,
-    PhysicalDeviceFlags_SeparateTransferQueue = 1 << 3,
-    PhysicalDeviceFlags_SeparateComputeQueue = 1 << 4,
+    PhysicalDeviceFlags_HasDedicatedComputeQueue = 1 << 1,
+    PhysicalDeviceFlags_HasDedicatedTransferQueue = 1 << 2,
+    PhysicalDeviceFlags_HasSeparateTransferQueue = 1 << 3,
+    PhysicalDeviceFlags_HasSeparateComputeQueue = 1 << 4,
     PhysicalDeviceFlags_PortabilitySubset = 1 << 5,
     PhysicalDeviceFlags_HasGraphicsQueue = 1 << 6,
     PhysicalDeviceFlags_HasComputeQueue = 1 << 7,
@@ -21,10 +21,10 @@ enum PhysicalDeviceFlags : u16
 enum PhysicalDeviceSelectorFlags : u16
 {
     PhysicalDeviceSelectorFlags_AnyType = 1 << 0,
-    PhysicalDeviceSelectorFlags_DedicatedComputeQueue = 1 << 1,
-    PhysicalDeviceSelectorFlags_DedicatedTransferQueue = 1 << 2,
-    PhysicalDeviceSelectorFlags_SeparateComputeQueue = 1 << 3,
-    PhysicalDeviceSelectorFlags_SeparateTransferQueue = 1 << 4,
+    PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue = 1 << 1,
+    PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue = 1 << 2,
+    PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue = 1 << 3,
+    PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue = 1 << 4,
     PhysicalDeviceSelectorFlags_PortabilitySubset = 1 << 5,
     PhysicalDeviceSelectorFlags_RequireGraphicsQueue = 1 << 6,
     PhysicalDeviceSelectorFlags_RequireComputeQueue = 1 << 7,

@@ -40,4 +40,22 @@ TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
     REQUIRE(!result);
     REQUIRE(result.GetError().Result == VK_ERROR_LAYER_NOT_PRESENT);
 }
+
+TEST_CASE("Validation layers", "[instance][validation]")
+{
+    const auto sysres = System::Initialize();
+    REQUIRE(sysres);
+
+    auto result = Instance::Builder().SetHeadless().RequestValidationLayers().Build();
+    REQUIRE(result);
+
+    Instance &instance = result.GetValue();
+    const Instance::Info &info = instance.GetInfo();
+
+    REQUIRE(info.Flags & InstanceFlags_HasValidationLayers);
+    REQUIRE(info.EnabledLayers.size() > 0);
+    REQUIRE(info.DebugMessenger);
+
+    instance.Destroy();
+}
 } // namespace VKit
