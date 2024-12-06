@@ -69,14 +69,18 @@ void Buffer::Unmap() noexcept
     m_Data = nullptr;
 }
 
-void Buffer::Write(const void *p_Data, const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
+void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "Cannot copy to unmapped buffer");
     TKIT_ASSERT((p_Size == VK_WHOLE_SIZE && p_Offset == 0) ||
                     (p_Size != VK_WHOLE_SIZE && (p_Offset + p_Size) <= m_Info.Size),
                 "Size + offset must be lower than the buffer size");
+
     if (p_Size == VK_WHOLE_SIZE)
-        std::memcpy(m_Data, p_Data, m_Info.Size);
+        p_Size = m_Info.Size - p_Offset;
+
+    if (p_Size == m_Info.Size)
+        std::memcpy(m_Data, p_Data, p_Size);
     else
     {
         std::byte *offsetted = static_cast<std::byte *>(m_Data) + p_Offset;
