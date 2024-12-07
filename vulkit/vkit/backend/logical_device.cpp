@@ -165,6 +165,10 @@ LogicalDevice::Proxy::operator VkDevice() const noexcept
 {
     return Device;
 }
+LogicalDevice::Proxy::operator bool() const noexcept
+{
+    return Device != VK_NULL_HANDLE;
+}
 
 LogicalDevice::Proxy LogicalDevice::CreateProxy() const noexcept
 {

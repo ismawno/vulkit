@@ -35,9 +35,9 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPip
         shaderStage.pSpecializationInfo = nullptr;
     }
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = specs.VertexShader->GetModule();
+    shaderStages[0].module = specs.VertexShader;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = specs.FragmentShader->GetModule();
+    shaderStages[1].module = specs.FragmentShader;
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -86,8 +86,8 @@ Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_
     if (result != VK_SUCCESS)
         return Result<GraphicsPipeline>::Error(result, "Failed to create graphics pipeline");
 
-    return Result<GraphicsPipeline>::Ok(p_Device, pipeline, p_Specs.Layout, *p_Specs.VertexShader,
-                                        *p_Specs.FragmentShader);
+    return Result<GraphicsPipeline>::Ok(p_Device, pipeline, p_Specs.Layout, p_Specs.VertexShader,
+                                        p_Specs.FragmentShader);
 }
 VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
                                       const std::span<GraphicsPipeline> p_Pipelines) noexcept
@@ -115,8 +115,8 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to create graphics pipelines");
     for (usize i = 0; i < p_Specs.size(); ++i)
-        p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i], p_Specs[i].Layout, *p_Specs[i].VertexShader,
-                                          *p_Specs[i].FragmentShader);
+        p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i], p_Specs[i].Layout, p_Specs[i].VertexShader,
+                                          p_Specs[i].FragmentShader);
     return VulkanResult::Success();
 }
 

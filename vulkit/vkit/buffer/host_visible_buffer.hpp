@@ -81,6 +81,7 @@ template <typename T> class HostVisibleBuffer
         return Create(specs);
     }
 
+    HostVisibleBuffer() noexcept = default;
     explicit HostVisibleBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
     {
     }
@@ -186,6 +187,6 @@ template <typename T> class HostVisibleBuffer
     }
 
   private:
-    Buffer m_Buffer;
+    Buffer m_Buffer{};
 };
 } // namespace VKit

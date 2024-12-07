@@ -16,6 +16,8 @@ enum InstanceFlags : u8
     InstanceFlags_Properties2Extension = 1 << 2
 };
 
+// Enabling validation layers with default debugger with no tkit logging will result in a void callback!
+
 class VKIT_API Instance
 {
   public:
@@ -103,6 +105,7 @@ class VKIT_API Instance
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
     };
 
+    Instance() noexcept = default;
     Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
 
     bool IsExtensionEnabled(const char *p_Extension) const noexcept;
@@ -123,7 +126,7 @@ class VKIT_API Instance
     }
 
   private:
-    VkInstance m_Instance;
+    VkInstance m_Instance = VK_NULL_HANDLE;
     Info m_Info;
 };
 } // namespace VKit

@@ -136,6 +136,7 @@ class SwapChain
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     };
 
+    SwapChain() noexcept = default;
     SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
@@ -151,8 +152,8 @@ class SwapChain
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkSwapchainKHR m_SwapChain;
+    LogicalDevice::Proxy m_Device{};
+    VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
     Info m_Info;
 };
 } // namespace VKit

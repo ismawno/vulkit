@@ -28,6 +28,7 @@ class VKIT_API DescriptorSetLayout
         DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
+    DescriptorSetLayout() noexcept = default;
     DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
                         const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
 
@@ -41,8 +42,8 @@ class VKIT_API DescriptorSetLayout
     const DynamicArray<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkDescriptorSetLayout m_Layout;
+    LogicalDevice::Proxy m_Device{};
+    VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
     DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
 };
 } // namespace VKit

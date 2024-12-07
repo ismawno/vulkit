@@ -15,6 +15,7 @@ class CommandPool
 
     static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 
+    CommandPool() noexcept = default;
     CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -34,7 +35,7 @@ class CommandPool
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkCommandPool m_Pool;
+    LogicalDevice::Proxy m_Device{};
+    VkCommandPool m_Pool = VK_NULL_HANDLE;
 };
 }; // namespace VKit

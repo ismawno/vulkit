@@ -27,10 +27,11 @@ class LogicalDevice
   public:
     struct Proxy
     {
-        VkDevice Device;
-        const VkAllocationCallbacks *AllocationCallbacks;
+        VkDevice Device = VK_NULL_HANDLE;
+        const VkAllocationCallbacks *AllocationCallbacks = nullptr;
 
         explicit(false) operator VkDevice() const noexcept;
+        explicit(false) operator bool() const noexcept;
     };
 
     // QueuePriorities Will default to one queue per type with priority 1.0f
@@ -41,6 +42,8 @@ class LogicalDevice
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
     using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
+
+    LogicalDevice() noexcept = default;
     LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device,
                   const QueueArray &p_Queues) noexcept;
 
@@ -74,9 +77,9 @@ class LogicalDevice
     }
 
   private:
-    Instance m_Instance;
-    PhysicalDevice m_PhysicalDevice;
-    VkDevice m_Device;
+    Instance m_Instance{};
+    PhysicalDevice m_PhysicalDevice{};
+    VkDevice m_Device = VK_NULL_HANDLE;
     QueueArray m_Queues;
 };
 } // namespace VKit

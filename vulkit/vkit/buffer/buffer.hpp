@@ -39,7 +39,8 @@ class VKIT_API Buffer
 
     static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 
-    explicit Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
+    Buffer() noexcept = default;
+    Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;

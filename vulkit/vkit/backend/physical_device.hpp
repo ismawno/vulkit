@@ -143,7 +143,8 @@ class PhysicalDevice
         Features m_RequiredFeatures{};
     };
 
-    explicit PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
+    PhysicalDevice() noexcept = default;
+    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
 
     bool IsExtensionSupported(const char *p_Extension) const noexcept;
     bool IsExtensionEnabled(const char *p_Extension) const noexcept;
@@ -160,7 +161,7 @@ class PhysicalDevice
     explicit(false) operator bool() const noexcept;
 
   private:
-    VkPhysicalDevice m_Device;
+    VkPhysicalDevice m_Device = VK_NULL_HANDLE;
     Info m_Info;
 };
 } // namespace VKit

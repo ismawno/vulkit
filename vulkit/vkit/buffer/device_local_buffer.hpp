@@ -120,6 +120,7 @@ template <typename T> class DeviceLocalBuffer
         return Create(specs);
     }
 
+    DeviceLocalBuffer() noexcept = default;
     explicit DeviceLocalBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
     {
     }
@@ -184,6 +185,6 @@ template <typename T> class DeviceLocalBuffer
     }
 
   private:
-    Buffer m_Buffer;
+    Buffer m_Buffer{};
 };
 } // namespace VKit

@@ -40,6 +40,7 @@ class VKIT_API DescriptorPool
         DynamicArray<VkDescriptorPoolSize> m_PoolSizes{};
     };
 
+    DescriptorPool() noexcept = default;
     DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
@@ -58,8 +59,8 @@ class VKIT_API DescriptorPool
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkDescriptorPool m_Pool;
+    LogicalDevice::Proxy m_Device{};
+    VkDescriptorPool m_Pool = VK_NULL_HANDLE;
     Info m_Info;
 };
 } // namespace VKit

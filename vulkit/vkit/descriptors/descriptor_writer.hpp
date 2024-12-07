@@ -19,7 +19,7 @@ class VKIT_API DescriptorWriter
     void Overwrite(VkDescriptorSet p_Set) noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
+    LogicalDevice::Proxy m_Device{};
     const DescriptorSetLayout *m_Layout;
     const DescriptorPool *m_Pool;
     DynamicArray<VkWriteDescriptorSet> m_Writes;

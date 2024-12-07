@@ -19,6 +19,7 @@ class ComputePipeline
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
                                std::span<ComputePipeline> p_Pipelines) noexcept;
 
+    ComputePipeline() noexcept = default;
     ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
                     const Shader &p_ComputeShader) noexcept;
 
@@ -44,9 +45,9 @@ class ComputePipeline
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkPipeline m_Pipeline;
-    VkPipelineLayout m_Layout;
-    Shader m_ComputeShader;
+    LogicalDevice::Proxy m_Device{};
+    VkPipeline m_Pipeline = VK_NULL_HANDLE;
+    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
+    Shader m_ComputeShader{};
 };
 } // namespace VKit

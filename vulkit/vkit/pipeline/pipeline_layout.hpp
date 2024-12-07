@@ -34,6 +34,7 @@ class PipelineLayout
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 
+    PipelineLayout() noexcept = default;
     PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout) noexcept;
 
     void Destroy() noexcept;
@@ -44,7 +45,7 @@ class PipelineLayout
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkPipelineLayout m_Layout;
+    LogicalDevice::Proxy m_Device{};
+    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
 };
 } // namespace VKit

@@ -399,6 +399,11 @@ VulkanResult SwapChain::CreateDefaultFrameBuffers(const VkRenderPass p_RenderPas
     return VulkanResult::Success();
 }
 
+SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept
+    : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Info(p_Info)
+{
+}
+
 void SwapChain::Destroy() noexcept
 {
     TKIT_ASSERT(m_SwapChain, "The swap chain is already destroyed");

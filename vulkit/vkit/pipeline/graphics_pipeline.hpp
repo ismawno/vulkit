@@ -53,8 +53,8 @@ class VKIT_API GraphicsPipeline
         u32 Subpass = 0;
 
         // Do not need to remain alive on the user end
-        const Shader *VertexShader = nullptr;
-        const Shader *FragmentShader = nullptr;
+        Shader VertexShader{};
+        Shader FragmentShader{};
 
         DynamicArray<VkDynamicState> DynamicStates;
         DynamicArray<VkVertexInputBindingDescription> BindingDescriptions;
@@ -65,6 +65,7 @@ class VKIT_API GraphicsPipeline
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
                                std::span<GraphicsPipeline> p_Pipelines) noexcept;
 
+    GraphicsPipeline() noexcept = default;
     GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
                      const Shader &p_VertexShader, const Shader &p_FragmentShader) noexcept;
 
@@ -90,10 +91,10 @@ class VKIT_API GraphicsPipeline
     explicit(false) operator bool() const noexcept;
 
   private:
-    LogicalDevice::Proxy m_Device;
-    VkPipeline m_Pipeline;
-    VkPipelineLayout m_Layout;
-    Shader m_VertexShader;
-    Shader m_FragmentShader;
+    LogicalDevice::Proxy m_Device{};
+    VkPipeline m_Pipeline = VK_NULL_HANDLE;
+    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
+    Shader m_VertexShader{};
+    Shader m_FragmentShader{};
 };
 } // namespace VKit
