@@ -137,7 +137,7 @@ class PhysicalDevice
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
         Type m_PreferredType = Discrete;
 
-        u16 m_Flags = PhysicalDeviceSelectorFlags_AnyType | PhysicalDeviceSelectorFlags_PortabilitySubset;
+        u16 m_Flags = 0;
 
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
