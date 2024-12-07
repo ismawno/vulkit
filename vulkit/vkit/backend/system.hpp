@@ -41,14 +41,13 @@ template <String MessageType> class VulkanResultInfo
     static VulkanResultInfo Success() noexcept;
     static VulkanResultInfo Error(VkResult p_Result, const MessageType &p_Message) noexcept;
 
+    VulkanResultInfo() noexcept = default;
     VulkanResultInfo(VkResult p_Result, const MessageType &p_Message) noexcept;
+
     explicit(false) operator bool() const noexcept;
 
     VkResult Result = VK_SUCCESS;
-    MessageType Message;
-
-  private:
-    VulkanResultInfo() noexcept = default;
+    MessageType Message{};
 };
 
 using VulkanResult = VulkanResultInfo<const char *>;

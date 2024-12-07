@@ -34,7 +34,7 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
     VkShaderModule module;
     const VkResult result = vkCreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
     if (result != VK_SUCCESS)
-        return FormattedResult<Shader>::Error(VKIT_FORMAT_ERROR(result, "Failed to create shader module"));
+        return FormattedResult<Shader>::Error(result, "Failed to create shader module");
 
     return FormattedResult<Shader>::Ok(p_Device, module);
 }

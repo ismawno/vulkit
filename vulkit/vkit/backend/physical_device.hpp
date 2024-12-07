@@ -102,8 +102,8 @@ class PhysicalDevice
       public:
         explicit Selector(const Instance &p_Instance) noexcept;
 
-        Result<PhysicalDevice> Select() const noexcept;
-        Result<DynamicArray<PhysicalDevice>> Enumerate() const noexcept;
+        FormattedResult<PhysicalDevice> Select() const noexcept;
+        Result<DynamicArray<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
 
         Selector &SetName(const char *p_Name) noexcept;
         Selector &PreferType(Type p_Type) noexcept;
@@ -126,6 +126,8 @@ class PhysicalDevice
         Selector &SetSurface(VkSurfaceKHR p_Surface) noexcept;
 
       private:
+        FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const noexcept;
+
         Instance m_Instance;
         const char *m_Name = nullptr;
 

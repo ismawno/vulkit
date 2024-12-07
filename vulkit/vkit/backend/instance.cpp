@@ -63,7 +63,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         u32 version;
         const VkResult result = vkEnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
-            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(result, "Failed to get the vulkan instance version"));
+            return FormattedResult<u32>::Error(result, "Failed to get the vulkan instance version");
 
         if (version < p_Version)
             return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
@@ -131,8 +131,8 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
 
         if (!validationLayers && m_RequireValidationLayers)
             return FormattedResult<Instance>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT,
-                                  "Validation layers (along with the debug utils extension) are not suported"));
+                VK_ERROR_LAYER_NOT_PRESENT,
+                "Validation layers (along with the debug utils extension) are not suported");
 
         if (validationLayers && !contains(extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -233,7 +233,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     VkInstance vkinstance;
     VkResult result = vkCreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
-        return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the vulkan instance"));
+        return FormattedResult<Instance>::Error(result, "Failed to create the vulkan instance");
 
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
@@ -241,14 +241,14 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         const auto createDebugMessenger = System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>(
             "vkCreateDebugUtilsMessengerEXT", vkinstance);
         if (!createDebugMessenger)
-            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to get the vkCreateDebugUtilsMessengerEXT function"));
+            return FormattedResult<Instance>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                                    "Failed to get the vkCreateDebugUtilsMessengerEXT function");
 
         result = createDebugMessenger(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
             vkDestroyInstance(vkinstance, m_AllocationCallbacks);
-            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(result, "Failed to create the debug messenger"));
+            return FormattedResult<Instance>::Error(result, "Failed to create the debug messenger");
         }
     }
 

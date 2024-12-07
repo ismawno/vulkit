@@ -111,27 +111,396 @@ PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Inst
         m_Flags |= PhysicalDeviceSelectorFlags_RequirePresentQueue;
 }
 
-Result<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
 {
     const auto result = Enumerate();
     if (!result)
-        return Result<PhysicalDevice>::Error(result.GetError());
+        return FormattedResult<PhysicalDevice>::Error(result.GetError().Result, result.GetError().Message);
 
-    const DynamicArray<PhysicalDevice> &devices = result.GetValue();
-    if (devices.empty())
-        return Result<PhysicalDevice>::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
-
-    return Result<PhysicalDevice>::Ok(devices[0]);
+    const DynamicArray<FormattedResult<PhysicalDevice>> &devices = result.GetValue();
+    return devices[0];
 }
 
-Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const noexcept
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const noexcept
 {
-    using EnumerateResult = Result<DynamicArray<PhysicalDevice>>;
+    using JudgeResult = FormattedResult<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance.GetInfo();
+
+    VkPhysicalDeviceProperties quickProperties;
+    vkGetPhysicalDeviceProperties(p_Device, &quickProperties);
+    const char *name = quickProperties.deviceName;
+
+    if (m_Name != nullptr && strcmp(m_Name, name) != 0)
+        return JudgeResult::Error(VK_ERROR_INITIALIZATION_FAILED, "The device name does not match the requested name");
+
+    u32 extensionCount;
+    VkResult result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
+    if (result != VK_SUCCESS)
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
+
+    DynamicArray<VkExtensionProperties> extensionsProps{extensionCount};
+    result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.data());
+    if (result != VK_SUCCESS)
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
+
+    DynamicArray<std::string> availableExtensions;
+    availableExtensions.reserve(extensionCount);
+    for (const VkExtensionProperties &extension : extensionsProps)
+        availableExtensions.push_back(extension.extensionName);
+
+    DynamicArray<std::string> enabledExtensions;
+    enabledExtensions.reserve(availableExtensions.size());
+
+    bool skipDevice = false;
+    for (const std::string &extension : m_RequiredExtensions)
+    {
+        if (!contains(availableExtensions, extension))
+        {
+            skipDevice = true;
+            break;
+        }
+        enabledExtensions.push_back(extension);
+    }
+    if (skipDevice)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(
+            VK_ERROR_EXTENSION_NOT_PRESENT, "The required extensions are not supported for the device: {}", name));
+
+    bool fullySuitable = true;
+    for (const std::string &extension : m_RequestedExtensions)
+        if (contains(availableExtensions, extension))
+            enabledExtensions.push_back(extension);
+        else
+            fullySuitable = false;
 
     const auto checkFlag = [this](const PhysicalDeviceSelectorFlags p_Flag) -> bool { return m_Flags & p_Flag; };
 
-    if (!checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue) && !m_Surface)
+    if (checkFlag(PhysicalDeviceSelectorFlags_PortabilitySubset))
+        enabledExtensions.push_back("VK_KHR_portability_subset");
+    if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
+        enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
+    u32 familyCount;
+    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
+
+    DynamicArray<VkQueueFamilyProperties> families{familyCount};
+    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.data());
+
+    const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
+        for (u32 i = 0; i < familyCount; ++i)
+            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags)
+                return i;
+
+        return UINT32_MAX;
+    };
+    const auto dedicatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
+                                                              const VkQueueFlags p_ForbiddenFlags) -> u32 {
+        for (u32 i = 0; i < familyCount; ++i)
+            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
+                !(families[i].queueFlags & p_ForbiddenFlags))
+                return i;
+
+        return UINT32_MAX;
+    };
+    const auto separatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
+                                                              const VkQueueFlags p_ForbiddenFlags) -> u32 {
+        u32 index = UINT32_MAX;
+        for (u32 i = 0; i < familyCount; ++i)
+            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
+                !(families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT))
+            {
+                if (!(families[i].queueFlags & p_ForbiddenFlags))
+                    return i;
+                index = i;
+            }
+        return index;
+    };
+    const auto presentQueueIndex = [this, familyCount, p_Device](const VkSurfaceKHR p_Surface) -> u32 {
+        if (!p_Surface)
+            return UINT32_MAX;
+
+        const auto queryPresentSupport =
+            m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>("vkGetPhysicalDeviceSurfaceSupportKHR");
+        if (!queryPresentSupport)
+            return UINT32_MAX;
+
+        for (u32 i = 0; i < familyCount; ++i)
+        {
+            VkBool32 presentSupport = VK_FALSE;
+            const VkResult result = queryPresentSupport(p_Device, i, p_Surface, &presentSupport);
+            if (result == VK_SUCCESS && presentSupport == VK_TRUE)
+                return i;
+        }
+        return UINT32_MAX;
+    };
+
+    TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireComputeQueue) ||
+                    (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue) &&
+                     !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue)),
+                "Flags mismatch: Must require compute queue to request dedicated or separate compute queue");
+
+    TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireTransferQueue) ||
+                    (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue) &&
+                     !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue)),
+                "Flags mismatch: Must require transfer queue to request dedicated or separate transfer queue");
+
+    u16 deviceFlags = 0;
+    const u32 dedicatedCompute =
+        dedicatedQueueIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT);
+    const u32 dedicatedTransfer =
+        dedicatedQueueIndex(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
+
+    const u32 separateCompute = separatedQueueIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT);
+    const u32 separateTransfer = separatedQueueIndex(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_COMPUTE_BIT);
+
+    const u32 computeCompatible = compatibleQueueIndex(VK_QUEUE_COMPUTE_BIT);
+    const u32 transferCompatible = compatibleQueueIndex(VK_QUEUE_TRANSFER_BIT);
+
+    const u32 graphicsIndex = compatibleQueueIndex(VK_QUEUE_GRAPHICS_BIT);
+    const u32 presentIndex = presentQueueIndex(m_Surface);
+    u32 computeIndex = UINT32_MAX;
+    u32 transferIndex = UINT32_MAX;
+
+    if (graphicsIndex != UINT32_MAX)
+        deviceFlags |= PhysicalDeviceFlags_HasGraphicsQueue;
+    if (presentIndex != UINT32_MAX)
+        deviceFlags |= PhysicalDeviceFlags_HasPresentQueue;
+
+    if (dedicatedCompute != UINT32_MAX)
+    {
+        computeIndex = dedicatedCompute;
+        deviceFlags |= PhysicalDeviceFlags_HasDedicatedComputeQueue;
+        deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
+    }
+    else if (separateCompute != UINT32_MAX)
+    {
+        computeIndex = separateCompute;
+        deviceFlags |= PhysicalDeviceFlags_HasSeparateComputeQueue;
+        deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
+    }
+    else if (computeCompatible != UINT32_MAX)
+    {
+        computeIndex = computeCompatible;
+        deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
+    }
+
+    if (dedicatedTransfer != UINT32_MAX)
+    {
+        transferIndex = dedicatedTransfer;
+        deviceFlags |= PhysicalDeviceFlags_HasDedicatedTransferQueue;
+        deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
+    }
+    else if (separateTransfer != UINT32_MAX)
+    {
+        transferIndex = separateTransfer;
+        deviceFlags |= PhysicalDeviceFlags_HasSeparateTransferQueue;
+        deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
+    }
+    else if (transferCompatible != UINT32_MAX)
+    {
+        transferIndex = transferCompatible;
+        deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
+    }
+
+    const auto checkFlags = [this, deviceFlags](const u16 p_SelectorFlag, const u16 p_DeviceFlag) -> bool {
+        return !(m_Flags & p_SelectorFlag) || (deviceFlags & p_DeviceFlag);
+    };
+
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireGraphicsQueue, PhysicalDeviceFlags_HasGraphicsQueue))
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a graphics queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireComputeQueue, PhysicalDeviceFlags_HasComputeQueue))
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a compute queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireTransferQueue, PhysicalDeviceFlags_HasTransferQueue))
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a transfer queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequirePresentQueue, PhysicalDeviceFlags_HasPresentQueue))
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a present queue", name));
+
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue,
+                    PhysicalDeviceFlags_HasDedicatedComputeQueue))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have a dedicated compute queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue,
+                    PhysicalDeviceFlags_HasDedicatedTransferQueue))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have a dedicated transfer queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue,
+                    PhysicalDeviceFlags_HasSeparateComputeQueue))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have a separate compute queue", name));
+    if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue,
+                    PhysicalDeviceFlags_HasSeparateTransferQueue))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have a separate transfer queue", name));
+
+    if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
+    {
+        const auto qresult = querySwapChainSupport(m_Instance, p_Device, m_Surface);
+        if (!qresult)
+            return JudgeResult::Error(
+                VKIT_FORMAT_ERROR(qresult.GetError().Result, "{}. Device: {}", qresult.GetError().Message, name));
+    }
+
+    const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+    const bool prop2 = instanceInfo.Flags & InstanceFlags_Properties2Extension;
+
+    Features features{};
+    Properties properties{};
+
+#ifdef VKIT_API_VERSION_1_2
+    features.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+    properties.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+    features.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    properties.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
+#endif
+
+    if (v11 || prop2)
+    {
+        VkPhysicalDeviceFeatures2 featuresChain{};
+        VkPhysicalDeviceProperties2 propertiesChain{};
+        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+        propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+
+        // 2 and 2KHR have the same signature
+        PFN_vkGetPhysicalDeviceFeatures2 getFeatures2;
+        PFN_vkGetPhysicalDeviceProperties2 getProperties2;
+
+        if (v11)
+        {
+            getFeatures2 = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
+            getProperties2 =
+                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
+        }
+        else
+        {
+            getFeatures2 =
+                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
+            getProperties2 =
+                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
+        }
+        if (!getFeatures2 || !getProperties2)
+            return JudgeResult::Error(VKIT_FORMAT_ERROR(
+                VK_ERROR_EXTENSION_NOT_PRESENT,
+                "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function for the device: {}", name));
+
+#ifdef VKIT_API_VERSION_1_2
+        featuresChain.pNext = &features.Vulkan11;
+        propertiesChain.pNext = &properties.Vulkan11;
+
+        features.Vulkan11.pNext = &features.Vulkan12;
+        properties.Vulkan11.pNext = &properties.Vulkan12;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+        features.Vulkan12.pNext = &features.Vulkan13;
+        properties.Vulkan12.pNext = &properties.Vulkan13;
+#endif
+
+        getFeatures2(p_Device, &featuresChain);
+        getProperties2(p_Device, &propertiesChain);
+
+        features.Core = featuresChain.features;
+        properties.Core = propertiesChain.properties;
+    }
+    else
+    {
+        vkGetPhysicalDeviceFeatures(p_Device, &features.Core);
+        vkGetPhysicalDeviceProperties(p_Device, &properties.Core);
+    }
+
+    if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have the required features", name));
+
+#ifdef VKIT_API_VERSION_1_2
+    if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
+        !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                              "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(
+            VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
+#endif
+
+    if (properties.Core.apiVersion < instanceInfo.ApiVersion)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not support the required API version", name));
+    if (m_PreferredType != Type(properties.Core.deviceType))
+    {
+        if (!checkFlag(PhysicalDeviceSelectorFlags_AnyType))
+            return JudgeResult::Error(
+                VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} is not of the preferred type", name));
+        fullySuitable = false;
+    }
+
+    vkGetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
+    TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
+                "Requested memory must be greater than or equal to required memory");
+
+    skipDevice = false;
+    for (u32 i = 0; i < properties.Memory.memoryHeapCount; ++i)
+    {
+        if (!(properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
+            return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                        "The device {} does not have device local memory", name));
+
+        const VkDeviceSize size = properties.Memory.memoryHeaps[i].size;
+        if (m_RequiredMemory > 0 && size < m_RequiredMemory)
+        {
+            skipDevice = true;
+            break;
+        }
+        if (m_RequestedMemory > 0 && size < m_RequestedMemory)
+            fullySuitable = false;
+    }
+    if (skipDevice)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device {} does not have the required memory size", name));
+
+    if (fullySuitable)
+        deviceFlags |= PhysicalDeviceFlags_Optimal;
+
+#ifdef VKIT_API_VERSION_1_2
+    features.Vulkan11.pNext = nullptr;
+    features.Vulkan12.pNext = nullptr;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    features.Vulkan13.pNext = nullptr;
+#endif
+
+    PhysicalDevice::Info deviceInfo{};
+    deviceInfo.AvailableExtensions = availableExtensions;
+    deviceInfo.EnabledExtensions = enabledExtensions;
+    deviceInfo.Properties = properties;
+    deviceInfo.Flags = deviceFlags;
+    deviceInfo.GraphicsIndex = graphicsIndex;
+    deviceInfo.ComputeIndex = computeIndex;
+    deviceInfo.TransferIndex = transferIndex;
+    deviceInfo.PresentIndex = presentIndex;
+    deviceInfo.QueueFamilies = families;
+    deviceInfo.Type = Type(properties.Core.deviceType);
+    deviceInfo.AvailableFeatures = features;
+    deviceInfo.EnabledFeatures = m_RequiredFeatures;
+    deviceInfo.Properties = properties;
+
+    return JudgeResult::Ok(p_Device, deviceInfo);
+}
+
+Result<DynamicArray<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const noexcept
+{
+    using EnumerateResult = Result<DynamicArray<FormattedResult<PhysicalDevice>>>;
+
+    if (!(m_Flags & PhysicalDeviceSelectorFlags_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
                                       "The surface must be set if the instance is not headless");
 
@@ -150,350 +519,15 @@ Result<DynamicArray<PhysicalDevice>> PhysicalDevice::Selector::Enumerate() const
     if (vkdevices.empty())
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
-    DynamicArray<PhysicalDevice> devices;
+    DynamicArray<FormattedResult<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
-        u32 extensionCount;
-        result = vkEnumerateDeviceExtensionProperties(vkdevice, nullptr, &extensionCount, nullptr);
-        if (result != VK_SUCCESS)
-            return EnumerateResult::Error(result, "Failed to get the number of device extensions");
-
-        DynamicArray<VkExtensionProperties> extensionsProps{extensionCount};
-        result = vkEnumerateDeviceExtensionProperties(vkdevice, nullptr, &extensionCount, extensionsProps.data());
-        if (result != VK_SUCCESS)
-            return EnumerateResult::Error(result, "Failed to get the device extensions");
-
-        DynamicArray<std::string> availableExtensions;
-        availableExtensions.reserve(extensionCount);
-        for (const VkExtensionProperties &extension : extensionsProps)
-            availableExtensions.push_back(extension.extensionName);
-
-        DynamicArray<std::string> enabledExtensions;
-        enabledExtensions.reserve(availableExtensions.size());
-
-        bool skipDevice = false;
-        for (const std::string &extension : m_RequiredExtensions)
-        {
-            if (!contains(availableExtensions, extension))
-            {
-                skipDevice = true;
-                break;
-            }
-            enabledExtensions.push_back(extension);
-        }
-        if (skipDevice)
-            continue;
-
-        bool fullySuitable = true;
-        for (const std::string &extension : m_RequestedExtensions)
-            if (contains(availableExtensions, extension))
-                enabledExtensions.push_back(extension);
-            else
-                fullySuitable = false;
-
-        if (checkFlag(PhysicalDeviceSelectorFlags_PortabilitySubset))
-            enabledExtensions.push_back("VK_KHR_portability_subset");
-        if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
-            enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-
-        u32 familyCount;
-        vkGetPhysicalDeviceQueueFamilyProperties(vkdevice, &familyCount, nullptr);
-
-        DynamicArray<VkQueueFamilyProperties> families{familyCount};
-        vkGetPhysicalDeviceQueueFamilyProperties(vkdevice, &familyCount, families.data());
-
-        const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
-            for (u32 i = 0; i < familyCount; ++i)
-                if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags)
-                    return i;
-
-            return UINT32_MAX;
-        };
-        const auto dedicatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
-                                                                  const VkQueueFlags p_ForbiddenFlags) -> u32 {
-            for (u32 i = 0; i < familyCount; ++i)
-                if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
-                    !(families[i].queueFlags & p_ForbiddenFlags))
-                    return i;
-
-            return UINT32_MAX;
-        };
-        const auto separatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
-                                                                  const VkQueueFlags p_ForbiddenFlags) -> u32 {
-            u32 index = UINT32_MAX;
-            for (u32 i = 0; i < familyCount; ++i)
-                if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
-                    !(families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT))
-                {
-                    if (!(families[i].queueFlags & p_ForbiddenFlags))
-                        return i;
-                    index = i;
-                }
-            return index;
-        };
-        const auto presentQueueIndex = [this, familyCount, vkdevice](const VkSurfaceKHR p_Surface) -> u32 {
-            if (!p_Surface)
-                return UINT32_MAX;
-
-            const auto queryPresentSupport = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(
-                "vkGetPhysicalDeviceSurfaceSupportKHR");
-            if (!queryPresentSupport)
-                return UINT32_MAX;
-
-            for (u32 i = 0; i < familyCount; ++i)
-            {
-                VkBool32 presentSupport = VK_FALSE;
-                const VkResult result = queryPresentSupport(vkdevice, i, p_Surface, &presentSupport);
-                if (result == VK_SUCCESS && presentSupport == VK_TRUE)
-                    return i;
-            }
-            return UINT32_MAX;
-        };
-
-        TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireComputeQueue) ||
-                        (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue) &&
-                         !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue)),
-                    "Flags mismatch: Must require compute queue to request dedicated or separate compute queue");
-
-        TKIT_ASSERT(checkFlag(PhysicalDeviceSelectorFlags_RequireTransferQueue) ||
-                        (!checkFlag(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue) &&
-                         !checkFlag(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue)),
-                    "Flags mismatch: Must require transfer queue to request dedicated or separate transfer queue");
-
-        u16 deviceFlags = 0;
-        const u32 dedicatedCompute =
-            dedicatedQueueIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT);
-        const u32 dedicatedTransfer =
-            dedicatedQueueIndex(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
-
-        const u32 separateCompute = separatedQueueIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT);
-        const u32 separateTransfer = separatedQueueIndex(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_COMPUTE_BIT);
-
-        const u32 computeCompatible = compatibleQueueIndex(VK_QUEUE_COMPUTE_BIT);
-        const u32 transferCompatible = compatibleQueueIndex(VK_QUEUE_TRANSFER_BIT);
-
-        const u32 graphicsIndex = compatibleQueueIndex(VK_QUEUE_GRAPHICS_BIT);
-        const u32 presentIndex = presentQueueIndex(m_Surface);
-        u32 computeIndex = UINT32_MAX;
-        u32 transferIndex = UINT32_MAX;
-
-        if (graphicsIndex != UINT32_MAX)
-            deviceFlags |= PhysicalDeviceFlags_HasGraphicsQueue;
-        if (presentIndex != UINT32_MAX)
-            deviceFlags |= PhysicalDeviceFlags_HasPresentQueue;
-
-        if (dedicatedCompute != UINT32_MAX)
-        {
-            computeIndex = dedicatedCompute;
-            deviceFlags |= PhysicalDeviceFlags_HasDedicatedComputeQueue;
-            deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
-        }
-        else if (separateCompute != UINT32_MAX)
-        {
-            computeIndex = separateCompute;
-            deviceFlags |= PhysicalDeviceFlags_HasSeparateComputeQueue;
-            deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
-        }
-        else if (computeCompatible != UINT32_MAX)
-        {
-            computeIndex = computeCompatible;
-            deviceFlags |= PhysicalDeviceFlags_HasComputeQueue;
-        }
-
-        if (dedicatedTransfer != UINT32_MAX)
-        {
-            transferIndex = dedicatedTransfer;
-            deviceFlags |= PhysicalDeviceFlags_HasDedicatedTransferQueue;
-            deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
-        }
-        else if (separateTransfer != UINT32_MAX)
-        {
-            transferIndex = separateTransfer;
-            deviceFlags |= PhysicalDeviceFlags_HasSeparateTransferQueue;
-            deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
-        }
-        else if (transferCompatible != UINT32_MAX)
-        {
-            transferIndex = transferCompatible;
-            deviceFlags |= PhysicalDeviceFlags_HasTransferQueue;
-        }
-
-        const auto checkFlags = [this, deviceFlags](const u16 p_SelectorFlag, const u16 p_DeviceFlag) -> bool {
-            return !(m_Flags & p_SelectorFlag) || (deviceFlags & p_DeviceFlag);
-        };
-
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireGraphicsQueue, PhysicalDeviceFlags_HasGraphicsQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireComputeQueue, PhysicalDeviceFlags_HasComputeQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireTransferQueue, PhysicalDeviceFlags_HasTransferQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequirePresentQueue, PhysicalDeviceFlags_HasPresentQueue))
-            continue;
-
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue,
-                        PhysicalDeviceFlags_HasDedicatedComputeQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue,
-                        PhysicalDeviceFlags_HasDedicatedTransferQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue,
-                        PhysicalDeviceFlags_HasSeparateComputeQueue))
-            continue;
-        if (!checkFlags(PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue,
-                        PhysicalDeviceFlags_HasSeparateTransferQueue))
-            continue;
-
-        if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
-        {
-            const auto result = querySwapChainSupport(m_Instance, vkdevice, m_Surface);
-        }
-
-        const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
-        const bool prop2 = instanceInfo.Flags & InstanceFlags_Properties2Extension;
-
-        Features features{};
-        Properties properties{};
-
-#ifdef VKIT_API_VERSION_1_2
-        features.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-        properties.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
-        features.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-        properties.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-        properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
-#endif
-
-        if (v11 || prop2)
-        {
-            VkPhysicalDeviceFeatures2 featuresChain{};
-            VkPhysicalDeviceProperties2 propertiesChain{};
-            featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-            propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-
-            // 2 and 2KHR have the same signature
-            PFN_vkGetPhysicalDeviceFeatures2 getFeatures2;
-            PFN_vkGetPhysicalDeviceProperties2 getProperties2;
-
-            if (v11)
-            {
-                getFeatures2 = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
-                getProperties2 =
-                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
-            }
-            else
-            {
-                getFeatures2 =
-                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
-                getProperties2 =
-                    m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
-            }
-            if (!getFeatures2 || !getProperties2)
-                return EnumerateResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                              "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function");
-
-#ifdef VKIT_API_VERSION_1_2
-            featuresChain.pNext = &features.Vulkan11;
-            propertiesChain.pNext = &properties.Vulkan11;
-
-            features.Vulkan11.pNext = &features.Vulkan12;
-            properties.Vulkan11.pNext = &properties.Vulkan12;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-            features.Vulkan12.pNext = &features.Vulkan13;
-            properties.Vulkan12.pNext = &properties.Vulkan13;
-#endif
-
-            getFeatures2(vkdevice, &featuresChain);
-            getProperties2(vkdevice, &propertiesChain);
-
-            features.Core = featuresChain.features;
-            properties.Core = propertiesChain.properties;
-        }
-        else
-        {
-            vkGetPhysicalDeviceFeatures(vkdevice, &features.Core);
-            vkGetPhysicalDeviceProperties(vkdevice, &properties.Core);
-        }
-
-        if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
-            continue;
-
-#ifdef VKIT_API_VERSION_1_2
-        if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
-            !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
-            continue;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
-            continue;
-#endif
-
-        if (m_Name != nullptr && strcmp(m_Name, properties.Core.deviceName) != 0)
-            continue;
-        if (properties.Core.apiVersion < instanceInfo.ApiVersion)
-            continue;
-        if (m_PreferredType != Type(properties.Core.deviceType))
-        {
-            if (!checkFlag(PhysicalDeviceSelectorFlags_AnyType))
-                continue;
-            fullySuitable = false;
-        }
-
-        vkGetPhysicalDeviceMemoryProperties(vkdevice, &properties.Memory);
-        TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
-                    "Requested memory must be greater than or equal to required memory");
-
-        skipDevice = false;
-        for (u32 i = 0; i < properties.Memory.memoryHeapCount; ++i)
-        {
-            if (!(properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
-                continue;
-
-            const VkDeviceSize size = properties.Memory.memoryHeaps[i].size;
-            if (m_RequiredMemory > 0 && size < m_RequiredMemory)
-            {
-                skipDevice = true;
-                break;
-            }
-            if (m_RequestedMemory > 0 && size < m_RequestedMemory)
-                fullySuitable = false;
-        }
-        if (skipDevice)
-            continue;
-
-        if (fullySuitable)
-            deviceFlags |= PhysicalDeviceFlags_Optimal;
-
-#ifdef VKIT_API_VERSION_1_2
-        features.Vulkan11.pNext = nullptr;
-        features.Vulkan12.pNext = nullptr;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        features.Vulkan13.pNext = nullptr;
-#endif
-
-        PhysicalDevice::Info deviceInfo{};
-        deviceInfo.AvailableExtensions = availableExtensions;
-        deviceInfo.EnabledExtensions = enabledExtensions;
-        deviceInfo.Properties = properties;
-        deviceInfo.Flags = deviceFlags;
-        deviceInfo.GraphicsIndex = graphicsIndex;
-        deviceInfo.ComputeIndex = computeIndex;
-        deviceInfo.TransferIndex = transferIndex;
-        deviceInfo.PresentIndex = presentIndex;
-        deviceInfo.QueueFamilies = families;
-        deviceInfo.Type = Type(properties.Core.deviceType);
-        deviceInfo.AvailableFeatures = features;
-        deviceInfo.EnabledFeatures = m_RequiredFeatures;
-        deviceInfo.Properties = properties;
-        devices.emplace_back(vkdevice, deviceInfo);
+        const auto judgeResult = judgeDevice(vkdevice);
+        devices.push_back(judgeResult);
     }
 
-    std::stable_partition(devices.begin(), devices.end(), [](const PhysicalDevice &p_Device) {
-        return p_Device.GetInfo().Flags & PhysicalDeviceFlags_Optimal;
+    std::stable_partition(devices.begin(), devices.end(), [](const FormattedResult<PhysicalDevice> &p_Device) {
+        return p_Device && (p_Device.GetValue().GetInfo().Flags & PhysicalDeviceFlags_Optimal);
     });
     return EnumerateResult::Ok(devices);
 }
