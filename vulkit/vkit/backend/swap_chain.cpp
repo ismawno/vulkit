@@ -471,6 +471,16 @@ SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormat
     m_SurfaceFormats.push_back(p_Format);
     return *this;
 }
+SwapChain::Builder &SwapChain::Builder::RequestDepthFormat(const VkFormat p_Format) noexcept
+{
+    m_DepthFormats.insert(m_DepthFormats.begin(), p_Format);
+    return *this;
+}
+SwapChain::Builder &SwapChain::Builder::AllowDepthFormat(const VkFormat p_Format) noexcept
+{
+    m_DepthFormats.push_back(p_Format);
+    return *this;
+}
 SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode) noexcept
 {
     m_PresentModes.insert(m_PresentModes.begin(), p_Mode);

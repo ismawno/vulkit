@@ -83,6 +83,9 @@ class SwapChain
         Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
         Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
 
+        Builder &RequestDepthFormat(VkFormat p_Format) noexcept;
+        Builder &AllowDepthFormat(VkFormat p_Format) noexcept;
+
         Builder &RequestPresentMode(VkPresentModeKHR p_Mode) noexcept;
         Builder &AllowPresentMode(VkPresentModeKHR p_Mode) noexcept;
 
