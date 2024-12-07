@@ -121,7 +121,7 @@ class SwapChain
         u32 m_Width = 512;
         u32 m_Height = 512;
 
-        u32 m_RequestedImages = 2;
+        u32 m_RequestedImages = 0;
         u32 m_RequiredImages = 0; // Zero means no requirement
         u32 m_ImageArrayLayers = 1;
 

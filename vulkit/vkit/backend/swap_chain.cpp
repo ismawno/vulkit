@@ -62,7 +62,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     const PhysicalDevice::SwapChainSupportDetails &support = suppResult.GetValue();
 
-    const auto checkImageCount = [&support](const u32 p_Count) -> const char * {
+    const auto badImageCount = [&support](const u32 p_Count) -> const char * {
         if (p_Count < support.Capabilities.minImageCount)
             return "The requested image count is less than the minimum image count";
         if (support.Capabilities.maxImageCount > 0 && p_Count > support.Capabilities.maxImageCount)
@@ -71,7 +71,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     };
 
     u32 minImageCount = m_RequestedImages;
-    if (checkImageCount(minImageCount))
+    if (badImageCount(minImageCount))
         if (m_RequiredImages == 0)
         {
             minImageCount = support.Capabilities.minImageCount + 1;
@@ -81,7 +81,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         else
         {
             minImageCount = m_RequiredImages;
-            const char *error = checkImageCount(minImageCount);
+            const char *error = badImageCount(minImageCount);
             if (error)
                 return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, error);
         }
