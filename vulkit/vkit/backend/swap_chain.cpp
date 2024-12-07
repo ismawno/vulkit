@@ -406,7 +406,7 @@ SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_Swap
 
 void SwapChain::Destroy() noexcept
 {
-    TKIT_ASSERT(m_SwapChain, "The swap chain is already destroyed");
+    TKIT_ASSERT(m_SwapChain, "The swap chain is a NULL handle");
 
     const auto destroySwapChain =
         System::GetDeviceFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR", m_Device);

@@ -56,7 +56,7 @@ i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view 
 
 void Shader::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Module, "The shader is already destroyed");
+    TKIT_ASSERT(m_Module, "The shader is a NULL handle");
     vkDestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
     m_Module = VK_NULL_HANDLE;
 }
