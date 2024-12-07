@@ -90,6 +90,7 @@ class SwapChain
         Builder &RequireImageCount(u32 p_Images) noexcept;
 
         Builder &RequestExtent(u32 p_Width, u32 p_Height) noexcept;
+        Builder &RequestExtent(const VkExtent2D &p_Extent) noexcept;
 
         Builder &SetImageArrayLayers(u32 p_Layers) noexcept;
 

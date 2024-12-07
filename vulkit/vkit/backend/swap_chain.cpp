@@ -501,6 +501,12 @@ SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u
     m_Height = p_Height;
     return *this;
 }
+SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent) noexcept
+{
+    m_Width = p_Extent.width;
+    m_Height = p_Extent.height;
+    return *this;
+}
 SwapChain::Builder &SwapChain::Builder::SetAllocator(VmaAllocator p_Allocator) noexcept
 {
     m_Allocator = p_Allocator;
