@@ -69,6 +69,7 @@ class LogicalDevice
     Proxy CreateProxy() const noexcept;
 
     explicit(false) operator VkDevice() const noexcept;
+    explicit(false) operator Proxy() const noexcept;
     explicit(false) operator bool() const noexcept;
 
     template <typename F> F GetFunction(const char *p_Name) const noexcept
