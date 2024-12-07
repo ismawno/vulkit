@@ -14,11 +14,7 @@ endif()
 
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-if (CMAKE_BUILD_TYPE STREQUAL "Dist")
-    option(VULKIT_BUILD_TESTS "Build the demos" OFF)
-else()
-    option(VULKIT_BUILD_TESTS "Build the demos" ON)
-endif()
+option(VULKIT_BUILD_TESTS "Build the demos" OFF)
 
 message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 
