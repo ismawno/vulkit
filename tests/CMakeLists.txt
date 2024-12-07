@@ -14,7 +14,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 set(SOURCES
+    tests/utils.cpp
     tests/backend/instance.cpp
+    tests/backend/physical_device.cpp
 )
 
 add_executable(vulkit-tests ${SOURCES})

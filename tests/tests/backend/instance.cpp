@@ -7,7 +7,7 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
 {
     SetupSystem();
     auto result = Instance::Builder().SetHeadless().Build();
-    REQUIRE(result);
+    CheckResult(result);
 
     Instance &instance = result.GetValue();
     const Instance::Info &info = instance.GetInfo();

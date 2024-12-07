@@ -5,9 +5,17 @@
 
 namespace VKit
 {
-void SetupSystem()
+void SetupSystem() noexcept;
+
+template <typename T> void CheckResult(const T &result) noexcept
 {
-    const auto sysres = System::Initialize();
-    REQUIRE(sysres);
+    if (!result)
+        FAIL(result.GetError().Message);
+}
+
+template <typename T> void CheckVulkanResult(const T &result) noexcept
+{
+    if (!result)
+        FAIL(result.Message);
 }
 } // namespace VKit

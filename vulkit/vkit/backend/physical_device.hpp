@@ -32,6 +32,9 @@ enum PhysicalDeviceSelectorFlags : u16
     PhysicalDeviceSelectorFlags_RequirePresentQueue = 1 << 9
 };
 
+// If instance API version do not support 1.1/1.2/1.3 features event though the version macros are defined,
+// the 1.1/1.2/1.3 structs will be ignored
+
 class PhysicalDevice
 {
   public:
@@ -100,7 +103,7 @@ class PhysicalDevice
     class Selector
     {
       public:
-        explicit Selector(const Instance &p_Instance) noexcept;
+        explicit Selector(const Instance *p_Instance) noexcept;
 
         FormattedResult<PhysicalDevice> Select() const noexcept;
         Result<DynamicArray<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
@@ -128,7 +131,7 @@ class PhysicalDevice
       private:
         FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const noexcept;
 
-        Instance m_Instance;
+        const Instance *m_Instance;
         const char *m_Name = nullptr;
 
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;

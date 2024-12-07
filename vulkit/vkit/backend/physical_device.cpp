@@ -97,7 +97,7 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
     return Res::Ok(details);
 }
 
-PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Instance(p_Instance)
+PhysicalDevice::Selector::Selector(const Instance *p_Instance) noexcept : m_Instance(p_Instance)
 {
 #ifdef VKIT_API_VERSION_1_2
     m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
@@ -107,7 +107,7 @@ PhysicalDevice::Selector::Selector(const Instance &p_Instance) noexcept : m_Inst
     m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 #endif
 
-    if ((p_Instance.GetInfo().Flags & InstanceFlags_Headless))
+    if (!(p_Instance->GetInfo().Flags & InstanceFlags_Headless))
         m_Flags |= PhysicalDeviceSelectorFlags_RequirePresentQueue;
 }
 
@@ -124,7 +124,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcep
 FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const noexcept
 {
     using JudgeResult = FormattedResult<PhysicalDevice>;
-    const Instance::Info &instanceInfo = m_Instance.GetInfo();
+    const Instance::Info &instanceInfo = m_Instance->GetInfo();
 
     VkPhysicalDeviceProperties quickProperties;
     vkGetPhysicalDeviceProperties(p_Device, &quickProperties);
@@ -221,7 +221,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             return UINT32_MAX;
 
         const auto queryPresentSupport =
-            m_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>("vkGetPhysicalDeviceSurfaceSupportKHR");
+            m_Instance->GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>("vkGetPhysicalDeviceSurfaceSupportKHR");
         if (!queryPresentSupport)
             return UINT32_MAX;
 
@@ -339,7 +339,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
     if (checkFlag(PhysicalDeviceSelectorFlags_RequirePresentQueue))
     {
-        const auto qresult = querySwapChainSupport(m_Instance, p_Device, m_Surface);
+        const auto qresult = querySwapChainSupport(*m_Instance, p_Device, m_Surface);
         if (!qresult)
             return JudgeResult::Error(
                 VKIT_FORMAT_ERROR(qresult.GetError().Result, "{}. Device: {}", qresult.GetError().Message, name));
@@ -362,6 +362,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
 #endif
 
+    const bool api12 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0);
+    const bool api13 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0);
+
     if (v11 || prop2)
     {
         VkPhysicalDeviceFeatures2 featuresChain{};
@@ -375,16 +378,16 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
         if (v11)
         {
-            getFeatures2 = m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
+            getFeatures2 = m_Instance->GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
             getProperties2 =
-                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
+                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
         }
         else
         {
             getFeatures2 =
-                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
+                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
             getProperties2 =
-                m_Instance.GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
+                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
         }
         if (!getFeatures2 || !getProperties2)
             return JudgeResult::Error(VKIT_FORMAT_ERROR(
@@ -392,15 +395,21 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                 "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function for the device: {}", name));
 
 #ifdef VKIT_API_VERSION_1_2
-        featuresChain.pNext = &features.Vulkan11;
-        propertiesChain.pNext = &properties.Vulkan11;
+        if (api12)
+        {
+            featuresChain.pNext = &features.Vulkan11;
+            propertiesChain.pNext = &properties.Vulkan11;
 
-        features.Vulkan11.pNext = &features.Vulkan12;
-        properties.Vulkan11.pNext = &properties.Vulkan12;
+            features.Vulkan11.pNext = &features.Vulkan12;
+            properties.Vulkan11.pNext = &properties.Vulkan12;
+        }
 #endif
 #ifdef VKIT_API_VERSION_1_3
-        features.Vulkan12.pNext = &features.Vulkan13;
-        properties.Vulkan12.pNext = &properties.Vulkan13;
+        if (api13)
+        {
+            features.Vulkan12.pNext = &features.Vulkan13;
+            properties.Vulkan12.pNext = &properties.Vulkan13;
+        }
 #endif
 
         getFeatures2(p_Device, &featuresChain);
@@ -420,14 +429,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                                                     "The device {} does not have the required features", name));
 
 #ifdef VKIT_API_VERSION_1_2
-    if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
-        !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
+    if (api12 && (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
+                  !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12)))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
                               "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
+    if (api13 && !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
 #endif
@@ -500,19 +509,19 @@ Result<DynamicArray<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::
 {
     using EnumerateResult = Result<DynamicArray<FormattedResult<PhysicalDevice>>>;
 
-    if (!(m_Flags & PhysicalDeviceSelectorFlags_RequirePresentQueue) && !m_Surface)
+    if ((m_Flags & PhysicalDeviceSelectorFlags_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
                                       "The surface must be set if the instance is not headless");
 
     DynamicArray<VkPhysicalDevice> vkdevices;
 
     u32 deviceCount = 0;
-    VkResult result = vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
+    VkResult result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, nullptr);
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the number of physical devices");
 
     vkdevices.resize(deviceCount);
-    result = vkEnumeratePhysicalDevices(m_Instance, &deviceCount, vkdevices.data());
+    result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, vkdevices.data());
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the physical devices");
 
