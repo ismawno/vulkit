@@ -12,8 +12,6 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build" FORCE)
 endif()
 
-set(TOOLKIT_BUILD_TESTS OFF CACHE BOOL "Build toolkit tests" FORCE)
-set(TOOLKIT_BUILD_PERFORMANCE OFF CACHE BOOL "Build toolkit performance tests" FORCE)
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (CMAKE_BUILD_TYPE STREQUAL "Dist")
