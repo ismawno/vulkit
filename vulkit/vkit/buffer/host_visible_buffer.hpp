@@ -61,8 +61,7 @@ template <typename T> class HostVisibleBuffer
         return Create(specs);
     }
 
-    static Result<HostVisibleBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs,
-                                                       const VkDeviceSize p_Alignment) noexcept
+    static Result<HostVisibleBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
         Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -70,7 +69,6 @@ template <typename T> class HostVisibleBuffer
         specs.Usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
         specs.Coherent = p_Specs.Coherent;
-        specs.MinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
@@ -81,6 +79,19 @@ template <typename T> class HostVisibleBuffer
         specs.Allocator = p_Specs.Allocator;
         specs.Capacity = p_Specs.Capacity;
         specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+        specs.AllocationFlags = p_Specs.AllocationFlags;
+        specs.Coherent = p_Specs.Coherent;
+        specs.MinimumAlignment = p_Alignment;
+        return Create(specs);
+    }
+
+    static Result<HostVisibleBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
+                                                         const VkDeviceSize p_Alignment) noexcept
+    {
+        Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
+        specs.Capacity = p_Specs.Capacity;
+        specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
         specs.Coherent = p_Specs.Coherent;
         specs.MinimumAlignment = p_Alignment;
