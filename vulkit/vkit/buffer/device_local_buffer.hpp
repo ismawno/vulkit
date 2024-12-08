@@ -48,7 +48,7 @@ template <typename T> class DeviceLocalBuffer
         if (!result1)
             return Result<DeviceLocalBuffer>::Error(result1.GetError().Result, "Failed to create main device buffer");
 
-        const Buffer &buffer = result1.GetValue();
+        Buffer &buffer = result1.GetValue();
 
         Buffer::Specs stagingSpecs = specs;
         stagingSpecs.Usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
