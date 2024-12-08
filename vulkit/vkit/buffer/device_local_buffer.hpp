@@ -103,7 +103,8 @@ template <typename T> class DeviceLocalBuffer
         return Create(specs);
     }
 
-    static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
+                                                         const VkDeviceSize p_Alignment) noexcept
     {
         Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -112,10 +113,12 @@ template <typename T> class DeviceLocalBuffer
         specs.CommandPool = p_Specs.CommandPool;
         specs.Queue = p_Specs.Queue;
         specs.AllocationFlags = p_Specs.AllocationFlags;
+        specs.MinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
-    static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
+                                                         const VkDeviceSize p_Alignment) noexcept
     {
         Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -124,6 +127,7 @@ template <typename T> class DeviceLocalBuffer
         specs.CommandPool = p_Specs.CommandPool;
         specs.Queue = p_Specs.Queue;
         specs.AllocationFlags = p_Specs.AllocationFlags;
+        specs.MinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
