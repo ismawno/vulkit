@@ -44,7 +44,7 @@ template <typename T> class DeviceLocalBuffer
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
 
-        const auto result1 = Buffer::Create(specs);
+        auto result1 = Buffer::Create(specs);
         if (!result1)
             return Result<DeviceLocalBuffer>::Error(result1.GetError().Result, "Failed to create main device buffer");
 
