@@ -74,7 +74,7 @@ template <typename T> class DeviceLocalBuffer
         const auto result3 = buffer.CopyFrom(stagingBuffer, *p_Specs.CommandPool, p_Specs.Queue);
         stagingBuffer.Destroy();
         if (!result3)
-            return Result<DeviceLocalBuffer>::Error(result3.GetError().Result, "Failed to copy data to main buffer");
+            return Result<DeviceLocalBuffer>::Error(result3.Result, "Failed to copy data to main buffer");
 
         return Result<DeviceLocalBuffer>::Ok(buffer);
     }
