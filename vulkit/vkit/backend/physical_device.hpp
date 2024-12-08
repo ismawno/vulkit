@@ -35,7 +35,7 @@ enum PhysicalDeviceSelectorFlags : u16
 // If instance API version do not support 1.1/1.2/1.3 features event though the version macros are defined,
 // the 1.1/1.2/1.3 structs will be ignored
 
-class PhysicalDevice
+class VKIT_API PhysicalDevice
 {
   public:
     enum Type

@@ -5,7 +5,7 @@
 
 namespace VKit
 {
-class Shader
+class VKIT_API Shader
 {
   public:
     static FormattedResult<Shader> Create(const LogicalDevice::Proxy &p_Device, std::string_view p_BinaryPath) noexcept;

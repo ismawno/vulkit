@@ -4,7 +4,7 @@
 
 namespace VKit
 {
-class ComputePipeline
+class VKIT_API ComputePipeline
 {
   public:
     struct Specs

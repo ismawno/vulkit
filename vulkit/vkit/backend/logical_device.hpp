@@ -8,13 +8,13 @@
 
 namespace VKit
 {
-struct QueuePriorities
+struct VKIT_API QueuePriorities
 {
     u32 Index;
     DynamicArray<f32> Priorities;
 };
 
-enum class QueueType : u32
+enum class VKIT_API QueueType : u32
 {
     Graphics = 0,
     Compute = 1,
@@ -22,7 +22,7 @@ enum class QueueType : u32
     Present = 3
 };
 
-class LogicalDevice
+class VKIT_API LogicalDevice
 {
   public:
     struct Proxy

@@ -34,7 +34,7 @@ enum SwapChainFlags : u8
     SwapChainFlags_HasDefaultFrameBuffers = 1 << 4
 };
 
-class SwapChain
+class VKIT_API SwapChain
 {
   public:
     struct ImageData

@@ -59,7 +59,7 @@ namespace VKit
 template <typename T>
 concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::string>;
 
-template <String MessageType> class VulkanResultInfo
+template <String MessageType> class VKIT_API VulkanResultInfo
 {
   public:
     static VulkanResultInfo Success() noexcept;
@@ -80,7 +80,7 @@ using VulkanFormattedResult = VulkanResultInfo<std::string>;
 template <typename T> using Result = TKit::Result<T, VulkanResult>;
 template <typename T> using FormattedResult = TKit::Result<T, VulkanFormattedResult>;
 
-struct System
+struct VKIT_API System
 {
     static VulkanResult Initialize() noexcept;
 
@@ -104,7 +104,7 @@ struct System
     static inline DynamicArray<VkLayerProperties> AvailableLayers{};
 };
 
-class DeletionQueue
+class VKIT_API DeletionQueue
 {
   public:
     void Push(std::function<void()> &&p_Deleter) noexcept;
