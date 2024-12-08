@@ -10,6 +10,7 @@ template <typename T> class DeviceLocalBuffer
   public:
     struct Specs
     {
+        VmaAllocator Allocator = VK_NULL_HANDLE;
         std::span<const T> Data;
         VkBufferUsageFlags Usage;
         CommandPool *CommandPool;
@@ -20,6 +21,7 @@ template <typename T> class DeviceLocalBuffer
 
     struct SpecializedSpecs
     {
+        VmaAllocator Allocator = VK_NULL_HANDLE;
         std::span<const T> Data;
         CommandPool *CommandPool;
         VkQueue Queue;
@@ -34,6 +36,7 @@ template <typename T> class DeviceLocalBuffer
     static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
     {
         Buffer::Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Data.size();
         specs.InstanceSize = sizeof(T);
         specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
@@ -79,6 +82,7 @@ template <typename T> class DeviceLocalBuffer
     static Result<DeviceLocalBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Data = p_Specs.Data;
         specs.Usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         specs.CommandPool = p_Specs.CommandPool;
@@ -90,6 +94,7 @@ template <typename T> class DeviceLocalBuffer
     static Result<DeviceLocalBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Data = p_Specs.Data;
         specs.Usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         specs.CommandPool = p_Specs.CommandPool;
@@ -101,6 +106,7 @@ template <typename T> class DeviceLocalBuffer
     static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Data = p_Specs.Data;
         specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         specs.CommandPool = p_Specs.CommandPool;
@@ -112,6 +118,7 @@ template <typename T> class DeviceLocalBuffer
     static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Data = p_Specs.Data;
         specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
         specs.CommandPool = p_Specs.CommandPool;

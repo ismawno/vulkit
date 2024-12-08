@@ -9,6 +9,7 @@ template <typename T> class HostVisibleBuffer
   public:
     struct Specs
     {
+        VmaAllocator Allocator = VK_NULL_HANDLE;
         VkDeviceSize Capacity;
         VkBufferUsageFlags Usage;
         VkDeviceSize MinimumAlignment = 1;
@@ -18,6 +19,7 @@ template <typename T> class HostVisibleBuffer
 
     struct SpecializedSpecs
     {
+        VmaAllocator Allocator = VK_NULL_HANDLE;
         VkDeviceSize Capacity;
         VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
         bool Coherent = false;
@@ -31,6 +33,7 @@ template <typename T> class HostVisibleBuffer
     static Result<HostVisibleBuffer> Create(const Specs &p_Specs) noexcept
     {
         Buffer::Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Capacity;
         specs.InstanceSize = sizeof(T);
         specs.Usage = p_Specs.Usage;
@@ -50,6 +53,7 @@ template <typename T> class HostVisibleBuffer
     static Result<HostVisibleBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Capacity = p_Specs.Capacity;
         specs.Usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
@@ -61,6 +65,7 @@ template <typename T> class HostVisibleBuffer
                                                        const VkDeviceSize p_Alignment) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Capacity = p_Specs.Capacity;
         specs.Usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
@@ -73,6 +78,7 @@ template <typename T> class HostVisibleBuffer
                                                          const VkDeviceSize p_Alignment) noexcept
     {
         Specs specs{};
+        specs.Allocator = p_Specs.Allocator;
         specs.Capacity = p_Specs.Capacity;
         specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
