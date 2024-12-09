@@ -31,23 +31,23 @@
 
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_VULKAN_RESULT(result) TKIT_ASSERT(result, "{}", result.Message)
-#    define VKIT_ASSERT_RESULT(result) VKIT_ASSERT_VULKAN_RESULT(result.GetError())
+#    define VKIT_ASSERT_RESULT(result) TKIT_ASSERT(result, "{}", result.GetError().Message)
 #else
 #    define VKIT_ASSERT_VULKAN_RESULT(result)
 #    define VKIT_ASSERT_RESULT(result)
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_VULKAN_RESULT(result) TKIT_LOG_INFO("{}", result.Message)
-#    define VKIT_LOG_RESULT(result) VKIT_LOG_VULKAN_RESULT(result.GetError())
+#    define VKIT_LOG_VULKAN_RESULT(result) TKIT_LOG_INFO_IF(!result, "{}", result.Message)
+#    define VKIT_LOG_RESULT(result) TKIT_LOG_INFO_IF(!result, "{}", result.GetError().Message)
 #else
 #    define VKIT_LOG_VULKAN_RESULT(result)
 #    define VKIT_LOG_RESULT(result)
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_WARN_VULKAN_RESULT(result) TKIT_LOG_WARNING("{}", result.Message)
-#    define VKIT_WARN_RESULT(result) VKIT_WARN_VULKAN_RESULT(result.GetError())
+#    define VKIT_WARN_VULKAN_RESULT(result) TKIT_LOG_WARNING_IF(!result, "{}", result.Message)
+#    define VKIT_WARN_RESULT(result) TKIT_LOG_WARNING_IF(!result, "{}", result.GetError().Message)
 #else
 #    define VKIT_WARN_VULKAN_RESULT(result)
 #    define VKIT_WARN_RESULT(result)
