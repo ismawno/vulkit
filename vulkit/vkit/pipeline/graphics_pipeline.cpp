@@ -38,7 +38,7 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline:
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaderStages[1].module = p_Specs.FragmentShader;
 
-    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    thread_local VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
     if (hasAttributes || hasBindings)
