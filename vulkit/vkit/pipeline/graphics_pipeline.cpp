@@ -27,6 +27,7 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline:
     thread_local std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
     for (auto &shaderStage : shaderStages)
     {
+        shaderStage = {};
         shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStage.pName = "main";
         shaderStage.flags = 0;
@@ -39,6 +40,7 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline:
     shaderStages[1].module = p_Specs.FragmentShader;
 
     thread_local VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo = {};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
     if (hasAttributes || hasBindings)
