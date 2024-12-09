@@ -101,6 +101,7 @@ template <typename T> class HostVisibleBuffer
     HostVisibleBuffer() noexcept = default;
     explicit HostVisibleBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
     {
+        m_Buffer.Map();
     }
 
     void Destroy() noexcept
@@ -110,15 +111,6 @@ template <typename T> class HostVisibleBuffer
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     {
         m_Buffer.SubmitForDeletion(p_Queue);
-    }
-
-    void Map() noexcept
-    {
-        m_Buffer.Map();
-    }
-    void Unmap() noexcept
-    {
-        m_Buffer.Unmap();
     }
 
     void Write(const std::span<const T> p_Data) noexcept
