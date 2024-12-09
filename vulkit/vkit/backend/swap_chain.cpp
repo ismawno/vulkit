@@ -72,6 +72,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     u32 minImageCount = m_RequestedImages;
     if (badImageCount(minImageCount))
+    {
         if (m_RequiredImages == 0)
         {
             minImageCount = support.Capabilities.minImageCount + 1;
@@ -85,6 +86,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
             if (error)
                 return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, error);
         }
+    }
     TKIT_ASSERT(minImageCount <= VKIT_MAX_IMAGE_COUNT, "The image count is too high");
 
     const auto surfFormatResult = selectFormat(imageFormats, support.Formats);

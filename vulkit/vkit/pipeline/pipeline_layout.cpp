@@ -21,7 +21,7 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
     const VkResult result = vkCreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
         return Result<PipelineLayout>::Error(result, "Failed to create pipeline layout");
-    return Result<PipelineLayout>::Ok(*m_Device, layout);
+    return Result<PipelineLayout>::Ok(m_Device, layout);
 }
 
 PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout) noexcept
