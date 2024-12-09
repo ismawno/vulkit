@@ -61,8 +61,8 @@ class VKIT_API GraphicsPipeline
         std::span<const VkVertexInputAttributeDescription> AttributeDescriptions;
     };
 
-    static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
-    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
+    static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept;
+    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<Specs> p_Specs,
                                std::span<GraphicsPipeline> p_Pipelines) noexcept;
 
     GraphicsPipeline() noexcept = default;

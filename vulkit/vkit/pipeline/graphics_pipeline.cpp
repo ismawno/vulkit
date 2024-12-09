@@ -7,23 +7,22 @@
 
 namespace VKit
 {
-static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPipeline::Specs &p_Specs) noexcept
+static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline::Specs &p_Specs) noexcept
 {
-    GraphicsPipeline::Specs specs = p_Specs;
-    specs.Populate();
+    p_Specs.Populate();
 
-    if (!specs.RenderPass)
+    if (!p_Specs.RenderPass)
         return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                                            "Render pass must be provided");
-    if (!specs.Layout)
+    if (!p_Specs.Layout)
         return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                                            "Pipeline layout must be provided");
-    if (!specs.VertexShader || !specs.FragmentShader)
+    if (!p_Specs.VertexShader || !p_Specs.FragmentShader)
         return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                                            "Vertex and fragment shaders must be provided");
 
-    const bool hasAttributes = !specs.AttributeDescriptions.empty();
-    const bool hasBindings = !specs.BindingDescriptions.empty();
+    const bool hasAttributes = !p_Specs.AttributeDescriptions.empty();
+    const bool hasBindings = !p_Specs.BindingDescriptions.empty();
 
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
     for (auto &shaderStage : shaderStages)
@@ -35,19 +34,19 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPip
         shaderStage.pSpecializationInfo = nullptr;
     }
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = specs.VertexShader;
+    shaderStages[0].module = p_Specs.VertexShader;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = specs.FragmentShader;
+    shaderStages[1].module = p_Specs.FragmentShader;
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
     if (hasAttributes || hasBindings)
     {
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(specs.AttributeDescriptions.size());
-        vertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(specs.BindingDescriptions.size());
-        vertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? specs.AttributeDescriptions.data() : nullptr;
-        vertexInputInfo.pVertexBindingDescriptions = hasBindings ? specs.BindingDescriptions.data() : nullptr;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(p_Specs.AttributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(p_Specs.BindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? p_Specs.AttributeDescriptions.data() : nullptr;
+        vertexInputInfo.pVertexBindingDescriptions = hasBindings ? p_Specs.BindingDescriptions.data() : nullptr;
     }
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
@@ -55,17 +54,17 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPip
     pipelineInfo.stageCount = 2;
     pipelineInfo.pStages = shaderStages.data();
     pipelineInfo.pVertexInputState = &vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = &specs.InputAssemblyInfo;
-    pipelineInfo.pViewportState = &specs.ViewportInfo;
-    pipelineInfo.pRasterizationState = &specs.RasterizationInfo;
-    pipelineInfo.pMultisampleState = &specs.MultisampleInfo;
-    pipelineInfo.pColorBlendState = &specs.ColorBlendInfo;
-    pipelineInfo.pDepthStencilState = &specs.DepthStencilInfo;
-    pipelineInfo.pDynamicState = &specs.DynamicStateInfo;
+    pipelineInfo.pInputAssemblyState = &p_Specs.InputAssemblyInfo;
+    pipelineInfo.pViewportState = &p_Specs.ViewportInfo;
+    pipelineInfo.pRasterizationState = &p_Specs.RasterizationInfo;
+    pipelineInfo.pMultisampleState = &p_Specs.MultisampleInfo;
+    pipelineInfo.pColorBlendState = &p_Specs.ColorBlendInfo;
+    pipelineInfo.pDepthStencilState = &p_Specs.DepthStencilInfo;
+    pipelineInfo.pDynamicState = &p_Specs.DynamicStateInfo;
 
-    pipelineInfo.layout = specs.Layout;
-    pipelineInfo.renderPass = specs.RenderPass;
-    pipelineInfo.subpass = specs.Subpass;
+    pipelineInfo.layout = p_Specs.Layout;
+    pipelineInfo.renderPass = p_Specs.RenderPass;
+    pipelineInfo.subpass = p_Specs.Subpass;
 
     pipelineInfo.basePipelineIndex = -1;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -73,7 +72,7 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(const GraphicsPip
     return Result<VkGraphicsPipelineCreateInfo>::Ok(pipelineInfo);
 }
 
-Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
+Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept
 {
     const auto presult = createPipelineInfo(p_Specs);
     if (!presult)
@@ -89,7 +88,7 @@ Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_
     return Result<GraphicsPipeline>::Ok(p_Device, pipeline, p_Specs.Layout, p_Specs.VertexShader,
                                         p_Specs.FragmentShader);
 }
-VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
+VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<Specs> p_Specs,
                                       const std::span<GraphicsPipeline> p_Pipelines) noexcept
 {
     if (p_Specs.size() != p_Pipelines.size())
@@ -99,7 +98,7 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
 
     DynamicArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
     pipelineInfos.reserve(p_Specs.size());
-    for (const Specs &specs : p_Specs)
+    for (Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
         if (!result)
