@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/utilities/result.hpp"
 #include <vulkan/vulkan.hpp>
