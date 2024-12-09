@@ -362,9 +362,6 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
 #endif
 
-    const bool api12 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0);
-    const bool api13 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0);
-
     if (v11 || prop2)
     {
         VkPhysicalDeviceFeatures2 featuresChain{};
@@ -395,7 +392,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                 "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function for the device: {}", name));
 
 #ifdef VKIT_API_VERSION_1_2
-        if (api12)
+        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
         {
             featuresChain.pNext = &features.Vulkan11;
             propertiesChain.pNext = &properties.Vulkan11;
@@ -405,7 +402,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         }
 #endif
 #ifdef VKIT_API_VERSION_1_3
-        if (api13)
+        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
         {
             features.Vulkan12.pNext = &features.Vulkan13;
             properties.Vulkan12.pNext = &properties.Vulkan13;
@@ -429,14 +426,16 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                                                     "The device {} does not have the required features", name));
 
 #ifdef VKIT_API_VERSION_1_2
-    if (api12 && (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
-                  !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12)))
+    if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0) &&
+        (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
+         !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12)))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
                               "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (api13 && !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
+    if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0) &&
+        !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
 #endif

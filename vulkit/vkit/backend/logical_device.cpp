@@ -38,11 +38,15 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
         featuresChain.features = devInfo.EnabledFeatures.Core;
 #ifdef VKIT_API_VERSION_1_2
-        featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
-        devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
+        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+        {
+            featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
+            devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
+        }
 #endif
 #ifdef VKIT_API_VERSION_1_3
-        devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
+        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+            devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
 #endif
         createInfo.pNext = &featuresChain;
     }
