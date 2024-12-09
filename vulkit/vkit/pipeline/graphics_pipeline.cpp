@@ -24,7 +24,7 @@ static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline:
     const bool hasAttributes = !p_Specs.AttributeDescriptions.empty();
     const bool hasBindings = !p_Specs.BindingDescriptions.empty();
 
-    std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+    thread_local std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
     for (auto &shaderStage : shaderStages)
     {
         shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
