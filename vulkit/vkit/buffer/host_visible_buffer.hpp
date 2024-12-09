@@ -42,6 +42,7 @@ template <typename T> class HostVisibleBuffer
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
         if (p_Specs.Coherent)
             specs.AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        specs.MinimumAlignment = p_Specs.MinimumAlignment;
 
         const auto result = Buffer::Create(specs);
         if (!result)
