@@ -41,11 +41,8 @@ class VKIT_API LogicalDevice
 
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
-    using QueueArray = std::array<VkQueue, VKIT_MAX_QUEUES_PER_FAMILY>;
-
     LogicalDevice() noexcept = default;
-    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device,
-                  const QueueArray &p_Queues) noexcept;
+    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -62,8 +59,6 @@ class VKIT_API LogicalDevice
     void WaitIdle() const noexcept;
 
     VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const noexcept;
-
-    // This requires a call to vkGetDeviceQueue
     VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const noexcept;
 
     Proxy CreateProxy() const noexcept;
@@ -81,6 +76,5 @@ class VKIT_API LogicalDevice
     Instance m_Instance{};
     PhysicalDevice m_PhysicalDevice{};
     VkDevice m_Device = VK_NULL_HANDLE;
-    QueueArray m_Queues;
 };
 } // namespace VKit

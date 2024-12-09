@@ -65,17 +65,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
-    QueueArray queues;
-    for (u32 i = 0; i < 4; ++i)
-    {
-        const u32 queueCount = queueCreateInfos[i].queueCount > VKIT_MAX_QUEUES_PER_FAMILY
-                                   ? VKIT_MAX_QUEUES_PER_FAMILY
-                                   : queueCreateInfos[i].queueCount;
-        for (u32 j = 0; j < queueCount; ++j)
-            vkGetDeviceQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
-    }
-
-    return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, device, queues);
+    return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, device);
 }
 
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
@@ -94,8 +84,8 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 }
 
 LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                             const VkDevice p_Device, const QueueArray &p_Queues) noexcept
-    : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Device(p_Device), m_Queues(p_Queues)
+                             const VkDevice p_Device) noexcept
+    : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Device(p_Device)
 {
 }
 
@@ -164,12 +154,6 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(std::span<const VkFormat> p_
     return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
 
-VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const noexcept
-{
-    const u32 index = static_cast<u32>(p_Type) * VKIT_MAX_QUEUES_PER_FAMILY + p_QueueIndex;
-    return m_Queues[index];
-}
-
 LogicalDevice::Proxy::operator VkDevice() const noexcept
 {
     return Device;
@@ -182,6 +166,24 @@ LogicalDevice::Proxy::operator bool() const noexcept
 LogicalDevice::Proxy LogicalDevice::CreateProxy() const noexcept
 {
     return {m_Device, m_Instance.GetInfo().AllocationCallbacks};
+}
+
+VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const noexcept
+{
+    const PhysicalDevice::Info &info = m_PhysicalDevice.GetInfo();
+    switch (p_Type)
+    {
+    case QueueType::Graphics:
+        return GetQueue(info.GraphicsIndex, p_QueueIndex);
+    case QueueType::Compute:
+        return GetQueue(info.ComputeIndex, p_QueueIndex);
+    case QueueType::Transfer:
+        return GetQueue(info.TransferIndex, p_QueueIndex);
+    case QueueType::Present:
+        return GetQueue(info.PresentIndex, p_QueueIndex);
+    }
+
+    return VK_NULL_HANDLE;
 }
 
 VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const noexcept
