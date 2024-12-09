@@ -56,9 +56,9 @@ class VKIT_API GraphicsPipeline
         Shader VertexShader{};
         Shader FragmentShader{};
 
-        DynamicArray<VkDynamicState> DynamicStates;
-        DynamicArray<VkVertexInputBindingDescription> BindingDescriptions;
-        DynamicArray<VkVertexInputAttributeDescription> AttributeDescriptions;
+        std::span<const VkDynamicState> DynamicStates;
+        std::span<const VkVertexInputBindingDescription> BindingDescriptions;
+        std::span<const VkVertexInputAttributeDescription> AttributeDescriptions;
     };
 
     static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;

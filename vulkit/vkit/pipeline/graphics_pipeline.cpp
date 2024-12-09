@@ -225,7 +225,8 @@ GraphicsPipeline::Specs::Specs() noexcept
     DepthStencilInfo.front = {}; // Optional
     DepthStencilInfo.back = {};  // Optional
 
-    DynamicStates = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+    static const std::array<VkDynamicState, 2> dynamicStates = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+    DynamicStates = dynamicStates;
     DynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 }
 
