@@ -67,8 +67,13 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
     QueueArray queues;
     for (u32 i = 0; i < 4; ++i)
-        for (u32 j = 0; j < VKIT_MAX_QUEUES_PER_FAMILY; ++j)
+    {
+        const u32 queueCount = queueCreateInfos[i].queueCount > VKIT_MAX_QUEUES_PER_FAMILY
+                                   ? VKIT_MAX_QUEUES_PER_FAMILY
+                                   : queueCreateInfos[i].queueCount;
+        for (u32 j = 0; j < queueCount; ++j)
             vkGetDeviceQueue(device, i, j, &queues[i * VKIT_MAX_QUEUES_PER_FAMILY + j]);
+    }
 
     return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, device, queues);
 }

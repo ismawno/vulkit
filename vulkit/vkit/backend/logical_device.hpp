@@ -3,7 +3,7 @@
 #include "vkit/backend/physical_device.hpp"
 
 #ifndef VKIT_MAX_QUEUES_PER_FAMILY
-#    define VKIT_MAX_QUEUES_PER_FAMILY 16
+#    define VKIT_MAX_QUEUES_PER_FAMILY 4
 #endif
 
 namespace VKit
