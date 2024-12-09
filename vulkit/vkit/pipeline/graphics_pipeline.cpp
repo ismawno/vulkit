@@ -7,76 +7,9 @@
 
 namespace VKit
 {
-static Result<VkGraphicsPipelineCreateInfo> createPipelineInfo(GraphicsPipeline::Specs &p_Specs) noexcept
-{
-    p_Specs.Populate();
-
-    if (!p_Specs.RenderPass)
-        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                                           "Render pass must be provided");
-    if (!p_Specs.Layout)
-        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                                           "Pipeline layout must be provided");
-    if (!p_Specs.VertexShader || !p_Specs.FragmentShader)
-        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                                           "Vertex and fragment shaders must be provided");
-
-    const bool hasAttributes = !p_Specs.AttributeDescriptions.empty();
-    const bool hasBindings = !p_Specs.BindingDescriptions.empty();
-
-    thread_local std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
-    for (auto &shaderStage : shaderStages)
-    {
-        shaderStage = {};
-        shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStage.pName = "main";
-        shaderStage.flags = 0;
-        shaderStage.pNext = nullptr;
-        shaderStage.pSpecializationInfo = nullptr;
-    }
-    shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = p_Specs.VertexShader;
-    shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = p_Specs.FragmentShader;
-
-    thread_local VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-    vertexInputInfo = {};
-    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-    if (hasAttributes || hasBindings)
-    {
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(p_Specs.AttributeDescriptions.size());
-        vertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(p_Specs.BindingDescriptions.size());
-        vertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? p_Specs.AttributeDescriptions.data() : nullptr;
-        vertexInputInfo.pVertexBindingDescriptions = hasBindings ? p_Specs.BindingDescriptions.data() : nullptr;
-    }
-
-    VkGraphicsPipelineCreateInfo pipelineInfo{};
-    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = 2;
-    pipelineInfo.pStages = shaderStages.data();
-    pipelineInfo.pVertexInputState = &vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = &p_Specs.InputAssemblyInfo;
-    pipelineInfo.pViewportState = &p_Specs.ViewportInfo;
-    pipelineInfo.pRasterizationState = &p_Specs.RasterizationInfo;
-    pipelineInfo.pMultisampleState = &p_Specs.MultisampleInfo;
-    pipelineInfo.pColorBlendState = &p_Specs.ColorBlendInfo;
-    pipelineInfo.pDepthStencilState = &p_Specs.DepthStencilInfo;
-    pipelineInfo.pDynamicState = &p_Specs.DynamicStateInfo;
-
-    pipelineInfo.layout = p_Specs.Layout;
-    pipelineInfo.renderPass = p_Specs.RenderPass;
-    pipelineInfo.subpass = p_Specs.Subpass;
-
-    pipelineInfo.basePipelineIndex = -1;
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-
-    return Result<VkGraphicsPipelineCreateInfo>::Ok(pipelineInfo);
-}
-
 Result<GraphicsPipeline> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept
 {
-    const auto presult = createPipelineInfo(p_Specs);
+    const auto presult = p_Specs.CreatePipelineInfo();
     if (!presult)
         return Result<GraphicsPipeline>::Error(presult.GetError());
     const VkGraphicsPipelineCreateInfo &pipelineInfo = presult.GetValue();
@@ -102,7 +35,7 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
     pipelineInfos.reserve(p_Specs.size());
     for (Specs &specs : p_Specs)
     {
-        const auto result = createPipelineInfo(specs);
+        const auto result = specs.CreatePipelineInfo();
         if (!result)
             return result.GetError();
         const VkGraphicsPipelineCreateInfo &pipelineInfo = result.GetValue();
@@ -236,5 +169,68 @@ void GraphicsPipeline::Specs::Populate() noexcept
     ColorBlendInfo.pAttachments = &ColorBlendAttachment;
     DynamicStateInfo.pDynamicStates = DynamicStates.data();
     DynamicStateInfo.dynamicStateCount = static_cast<u32>(DynamicStates.size());
+
+    const bool hasAttributes = !AttributeDescriptions.empty();
+    const bool hasBindings = !BindingDescriptions.empty();
+
+    for (auto &shaderStage : ShaderStages)
+    {
+        shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStage.pName = "main";
+        shaderStage.flags = 0;
+        shaderStage.pNext = nullptr;
+        shaderStage.pSpecializationInfo = nullptr;
+    }
+    ShaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+    ShaderStages[0].module = VertexShader;
+    ShaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    ShaderStages[1].module = FragmentShader;
+
+    VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+    if (hasAttributes || hasBindings)
+    {
+        VertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(AttributeDescriptions.size());
+        VertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(BindingDescriptions.size());
+        VertexInputInfo.pVertexAttributeDescriptions = hasAttributes ? AttributeDescriptions.data() : nullptr;
+        VertexInputInfo.pVertexBindingDescriptions = hasBindings ? BindingDescriptions.data() : nullptr;
+    }
+}
+
+Result<VkGraphicsPipelineCreateInfo> GraphicsPipeline::Specs::CreatePipelineInfo() noexcept
+{
+    Populate();
+
+    if (!RenderPass)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Render pass must be provided");
+    if (!Layout)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Pipeline layout must be provided");
+    if (!VertexShader || !FragmentShader)
+        return Result<VkGraphicsPipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                                           "Vertex and fragment shaders must be provided");
+
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.stageCount = 2;
+    pipelineInfo.pStages = ShaderStages.data();
+    pipelineInfo.pVertexInputState = &VertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &InputAssemblyInfo;
+    pipelineInfo.pViewportState = &ViewportInfo;
+    pipelineInfo.pRasterizationState = &RasterizationInfo;
+    pipelineInfo.pMultisampleState = &MultisampleInfo;
+    pipelineInfo.pColorBlendState = &ColorBlendInfo;
+    pipelineInfo.pDepthStencilState = &DepthStencilInfo;
+    pipelineInfo.pDynamicState = &DynamicStateInfo;
+
+    pipelineInfo.layout = Layout;
+    pipelineInfo.renderPass = RenderPass;
+    pipelineInfo.subpass = Subpass;
+
+    pipelineInfo.basePipelineIndex = -1;
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+    return Result<VkGraphicsPipelineCreateInfo>::Ok(pipelineInfo);
 }
 } // namespace VKit

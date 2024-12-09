@@ -37,6 +37,8 @@ class VKIT_API GraphicsPipeline
          */
         void Populate() noexcept;
 
+        Result<VkGraphicsPipelineCreateInfo> CreatePipelineInfo() noexcept;
+
         VkPipelineViewportStateCreateInfo ViewportInfo{};
         VkPipelineInputAssemblyStateCreateInfo InputAssemblyInfo{};
         VkPipelineRasterizationStateCreateInfo RasterizationInfo{};
@@ -59,6 +61,10 @@ class VKIT_API GraphicsPipeline
         std::span<const VkDynamicState> DynamicStates;
         std::span<const VkVertexInputBindingDescription> BindingDescriptions;
         std::span<const VkVertexInputAttributeDescription> AttributeDescriptions;
+
+        // Automatically populated, user does not need to touch this! (It is easier to leave it here bc of impl details)
+        std::array<VkPipelineShaderStageCreateInfo, 2> ShaderStages{};
+        VkPipelineVertexInputStateCreateInfo VertexInputInfo{};
     };
 
     static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept;
