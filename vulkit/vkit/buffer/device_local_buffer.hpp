@@ -5,6 +5,15 @@
 
 namespace VKit
 {
+/**
+ * @brief Represents a buffer stored in device-local memory.
+ *
+ * Manages Vulkan buffers optimized for GPU access, including methods for
+ * creation, destruction, and binding as vertex or index buffers. Provides
+ * specialized creation options for vertex, index, uniform, and storage buffers.
+ *
+ * @tparam T The type of data stored in the buffer.
+ */
 template <typename T> class DeviceLocalBuffer
 {
   public:
@@ -33,6 +42,15 @@ template <typename T> class DeviceLocalBuffer
     using UniformSpecs = SpecializedSpecs;
     using StorageSpecs = SpecializedSpecs;
 
+    /**
+     * @brief Creates a device-local buffer with the specified settings.
+     *
+     * Uses a staging buffer to upload data to the GPU. The data is stored
+     * in device-local memory for optimal GPU access.
+     *
+     * @param p_Specs The specifications for the buffer.
+     * @return A result containing the created DeviceLocalBuffer or an error.
+     */
     static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
     {
         Buffer::Specs specs{};
@@ -80,6 +98,15 @@ template <typename T> class DeviceLocalBuffer
         return Result<DeviceLocalBuffer>::Ok(buffer);
     }
 
+    /**
+     * @brief Creates a device-local vertex buffer.
+     *
+     * Configures the buffer for vertex data and uploads the provided data
+     * to device-local memory.
+     *
+     * @param p_Specs The specifications for the vertex buffer.
+     * @return A result containing the created vertex buffer or an error.
+     */
     static Result<DeviceLocalBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
         Specs specs{};
@@ -92,6 +119,15 @@ template <typename T> class DeviceLocalBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a device-local index buffer.
+     *
+     * Configures the buffer for index data and uploads the provided data
+     * to device-local memory.
+     *
+     * @param p_Specs The specifications for the index buffer.
+     * @return A result containing the created index buffer or an error.
+     */
     static Result<DeviceLocalBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
         Specs specs{};
@@ -104,6 +140,16 @@ template <typename T> class DeviceLocalBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a device-local uniform buffer with the specified alignment.
+     *
+     * Configures the buffer for uniform data and uploads the provided data
+     * to device-local memory.
+     *
+     * @param p_Specs The specifications for the uniform buffer.
+     * @param p_Alignment The minimum alignment for the uniform buffer.
+     * @return A result containing the created uniform buffer or an error.
+     */
     static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
     {
@@ -118,6 +164,16 @@ template <typename T> class DeviceLocalBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a device-local storage buffer with the specified alignment.
+     *
+     * Configures the buffer for storage data and uploads the provided data
+     * to device-local memory.
+     *
+     * @param p_Specs The specifications for the storage buffer.
+     * @param p_Alignment The minimum alignment for the storage buffer.
+     * @return A result containing the created storage buffer or an error.
+     */
     static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
     {
@@ -146,6 +202,14 @@ template <typename T> class DeviceLocalBuffer
         m_Buffer.SubmitForDeletion(p_Queue);
     }
 
+    /**
+     * @brief Binds the buffer as an index buffer to a command buffer.
+     *
+     * Automatically detects the index type (u8, u16, or u32) based on the buffer's template parameter.
+     *
+     * @param p_CommandBuffer The command buffer to bind the index buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
     void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
         if constexpr (std::is_same_v<T, u8>)
@@ -162,11 +226,16 @@ template <typename T> class DeviceLocalBuffer
 #endif
     }
 
-    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const u32 p_BindingCount = 1,
-                            const u32 p_FirstBinding = 0, const VkDeviceSize p_Offset = 0) const noexcept
+    /**
+     * @brief Binds the buffer as a vertex buffer to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
         const VkBuffer buffer = m_Buffer.GetBuffer();
-        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_BindingCount, &buffer, &p_Offset);
+        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &buffer, &p_Offset);
     }
 
     VkDescriptorBufferInfo GetDescriptorInfo() const noexcept

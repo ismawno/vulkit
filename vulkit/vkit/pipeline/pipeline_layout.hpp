@@ -5,14 +5,33 @@
 
 namespace VKit
 {
+/**
+ * @brief Represents a Vulkan pipeline layout.
+ *
+ * Defines the layout for a pipeline, including descriptor set layouts and push constant ranges.
+ * Used by Vulkan pipelines to manage resource bindings and shader constants.
+ */
 class VKIT_API PipelineLayout
 {
   public:
+    /**
+     * @brief A utility for creating and configuring a Vulkan pipeline layout.
+     *
+     * Provides methods to define descriptor set layouts, push constant ranges, and layout creation flags.
+     * Simplifies the process of setting up pipeline layouts for Vulkan applications.
+     */
     class Builder
     {
       public:
         explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
 
+        /**
+         * @brief Creates a pipeline layout based on the builder's configuration.
+         *
+         * Returns a pipeline layout object if the creation succeeds, or an error otherwise.
+         *
+         * @return A result containing the created PipelineLayout or an error.
+         */
         Result<PipelineLayout> Build() const noexcept;
 
         Builder &AddDescriptorSetLayout(VkDescriptorSetLayout p_Layout) noexcept;

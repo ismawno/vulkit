@@ -10,17 +10,22 @@
 namespace VKit
 {
 /**
- * @brief The GraphicsPipeline class encapsulates Vulkan pipeline creation and management.
+ * @brief Represents a Vulkan graphics pipeline.
  *
- * Responsible for creating graphics pipelines based on provided specifications,
- * and provides methods to bind the pipeline for rendering.
+ * Handles the creation, management, and binding of graphics pipelines, which are used
+ * for rendering in Vulkan. Includes functionality for custom specifications and batch creation.
  */
 class VKIT_API GraphicsPipeline
 {
   public:
     /**
-     * @brief Struct containing specifications for creating a Vulkan pipeline.
+     * @brief Configuration for creating a Vulkan graphics pipeline.
+     *
+     * Contains all the necessary settings for pipeline creation, including shaders,
+     * layout, render pass, and state settings. Provides utility methods for internal
+     * setup and pipeline creation.
      */
+
     struct Specs
     {
         /**
@@ -29,14 +34,21 @@ class VKIT_API GraphicsPipeline
         Specs() noexcept;
 
         /**
-         * @brief Populates the pipeline specifications internally.
+         * @brief Populates the internal state of the pipeline specifications.
          *
-         * Involves some of the members of the struct to
-         * point to other members. Every time the specs are copied, this method should be called.
-         *
+         * Ensures that pointers within the specs point to valid internal members. This
+         * method should be called after copying or modifying the specs to maintain consistency.
          */
         void Populate() noexcept;
 
+        /**
+         * @brief Generates the `VkGraphicsPipelineCreateInfo` object.
+         *
+         * Constructs the Vulkan graphics pipeline creation info based on the specs.
+         * This is used internally during pipeline creation.
+         *
+         * @return A result containing the created `VkGraphicsPipelineCreateInfo` or an error.
+         */
         Result<VkGraphicsPipelineCreateInfo> CreatePipelineInfo() noexcept;
 
         VkPipelineViewportStateCreateInfo ViewportInfo{};
@@ -54,7 +66,6 @@ class VKIT_API GraphicsPipeline
 
         u32 Subpass = 0;
 
-        // Do not need to remain alive on the user end
         Shader VertexShader{};
         Shader FragmentShader{};
 
@@ -67,7 +78,29 @@ class VKIT_API GraphicsPipeline
         VkPipelineVertexInputStateCreateInfo VertexInputInfo{};
     };
 
+    /**
+     * @brief Creates a graphics pipeline based on the provided specifications.
+     *
+     * Initializes a Vulkan graphics pipeline using the specified logical device
+     * and pipeline configuration.
+     *
+     * @param p_Device The logical device proxy for Vulkan operations.
+     * @param p_Specs The specifications for the graphics pipeline.
+     * @return A result containing the created GraphicsPipeline or an error.
+     */
     static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept;
+
+    /**
+     * @brief Creates multiple graphics pipelines in a batch.
+     *
+     * Initializes multiple Vulkan graphics pipelines using the provided specifications
+     * and logical device.
+     *
+     * @param p_Device The logical device proxy for Vulkan operations.
+     * @param p_Specs A span of specifications for the graphics pipelines.
+     * @param p_Pipelines A span to store the created pipelines.
+     * @return A VulkanResult indicating success or failure for the batch operation.
+     */
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<Specs> p_Specs,
                                std::span<GraphicsPipeline> p_Pipelines) noexcept;
 
@@ -79,7 +112,9 @@ class VKIT_API GraphicsPipeline
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     /**
-     * @brief Binds the pipeline to the specified command buffer.
+     * @brief Binds the graphics pipeline to a command buffer.
+     *
+     * Prepares the pipeline for rendering by binding it to the specified command buffer.
      *
      * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
      */

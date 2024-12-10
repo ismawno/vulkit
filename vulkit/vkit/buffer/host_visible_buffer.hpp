@@ -4,6 +4,14 @@
 
 namespace VKit
 {
+/**
+ * @brief Represents a buffer stored in host-visible memory.
+ *
+ * Provides methods for writing data, flushing, invalidating memory, and binding as
+ * vertex or index buffers. Designed for use cases requiring frequent CPU-GPU data transfer.
+ *
+ * @tparam T The type of data stored in the buffer.
+ */
 template <typename T> class HostVisibleBuffer
 {
   public:
@@ -30,6 +38,14 @@ template <typename T> class HostVisibleBuffer
     using UniformSpecs = SpecializedSpecs;
     using StorageSpecs = SpecializedSpecs;
 
+    /**
+     * @brief Creates a host-visible buffer with the specified settings.
+     *
+     * Allocates and maps a Vulkan buffer in host-visible memory based on the provided specifications.
+     *
+     * @param p_Specs The specifications for the buffer.
+     * @return A result containing the created HostVisibleBuffer or an error.
+     */
     static Result<HostVisibleBuffer> Create(const Specs &p_Specs) noexcept
     {
         Buffer::Specs specs{};
@@ -51,6 +67,14 @@ template <typename T> class HostVisibleBuffer
         return Result<HostVisibleBuffer>::Ok(result.GetValue());
     }
 
+    /**
+     * @brief Creates a host-visible vertex buffer.
+     *
+     * Configures the buffer for vertex data and allocates memory in host-visible space.
+     *
+     * @param p_Specs The specifications for the vertex buffer.
+     * @return A result containing the created vertex buffer or an error.
+     */
     static Result<HostVisibleBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
         Specs specs{};
@@ -62,6 +86,14 @@ template <typename T> class HostVisibleBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a host-visible index buffer.
+     *
+     * Configures the buffer for index data and allocates memory in host-visible space.
+     *
+     * @param p_Specs The specifications for the index buffer.
+     * @return A result containing the created index buffer or an error.
+     */
     static Result<HostVisibleBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
         Specs specs{};
@@ -73,6 +105,15 @@ template <typename T> class HostVisibleBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a host-visible uniform buffer with specified alignment.
+     *
+     * Configures the buffer for uniform data and allocates memory with the required alignment.
+     *
+     * @param p_Specs The specifications for the uniform buffer.
+     * @param p_Alignment The minimum alignment for the buffer.
+     * @return A result containing the created uniform buffer or an error.
+     */
     static Result<HostVisibleBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
     {
@@ -86,6 +127,15 @@ template <typename T> class HostVisibleBuffer
         return Create(specs);
     }
 
+    /**
+     * @brief Creates a host-visible storage buffer with specified alignment.
+     *
+     * Configures the buffer for storage data and allocates memory with the required alignment.
+     *
+     * @param p_Specs The specifications for the storage buffer.
+     * @param p_Alignment The minimum alignment for the buffer.
+     * @return A result containing the created storage buffer or an error.
+     */
     static Result<HostVisibleBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
     {
@@ -114,12 +164,32 @@ template <typename T> class HostVisibleBuffer
         m_Buffer.SubmitForDeletion(p_Queue);
     }
 
+    /**
+     * @brief Writes data to the buffer.
+     *
+     * Copies the given data into the buffer. The buffer must have a trivial alignment
+     * requirement to use this method.
+     *
+     * @param p_Data A span containing the data to write.
+     */
     void Write(const std::span<const T> p_Data) noexcept
     {
         TKIT_ASSERT(m_Buffer.GetInfo().AlignedInstanceSize == m_Buffer.GetInfo().InstanceSize,
                     "Cannot 'mindlessly' write data to a buffer with a non-trivial alignment requirement");
         m_Buffer.Write(p_Data.data(), p_Data.size() * sizeof(T));
     }
+
+    /**
+     * @brief Writes data to the buffer at the specified index.
+     *
+     * Copies the provided data into the buffer at the specified index.
+     * The buffer must be mapped before calling this method.
+     *
+     * Automatically handles alignment requirements.
+     *
+     * @param p_Index The index of the buffer instance to write to.
+     * @param p_Data A pointer to the data to write.
+     */
     void WriteAt(const usize p_Index, const T *p_Data) noexcept
     {
         m_Buffer.WriteAt(p_Index, p_Data);
@@ -161,6 +231,14 @@ template <typename T> class HostVisibleBuffer
         return static_cast<T *>(m_Buffer.ReadAt(p_Index));
     }
 
+    /**
+     * @brief Binds the buffer as an index buffer to a command buffer.
+     *
+     * Automatically determines the index type (u8, u16, or u32) based on the buffer's template parameter.
+     *
+     * @param p_CommandBuffer The command buffer to bind the index buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
     void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
         if constexpr (std::is_same_v<T, u8>)
@@ -177,11 +255,16 @@ template <typename T> class HostVisibleBuffer
 #endif
     }
 
-    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const u32 p_BindingCount = 1,
-                            const u32 p_FirstBinding = 0, const VkDeviceSize p_Offset = 0) const noexcept
+    /**
+     * @brief Binds the buffer as a vertex buffer to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
         const VkBuffer buffer = m_Buffer.GetBuffer();
-        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_BindingCount, &buffer, &p_Offset);
+        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &buffer, &p_Offset);
     }
 
     VkBuffer GetBuffer() const noexcept

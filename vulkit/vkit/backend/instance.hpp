@@ -9,6 +9,12 @@
 
 namespace VKit
 {
+/**
+ * @brief Flags for configuring instance behavior.
+ *
+ * Use these flags to enable features like headless mode, validation layers,
+ * or specific Vulkan extensions during instance creation.
+ */
 enum InstanceFlags : u8
 {
     InstanceFlags_Headless = 1 << 0,
@@ -16,11 +22,21 @@ enum InstanceFlags : u8
     InstanceFlags_Properties2Extension = 1 << 2
 };
 
-// Enabling validation layers with default debugger with no tkit logging will result in a void callback!
-
+/**
+ * @brief Represents a Vulkan instance.
+ *
+ * A handle to the Vulkan API that manages extensions, layers, and debug configurations.
+ * The underlying resources must be destroyed explicitly using the `Destroy` method.
+ */
 class VKIT_API Instance
 {
   public:
+    /**
+     * @brief Stores the configuration details for a Vulkan instance.
+     *
+     * Includes the application and engine names, API version, enabled extensions,
+     * and layers. It also contains optional settings for debugging and memory allocation.
+     */
     struct Info
     {
         const char *ApplicationName;
@@ -39,9 +55,23 @@ class VKIT_API Instance
         const VkAllocationCallbacks *AllocationCallbacks;
     };
 
+    /**
+     * @brief A utility for setting up and creating a Vulkan instance.
+     *
+     * Provides methods to define application details, API versions, extensions,
+     * and layers. `Require` methods enforce strict conditions, while `Request`
+     * methods try to enable features without failing if unavailable.
+     */
     class Builder
     {
       public:
+        /**
+         * @brief Creates a Vulkan instance with the specified configuration.
+         *
+         * Returns a valid instance if all required parameters are met, or an error otherwise.
+         *
+         * @return A result containing the created Instance or an error.
+         */
         FormattedResult<Instance> Build() const noexcept;
 
         Builder &SetApplicationName(const char *p_Name) noexcept;
@@ -120,6 +150,13 @@ class VKIT_API Instance
     explicit(false) operator VkInstance() const noexcept;
     explicit(false) operator bool() const noexcept;
 
+    /**
+     * @brief Retrieves an instance function by name.
+     *
+     * @tparam F Function type to cast to.
+     * @param p_Name Name of the function.
+     * @return The function pointer casted to the specified type.
+     */
     template <typename F> F GetFunction(const char *p_Name) const noexcept
     {
         return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));

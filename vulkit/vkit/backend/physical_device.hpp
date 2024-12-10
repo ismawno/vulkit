@@ -4,6 +4,12 @@
 
 namespace VKit
 {
+/**
+ * @brief Flags to describe physical device capabilities.
+ *
+ * These flags indicate features like dedicated or separate queues, graphics
+ * and compute support, and portability subset availability.
+ */
 enum PhysicalDeviceFlags : u16
 {
     PhysicalDeviceFlags_Optimal = 1 << 0,
@@ -18,6 +24,12 @@ enum PhysicalDeviceFlags : u16
     PhysicalDeviceFlags_HasPresentQueue = 1 << 9
 };
 
+/**
+ * @brief Flags for specifying criteria when selecting a physical device.
+ *
+ * Used to filter devices based on required queue types, memory capabilities,
+ * and extension support.
+ */
 enum PhysicalDeviceSelectorFlags : u16
 {
     PhysicalDeviceSelectorFlags_AnyType = 1 << 0,
@@ -32,9 +44,16 @@ enum PhysicalDeviceSelectorFlags : u16
     PhysicalDeviceSelectorFlags_RequirePresentQueue = 1 << 9
 };
 
-// If instance API version do not support 1.1/1.2/1.3 features event though the version macros are defined,
-// the 1.1/1.2/1.3 structs will be ignored
-
+/**
+ * @brief Represents a Vulkan physical device and its features.
+ *
+ * Encapsulates the Vulkan physical device handle and provides access to its
+ * features, properties, and queue support. Includes methods to query and
+ * manage device-specific details.
+ *
+ * If the selected Vulkan API version does not support certain features (e.g.,
+ * 1.1/1.2/1.3), the related properties and features will be ignored.
+ */
 class VKIT_API PhysicalDevice
 {
   public:
@@ -100,12 +119,36 @@ class VKIT_API PhysicalDevice
         Properties Properties{};
     };
 
+    /**
+     * @brief A helper class for selecting a Vulkan physical device.
+     *
+     * Allows you to define requirements such as supported extensions, memory
+     * capacity, queue capabilities, and device type. Evaluates available devices
+     * and selects the one that best matches the criteria.
+     */
     class Selector
     {
       public:
         explicit Selector(const Instance *p_Instance) noexcept;
 
+        /**
+         * @brief Selects the best matching physical device.
+         *
+         * Based on the specified requirements and preferences, this method selects a
+         * Vulkan physical device and returns it. If no suitable device is found, an error is returned.
+         *
+         * @return A result containing the selected PhysicalDevice or an error.
+         */
         FormattedResult<PhysicalDevice> Select() const noexcept;
+
+        /**
+         * @brief Lists all available physical devices along with their evaluation results.
+         *
+         * Enumerates all Vulkan physical devices and evaluates them based on the selector's
+         * criteria. Provides detailed results for each device.
+         *
+         * @return A result containing an array of formatted results for each physical device.
+         */
         Result<DynamicArray<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
 
         Selector &SetName(const char *p_Name) noexcept;

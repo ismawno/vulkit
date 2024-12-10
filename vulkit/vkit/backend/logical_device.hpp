@@ -8,13 +8,18 @@
 
 namespace VKit
 {
+/**
+ * @brief Defines the priorities for device queues.
+ *
+ * The amount of queues will be determined by the number of priorities provided.
+ */
 struct VKIT_API QueuePriorities
 {
     u32 Index;
     DynamicArray<f32> Priorities;
 };
 
-enum class VKIT_API QueueType : u32
+enum class QueueType : u32
 {
     Graphics = 0,
     Compute = 1,
@@ -22,6 +27,12 @@ enum class VKIT_API QueueType : u32
     Present = 3
 };
 
+/**
+ * @brief Represents a Vulkan logical device and its associated state.
+ *
+ * The logical device manages queues, resources, and interactions with a physical device.
+ * It provides methods for resource allocation and command submission to the Vulkan API.
+ */
 class VKIT_API LogicalDevice
 {
   public:
@@ -34,11 +45,36 @@ class VKIT_API LogicalDevice
         explicit(false) operator bool() const noexcept;
     };
 
-    // QueuePriorities Will default to one queue per type with priority 1.0f
-
+    /**
+     * @brief Creates a Vulkan logical device with the specified settings.
+     *
+     * Configures the logical device using the provided physical device, queue priorities,
+     * and any required features or extensions. Ensures compatibility with both the
+     * Vulkan API and the physical device's capabilities.
+     *
+     * @param p_Instance The Vulkan instance associated with the logical device.
+     * @param p_PhysicalDevice The physical device to base the logical device on.
+     * @param p_QueuePriorities The queue priorities to assign to the device's queues.
+     *
+     * @return A result containing the created LogicalDevice or an error if the creation fails.
+     */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
                                         std::span<const QueuePriorities> p_QueuePriorities) noexcept;
 
+    /**
+     * @brief Creates a Vulkan logical device with the specified parameters.
+     *
+     * Configures the logical device using the given physical device, instance,
+     * and any required features or extensions. Ensures the configuration is compatible
+     * with the physical device and Vulkan API specifications.
+     *
+     * By default, the logical device will create one queue per type, each with a priority of 1.
+     *
+     * @param p_Instance The Vulkan instance associated with the logical device.
+     * @param p_PhysicalDevice The physical device to use for creating the logical device.
+     *
+     * @return A result containing the created LogicalDevice or an error if the creation fails.
+     */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
     LogicalDevice() noexcept = default;

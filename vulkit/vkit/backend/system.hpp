@@ -60,10 +60,33 @@ namespace VKit
 template <typename T>
 concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::string>;
 
+/**
+ * @brief Represents the result of a Vulkan operation, including status and a message.
+ *
+ * This class encapsulates a Vulkan result code (`VkResult`) and an optional message to provide
+ * more context about the operation's outcome. It can be used to indicate success or error states.
+ *
+ * @tparam MessageType The type of the message, either `const char*` or `std::string`. The former is a cheap version,
+ * when the message is a static string. The latter is used when explicit error message information can be provided based
+ * on user input.
+ */
 template <String MessageType> class VKIT_API VulkanResultInfo
 {
   public:
+    /**
+     * @brief Creates a success result with the Vulkan result code `VK_SUCCESS`.
+     *
+     * @return A VulkanResultInfo instance representing success.
+     */
     static VulkanResultInfo Success() noexcept;
+
+    /**
+     * @brief Creates an error result with the given Vulkan result code and message.
+     *
+     * @param p_Result The Vulkan result code indicating the error.
+     * @param p_Message A descriptive message providing details about the error.
+     * @return A VulkanResultInfo instance representing the error.
+     */
     static VulkanResultInfo Error(VkResult p_Result, const MessageType &p_Message) noexcept;
 
     VulkanResultInfo() noexcept = default;
@@ -81,8 +104,22 @@ using VulkanFormattedResult = VulkanResultInfo<std::string>;
 template <typename T> using Result = TKit::Result<T, VulkanResult>;
 template <typename T> using FormattedResult = TKit::Result<T, VulkanFormattedResult>;
 
+/**
+ * @brief Provides system-wide utilities for querying and managing Vulkan layers and extensions.
+ *
+ * Includes methods to check for support, retrieve details about layers and extensions,
+ * and fetch Vulkan functions at the instance or device level.
+ */
 struct VKIT_API System
 {
+    /**
+     * @brief Initializes the Vulkan system.
+     *
+     * Prepares the system by loading available extensions and layers.
+     * This should be called before any other Vulkit operations.
+     *
+     * @return A VulkanResult indicating success or an error if initialization fails.
+     */
     static VulkanResult Initialize() noexcept;
 
     static bool IsExtensionSupported(const char *p_Name) noexcept;
@@ -105,6 +142,12 @@ struct VKIT_API System
     static inline DynamicArray<VkLayerProperties> AvailableLayers{};
 };
 
+/**
+ * @brief Manages deferred deletion of Vulkan resources.
+ *
+ * Allows users to enqueue resource cleanup operations, which can be flushed
+ * in bulk to ensure proper resource management.
+ */
 class VKIT_API DeletionQueue
 {
   public:

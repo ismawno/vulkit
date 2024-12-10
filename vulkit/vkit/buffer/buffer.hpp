@@ -13,6 +13,12 @@
 namespace VKit
 {
 class CommandPool;
+/**
+ * @brief Manages a Vulkan buffer and its associated memory.
+ *
+ * Provides methods for buffer creation, memory mapping, data writing, flushing, and invalidation.
+ * Supports descriptor info retrieval and buffer-to-buffer copy operations.
+ */
 class VKIT_API Buffer
 {
   public:
@@ -37,6 +43,14 @@ class VKIT_API Buffer
         VkDeviceSize Size;
     };
 
+    /**
+     * @brief Creates a Vulkan buffer based on the provided specifications.
+     *
+     * Initializes the buffer with the specified size, usage, and memory allocation settings.
+     *
+     * @param p_Specs The specifications for the buffer.
+     * @return A result containing the created Buffer or an error.
+     */
     static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 
     Buffer() noexcept = default;
@@ -48,10 +62,50 @@ class VKIT_API Buffer
     void Map() noexcept;
     void Unmap() noexcept;
 
+    /**
+     * @brief Writes data to the buffer.
+     *
+     * Copies the provided data into the buffer at the specified offset and size.
+     * The buffer must be mapped before calling this method.
+     *
+     * Be very mindful of the alignment requirements of the buffer.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Size The size of the data to write (default: entire buffer).
+     * @param p_Offset The offset within the buffer to start writing (default: 0).
+     */
     void Write(const void *p_Data, VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
+
+    /**
+     * @brief Writes data to the buffer at the specified index.
+     *
+     * Copies the provided data into the buffer at the specified index.
+     * The buffer must be mapped before calling this method.
+     *
+     * Automatically handles alignment requirements.
+     *
+     * @param p_Index The index of the buffer instance to write to.
+     * @param p_Data A pointer to the data to write.
+     */
     void WriteAt(usize p_Index, const void *p_Data) noexcept;
 
+    /**
+     * @brief Flushes a range of the buffer's memory to ensure visibility to the device.
+     *
+     * Ensures that any changes made to the buffer's mapped memory are visible to the GPU.
+     *
+     * @param p_Size The size of the memory range to flush (default: entire buffer).
+     * @param p_Offset The offset within the buffer to start flushing (default: 0).
+     */
     void Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
+
+    /**
+     * @brief Flushes a range of the buffer's memory at the specified index.
+     *
+     * Ensures that any changes made to the buffer's mapped memory are visible to the GPU.
+     *
+     * @param p_Index The index of the buffer instance to flush.
+     */
     void FlushAt(usize p_Index) noexcept;
 
     void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
@@ -64,6 +118,16 @@ class VKIT_API Buffer
     void *GetData() const noexcept;
     void *ReadAt(usize p_Index) const noexcept;
 
+    /**
+     * @brief Copies data from another buffer into this buffer.
+     *
+     * Uses a command pool and queue to perform the buffer-to-buffer copy operation.
+     *
+     * @param p_Source The source buffer to copy from.
+     * @param p_Pool The command pool to allocate the copy command.
+     * @param p_Queue The queue to submit the copy command.
+     * @return A VulkanResult indicating success or failure.
+     */
     VulkanResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;

@@ -10,6 +10,12 @@
 
 namespace VKit
 {
+/**
+ * @brief Manages a Vulkan descriptor pool and its allocations.
+ *
+ * Handles the creation, allocation, and deallocation of descriptor sets.
+ * Also supports resetting the pool for reallocation of resources.
+ */
 class VKIT_API DescriptorPool
 {
   public:
@@ -19,11 +25,24 @@ class VKIT_API DescriptorPool
         DynamicArray<VkDescriptorPoolSize> PoolSizes;
     };
 
+    /**
+     * @brief A utility for creating and configuring a Vulkan descriptor pool.
+     *
+     * Provides methods to specify the maximum number of sets, pool sizes, and creation flags.
+     * Supports fine-grained control over the pool's configuration.
+     */
     class Builder
     {
       public:
         explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
 
+        /**
+         * @brief Creates a descriptor pool based on the builder's configuration.
+         *
+         * Returns a descriptor pool object if the creation succeeds, or an error otherwise.
+         *
+         * @return A result containing the created DescriptorPool or an error.
+         */
         Result<DescriptorPool> Build() const noexcept;
 
         Builder &SetMaxSets(u32 p_MaxSets) noexcept;
@@ -48,9 +67,32 @@ class VKIT_API DescriptorPool
 
     const Info &GetInfo() const noexcept;
 
+    /**
+     * @brief Allocates a descriptor set from the pool.
+     *
+     * Creates a descriptor set using the specified layout.
+     *
+     * @param p_Layout The descriptor set layout to use for allocation.
+     * @return A result containing the allocated descriptor set or an error.
+     */
     Result<VkDescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
 
+    /**
+     * @brief Deallocates one or more descriptor sets from the pool.
+     *
+     * Frees the specified descriptor sets, making their resources available for reallocation.
+     *
+     * @param p_Sets A span containing the descriptor sets to deallocate.
+     */
     void Deallocate(std::span<const VkDescriptorSet> p_Sets) const noexcept;
+
+    /**
+     * @brief Deallocates a descriptor set from the pool.
+     *
+     * Frees the specified descriptor set, making its resources available for reallocation.
+     *
+     * @param p_Set The descriptor set to deallocate.
+     */
     void Deallocate(VkDescriptorSet p_Set) const noexcept;
     void Reset() noexcept;
 

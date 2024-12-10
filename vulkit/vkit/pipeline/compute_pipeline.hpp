@@ -4,6 +4,12 @@
 
 namespace VKit
 {
+/**
+ * @brief Represents a Vulkan compute pipeline.
+ *
+ * Manages the creation, destruction, and usage of a compute pipeline, which is
+ * used to execute compute shaders on the GPU.
+ */
 class VKIT_API ComputePipeline
 {
   public:
@@ -15,7 +21,27 @@ class VKIT_API ComputePipeline
         VkPipelineCache Cache = VK_NULL_HANDLE;
     };
 
+    /**
+     * @brief Creates a compute pipeline based on the provided specifications.
+     *
+     * Initializes a compute pipeline with the given logical device and configuration.
+     *
+     * @param p_Device The logical device proxy for Vulkan operations.
+     * @param p_Specs The specifications for the compute pipeline.
+     * @return A result containing the created ComputePipeline or an error.
+     */
     static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
+
+    /**
+     * @brief Creates multiple compute pipelines in a batch.
+     *
+     * Initializes multiple compute pipelines using the provided specifications and logical device.
+     *
+     * @param p_Device The logical device proxy for Vulkan operations.
+     * @param p_Specs A span of specifications for the compute pipelines.
+     * @param p_Pipelines A span to store the created pipelines.
+     * @return A VulkanResult indicating success or failure for the batch operation.
+     */
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
                                std::span<ComputePipeline> p_Pipelines) noexcept;
 
@@ -27,17 +53,15 @@ class VKIT_API ComputePipeline
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     /**
-     * @brief Binds the pipeline to the specified command buffer.
+     * @brief Binds the compute pipeline to a command buffer.
+     *
+     * Prepares the pipeline for execution by binding it to the specified command buffer.
      *
      * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
      */
+
     void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
 
-    /**
-     * @brief Retrieves the pipeline layout.
-     *
-     * @return The Vulkan pipeline layout.
-     */
     VkPipelineLayout GetLayout() const noexcept;
 
     VkPipeline GetPipeline() const noexcept;

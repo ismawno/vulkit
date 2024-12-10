@@ -12,11 +12,17 @@
 #    define VKIT_MAX_FRAMES_IN_FLIGHT 2
 #endif
 
-// Warning!: If sync objects are created, they will be destroyed along with the swapchain on resize even though
-// they could be kept, which may (or may not) be undesirable.
-
 namespace VKit
 {
+/**
+ * @brief Flags for configuring swap chain creation.
+ *
+ * These flags define optional behaviors for the swap chain, such as creating
+ * default depth resources, sync objects, or image views.
+ *
+ * If sync objects are created, they will be destroyed along with the swapchain on resize even though
+ * they could be kept, which may be undesirable.
+ */
 enum SwapChainBuilderFlags : u8
 {
     SwapChainBuilderFlags_Clipped = 1 << 0,
@@ -25,6 +31,12 @@ enum SwapChainBuilderFlags : u8
     SwapChainBuilderFlags_CreateDefaultSyncObjects = 1 << 3
 };
 
+/**
+ * @brief Flags describing swap chain capabilities.
+ *
+ * Indicates features like whether the swap chain has image views, depth resources,
+ * or default frame buffers.
+ */
 enum SwapChainFlags : u8
 {
     SwapChainFlags_Clipped = 1 << 0,
@@ -34,6 +46,12 @@ enum SwapChainFlags : u8
     SwapChainFlags_HasDefaultFrameBuffers = 1 << 4
 };
 
+/**
+ * @brief Represents a Vulkan swap chain and its associated resources.
+ *
+ * Manages the swap chain's images, depth resources, synchronization objects,
+ * and frame buffers. Provides methods for creation, destruction, and resource management.
+ */
 class VKIT_API SwapChain
 {
   public:
@@ -71,11 +89,26 @@ class VKIT_API SwapChain
         std::array<SyncData, VKIT_MAX_FRAMES_IN_FLIGHT> SyncData;
     };
 
+    /**
+     * @brief Helps create and configure a Vulkan swap chain.
+     *
+     * Provides methods to specify swap chain parameters like surface format,
+     * present mode, image count, and flags. Supports both mandatory and optional requirements.
+     *
+     * A VmaAllocator is only required if depth resources are created.
+     */
     class Builder
     {
       public:
         Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) noexcept;
 
+        /**
+         * @brief Creates a swap chain based on the builder's configuration.
+         *
+         * Returns a swap chain object if the creation succeeds, or an error otherwise.
+         *
+         * @return A result containing the created SwapChain or an error.
+         */
         Result<SwapChain> Build() const noexcept;
 
         Builder &SetAllocator(VmaAllocator p_Allocator) noexcept; // only required if depth resources are created
@@ -149,7 +182,17 @@ class VKIT_API SwapChain
     const Info &GetInfo() const noexcept;
     VkSwapchainKHR GetSwapChain() const noexcept;
 
-    // User does not need to destroy the frame buffers!
+    /**
+     * @brief Creates default frame buffers for the swap chain's images.
+     *
+     * Associates the swap chain's images with the specified render pass and
+     * creates frame buffers for each image. This simplifies rendering setup.
+     *
+     * The frame buffers are automatically destroyed when the swap chain is destroyed.
+     *
+     * @param p_RenderPass The render pass to associate the frame buffers with.
+     * @return A VulkanResult indicating success or failure.
+     */
     VulkanResult CreateDefaultFrameBuffers(VkRenderPass p_RenderPass) noexcept;
 
     explicit(false) operator VkSwapchainKHR() const noexcept;
