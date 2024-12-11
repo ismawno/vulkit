@@ -8,7 +8,7 @@ set(SOURCES
     vkit/backend/instance.cpp
     vkit/backend/system.cpp
     vkit/backend/command_pool.cpp
-    vkit/backend/swap_chain.cpp
+    vkit/rendering/swap_chain.cpp
     vkit/buffer/buffer.cpp
     vkit/pipeline/compute_pipeline.cpp
     vkit/pipeline/graphics_pipeline.cpp
