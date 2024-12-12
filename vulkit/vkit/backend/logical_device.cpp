@@ -27,7 +27,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         enabledExtensions.push_back(extension.c_str());
 
     const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
-    const bool prop2 = instanceInfo.Flags & InstanceFlags_Properties2Extension;
+    const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

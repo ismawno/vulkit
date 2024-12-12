@@ -17,7 +17,7 @@ static void CheckDevices(const DynamicArray<FormattedResult<PhysicalDevice>> &p_
         const PhysicalDevice &device = devResult.GetValue();
 
         const PhysicalDevice::Info &info = device.GetInfo();
-        if (info.Flags & PhysicalDeviceFlags_Optimal)
+        if (info.Flags & PhysicalDevice::Flag_Optimal)
             TKIT_LOG_INFO("Found optimal device: {}", info.Properties.Core.deviceName);
         else
             TKIT_LOG_INFO("Found partially suitable device: {}", info.Properties.Core.deviceName);
