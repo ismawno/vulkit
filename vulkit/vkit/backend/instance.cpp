@@ -263,11 +263,11 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     info.AllocationCallbacks = m_AllocationCallbacks;
     info.DebugMessenger = debugMessenger;
     if (m_Headless)
-        info.Flags |= InstanceFlags_Headless;
+        info.Flags |= Flag_Headless;
     if (validationLayers)
-        info.Flags |= InstanceFlags_HasValidationLayers;
+        info.Flags |= Flag_HasValidationLayers;
     if (properties2Support)
-        info.Flags |= InstanceFlags_Properties2Extension;
+        info.Flags |= Flag_Properties2Extension;
 
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
                 "The debug messenger must be available if validation layers are enabled");
@@ -293,7 +293,7 @@ static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) n
     TKIT_ASSERT(p_Instance, "The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
 
-    if ((p_Info.Flags & InstanceFlags_HasValidationLayers) && p_Info.DebugMessenger)
+    if ((p_Info.Flags & Instance::Flag_HasValidationLayers) && p_Info.DebugMessenger)
     {
         const auto destroyDebugMessenger = System::GetInstanceFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
             "vkDestroyDebugUtilsMessengerEXT", p_Instance);

@@ -38,8 +38,8 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     if (devInfo.PresentIndex == UINT32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
-    const auto checkFlag = [this](const SwapChainBuilderFlags p_Flag) -> bool { return m_Flags & p_Flag; };
-    if (!m_Allocator && checkFlag(SwapChainBuilderFlags_CreateDefaultDepthResources))
+    const auto checkFlag = [this](const Flags p_Flag) -> bool { return m_Flags & p_Flag; };
+    if (!m_Allocator && checkFlag(Flag_CreateDefaultDepthResources))
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                         "If depth resources are created, an allocator must be provided");
 
@@ -95,7 +95,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     VkFormat depthFormat = VK_FORMAT_UNDEFINED;
 
-    if (checkFlag(SwapChainBuilderFlags_CreateDefaultDepthResources))
+    if (checkFlag(Flag_CreateDefaultDepthResources))
     {
         const auto depFormatResult = m_Device->FindSupportedFormat(depthFormats, VK_IMAGE_TILING_OPTIMAL,
                                                                    VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
@@ -151,7 +151,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     createInfo.preTransform = transform;
     createInfo.compositeAlpha = m_CompositeAlphaFlags;
     createInfo.presentMode = presentMode;
-    createInfo.clipped = checkFlag(SwapChainBuilderFlags_Clipped);
+    createInfo.clipped = checkFlag(Flag_Clipped);
     createInfo.oldSwapchain = m_OldSwapChain;
     createInfo.flags = m_CreateFlags;
 
@@ -179,17 +179,16 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     info.ImageUsage = m_ImageUsage;
     info.Allocator = m_Allocator;
     info.Flags = m_Flags;
-    info.ImageUsage = m_ImageUsage;
 
-    const auto earlyDestroy = [proxy, swapChain, &destroySwapChain, &info]() {
-        if (info.Flags & SwapChainFlags_HasImageViews)
+    const auto earlyDestroy = [proxy, swapChain, &destroySwapChain, &checkFlag, &info]() {
+        if (checkFlag(Flag_CreateImageViews))
             for (const ImageData &data : info.ImageData)
                 if (data.ImageView)
                     vkDestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
 
         destroySwapChain(proxy, swapChain, proxy.AllocationCallbacks);
 
-        if (info.Flags & SwapChainFlags_HasDefaultDepthResources)
+        if (checkFlag(Flag_CreateDefaultDepthResources))
             for (const ImageData &data : info.ImageData)
             {
                 if (data.DepthImageView)
@@ -198,7 +197,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                     vmaDestroyImage(info.Allocator, data.DepthImage, data.DepthAllocation);
             }
 
-        if (info.Flags & SwapChainFlags_HasDefaultSyncObjects)
+        if (checkFlag(Flag_CreateDefaultSyncObjects))
             for (SyncData &data : info.SyncData)
             {
                 if (data.RenderFinishedSemaphore)
@@ -240,7 +239,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     for (u32 i = 0; i < imageCount; ++i)
     {
         info.ImageData[i].Image = images[i];
-        if (checkFlag(SwapChainBuilderFlags_CreateImageViews))
+        if (checkFlag(Flag_CreateImageViews))
         {
             VkImageViewCreateInfo viewInfo{};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -265,7 +264,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
             }
         }
 
-        if (checkFlag(SwapChainBuilderFlags_CreateDefaultDepthResources))
+        if (checkFlag(Flag_CreateDefaultDepthResources))
         {
             VkImageCreateInfo imageInfo{};
             imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -315,7 +314,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         }
     }
 
-    if (checkFlag(SwapChainBuilderFlags_CreateDefaultSyncObjects))
+    if (checkFlag(Flag_CreateDefaultSyncObjects))
         for (u32 i = 0; i < VKIT_MAX_FRAMES_IN_FLIGHT; ++i)
         {
             VkSemaphoreCreateInfo semaphoreInfo{};
@@ -376,7 +375,7 @@ VulkanResult SwapChain::CreateDefaultFrameBuffers(const VkRenderPass p_RenderPas
             return VulkanResult::Error(result, "Failed to create the frame buffer");
         }
     }
-    m_Info.Flags |= SwapChainFlags_HasDefaultFrameBuffers;
+    m_Info.Flags |= Flag_HasDefaultFrameBuffers;
     return VulkanResult::Success();
 }
 
@@ -393,24 +392,24 @@ void SwapChain::Destroy() noexcept
         System::GetDeviceFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR", m_Device);
     TKIT_ASSERT(destroySwapChain, "Failed to get the vkDestroySwapchainKHR function");
 
-    if (m_Info.Flags & SwapChainFlags_HasImageViews)
+    if (m_Info.Flags & Flag_HasImageViews)
         for (const ImageData &data : m_Info.ImageData)
             vkDestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
 
     destroySwapChain(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 
-    if (m_Info.Flags & SwapChainFlags_HasDefaultDepthResources)
+    if (m_Info.Flags & Flag_HasDefaultDepthResources)
         for (const ImageData &data : m_Info.ImageData)
         {
             vkDestroyImageView(m_Device, data.DepthImageView, m_Device.AllocationCallbacks);
             vmaDestroyImage(m_Info.Allocator, data.DepthImage, data.DepthAllocation);
         }
 
-    if (m_Info.Flags & SwapChainFlags_HasDefaultFrameBuffers)
+    if (m_Info.Flags & Flag_HasDefaultFrameBuffers)
         for (const ImageData &data : m_Info.ImageData)
             vkDestroyFramebuffer(m_Device, data.FrameBuffer, m_Device.AllocationCallbacks);
 
-    if (m_Info.Flags & SwapChainFlags_HasDefaultSyncObjects)
+    if (m_Info.Flags & Flag_HasDefaultSyncObjects)
         for (SyncData &data : m_Info.SyncData)
         {
             vkDestroySemaphore(m_Device, data.RenderFinishedSemaphore, m_Device.AllocationCallbacks);

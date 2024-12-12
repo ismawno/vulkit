@@ -5,46 +5,6 @@
 namespace VKit
 {
 /**
- * @brief Flags to describe physical device capabilities.
- *
- * These flags indicate features like dedicated or separate queues, graphics
- * and compute support, and portability subset availability.
- */
-enum PhysicalDeviceFlags : u16
-{
-    PhysicalDeviceFlags_Optimal = 1 << 0,
-    PhysicalDeviceFlags_HasDedicatedComputeQueue = 1 << 1,
-    PhysicalDeviceFlags_HasDedicatedTransferQueue = 1 << 2,
-    PhysicalDeviceFlags_HasSeparateTransferQueue = 1 << 3,
-    PhysicalDeviceFlags_HasSeparateComputeQueue = 1 << 4,
-    PhysicalDeviceFlags_PortabilitySubset = 1 << 5,
-    PhysicalDeviceFlags_HasGraphicsQueue = 1 << 6,
-    PhysicalDeviceFlags_HasComputeQueue = 1 << 7,
-    PhysicalDeviceFlags_HasTransferQueue = 1 << 8,
-    PhysicalDeviceFlags_HasPresentQueue = 1 << 9
-};
-
-/**
- * @brief Flags for specifying criteria when selecting a physical device.
- *
- * Used to filter devices based on required queue types, memory capabilities,
- * and extension support.
- */
-enum PhysicalDeviceSelectorFlags : u16
-{
-    PhysicalDeviceSelectorFlags_AnyType = 1 << 0,
-    PhysicalDeviceSelectorFlags_RequireDedicatedComputeQueue = 1 << 1,
-    PhysicalDeviceSelectorFlags_RequireDedicatedTransferQueue = 1 << 2,
-    PhysicalDeviceSelectorFlags_RequireSeparateComputeQueue = 1 << 3,
-    PhysicalDeviceSelectorFlags_RequireSeparateTransferQueue = 1 << 4,
-    PhysicalDeviceSelectorFlags_PortabilitySubset = 1 << 5,
-    PhysicalDeviceSelectorFlags_RequireGraphicsQueue = 1 << 6,
-    PhysicalDeviceSelectorFlags_RequireComputeQueue = 1 << 7,
-    PhysicalDeviceSelectorFlags_RequireTransferQueue = 1 << 8,
-    PhysicalDeviceSelectorFlags_RequirePresentQueue = 1 << 9
-};
-
-/**
  * @brief Represents a Vulkan physical device and its features.
  *
  * Encapsulates the Vulkan physical device handle and provides access to its
@@ -57,6 +17,27 @@ enum PhysicalDeviceSelectorFlags : u16
 class VKIT_API PhysicalDevice
 {
   public:
+    /**
+     * @brief Flags to describe physical device capabilities.
+     *
+     * These flags indicate features like dedicated or separate queues, graphics
+     * and compute support, and portability subset availability.
+     */
+    enum FlagBits : u16
+    {
+        Flag_Optimal = 1 << 0,
+        Flag_HasDedicatedComputeQueue = 1 << 1,
+        Flag_HasDedicatedTransferQueue = 1 << 2,
+        Flag_HasSeparateTransferQueue = 1 << 3,
+        Flag_HasSeparateComputeQueue = 1 << 4,
+        Flag_PortabilitySubset = 1 << 5,
+        Flag_HasGraphicsQueue = 1 << 6,
+        Flag_HasComputeQueue = 1 << 7,
+        Flag_HasTransferQueue = 1 << 8,
+        Flag_HasPresentQueue = 1 << 9
+    };
+    using Flags = u16;
+
     enum Type
     {
         Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
@@ -101,7 +82,7 @@ class VKIT_API PhysicalDevice
     struct Info
     {
         Type Type;
-        u16 Flags;
+        Flags Flags;
 
         u32 GraphicsIndex;
         u32 ComputeIndex;
@@ -129,6 +110,27 @@ class VKIT_API PhysicalDevice
     class Selector
     {
       public:
+        /**
+         * @brief Flags for specifying criteria when selecting a physical device.
+         *
+         * Used to filter devices based on required queue types, memory capabilities,
+         * and extension support.
+         */
+        enum FlagBits : u16
+        {
+            Flag_AnyType = 1 << 0,
+            Flag_RequireDedicatedComputeQueue = 1 << 1,
+            Flag_RequireDedicatedTransferQueue = 1 << 2,
+            Flag_RequireSeparateComputeQueue = 1 << 3,
+            Flag_RequireSeparateTransferQueue = 1 << 4,
+            Flag_PortabilitySubset = 1 << 5,
+            Flag_RequireGraphicsQueue = 1 << 6,
+            Flag_RequireComputeQueue = 1 << 7,
+            Flag_RequireTransferQueue = 1 << 8,
+            Flag_RequirePresentQueue = 1 << 9
+        };
+        using Flags = u16;
+
         explicit Selector(const Instance *p_Instance) noexcept;
 
         /**
@@ -165,9 +167,9 @@ class VKIT_API PhysicalDevice
 
         Selector &RequireFeatures(const Features &p_Features) noexcept;
 
-        Selector &SetFlags(u16 p_Flags) noexcept;
-        Selector &AddFlags(u16 p_Flags) noexcept;
-        Selector &RemoveFlags(u16 p_Flags) noexcept;
+        Selector &SetFlags(Flags p_Flags) noexcept;
+        Selector &AddFlags(Flags p_Flags) noexcept;
+        Selector &RemoveFlags(Flags p_Flags) noexcept;
 
         Selector &SetSurface(VkSurfaceKHR p_Surface) noexcept;
 
@@ -180,7 +182,7 @@ class VKIT_API PhysicalDevice
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
         Type m_PreferredType = Discrete;
 
-        u16 m_Flags = 0;
+        Flags m_Flags = 0;
 
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;

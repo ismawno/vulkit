@@ -10,19 +10,6 @@
 namespace VKit
 {
 /**
- * @brief Flags for configuring instance behavior.
- *
- * Use these flags to enable features like headless mode, validation layers,
- * or specific Vulkan extensions during instance creation.
- */
-enum InstanceFlags : u8
-{
-    InstanceFlags_Headless = 1 << 0,
-    InstanceFlags_HasValidationLayers = 1 << 1,
-    InstanceFlags_Properties2Extension = 1 << 2
-};
-
-/**
  * @brief Represents a Vulkan instance.
  *
  * A handle to the Vulkan API that manages extensions, layers, and debug configurations.
@@ -31,6 +18,20 @@ enum InstanceFlags : u8
 class VKIT_API Instance
 {
   public:
+    /**
+     * @brief Flags for configuring instance behavior.
+     *
+     * Use these flags to enable features like headless mode, validation layers,
+     * or specific Vulkan extensions during instance creation.
+     */
+    enum FlagBits : u8
+    {
+        Flag_Headless = 1 << 0,
+        Flag_HasValidationLayers = 1 << 1,
+        Flag_Properties2Extension = 1 << 2
+    };
+    using Flags = u8;
+
     /**
      * @brief Stores the configuration details for a Vulkan instance.
      *
@@ -46,7 +47,7 @@ class VKIT_API Instance
         u32 EngineVersion;
         u32 ApiVersion;
 
-        u8 Flags;
+        Flags Flags;
 
         DynamicArray<const char *> EnabledExtensions;
         DynamicArray<const char *> EnabledLayers;

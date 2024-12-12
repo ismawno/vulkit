@@ -15,38 +15,6 @@
 namespace VKit
 {
 /**
- * @brief Flags for configuring swap chain creation.
- *
- * These flags define optional behaviors for the swap chain, such as creating
- * default depth resources, sync objects, or image views.
- *
- * If sync objects are created, they will be destroyed along with the swapchain on resize even though
- * they could be kept, which may be undesirable.
- */
-enum SwapChainBuilderFlags : u8
-{
-    SwapChainBuilderFlags_Clipped = 1 << 0,
-    SwapChainBuilderFlags_CreateImageViews = 1 << 1,
-    SwapChainBuilderFlags_CreateDefaultDepthResources = 1 << 2,
-    SwapChainBuilderFlags_CreateDefaultSyncObjects = 1 << 3
-};
-
-/**
- * @brief Flags describing swap chain capabilities.
- *
- * Indicates features like whether the swap chain has image views, depth resources,
- * or default frame buffers.
- */
-enum SwapChainFlags : u8
-{
-    SwapChainFlags_Clipped = 1 << 0,
-    SwapChainFlags_HasImageViews = 1 << 1,
-    SwapChainFlags_HasDefaultDepthResources = 1 << 2,
-    SwapChainFlags_HasDefaultSyncObjects = 1 << 3,
-    SwapChainFlags_HasDefaultFrameBuffers = 1 << 4
-};
-
-/**
  * @brief Represents a Vulkan swap chain and its associated resources.
  *
  * Manages the swap chain's images, depth resources, synchronization objects,
@@ -55,6 +23,22 @@ enum SwapChainFlags : u8
 class VKIT_API SwapChain
 {
   public:
+    /**
+     * @brief Flags describing swap chain capabilities.
+     *
+     * Indicates features like whether the swap chain has image views, depth resources,
+     * or default frame buffers.
+     */
+    enum FlagBits : u8
+    {
+        Flag_Clipped = 1 << 0,
+        Flag_HasImageViews = 1 << 1,
+        Flag_HasDefaultDepthResources = 1 << 2,
+        Flag_HasDefaultSyncObjects = 1 << 3,
+        Flag_HasDefaultFrameBuffers = 1 << 4
+    };
+    using Flags = u8;
+
     struct ImageData
     {
         VkImage Image;
@@ -83,7 +67,7 @@ class VKIT_API SwapChain
         VkPresentModeKHR PresentMode;
         VkExtent2D Extent;
         VkImageUsageFlags ImageUsage;
-        u8 Flags;
+        Flags Flags;
 
         TKit::StaticArray<ImageData, VKIT_MAX_IMAGE_COUNT> ImageData;
         std::array<SyncData, VKIT_MAX_FRAMES_IN_FLIGHT> SyncData;
@@ -100,6 +84,24 @@ class VKIT_API SwapChain
     class Builder
     {
       public:
+        /**
+         * @brief Flags for configuring swap chain creation.
+         *
+         * These flags define optional behaviors for the swap chain, such as creating
+         * default depth resources, sync objects, or image views.
+         *
+         * If sync objects are created, they will be destroyed along with the swapchain on resize even though
+         * they could be kept, which may be undesirable.
+         */
+        enum FlagBits : u8
+        {
+            Flag_Clipped = 1 << 0,
+            Flag_CreateImageViews = 1 << 1,
+            Flag_CreateDefaultDepthResources = 1 << 2,
+            Flag_CreateDefaultSyncObjects = 1 << 3
+        };
+        using Flags = u8;
+
         Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) noexcept;
 
         /**
@@ -130,9 +132,9 @@ class VKIT_API SwapChain
 
         Builder &SetImageArrayLayers(u32 p_Layers) noexcept;
 
-        Builder &SetFlags(u8 p_Flags) noexcept;
-        Builder &AddFlags(u8 p_Flags) noexcept;
-        Builder &RemoveFlags(u8 p_Flags) noexcept;
+        Builder &SetFlags(Flags p_Flags) noexcept;
+        Builder &AddFlags(Flags p_Flags) noexcept;
+        Builder &RemoveFlags(Flags p_Flags) noexcept;
 
         Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR p_Flags) noexcept;
         Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR p_Flags) noexcept;
@@ -167,7 +169,7 @@ class VKIT_API SwapChain
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        u8 m_Flags = 0;
+        Flags m_Flags = 0;
         VkSwapchainCreateFlagsKHR m_CreateFlags = 0;
         VkSurfaceTransformFlagBitsKHR m_TransformBit = static_cast<VkSurfaceTransformFlagBitsKHR>(0);
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
