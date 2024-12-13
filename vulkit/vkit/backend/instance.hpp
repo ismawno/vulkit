@@ -19,44 +19,6 @@ class VKIT_API Instance
 {
   public:
     /**
-     * @brief Flags for configuring instance behavior.
-     *
-     * Use these flags to enable features like headless mode, validation layers,
-     * or specific Vulkan extensions during instance creation.
-     */
-    enum FlagBits : u8
-    {
-        Flag_Headless = 1 << 0,
-        Flag_HasValidationLayers = 1 << 1,
-        Flag_Properties2Extension = 1 << 2
-    };
-    using Flags = u8;
-
-    /**
-     * @brief Stores the configuration details for a Vulkan instance.
-     *
-     * Includes the application and engine names, API version, enabled extensions,
-     * and layers. It also contains optional settings for debugging and memory allocation.
-     */
-    struct Info
-    {
-        const char *ApplicationName;
-        const char *EngineName;
-
-        u32 ApplicationVersion;
-        u32 EngineVersion;
-        u32 ApiVersion;
-
-        Flags Flags;
-
-        DynamicArray<const char *> EnabledExtensions;
-        DynamicArray<const char *> EnabledLayers;
-
-        VkDebugUtilsMessengerEXT DebugMessenger;
-        const VkAllocationCallbacks *AllocationCallbacks;
-    };
-
-    /**
      * @brief A utility for setting up and creating a Vulkan instance.
      *
      * Provides methods to define application details, API versions, extensions,
@@ -134,6 +96,44 @@ class VKIT_API Instance
         const VkAllocationCallbacks *m_AllocationCallbacks = nullptr;
 
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
+    };
+
+    /**
+     * @brief Flags for configuring instance behavior.
+     *
+     * Use these flags to enable features like headless mode, validation layers,
+     * or specific Vulkan extensions during instance creation.
+     */
+    enum FlagBits : u8
+    {
+        Flag_Headless = 1 << 0,
+        Flag_HasValidationLayers = 1 << 1,
+        Flag_Properties2Extension = 1 << 2
+    };
+    using Flags = u8;
+
+    /**
+     * @brief Stores the configuration details for a Vulkan instance.
+     *
+     * Includes the application and engine names, API version, enabled extensions,
+     * and layers. It also contains optional settings for debugging and memory allocation.
+     */
+    struct Info
+    {
+        const char *ApplicationName;
+        const char *EngineName;
+
+        u32 ApplicationVersion;
+        u32 EngineVersion;
+        u32 ApiVersion;
+
+        Flags Flags;
+
+        DynamicArray<const char *> EnabledExtensions;
+        DynamicArray<const char *> EnabledLayers;
+
+        VkDebugUtilsMessengerEXT DebugMessenger;
+        const VkAllocationCallbacks *AllocationCallbacks;
     };
 
     Instance() noexcept = default;

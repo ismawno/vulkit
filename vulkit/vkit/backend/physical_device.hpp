@@ -17,27 +17,6 @@ namespace VKit
 class VKIT_API PhysicalDevice
 {
   public:
-    /**
-     * @brief Flags to describe physical device capabilities.
-     *
-     * These flags indicate features like dedicated or separate queues, graphics
-     * and compute support, and portability subset availability.
-     */
-    enum FlagBits : u16
-    {
-        Flag_Optimal = 1 << 0,
-        Flag_HasDedicatedComputeQueue = 1 << 1,
-        Flag_HasDedicatedTransferQueue = 1 << 2,
-        Flag_HasSeparateTransferQueue = 1 << 3,
-        Flag_HasSeparateComputeQueue = 1 << 4,
-        Flag_PortabilitySubset = 1 << 5,
-        Flag_HasGraphicsQueue = 1 << 6,
-        Flag_HasComputeQueue = 1 << 7,
-        Flag_HasTransferQueue = 1 << 8,
-        Flag_HasPresentQueue = 1 << 9
-    };
-    using Flags = u16;
-
     enum Type
     {
         Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
@@ -77,27 +56,6 @@ class VKIT_API PhysicalDevice
         VkSurfaceCapabilitiesKHR Capabilities;
         DynamicArray<VkSurfaceFormatKHR> Formats;
         DynamicArray<VkPresentModeKHR> PresentModes;
-    };
-
-    struct Info
-    {
-        Type Type;
-        Flags Flags;
-
-        u32 GraphicsIndex;
-        u32 ComputeIndex;
-        u32 TransferIndex;
-        u32 PresentIndex;
-        DynamicArray<VkQueueFamilyProperties> QueueFamilies;
-
-        // std string because extension names are "locally" allocated
-        DynamicArray<std::string> EnabledExtensions;
-        DynamicArray<std::string> AvailableExtensions;
-
-        Features EnabledFeatures{};
-        Features AvailableFeatures{};
-
-        Properties Properties{};
     };
 
     /**
@@ -191,6 +149,48 @@ class VKIT_API PhysicalDevice
         DynamicArray<std::string> m_RequestedExtensions;
 
         Features m_RequiredFeatures{};
+    };
+
+    /**
+     * @brief Flags to describe physical device capabilities.
+     *
+     * These flags indicate features like dedicated or separate queues, graphics
+     * and compute support, and portability subset availability.
+     */
+    enum FlagBits : u16
+    {
+        Flag_Optimal = 1 << 0,
+        Flag_HasDedicatedComputeQueue = 1 << 1,
+        Flag_HasDedicatedTransferQueue = 1 << 2,
+        Flag_HasSeparateTransferQueue = 1 << 3,
+        Flag_HasSeparateComputeQueue = 1 << 4,
+        Flag_PortabilitySubset = 1 << 5,
+        Flag_HasGraphicsQueue = 1 << 6,
+        Flag_HasComputeQueue = 1 << 7,
+        Flag_HasTransferQueue = 1 << 8,
+        Flag_HasPresentQueue = 1 << 9
+    };
+    using Flags = u16;
+
+    struct Info
+    {
+        Type Type;
+        Flags Flags;
+
+        u32 GraphicsIndex;
+        u32 ComputeIndex;
+        u32 TransferIndex;
+        u32 PresentIndex;
+        DynamicArray<VkQueueFamilyProperties> QueueFamilies;
+
+        // std string because extension names are "locally" allocated
+        DynamicArray<std::string> EnabledExtensions;
+        DynamicArray<std::string> AvailableExtensions;
+
+        Features EnabledFeatures{};
+        Features AvailableFeatures{};
+
+        Properties Properties{};
     };
 
     PhysicalDevice() noexcept = default;

@@ -19,12 +19,6 @@ namespace VKit
 class VKIT_API DescriptorPool
 {
   public:
-    struct Info
-    {
-        u32 MaxSets;
-        DynamicArray<VkDescriptorPoolSize> PoolSizes;
-    };
-
     /**
      * @brief A utility for creating and configuring a Vulkan descriptor pool.
      *
@@ -57,6 +51,12 @@ class VKIT_API DescriptorPool
         u32 m_MaxSets = 8;
         VkDescriptorPoolCreateFlags m_Flags = 0;
         DynamicArray<VkDescriptorPoolSize> m_PoolSizes{};
+    };
+
+    struct Info
+    {
+        u32 MaxSets;
+        DynamicArray<VkDescriptorPoolSize> PoolSizes;
     };
 
     DescriptorPool() noexcept = default;

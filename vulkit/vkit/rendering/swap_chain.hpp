@@ -24,56 +24,6 @@ class VKIT_API SwapChain
 {
   public:
     /**
-     * @brief Flags describing swap chain capabilities.
-     *
-     * Indicates features like whether the swap chain has image views, depth resources,
-     * or default frame buffers.
-     */
-    enum FlagBits : u8
-    {
-        Flag_Clipped = 1 << 0,
-        Flag_HasImageViews = 1 << 1,
-        Flag_HasDefaultDepthResources = 1 << 2,
-        Flag_HasDefaultSyncObjects = 1 << 3,
-        Flag_HasDefaultFrameBuffers = 1 << 4
-    };
-    using Flags = u8;
-
-    struct ImageData
-    {
-        VkImage Image;
-        VkImageView ImageView = VK_NULL_HANDLE;
-
-        VkImage DepthImage = VK_NULL_HANDLE;
-        VkImageView DepthImageView = VK_NULL_HANDLE;
-        VmaAllocation DepthAllocation = VK_NULL_HANDLE;
-
-        VkFramebuffer FrameBuffer = VK_NULL_HANDLE;
-    };
-
-    struct SyncData
-    {
-        VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
-        VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
-        VkFence InFlightFence = VK_NULL_HANDLE;
-    };
-
-    struct Info
-    {
-        VkSurfaceFormatKHR SurfaceFormat;
-        VkFormat DepthFormat; // Optional, undefined if not created
-        VmaAllocator Allocator;
-
-        VkPresentModeKHR PresentMode;
-        VkExtent2D Extent;
-        VkImageUsageFlags ImageUsage;
-        Flags Flags;
-
-        TKit::StaticArray<ImageData, VKIT_MAX_IMAGE_COUNT> ImageData;
-        std::array<SyncData, VKIT_MAX_FRAMES_IN_FLIGHT> SyncData;
-    };
-
-    /**
      * @brief Helps create and configure a Vulkan swap chain.
      *
      * Provides methods to specify swap chain parameters like surface format,
@@ -173,6 +123,56 @@ class VKIT_API SwapChain
         VkSwapchainCreateFlagsKHR m_CreateFlags = 0;
         VkSurfaceTransformFlagBitsKHR m_TransformBit = static_cast<VkSurfaceTransformFlagBitsKHR>(0);
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    };
+
+    /**
+     * @brief Flags describing swap chain capabilities.
+     *
+     * Indicates features like whether the swap chain has image views, depth resources,
+     * or default frame buffers.
+     */
+    enum FlagBits : u8
+    {
+        Flag_Clipped = 1 << 0,
+        Flag_HasImageViews = 1 << 1,
+        Flag_HasDefaultDepthResources = 1 << 2,
+        Flag_HasDefaultSyncObjects = 1 << 3,
+        Flag_HasDefaultFrameBuffers = 1 << 4
+    };
+    using Flags = u8;
+
+    struct ImageData
+    {
+        VkImage Image;
+        VkImageView ImageView = VK_NULL_HANDLE;
+
+        VkImage DepthImage = VK_NULL_HANDLE;
+        VkImageView DepthImageView = VK_NULL_HANDLE;
+        VmaAllocation DepthAllocation = VK_NULL_HANDLE;
+
+        VkFramebuffer FrameBuffer = VK_NULL_HANDLE;
+    };
+
+    struct SyncData
+    {
+        VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
+        VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
+        VkFence InFlightFence = VK_NULL_HANDLE;
+    };
+
+    struct Info
+    {
+        VkSurfaceFormatKHR SurfaceFormat;
+        VkFormat DepthFormat; // Optional, undefined if not created
+        VmaAllocator Allocator;
+
+        VkPresentModeKHR PresentMode;
+        VkExtent2D Extent;
+        VkImageUsageFlags ImageUsage;
+        Flags Flags;
+
+        TKit::StaticArray<ImageData, VKIT_MAX_IMAGE_COUNT> ImageData;
+        std::array<SyncData, VKIT_MAX_FRAMES_IN_FLIGHT> SyncData;
     };
 
     SwapChain() noexcept = default;
