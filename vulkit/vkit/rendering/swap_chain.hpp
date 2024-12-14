@@ -8,8 +8,7 @@ namespace VKit
 /**
  * @brief Represents a Vulkan swap chain and its associated resources.
  *
- * Manages the swap chain's images, depth resources, synchronization objects,
- * and frame buffers. Provides methods for creation, destruction, and resource management.
+ * Manages the swap chain's images and, optionally, image views.
  */
 class VKIT_API SwapChain
 {
@@ -27,11 +26,8 @@ class VKIT_API SwapChain
         /**
          * @brief Flags for configuring swap chain creation.
          *
-         * These flags define optional behaviors for the swap chain, such as creating
-         * default depth resources, sync objects, or image views.
+         * These flags define optional behaviors for the swap chain, such as creating image views.
          *
-         * If sync objects are created, they will be destroyed along with the swapchain on resize even though
-         * they could be kept, which may be undesirable.
          */
         enum FlagBits : u8
         {
@@ -108,8 +104,7 @@ class VKIT_API SwapChain
     /**
      * @brief Flags describing swap chain capabilities.
      *
-     * Indicates features like whether the swap chain has image views, depth resources,
-     * or default frame buffers.
+     * Indicates features like whether the swap chain has image views.
      */
     enum FlagBits : u8
     {
@@ -163,9 +158,26 @@ struct SyncData
     VkFence InFlightFence = VK_NULL_HANDLE;
 };
 
-VulkanResult CreateSynchronizationObjects(
-    const LogicalDevice::Proxy &p_Device,
-    std::span<SyncData> p_Objects) noexcept; // p_Objects structs must be all set to VK_NULL_HANDLE
+/**
+ * @brief Creates synchronization objects for the swap chain.
+ *
+ * Initializes semaphores and fences required for synchronization during rendering.
+ * Each `SyncData` structure in the provided span must initially have its members set to `VK_NULL_HANDLE`.
+ *
+ * @param p_Device The logical device to create the synchronization objects with.
+ * @param p_Objects A span of `SyncData` structures to populate with the created objects.
+ * @return A VulkanResult indicating success or failure of the operation.
+ */
+VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device, std::span<SyncData> p_Objects) noexcept;
+
+/**
+ * @brief Destroys synchronization objects.
+ *
+ * Releases Vulkan resources associated with the semaphores and fences in the given span of `SyncData` structures.
+ *
+ * @param p_Device The logical device used to destroy the synchronization objects.
+ * @param p_Objects A span of `SyncData` structures whose resources will be destroyed.
+ */
 void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device, std::span<const SyncData> p_Objects) noexcept;
 
 } // namespace VKit

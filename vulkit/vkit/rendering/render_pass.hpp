@@ -22,6 +22,12 @@ struct Attachment
     Flags TypeFlags;
 };
 
+/**
+ * @brief Represents a Vulkan render pass and its associated resources.
+ *
+ * Manages the configuration, creation, and destruction of Vulkan render passes, along with helper utilities for
+ * attachments, subpasses, and dependencies. Also supports resource creation for associated frame buffers and images.
+ */
 class RenderPass
 {
   public:
@@ -116,6 +122,12 @@ class RenderPass
     };
 
   public:
+    /**
+     * @brief A utility for constructing Vulkan render passes.
+     *
+     * Provides methods for configuring attachments, subpasses, and dependencies, while allowing fine-grained control
+     * over render pass creation flags and resource management.
+     */
     class Builder
     {
       public:
@@ -152,6 +164,13 @@ class RenderPass
         VmaAllocation Allocation;
     };
 
+    /**
+     * @brief Manages frame buffers and image views associated with a render pass.
+     *
+     * Can be created with the CreateResources method, which generates frame buffers and image views for each
+     * attachment. The user is responsible for destroying the resources when they are no longer needed.
+     *
+     */
     class Resources
     {
       public:
@@ -186,6 +205,21 @@ class RenderPass
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
+    /**
+     * @brief Creates resources for the render pass, including frame buffers and image data.
+     *
+     * Populates frame buffers and associated images based on the provided extent and a user-defined image creation
+     * callback. The RenderPass class provides many high-level options for ImageData struct creation, including the case
+     * where the underlying resource is directly provided by a SwapChain image. See the CreateImageData methods for
+     * more.
+     *
+     * @tparam F The type of the callback function used for creating image data.
+     * @param p_Extent The dimensions of the frame buffer.
+     * @param p_CreateImageData A callback function that generates image data for each attachment. Takes the image index
+     * and attachment index as arguments.
+     * @param p_FrameBufferLayers The number of layers for each frame buffer (default: 1).
+     * @return A result containing the created resources or an error.
+     */
     template <typename F>
     Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
                                       u32 p_FrameBufferLayers = 1) noexcept
@@ -245,15 +279,94 @@ class RenderPass
         return Result<Resources>::Ok(resources);
     }
 
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
+     * configuration.
+     *
+     * @param p_Info The Vulkan image creation info.
+     * @param p_Range The subresource range for the image.
+     * @param p_ViewType The type of image view to create.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range,
                                       VkImageViewType p_ViewType) const noexcept;
+
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
+     * configuration.
+     *
+     * The view type is determined based on the image type in the image creation info.
+     *
+     * @param p_Info The Vulkan image creation info.
+     * @param p_Range The subresource range for the image.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info,
                                       const VkImageSubresourceRange &p_Range) const noexcept;
+
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
+     * configuration.
+     *
+     * The subresource range will default to the entire image.
+     *
+     * @param p_AttachmentIndex The index of the attachment.
+     * @param p_Info The Vulkan image creation info.
+     * @param p_ViewType The type of image view to create.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info,
                                       VkImageViewType p_ViewType) const noexcept;
+
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
+     * configuration.
+     *
+     * The view type is determined based on the image type in the image creation info.
+     * The subresource range will default to the entire image.
+     *
+     * @param p_AttachmentIndex The index of the attachment.
+     * @param p_Info The Vulkan image creation info.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info) const noexcept;
 
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
+     * configuration.
+     *
+     * The image creation info will default to the attachment's format and usage flags to provide a
+     * basic image resource that works for most cases.
+     *
+     * @param p_AttachmentIndex The index of the attachment.
+     * @param p_Extent The extent of the image.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkExtent2D &p_Extent) const noexcept;
+
+    /**
+     * @brief Creates image data for a render pass attachment.
+     *
+     * A dummy method used when the user provides the image data directly. Commonly used when the image is provided by
+     * a SwapChain.
+     *
+     * The underlying Resources struct will not take ownership of the image data (will skip this resource when the
+     * Destroy() method is called), and the user is responsible for managing the image and image view (which will very
+     * likely be automatically handled by the SwapChain itself).
+     *
+     * @param p_ImageView The image view to use.
+     * @return A result containing the created image data or an error.
+     */
     Result<ImageData> CreateImageData(VkImageView p_ImageView) const noexcept;
 
     const Info &GetInfo() const noexcept;
