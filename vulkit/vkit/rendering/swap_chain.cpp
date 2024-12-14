@@ -39,12 +39,8 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
     const auto checkFlag = [this](const Flags p_Flag) -> bool { return m_Flags & p_Flag; };
-    if (!m_Allocator && checkFlag(Flag_CreateDefaultDepthResources))
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                        "If depth resources are created, an allocator must be provided");
 
     DynamicArray<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
-    DynamicArray<VkFormat> depthFormats = m_DepthFormats;
     DynamicArray<VkPresentModeKHR> presentModes = m_PresentModes;
     if (imageFormats.empty())
         imageFormats.push_back({VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
@@ -53,8 +49,6 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         presentModes.push_back(VK_PRESENT_MODE_MAILBOX_KHR);
         presentModes.push_back(VK_PRESENT_MODE_FIFO_KHR);
     }
-    if (depthFormats.empty())
-        depthFormats.push_back(VK_FORMAT_D32_SFLOAT);
 
     const auto suppResult = m_Device->QuerySwapChainSupport(m_Surface);
     if (!suppResult)
@@ -87,22 +81,10 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                 return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, error);
         }
     }
-    TKIT_ASSERT(minImageCount <= VKIT_MAX_IMAGE_COUNT, "The image count is too high");
 
     const auto surfFormatResult = selectFormat(imageFormats, support.Formats);
     if (!surfFormatResult)
         return Result<SwapChain>::Error(surfFormatResult.GetError());
-
-    VkFormat depthFormat = VK_FORMAT_UNDEFINED;
-
-    if (checkFlag(Flag_CreateDefaultDepthResources))
-    {
-        const auto depFormatResult = m_Device->FindSupportedFormat(depthFormats, VK_IMAGE_TILING_OPTIMAL,
-                                                                   VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-        if (!depFormatResult)
-            return Result<SwapChain>::Error(depFormatResult.GetError());
-        depthFormat = depFormatResult.GetValue();
-    }
 
     const auto presentModeResult = selectPresentMode(presentModes, support.PresentModes);
     if (!presentModeResult)
@@ -117,9 +99,9 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         extent = support.Capabilities.currentExtent;
     else
     {
-        extent.width =
-            std::clamp(m_Width, support.Capabilities.minImageExtent.width, support.Capabilities.maxImageExtent.width);
-        extent.height = std::clamp(m_Height, support.Capabilities.minImageExtent.height,
+        extent.width = std::clamp(m_Extent.width, support.Capabilities.minImageExtent.width,
+                                  support.Capabilities.maxImageExtent.width);
+        extent.height = std::clamp(m_Extent.height, support.Capabilities.minImageExtent.height,
                                    support.Capabilities.maxImageExtent.height);
     }
     VkSurfaceTransformFlagBitsKHR transform = m_TransformBit;
@@ -174,10 +156,8 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     SwapChain::Info info{};
     info.Extent = extent;
     info.SurfaceFormat = surfaceFormat;
-    info.DepthFormat = depthFormat;
     info.PresentMode = presentMode;
     info.ImageUsage = m_ImageUsage;
-    info.Allocator = m_Allocator;
     info.Flags = m_Flags;
 
     const auto earlyDestroy = [proxy, swapChain, &destroySwapChain, &checkFlag, &info]() {
@@ -187,26 +167,6 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                     vkDestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
 
         destroySwapChain(proxy, swapChain, proxy.AllocationCallbacks);
-
-        if (checkFlag(Flag_CreateDefaultDepthResources))
-            for (const ImageData &data : info.ImageData)
-            {
-                if (data.DepthImageView)
-                    vkDestroyImageView(proxy, data.DepthImageView, proxy.AllocationCallbacks);
-                if (data.DepthImage)
-                    vmaDestroyImage(info.Allocator, data.DepthImage, data.DepthAllocation);
-            }
-
-        if (checkFlag(Flag_CreateDefaultSyncObjects))
-            for (SyncData &data : info.SyncData)
-            {
-                if (data.RenderFinishedSemaphore)
-                    vkDestroySemaphore(proxy, data.RenderFinishedSemaphore, proxy.AllocationCallbacks);
-                if (data.ImageAvailableSemaphore)
-                    vkDestroySemaphore(proxy, data.ImageAvailableSemaphore, proxy.AllocationCallbacks);
-                if (data.InFlightFence)
-                    vkDestroyFence(proxy, data.InFlightFence, proxy.AllocationCallbacks);
-            }
     };
 
     const auto getImages = m_Device->GetFunction<PFN_vkGetSwapchainImagesKHR>("vkGetSwapchainImagesKHR");
@@ -225,7 +185,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
     }
 
-    TKit::StaticArray<VkImage, VKIT_MAX_IMAGE_COUNT> images;
+    DynamicArray<VkImage> images;
     images.resize(imageCount);
 
     result = getImages(proxy, swapChain, &imageCount, images.data());
@@ -263,120 +223,9 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                 return Result<SwapChain>::Error(result, "Failed to create the image view");
             }
         }
-
-        if (checkFlag(Flag_CreateDefaultDepthResources))
-        {
-            VkImageCreateInfo imageInfo{};
-            imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-            imageInfo.imageType = VK_IMAGE_TYPE_2D;
-            imageInfo.extent.width = extent.width;
-            imageInfo.extent.height = extent.height;
-            imageInfo.extent.depth = 1;
-            imageInfo.mipLevels = 1;
-            imageInfo.arrayLayers = 1;
-            imageInfo.format = depthFormat;
-            imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-            imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-            imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-            imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-            imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-            imageInfo.flags = 0;
-
-            VmaAllocationCreateInfo allocInfo{};
-            allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-            allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-
-            result = vmaCreateImage(m_Allocator, &imageInfo, &allocInfo, &info.ImageData[i].DepthImage,
-                                    &info.ImageData[i].DepthAllocation, nullptr);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the depth image");
-            }
-
-            VkImageViewCreateInfo viewInfo{};
-            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            viewInfo.image = info.ImageData[i].DepthImage;
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            viewInfo.format = depthFormat;
-            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-            viewInfo.subresourceRange.baseMipLevel = 0;
-            viewInfo.subresourceRange.levelCount = 1;
-            viewInfo.subresourceRange.baseArrayLayer = 0;
-            viewInfo.subresourceRange.layerCount = 1;
-
-            result = vkCreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &info.ImageData[i].DepthImageView);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the depth image view");
-            }
-        }
     }
 
-    if (checkFlag(Flag_CreateDefaultSyncObjects))
-        for (u32 i = 0; i < VKIT_MAX_FRAMES_IN_FLIGHT; ++i)
-        {
-            VkSemaphoreCreateInfo semaphoreInfo{};
-            semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-            VkFenceCreateInfo fenceInfo{};
-            fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-            fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-            result = vkCreateSemaphore(proxy, &semaphoreInfo, proxy.AllocationCallbacks,
-                                       &info.SyncData[i].ImageAvailableSemaphore);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the image available semaphore");
-            }
-
-            result = vkCreateSemaphore(proxy, &semaphoreInfo, proxy.AllocationCallbacks,
-                                       &info.SyncData[i].RenderFinishedSemaphore);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the image available semaphore");
-            }
-
-            result = vkCreateFence(proxy, &fenceInfo, proxy.AllocationCallbacks, &info.SyncData[i].InFlightFence);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the image available semaphore");
-            }
-        }
     return Result<SwapChain>::Ok(proxy, swapChain, info);
-}
-
-VulkanResult SwapChain::CreateDefaultFrameBuffers(const VkRenderPass p_RenderPass) noexcept
-{
-    for (u32 i = 0; i < m_Info.ImageData.size(); ++i)
-    {
-        std::array<VkImageView, 2> attachments = {m_Info.ImageData[i].ImageView, m_Info.ImageData[i].DepthImageView};
-        const u32 attachmentCount = attachments[1] ? 2 : 1;
-
-        VkFramebufferCreateInfo frameBufferInfo{};
-        frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        frameBufferInfo.renderPass = p_RenderPass;
-        frameBufferInfo.attachmentCount = attachmentCount;
-        frameBufferInfo.pAttachments = attachments.data();
-        frameBufferInfo.width = m_Info.Extent.width;
-        frameBufferInfo.height = m_Info.Extent.height;
-        frameBufferInfo.layers = 1;
-
-        const VkResult result = vkCreateFramebuffer(m_Device, &frameBufferInfo, m_Device.AllocationCallbacks,
-                                                    &m_Info.ImageData[i].FrameBuffer);
-        if (result != VK_SUCCESS)
-        {
-            for (u32 j = 0; j < i; ++j)
-                vkDestroyFramebuffer(m_Device, m_Info.ImageData[j].FrameBuffer, m_Device.AllocationCallbacks);
-            return VulkanResult::Error(result, "Failed to create the frame buffer");
-        }
-    }
-    m_Info.Flags |= Flag_HasDefaultFrameBuffers;
-    return VulkanResult::Success();
 }
 
 SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept
@@ -384,7 +233,7 @@ SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_Swap
 {
 }
 
-void SwapChain::Destroy() noexcept
+void SwapChain::destroy() const noexcept
 {
     TKIT_ASSERT(m_SwapChain, "The swap chain is a NULL handle");
 
@@ -397,31 +246,68 @@ void SwapChain::Destroy() noexcept
             vkDestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
 
     destroySwapChain(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
+}
 
-    if (m_Info.Flags & Flag_HasDefaultDepthResources)
-        for (const ImageData &data : m_Info.ImageData)
+VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
+                                          const std::span<SyncData> p_Objects) noexcept
+{
+    for (usize i = 0; i < p_Objects.size(); ++i)
+    {
+        VkSemaphoreCreateInfo semaphoreInfo{};
+        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+        VkFenceCreateInfo fenceInfo{};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+        VkResult result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
+                                            &p_Objects[i].ImageAvailableSemaphore);
+        if (result != VK_SUCCESS)
         {
-            vkDestroyImageView(m_Device, data.DepthImageView, m_Device.AllocationCallbacks);
-            vmaDestroyImage(m_Info.Allocator, data.DepthImage, data.DepthAllocation);
+            DestroySynchronizationObjects(p_Device, p_Objects);
+            return VulkanResult::Error(result, "Failed to create the image available semaphore");
         }
 
-    if (m_Info.Flags & Flag_HasDefaultFrameBuffers)
-        for (const ImageData &data : m_Info.ImageData)
-            vkDestroyFramebuffer(m_Device, data.FrameBuffer, m_Device.AllocationCallbacks);
-
-    if (m_Info.Flags & Flag_HasDefaultSyncObjects)
-        for (SyncData &data : m_Info.SyncData)
+        result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
+                                   &p_Objects[i].RenderFinishedSemaphore);
+        if (result != VK_SUCCESS)
         {
-            vkDestroySemaphore(m_Device, data.RenderFinishedSemaphore, m_Device.AllocationCallbacks);
-            vkDestroySemaphore(m_Device, data.ImageAvailableSemaphore, m_Device.AllocationCallbacks);
-            vkDestroyFence(m_Device, data.InFlightFence, m_Device.AllocationCallbacks);
+            DestroySynchronizationObjects(p_Device, p_Objects);
+            return VulkanResult::Error(result, "Failed to create the image available semaphore");
         }
+
+        result = vkCreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks, &p_Objects[i].InFlightFence);
+        if (result != VK_SUCCESS)
+        {
+            DestroySynchronizationObjects(p_Device, p_Objects);
+            return VulkanResult::Error(result, "Failed to create the image available semaphore");
+        }
+    }
+    return VulkanResult::Success();
+}
+void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
+                                   const std::span<const SyncData> p_Objects) noexcept
+{
+    for (const SyncData &data : p_Objects)
+    {
+        if (data.RenderFinishedSemaphore)
+            vkDestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
+        if (data.ImageAvailableSemaphore)
+            vkDestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
+        if (data.InFlightFence)
+            vkDestroyFence(p_Device, data.InFlightFence, p_Device.AllocationCallbacks);
+    }
+}
+
+void SwapChain::Destroy() noexcept
+{
+    destroy();
     m_SwapChain = VK_NULL_HANDLE;
 }
 void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const SwapChain swapChain = *this;
-    p_Queue.Push([swapChain]() { SwapChain{swapChain}.Destroy(); }); // That is stupid...
+    p_Queue.Push([swapChain]() { swapChain.destroy(); }); // That is stupid...
 }
 
 VkSwapchainKHR SwapChain::GetSwapChain() const noexcept
@@ -451,16 +337,6 @@ SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormat
     m_SurfaceFormats.push_back(p_Format);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestDepthFormat(const VkFormat p_Format) noexcept
-{
-    m_DepthFormats.insert(m_DepthFormats.begin(), p_Format);
-    return *this;
-}
-SwapChain::Builder &SwapChain::Builder::AllowDepthFormat(const VkFormat p_Format) noexcept
-{
-    m_DepthFormats.push_back(p_Format);
-    return *this;
-}
 SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode) noexcept
 {
     m_PresentModes.insert(m_PresentModes.begin(), p_Mode);
@@ -487,32 +363,26 @@ SwapChain::Builder &SwapChain::Builder::RequireImageCount(const u32 p_Images) no
 }
 SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u32 p_Height) noexcept
 {
-    m_Width = p_Width;
-    m_Height = p_Height;
+    m_Extent.width = p_Width;
+    m_Extent.height = p_Height;
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent) noexcept
 {
-    m_Width = p_Extent.width;
-    m_Height = p_Extent.height;
+    m_Extent = p_Extent;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetAllocator(VmaAllocator p_Allocator) noexcept
-{
-    m_Allocator = p_Allocator;
-    return *this;
-}
-SwapChain::Builder &SwapChain::Builder::SetFlags(const u8 p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::SetFlags(const Flags p_Flags) noexcept
 {
     m_Flags = p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddFlags(const u8 p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::AddFlags(const Flags p_Flags) noexcept
 {
     m_Flags |= p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveFlags(const u8 p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::RemoveFlags(const Flags p_Flags) noexcept
 {
     m_Flags &= ~p_Flags;
     return *this;

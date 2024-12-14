@@ -2,15 +2,6 @@
 
 #include "vkit/core/alias.hpp"
 #include "vkit/backend/logical_device.hpp"
-#include "tkit/container/static_array.hpp"
-
-#ifndef VKIT_MAX_IMAGE_COUNT
-#    define VKIT_MAX_IMAGE_COUNT 3
-#endif
-
-#ifndef VKIT_MAX_FRAMES_IN_FLIGHT
-#    define VKIT_MAX_FRAMES_IN_FLIGHT 2
-#endif
 
 namespace VKit
 {
@@ -29,7 +20,6 @@ class VKIT_API SwapChain
      * Provides methods to specify swap chain parameters like surface format,
      * present mode, image count, and flags. Supports both mandatory and optional requirements.
      *
-     * A VmaAllocator is only required if depth resources are created.
      */
     class Builder
     {
@@ -46,9 +36,7 @@ class VKIT_API SwapChain
         enum FlagBits : u8
         {
             Flag_Clipped = 1 << 0,
-            Flag_CreateImageViews = 1 << 1,
-            Flag_CreateDefaultDepthResources = 1 << 2,
-            Flag_CreateDefaultSyncObjects = 1 << 3
+            Flag_CreateImageViews = 1 << 1
         };
         using Flags = u8;
 
@@ -63,13 +51,8 @@ class VKIT_API SwapChain
          */
         Result<SwapChain> Build() const noexcept;
 
-        Builder &SetAllocator(VmaAllocator p_Allocator) noexcept; // only required if depth resources are created
-
         Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
         Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
-
-        Builder &RequestDepthFormat(VkFormat p_Format) noexcept;
-        Builder &AllowDepthFormat(VkFormat p_Format) noexcept;
 
         Builder &RequestPresentMode(VkPresentModeKHR p_Mode) noexcept;
         Builder &AllowPresentMode(VkPresentModeKHR p_Mode) noexcept;
@@ -104,17 +87,14 @@ class VKIT_API SwapChain
         VkSurfaceKHR m_Surface;
 
         VkSwapchainKHR m_OldSwapChain = VK_NULL_HANDLE;
-        VmaAllocator m_Allocator = VK_NULL_HANDLE;
 
-        u32 m_Width = 512;
-        u32 m_Height = 512;
+        VkExtent2D m_Extent = {512, 512};
 
         u32 m_RequestedImages = 0;
         u32 m_RequiredImages = 0; // Zero means no requirement
         u32 m_ImageArrayLayers = 1;
 
         DynamicArray<VkSurfaceFormatKHR> m_SurfaceFormats;
-        DynamicArray<VkFormat> m_DepthFormats;
         DynamicArray<VkPresentModeKHR> m_PresentModes;
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -134,10 +114,7 @@ class VKIT_API SwapChain
     enum FlagBits : u8
     {
         Flag_Clipped = 1 << 0,
-        Flag_HasImageViews = 1 << 1,
-        Flag_HasDefaultDepthResources = 1 << 2,
-        Flag_HasDefaultSyncObjects = 1 << 3,
-        Flag_HasDefaultFrameBuffers = 1 << 4
+        Flag_HasImageViews = 1 << 1
     };
     using Flags = u8;
 
@@ -145,34 +122,18 @@ class VKIT_API SwapChain
     {
         VkImage Image;
         VkImageView ImageView = VK_NULL_HANDLE;
-
-        VkImage DepthImage = VK_NULL_HANDLE;
-        VkImageView DepthImageView = VK_NULL_HANDLE;
-        VmaAllocation DepthAllocation = VK_NULL_HANDLE;
-
-        VkFramebuffer FrameBuffer = VK_NULL_HANDLE;
-    };
-
-    struct SyncData
-    {
-        VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
-        VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
-        VkFence InFlightFence = VK_NULL_HANDLE;
     };
 
     struct Info
     {
         VkSurfaceFormatKHR SurfaceFormat;
-        VkFormat DepthFormat; // Optional, undefined if not created
-        VmaAllocator Allocator;
 
         VkPresentModeKHR PresentMode;
         VkExtent2D Extent;
         VkImageUsageFlags ImageUsage;
         Flags Flags;
 
-        TKit::StaticArray<ImageData, VKIT_MAX_IMAGE_COUNT> ImageData;
-        std::array<SyncData, VKIT_MAX_FRAMES_IN_FLIGHT> SyncData;
+        DynamicArray<ImageData> ImageData;
     };
 
     SwapChain() noexcept = default;
@@ -184,25 +145,27 @@ class VKIT_API SwapChain
     const Info &GetInfo() const noexcept;
     VkSwapchainKHR GetSwapChain() const noexcept;
 
-    /**
-     * @brief Creates default frame buffers for the swap chain's images.
-     *
-     * Associates the swap chain's images with the specified render pass and
-     * creates frame buffers for each image. This simplifies rendering setup.
-     *
-     * The frame buffers are automatically destroyed when the swap chain is destroyed.
-     *
-     * @param p_RenderPass The render pass to associate the frame buffers with.
-     * @return A VulkanResult indicating success or failure.
-     */
-    VulkanResult CreateDefaultFrameBuffers(VkRenderPass p_RenderPass) noexcept;
-
     explicit(false) operator VkSwapchainKHR() const noexcept;
     explicit(false) operator bool() const noexcept;
 
   private:
+    void destroy() const noexcept;
+
     LogicalDevice::Proxy m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
     Info m_Info;
 };
+
+struct SyncData
+{
+    VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
+    VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
+    VkFence InFlightFence = VK_NULL_HANDLE;
+};
+
+VulkanResult CreateSynchronizationObjects(
+    const LogicalDevice::Proxy &p_Device,
+    std::span<SyncData> p_Objects) noexcept; // p_Objects structs must be all set to VK_NULL_HANDLE
+void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device, std::span<const SyncData> p_Objects) noexcept;
+
 } // namespace VKit
