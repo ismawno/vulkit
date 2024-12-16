@@ -11,7 +11,7 @@ The reason I decided against using an existing Vulkan library to handle all of t
 Vulkit focuses on Vulkan API abstractions, which can be summed up as follows:
 - Significant speedup of the Vulkan API initialization process
 - Significant speedup of instance, physical device, and logical device creation
-- Useful abstractions of essential components of the Vulkan API, such as buffers, command pools, swap chains, etc.
+- Useful abstractions of essential components of the Vulkan API, such as buffers, command pools, swap chains, render passes, etc.
 
 ### API Initialization
 
@@ -70,8 +70,8 @@ const auto physres =
     VKit::PhysicalDevice::Selector(&instance)
         .SetSurface(surface)
         .PreferType(VKit::PhysicalDevice::Discrete)
-        .AddFlags(VKit::PhysicalDeviceSelectorFlags_AnyType | VKit::PhysicalDeviceSelectorFlags_PortabilitySubset |
-                    VKit::PhysicalDeviceSelectorFlags_RequireGraphicsQueue)
+        .AddFlags(VKit::PhysicalDevice::Selector::Flag_AnyType | VKit::PhysicalDevice::Selector::Flag_PortabilitySubset |
+                    VKit::PhysicalDevice::Selector::Flag_RequireGraphicsQueue)
         .Select();
 VKIT_ASSERT_RESULT(physres);
 const VKit::PhysicalDevice &phys = physres.GetValue();
@@ -89,7 +89,8 @@ There are many more options available for both the [instance](https://github.com
 Vulkit provides a variety of abstractions. Here is the full list:
 
 - [CommandPool](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/backend/command_pool.hpp): Simplifies the allocation and deallocation of command buffers, reducing verbosity.
-- [SwapChain](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/backend/swap_chain.hpp): Streamlines the process of creating a swap chain, which can otherwise be cumbersome due to the variety of formats and parameters. Vulkit uses the same builder pattern as instance and device handles. It also supports creating additional resources that typically need to be recreated when the window is resized.
+- [RenderPass](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/rendering/render_pass.hpp): Simplifies the creation and management of Vulkan render passes, which can be complex due to the need to configure attachments, subpasses, and dependencies. Vulkit uses a flexible builder pattern to define render passes and provides utilities for managing associated resources like frame buffers and image views.
+- [SwapChain](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/rendering/swap_chain.hpp): Streamlines the process of creating a swap chain, which can otherwise be cumbersome due to the variety of formats and parameters. Vulkit uses the same builder pattern as instance and device handles. It also supports creating additional resources that typically need to be recreated when the window is resized.
 - [Buffers](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/buffer): Provides both low-level and high-level abstractions for various buffer usages (device-local and host-visible), as well as utility functions for creating vertex, index, uniform, and storage buffers.
 - [Descriptors](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/descriptors): Includes three abstractions for managing descriptor pools, descriptor set layouts, and descriptor writes.
 - [Pipelines and Shaders](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/pipeline): Offers abstractions for both graphics and compute pipelines. Additionally, a Shader class is provided, capable of compiling GLSL shaders into SPIR-V format by invoking the `glslc` compiler.
