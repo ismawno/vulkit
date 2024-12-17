@@ -28,6 +28,11 @@ template <String MessageType> VulkanResultInfo<MessageType>::operator bool() con
 template class VulkanResultInfo<const char *>;
 template class VulkanResultInfo<std::string>;
 
+VulkanFormattedResult ToFormatted(const VulkanResult &p_Result) noexcept
+{
+    return VulkanFormattedResult{p_Result.Result, p_Result.Message};
+}
+
 VulkanResult System::Initialize() noexcept
 {
     const auto enumerateExtensions =

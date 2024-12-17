@@ -116,6 +116,12 @@ using VulkanFormattedResult = VulkanResultInfo<std::string>;
 template <typename T> using Result = TKit::Result<T, VulkanResult>;
 template <typename T> using FormattedResult = TKit::Result<T, VulkanFormattedResult>;
 
+VKIT_API VulkanFormattedResult ToFormatted(const VulkanResult &p_Result) noexcept;
+template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result) noexcept
+{
+    return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue()) : FormattedResult<T>::Error(p_Result.GetError());
+}
+
 /**
  * @brief Provides system-wide utilities for querying and managing Vulkan layers and extensions.
  *
@@ -175,6 +181,6 @@ class VKIT_API DeletionQueue
     DynamicArray<std::function<void()>> m_Deleters;
 };
 
-const char *VkResultToString(VkResult p_Result) noexcept;
+VKIT_API const char *VkResultToString(VkResult p_Result) noexcept;
 
 } // namespace VKit
