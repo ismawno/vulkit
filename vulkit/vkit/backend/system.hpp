@@ -166,6 +166,11 @@ class VKIT_API DeletionQueue
     void Push(std::function<void()> &&p_Deleter) noexcept;
     void Flush() noexcept;
 
+    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object) noexcept
+    {
+        p_Object.SubmitForDeletion(*this);
+    }
+
   private:
     DynamicArray<std::function<void()>> m_Deleters;
 };
