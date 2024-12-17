@@ -65,7 +65,7 @@
 #    define VKIT_WARN_RESULT(result)
 #endif
 
-#define VKIT_FORMAT_ERROR(p_Result, ...) VulkanResultInfo<std::string>::Error(p_Result, TKIT_FORMAT(__VA_ARGS__))
+#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::VulkanResultInfo<std::string>::Error(p_Result, TKIT_FORMAT(__VA_ARGS__))
 
 namespace VKit
 {
