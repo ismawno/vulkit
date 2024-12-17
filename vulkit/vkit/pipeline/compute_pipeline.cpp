@@ -24,7 +24,7 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
     pipelineInfo.layout = p_Specs.Layout;
     pipelineInfo.stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     pipelineInfo.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    pipelineInfo.stage.module = p_Specs.ComputeShader->GetModule();
+    pipelineInfo.stage.module = p_Specs.ComputeShader;
     pipelineInfo.stage.pName = p_Specs.EntryPoint;
 
     return Result<VkComputePipelineCreateInfo>::Ok(pipelineInfo);
@@ -73,7 +73,7 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
         return VulkanResult::Error(result, "Failed to create compute pipelines");
 
     for (usize i = 0; i < p_Specs.size(); ++i)
-        p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i], p_Specs[i].Layout, *p_Specs[i].ComputeShader);
+        p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i], p_Specs[i].Layout, p_Specs[i].ComputeShader);
     return VulkanResult::Success();
 }
 
