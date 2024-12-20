@@ -3,6 +3,7 @@
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "vkit/backend/logical_device.hpp"
+#include "vkit/descriptors/descriptor_set.hpp"
 #include "tkit/profiling/vulkan.hpp"
 
 #include <vulkan/vulkan.hpp>
@@ -76,6 +77,16 @@ class VKIT_API DescriptorPool
      * @return A result containing the allocated descriptor set or an error.
      */
     Result<VkDescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
+
+    /**
+     * @brief Allocates a descriptor set from the pool.
+     *
+     * Creates a descriptor set using the specified layout.
+     *
+     * @param p_Layout The descriptor set layout to use for allocation.
+     * @return A result containing the allocated descriptor set or an error.
+     */
+    Result<DescriptorSet> Allocate(const DescriptorSetLayout &p_Layout) const noexcept;
 
     /**
      * @brief Deallocates one or more descriptor sets from the pool.

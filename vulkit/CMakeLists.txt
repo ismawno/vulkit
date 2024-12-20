@@ -17,7 +17,7 @@ set(SOURCES
     vkit/pipeline/shader.cpp
     vkit/descriptors/descriptor_pool.cpp
     vkit/descriptors/descriptor_set_layout.cpp
-    vkit/descriptors/descriptor_writer.cpp
+    vkit/descriptors/descriptor_set.cpp
 )
 
 add_library(vulkit STATIC ${SOURCES})

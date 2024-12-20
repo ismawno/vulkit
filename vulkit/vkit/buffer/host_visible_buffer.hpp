@@ -271,6 +271,10 @@ template <typename T> class HostVisibleBuffer
     {
         return m_Buffer.GetBuffer();
     }
+    explicit(false) operator const Buffer &() const noexcept
+    {
+        return m_Buffer;
+    }
     explicit(false) operator VkBuffer() const noexcept
     {
         return m_Buffer.GetBuffer();

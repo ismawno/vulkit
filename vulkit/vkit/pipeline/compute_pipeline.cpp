@@ -44,7 +44,7 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
     if (result != VK_SUCCESS)
         return Result<ComputePipeline>::Error(result, "Failed to create compute pipeline");
 
-    return Result<ComputePipeline>::Ok(p_Device, pipeline, p_Specs.Layout, *p_Specs.ComputeShader);
+    return Result<ComputePipeline>::Ok(p_Device, pipeline, p_Specs.Layout, p_Specs.ComputeShader);
 }
 VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
                                      const std::span<ComputePipeline> p_Pipelines) noexcept
