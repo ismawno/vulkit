@@ -4,7 +4,7 @@
 
 namespace VKit
 {
-DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set, const DescriptorSetLayout &p_Layout) noexcept
+DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set, const VkDescriptorSetLayout p_Layout) noexcept
     : m_Set(p_Set), m_Layout(p_Layout)
 {
 }
@@ -13,7 +13,7 @@ VkDescriptorSet DescriptorSet::GetDescriptorSet() const noexcept
 {
     return m_Set;
 }
-const DescriptorSetLayout &DescriptorSet::GetLayout() const noexcept
+VkDescriptorSetLayout DescriptorSet::GetLayout() const noexcept
 {
     return m_Layout;
 }
@@ -26,8 +26,8 @@ DescriptorSet::operator bool() const noexcept
     return m_Set != VK_NULL_HANDLE;
 }
 
-DescriptorSet::Writer::Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSet *p_Set) noexcept
-    : m_Device(p_Device), m_Set(p_Set)
+DescriptorSet::Writer::Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout) noexcept
+    : m_Device(p_Device), m_Layout(p_Layout)
 {
 }
 
@@ -68,10 +68,10 @@ void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorIm
     m_Writes.push_back(write);
 }
 
-void DescriptorSet::Writer::Overwrite() noexcept
+void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set) noexcept
 {
     for (VkWriteDescriptorSet &write : m_Writes)
-        write.dstSet = m_Set->GetDescriptorSet();
+        write.dstSet = p_Set;
     vkUpdateDescriptorSets(m_Device, static_cast<u32>(m_Writes.size()), m_Writes.data(), 0, nullptr);
 }
 

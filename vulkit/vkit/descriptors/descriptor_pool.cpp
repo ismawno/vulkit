@@ -52,7 +52,7 @@ const DescriptorPool::Info &DescriptorPool::GetInfo() const noexcept
     return m_Info;
 }
 
-Result<VkDescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
+Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
 {
     VkDescriptorSet set;
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -63,18 +63,9 @@ Result<VkDescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_L
 
     const VkResult result = vkAllocateDescriptorSets(m_Device, &allocInfo, &set);
     if (result != VK_SUCCESS)
-        return Result<VkDescriptorSet>::Error(result, "Failed to allocate descriptor set");
+        return Result<DescriptorSet>::Error(result, "Failed to allocate descriptor set");
 
-    return Result<VkDescriptorSet>::Ok(set);
-}
-
-Result<DescriptorSet> DescriptorPool::Allocate(const DescriptorSetLayout &p_Layout) const noexcept
-{
-    const auto result = Allocate(p_Layout.GetLayout());
-    if (!result)
-        return Result<DescriptorSet>::Error(result.GetError());
-
-    return Result<DescriptorSet>::Ok(result.GetValue(), p_Layout);
+    return Result<DescriptorSet>::Ok(set, p_Layout);
 }
 
 void DescriptorPool::Deallocate(const std::span<const VkDescriptorSet> p_Sets) const noexcept

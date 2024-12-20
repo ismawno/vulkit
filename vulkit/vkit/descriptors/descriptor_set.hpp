@@ -11,7 +11,7 @@ class DescriptorSet
     class Writer
     {
       public:
-        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSet *p_Set) noexcept;
+        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout) noexcept;
 
         /**
          * @brief Writes a buffer to a descriptor set binding.
@@ -50,27 +50,26 @@ class DescriptorSet
          *
          * @param p_Set The descriptor set to overwrite.
          */
-        void Overwrite() noexcept;
+        void Overwrite(const VkDescriptorSet p_Set) noexcept;
 
       private:
         LogicalDevice::Proxy m_Device;
-        const DescriptorSet *m_Set;
         const DescriptorSetLayout *m_Layout;
 
         DynamicArray<VkWriteDescriptorSet> m_Writes;
     };
 
     DescriptorSet() noexcept = default;
-    DescriptorSet(VkDescriptorSet p_Set, const DescriptorSetLayout &p_Layout) noexcept;
+    DescriptorSet(VkDescriptorSet p_Set, VkDescriptorSetLayout p_Layout) noexcept;
 
     VkDescriptorSet GetDescriptorSet() const noexcept;
-    const DescriptorSetLayout &GetLayout() const noexcept;
+    VkDescriptorSetLayout GetLayout() const noexcept;
 
     explicit(false) operator VkDescriptorSet() const noexcept;
     explicit(false) operator bool() const noexcept;
 
   private:
     VkDescriptorSet m_Set = VK_NULL_HANDLE;
-    DescriptorSetLayout m_Layout{};
+    VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
 };
 } // namespace VKit
