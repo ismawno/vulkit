@@ -43,8 +43,10 @@ Instance SetupInstance()
 TEST_CASE("Basic physical device enumeration", "[physical_device]")
 {
     Instance instance = SetupInstance();
-    const auto result =
-        PhysicalDevice::Selector(&instance).RequireExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME).Enumerate();
+    const auto result = PhysicalDevice::Selector(&instance)
+                            .RequireExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+                            .AddFlags(VKit::PhysicalDevice::Selector::Flag_AnyType)
+                            .Enumerate();
     CheckResult(result);
 
     instance.Destroy();

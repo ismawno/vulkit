@@ -5,6 +5,7 @@
 #include "vkit/backend/system.hpp"
 #include "tkit/memory/ptr.hpp"
 #include "tkit/utilities/result.hpp"
+#include "tkit/container/static_array.hpp"
 #include <vulkan/vulkan.hpp>
 
 namespace VKit
@@ -82,11 +83,11 @@ class VKIT_API Instance
         u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
         u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
-        DynamicArray<const char *> m_RequiredExtensions;
-        DynamicArray<const char *> m_RequestedExtensions;
+        TKit::StaticArray64<const char *> m_RequiredExtensions;
+        TKit::StaticArray64<const char *> m_RequestedExtensions;
 
-        DynamicArray<const char *> m_RequiredLayers;
-        DynamicArray<const char *> m_RequestedLayers;
+        TKit::StaticArray16<const char *> m_RequiredLayers;
+        TKit::StaticArray16<const char *> m_RequestedLayers;
 
         bool m_RequireValidationLayers = false;
         bool m_RequestValidationLayers = false;
@@ -129,8 +130,8 @@ class VKIT_API Instance
 
         Flags Flags;
 
-        DynamicArray<const char *> EnabledExtensions;
-        DynamicArray<const char *> EnabledLayers;
+        TKit::StaticArray64<const char *> EnabledExtensions;
+        TKit::StaticArray16<const char *> EnabledLayers;
 
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;

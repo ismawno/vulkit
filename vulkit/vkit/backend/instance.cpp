@@ -49,7 +49,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(VkDebugUtilsMessageSe
     return VK_FALSE;
 }
 
-static bool contains(const DynamicArray<const char *> &p_Extensions, const char *p_Extension) noexcept
+static bool contains(const std::span<const char *const> p_Extensions, const char *p_Extension) noexcept
 {
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
@@ -95,8 +95,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
             return FormattedResult<Instance>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
 
-    DynamicArray<const char *> extensions;
-    extensions.reserve(m_RequiredExtensions.size() + m_RequestedExtensions.size());
+    TKit::StaticArray64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
         if (!contains(extensions, extension))
             extensions.push_back(extension);
@@ -109,8 +108,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
             extensions.push_back(extension);
     }
 
-    DynamicArray<const char *> layers;
-    layers.reserve(m_RequiredLayers.size() + m_RequestedLayers.size());
+    TKit::StaticArray16<const char *> layers;
     for (const char *layer : m_RequiredLayers)
         if (!contains(layers, layer))
             layers.push_back(layer);
