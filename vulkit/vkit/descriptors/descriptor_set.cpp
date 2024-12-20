@@ -12,15 +12,11 @@ DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set, const VkDescriptorSetL
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const std::span<const u32> p_DynamicOffsets) const noexcept
 {
-    if (!p_DynamicOffsets.empty())
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, 0, 1, &m_Set,
-                                static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
-    else
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, 0, 1, &m_Set, 0, nullptr);
+    Bind(p_CommandBuffer, m_Set, p_BindPoint, p_Layout, 0, p_DynamicOffsets);
 }
-void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const std::span<const VkDescriptorSet> p_Sets,
-                         const u32 p_FirstSet, const std::span<const u32> p_DynamicOffsets) noexcept
+void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<const VkDescriptorSet> p_Sets,
+                         const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
+                         const std::span<const u32> p_DynamicOffsets) noexcept
 {
     if (!p_DynamicOffsets.empty())
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
@@ -28,6 +24,16 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipeline
     else
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
                                 p_Sets.data(), 0, nullptr);
+}
+void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkDescriptorSet p_Set,
+                         const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
+                         const std::span<const u32> p_DynamicOffsets) noexcept
+{
+    if (!p_DynamicOffsets.empty())
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,
+                                static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
+    else
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, 0, nullptr);
 }
 
 VkDescriptorSet DescriptorSet::GetDescriptorSet() const noexcept

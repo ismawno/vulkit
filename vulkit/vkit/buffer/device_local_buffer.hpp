@@ -255,6 +255,18 @@ template <typename T> class DeviceLocalBuffer
             vkCmdBindVertexBuffers(p_CommandBuffer, 0, static_cast<u32>(p_Buffers.size()), p_Buffers.data(), nullptr);
     }
 
+    /**
+     * @brief Binds a buffer as a vertex buffer to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
+                            const VkDeviceSize p_Offset = 0) const noexcept
+    {
+        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+    }
+
     VkDescriptorBufferInfo GetDescriptorInfo() const noexcept
     {
         return m_Buffer.GetDescriptorInfo();
