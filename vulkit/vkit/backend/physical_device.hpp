@@ -54,7 +54,7 @@ class VKIT_API PhysicalDevice
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
-        TKit::StaticArray16<VkSurfaceFormatKHR> Formats;
+        TKit::StaticArray128<VkSurfaceFormatKHR> Formats;
         TKit::StaticArray8<VkPresentModeKHR> PresentModes;
     };
 
