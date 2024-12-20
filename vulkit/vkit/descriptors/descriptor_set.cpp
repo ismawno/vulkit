@@ -9,6 +9,27 @@ DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set, const VkDescriptorSetL
 {
 }
 
+void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
+                         const VkPipelineLayout p_Layout, const std::span<const u32> p_DynamicOffsets) const noexcept
+{
+    if (!p_DynamicOffsets.empty())
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, 0, 1, &m_Set,
+                                static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
+    else
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, 0, 1, &m_Set, 0, nullptr);
+}
+void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
+                         const VkPipelineLayout p_Layout, const std::span<const VkDescriptorSet> p_Sets,
+                         const u32 p_FirstSet, const std::span<const u32> p_DynamicOffsets) noexcept
+{
+    if (!p_DynamicOffsets.empty())
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
+                                p_Sets.data(), static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
+    else
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
+                                p_Sets.data(), 0, nullptr);
+}
+
 VkDescriptorSet DescriptorSet::GetDescriptorSet() const noexcept
 {
     return m_Set;

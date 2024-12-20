@@ -62,6 +62,13 @@ class DescriptorSet
     DescriptorSet() noexcept = default;
     DescriptorSet(VkDescriptorSet p_Set, VkDescriptorSetLayout p_Layout) noexcept;
 
+    void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
+              std::span<const u32> p_DynamicOffsets = {}) const noexcept;
+
+    static void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
+                     std::span<const VkDescriptorSet> p_Sets, u32 p_FirstSet = 0,
+                     std::span<const u32> p_DynamicOffsets = {}) noexcept;
+
     VkDescriptorSet GetDescriptorSet() const noexcept;
     VkDescriptorSetLayout GetLayout() const noexcept;
 
