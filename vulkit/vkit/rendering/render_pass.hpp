@@ -64,7 +64,7 @@ class RenderPass
       private:
         Builder *m_Builder;
         Attachment m_Attachment{};
-        DynamicArray<VkFormat> m_Formats;
+        TKit::StaticArray16<VkFormat> m_Formats;
 
         friend class Builder;
     };
@@ -92,10 +92,10 @@ class RenderPass
       private:
         Builder *m_Builder;
         VkSubpassDescription m_Description{};
-        DynamicArray<VkAttachmentReference> m_ColorAttachments{};
-        DynamicArray<VkAttachmentReference> m_InputAttachments{};
-        DynamicArray<u32> m_PreserveAttachments{};
-        DynamicArray<VkAttachmentReference> m_ResolveAttachments{};
+        TKit::StaticArray8<VkAttachmentReference> m_ColorAttachments{};
+        TKit::StaticArray8<VkAttachmentReference> m_InputAttachments{};
+        TKit::StaticArray8<u32> m_PreserveAttachments{};
+        TKit::StaticArray8<VkAttachmentReference> m_ResolveAttachments{};
         VkAttachmentReference m_DepthStencilAttachment{};
 
         friend class Builder;
@@ -152,9 +152,9 @@ class RenderPass
         VkRenderPassCreateFlags m_Flags = 0;
         u32 m_ImageCount;
 
-        DynamicArray<AttachmentBuilder> m_Attachments{};
-        DynamicArray<SubpassBuilder> m_Subpasses{};
-        DynamicArray<DependencyBuilder> m_Dependencies{};
+        TKit::StaticArray16<AttachmentBuilder> m_Attachments{};
+        TKit::StaticArray8<SubpassBuilder> m_Subpasses{};
+        TKit::StaticArray8<DependencyBuilder> m_Dependencies{};
     };
 
     struct ImageData
@@ -186,8 +186,8 @@ class RenderPass
         LogicalDevice::Proxy m_Device{};
         VmaAllocator m_Allocator = VK_NULL_HANDLE;
 
-        DynamicArray<ImageData> m_Images;           // size: m_ImageCount * m_Attachments.size()
-        DynamicArray<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
+        TKit::StaticArray64<ImageData> m_Images;          // size: m_ImageCount * m_Attachments.size()
+        TKit::StaticArray4<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
     };
@@ -195,7 +195,7 @@ class RenderPass
     struct Info
     {
         VmaAllocator Allocator;
-        DynamicArray<Attachment> Attachments;
+        TKit::StaticArray16<Attachment> Attachments;
         u32 ImageCount;
     };
 
@@ -234,10 +234,8 @@ class RenderPass
         Resources resources;
         resources.m_Device = m_Device;
         resources.m_Allocator = m_Info.Allocator;
-        resources.m_Images.reserve(m_Info.ImageCount * m_Info.Attachments.size());
-        resources.m_FrameBuffers.reserve(m_Info.ImageCount);
 
-        DynamicArray<VkImageView> attachments{m_Info.Attachments.size(), VK_NULL_HANDLE};
+        TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.size(), VK_NULL_HANDLE};
         const u32 attachmentCount = static_cast<u32>(attachments.size());
 
         for (u32 i = 0; i < m_Info.ImageCount; ++i)

@@ -22,7 +22,7 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
 }
 
 DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, const VkDescriptorSetLayout p_Layout,
-                                         const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept
+                                         const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept
     : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
 {
 }
@@ -40,7 +40,7 @@ void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexce
     p_Queue.Push([layout, device]() { vkDestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
 }
 
-const DynamicArray<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const noexcept
+const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const noexcept
 {
     return m_Bindings;
 }

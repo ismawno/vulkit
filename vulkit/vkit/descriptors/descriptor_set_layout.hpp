@@ -56,12 +56,12 @@ class VKIT_API DescriptorSetLayout
       private:
         LogicalDevice::Proxy m_Device;
 
-        DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
+        TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
     DescriptorSetLayout() noexcept = default;
     DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
-                        const DynamicArray<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
+                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -70,11 +70,11 @@ class VKIT_API DescriptorSetLayout
     explicit(false) operator VkDescriptorSetLayout() const noexcept;
     explicit(false) operator bool() const noexcept;
 
-    const DynamicArray<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
+    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
 
   private:
     LogicalDevice::Proxy m_Device{};
     VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
-    DynamicArray<VkDescriptorSetLayoutBinding> m_Bindings;
+    TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
 };
 } // namespace VKit

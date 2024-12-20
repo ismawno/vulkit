@@ -117,7 +117,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcep
     if (!result)
         return FormattedResult<PhysicalDevice>::Error(result.GetError().Result, result.GetError().Message);
 
-    const DynamicArray<FormattedResult<PhysicalDevice>> &devices = result.GetValue();
+    const auto &devices = result.GetValue();
     return devices[0];
 }
 
@@ -139,20 +139,17 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
 
-    DynamicArray<VkExtensionProperties> extensionsProps{extensionCount};
+    TKit::StaticArray128<VkExtensionProperties> extensionsProps{extensionCount};
     result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.data());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
 
-    DynamicArray<std::string> availableExtensions;
-    availableExtensions.reserve(extensionCount);
+    TKit::StaticArray128<std::string> availableExtensions;
     for (const VkExtensionProperties &extension : extensionsProps)
         availableExtensions.push_back(extension.extensionName);
 
-    DynamicArray<std::string> enabledExtensions;
-    enabledExtensions.reserve(availableExtensions.size());
-
+    TKit::StaticArray128<std::string> enabledExtensions;
     bool skipDevice = false;
     for (const std::string &extension : m_RequiredExtensions)
     {
@@ -184,7 +181,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     u32 familyCount;
     vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
 
-    DynamicArray<VkQueueFamilyProperties> families{familyCount};
+    TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
     vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.data());
 
     const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
@@ -498,15 +495,15 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     return JudgeResult::Ok(p_Device, deviceInfo);
 }
 
-Result<DynamicArray<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const noexcept
+Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const noexcept
 {
-    using EnumerateResult = Result<DynamicArray<FormattedResult<PhysicalDevice>>>;
+    using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
 
     if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
                                       "The surface must be set if the instance is not headless");
 
-    DynamicArray<VkPhysicalDevice> vkdevices;
+    TKit::StaticArray4<VkPhysicalDevice> vkdevices;
 
     u32 deviceCount = 0;
     VkResult result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, nullptr);
@@ -521,7 +518,7 @@ Result<DynamicArray<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::
     if (vkdevices.empty())
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
-    DynamicArray<FormattedResult<PhysicalDevice>> devices;
+    TKit::StaticArray4<FormattedResult<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice);

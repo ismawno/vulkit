@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-static void CheckDevices(const DynamicArray<FormattedResult<PhysicalDevice>> &p_Devices) noexcept
+static void CheckDevices(const std::span<const FormattedResult<PhysicalDevice>> p_Devices) noexcept
 {
     bool none = true;
     for (const auto &devResult : p_Devices)

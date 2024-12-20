@@ -16,7 +16,7 @@ namespace VKit
 struct VKIT_API QueuePriorities
 {
     u32 Index;
-    DynamicArray<f32> Priorities;
+    TKit::StaticArray8<f32> Priorities;
 };
 
 enum class QueueType : u32

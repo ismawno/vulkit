@@ -51,13 +51,13 @@ class VKIT_API DescriptorPool
 
         u32 m_MaxSets = 8;
         VkDescriptorPoolCreateFlags m_Flags = 0;
-        DynamicArray<VkDescriptorPoolSize> m_PoolSizes{};
+        TKit::StaticArray32<VkDescriptorPoolSize> m_PoolSizes{};
     };
 
     struct Info
     {
         u32 MaxSets;
-        DynamicArray<VkDescriptorPoolSize> PoolSizes;
+        TKit::StaticArray32<VkDescriptorPoolSize> PoolSizes;
     };
 
     DescriptorPool() noexcept = default;

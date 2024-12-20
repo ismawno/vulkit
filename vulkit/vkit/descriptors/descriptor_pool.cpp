@@ -118,7 +118,7 @@ DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCr
 }
 DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept
 {
-    m_PoolSizes.push_back({p_Type, p_Size});
+    m_PoolSizes.push_back(VkDescriptorPoolSize{p_Type, p_Size});
     return *this;
 }
 

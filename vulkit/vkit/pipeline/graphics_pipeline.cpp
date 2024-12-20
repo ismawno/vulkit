@@ -31,8 +31,7 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
     if (p_Specs.size() == 0)
         return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
 
-    DynamicArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
-    pipelineInfos.reserve(p_Specs.size());
+    TKit::StaticArray32<VkGraphicsPipelineCreateInfo> pipelineInfos;
     for (Specs &specs : p_Specs)
     {
         const auto result = specs.CreatePipelineInfo();
@@ -42,7 +41,7 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
         pipelineInfos.push_back(pipelineInfo);
     }
 
-    DynamicArray<VkPipeline> pipelines{p_Specs.size()};
+    TKit::StaticArray32<VkPipeline> pipelines{p_Specs.size()};
     const VkResult result =
         vkCreateGraphicsPipelines(p_Device, p_Specs[0].Cache, static_cast<u32>(p_Specs.size()), pipelineInfos.data(),
                                   p_Device.AllocationCallbacks, pipelines.data());

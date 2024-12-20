@@ -8,8 +8,8 @@ SwapChain::Builder::Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surfac
 {
 }
 
-Result<VkSurfaceFormatKHR> selectFormat(const DynamicArray<VkSurfaceFormatKHR> &p_Requested,
-                                        const DynamicArray<VkSurfaceFormatKHR> &p_Supported) noexcept
+Result<VkSurfaceFormatKHR> selectFormat(const std::span<const VkSurfaceFormatKHR> p_Requested,
+                                        const std::span<const VkSurfaceFormatKHR> p_Supported) noexcept
 {
     for (const VkSurfaceFormatKHR &desired : p_Requested)
         for (const VkSurfaceFormatKHR &supported : p_Supported)
@@ -19,8 +19,8 @@ Result<VkSurfaceFormatKHR> selectFormat(const DynamicArray<VkSurfaceFormatKHR> &
                                              "No desired format that is supported found");
 }
 
-Result<VkPresentModeKHR> selectPresentMode(const DynamicArray<VkPresentModeKHR> &p_Requested,
-                                           const DynamicArray<VkPresentModeKHR> &p_Supported) noexcept
+Result<VkPresentModeKHR> selectPresentMode(const std::span<const VkPresentModeKHR> p_Requested,
+                                           const std::span<const VkPresentModeKHR> p_Supported) noexcept
 {
     for (const VkPresentModeKHR &desired : p_Requested)
         for (const VkPresentModeKHR &supported : p_Supported)
@@ -40,10 +40,10 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     const auto checkFlag = [this](const Flags p_Flag) -> bool { return m_Flags & p_Flag; };
 
-    DynamicArray<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
-    DynamicArray<VkPresentModeKHR> presentModes = m_PresentModes;
+    TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
+    TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
     if (imageFormats.empty())
-        imageFormats.push_back({VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
+        imageFormats.push_back(VkSurfaceFormatKHR{VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
     if (presentModes.empty())
     {
         presentModes.push_back(VK_PRESENT_MODE_MAILBOX_KHR);
@@ -185,7 +185,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
     }
 
-    DynamicArray<VkImage> images;
+    TKit::StaticArray4<VkImage> images;
     images.resize(imageCount);
 
     result = getImages(proxy, swapChain, &imageCount, images.data());

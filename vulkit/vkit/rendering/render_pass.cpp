@@ -13,14 +13,11 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
     if (m_Subpasses.empty())
         return Result<RenderPass>::Error(VK_ERROR_INITIALIZATION_FAILED, "Render must have at least one subpass");
 
-    DynamicArray<Attachment> attachments;
-    DynamicArray<VkAttachmentDescription> attDescriptions;
-
-    attachments.reserve(m_Attachments.size());
-    attDescriptions.reserve(m_Attachments.size());
+    TKit::StaticArray16<Attachment> attachments;
+    TKit::StaticArray16<VkAttachmentDescription> attDescriptions;
     for (const AttachmentBuilder &attachment : m_Attachments)
     {
-        DynamicArray<VkFormat> formats = attachment.m_Formats;
+        TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
         if (formats.empty())
         {
             if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Color)
@@ -51,13 +48,11 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
         attDescriptions.push_back(att.Description);
     }
 
-    DynamicArray<VkSubpassDescription> subpasses;
-    subpasses.reserve(m_Subpasses.size());
+    TKit::StaticArray8<VkSubpassDescription> subpasses;
     for (const SubpassBuilder &subpass : m_Subpasses)
         subpasses.push_back(subpass.m_Description);
 
-    DynamicArray<VkSubpassDependency> dependencies;
-    dependencies.reserve(m_Dependencies.size());
+    TKit::StaticArray8<VkSubpassDependency> dependencies;
     for (const DependencyBuilder &dependency : m_Dependencies)
         dependencies.push_back(dependency.m_Dependency);
 
@@ -448,10 +443,10 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
                                                                            const VkImageLayout p_Layout,
                                                                            const u32 p_ResolveIndex) noexcept
 {
-    m_ColorAttachments.push_back({p_AttachmentIndex, p_Layout});
+    m_ColorAttachments.push_back(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     if (p_ResolveIndex != UINT32_MAX)
     {
-        m_ResolveAttachments.push_back({p_ResolveIndex, p_Layout});
+        m_ResolveAttachments.push_back(VkAttachmentReference{p_ResolveIndex, p_Layout});
         TKIT_ASSERT(m_ResolveAttachments.size() == m_ColorAttachments.size(),
                     "Mismatched color and resolve attachments");
     }
@@ -465,7 +460,7 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddInputAttachment(const u32 p_AttachmentIndex,
                                                                            const VkImageLayout p_Layout) noexcept
 {
-    m_InputAttachments.push_back({p_AttachmentIndex, p_Layout});
+    m_InputAttachments.push_back(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     return *this;
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddPreserveAttachment(const u32 p_AttachmentIndex) noexcept

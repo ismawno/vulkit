@@ -63,7 +63,7 @@ PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const V
 PipelineLayout::Builder &PipelineLayout::Builder::AddPushConstantRange(const VkShaderStageFlags p_Stages,
                                                                        const u32 p_Size, const u32 p_Offset) noexcept
 {
-    m_PushConstantRanges.push_back({p_Stages, p_Offset, p_Size});
+    m_PushConstantRanges.push_back(VkPushConstantRange{p_Stages, p_Offset, p_Size});
     return *this;
 }
 PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags p_Flags) noexcept

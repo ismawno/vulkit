@@ -90,8 +90,8 @@ class VKIT_API SwapChain
         u32 m_RequiredImages = 0; // Zero means no requirement
         u32 m_ImageArrayLayers = 1;
 
-        DynamicArray<VkSurfaceFormatKHR> m_SurfaceFormats;
-        DynamicArray<VkPresentModeKHR> m_PresentModes;
+        TKit::StaticArray16<VkSurfaceFormatKHR> m_SurfaceFormats;
+        TKit::StaticArray8<VkPresentModeKHR> m_PresentModes;
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -128,7 +128,7 @@ class VKIT_API SwapChain
         VkImageUsageFlags ImageUsage;
         Flags Flags;
 
-        DynamicArray<ImageData> ImageData;
+        TKit::StaticArray4<ImageData> ImageData;
     };
 
     SwapChain() noexcept = default;

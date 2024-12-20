@@ -56,7 +56,7 @@ class DescriptorSet
         LogicalDevice::Proxy m_Device;
         const DescriptorSetLayout *m_Layout;
 
-        DynamicArray<VkWriteDescriptorSet> m_Writes;
+        TKit::StaticArray16<VkWriteDescriptorSet> m_Writes;
     };
 
     DescriptorSet() noexcept = default;

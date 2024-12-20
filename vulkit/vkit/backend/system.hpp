@@ -3,6 +3,7 @@
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/utilities/result.hpp"
+#include "tkit/container/static_array.hpp"
 #include <vulkan/vulkan.hpp>
 #include <span>
 #include <functional>
@@ -157,8 +158,8 @@ struct VKIT_API System
         return reinterpret_cast<F>(vkGetDeviceProcAddr(p_Device, p_Name));
     }
 
-    static inline DynamicArray<VkExtensionProperties> AvailableExtensions{};
-    static inline DynamicArray<VkLayerProperties> AvailableLayers{};
+    static inline TKit::StaticArray64<VkExtensionProperties> AvailableExtensions{};
+    static inline TKit::StaticArray16<VkLayerProperties> AvailableLayers{};
 };
 
 /**
@@ -179,7 +180,7 @@ class VKIT_API DeletionQueue
     }
 
   private:
-    DynamicArray<std::function<void()>> m_Deleters;
+    TKit::StaticArray1024<std::function<void()>> m_Deleters;
 };
 
 VKIT_API const char *VkResultToString(VkResult p_Result) noexcept;

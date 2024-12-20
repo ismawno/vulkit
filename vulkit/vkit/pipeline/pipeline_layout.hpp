@@ -48,8 +48,8 @@ class VKIT_API PipelineLayout
       private:
         LogicalDevice::Proxy m_Device;
 
-        DynamicArray<VkDescriptorSetLayout> m_DescriptorSetLayouts;
-        DynamicArray<VkPushConstantRange> m_PushConstantRanges;
+        TKit::StaticArray8<VkDescriptorSetLayout> m_DescriptorSetLayouts;
+        TKit::StaticArray4<VkPushConstantRange> m_PushConstantRanges;
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 

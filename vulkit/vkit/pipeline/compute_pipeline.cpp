@@ -54,8 +54,7 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
     if (p_Specs.size() == 0)
         return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
 
-    DynamicArray<VkComputePipelineCreateInfo> pipelineInfos;
-    pipelineInfos.reserve(p_Specs.size());
+    TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
@@ -65,7 +64,7 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
         pipelineInfos.push_back(pipelineInfo);
     }
 
-    DynamicArray<VkPipeline> pipelines{p_Specs.size()};
+    TKit::StaticArray32<VkPipeline> pipelines{p_Specs.size()};
     const VkResult result =
         vkCreateComputePipelines(p_Device, p_Specs[0].Cache, static_cast<u32>(p_Specs.size()), pipelineInfos.data(),
                                  p_Device.AllocationCallbacks, pipelines.data());

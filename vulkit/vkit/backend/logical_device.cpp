@@ -9,8 +9,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     const Instance::Info &instanceInfo = p_Instance.GetInfo();
     PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
 
-    DynamicArray<VkDeviceQueueCreateInfo> queueCreateInfos;
-    queueCreateInfos.reserve(p_QueuePriorities.size());
+    TKit::StaticArray8<VkDeviceQueueCreateInfo> queueCreateInfos;
     for (const QueuePriorities &priorities : p_QueuePriorities)
     {
         VkDeviceQueueCreateInfo queueCreateInfo{};
@@ -21,8 +20,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
-    DynamicArray<const char *> enabledExtensions;
-    enabledExtensions.reserve(devInfo.EnabledExtensions.size());
+    TKit::StaticArray128<const char *> enabledExtensions;
     for (const std::string &extension : devInfo.EnabledExtensions)
         enabledExtensions.push_back(extension.c_str());
 
@@ -71,8 +69,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
 {
     const usize queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.size();
-    DynamicArray<QueuePriorities> queuePriorities;
-    queuePriorities.reserve(queueFamilyCount);
+    TKit::StaticArray8<QueuePriorities> queuePriorities;
     for (usize i = 0; i < queueFamilyCount; ++i)
     {
         QueuePriorities priorities;

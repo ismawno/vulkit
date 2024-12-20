@@ -54,8 +54,8 @@ class VKIT_API PhysicalDevice
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
-        DynamicArray<VkSurfaceFormatKHR> Formats;
-        DynamicArray<VkPresentModeKHR> PresentModes;
+        TKit::StaticArray16<VkSurfaceFormatKHR> Formats;
+        TKit::StaticArray8<VkPresentModeKHR> PresentModes;
     };
 
     /**
@@ -109,7 +109,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A result containing an array of formatted results for each physical device.
          */
-        Result<DynamicArray<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
+        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
 
         Selector &SetName(const char *p_Name) noexcept;
         Selector &PreferType(Type p_Type) noexcept;
@@ -145,8 +145,8 @@ class VKIT_API PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        DynamicArray<std::string> m_RequiredExtensions;
-        DynamicArray<std::string> m_RequestedExtensions;
+        TKit::StaticArray128<std::string> m_RequiredExtensions;
+        TKit::StaticArray128<std::string> m_RequestedExtensions;
 
         Features m_RequiredFeatures{};
     };
@@ -181,11 +181,11 @@ class VKIT_API PhysicalDevice
         u32 ComputeIndex;
         u32 TransferIndex;
         u32 PresentIndex;
-        DynamicArray<VkQueueFamilyProperties> QueueFamilies;
+        TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        DynamicArray<std::string> EnabledExtensions;
-        DynamicArray<std::string> AvailableExtensions;
+        TKit::StaticArray128<std::string> EnabledExtensions;
+        TKit::StaticArray128<std::string> AvailableExtensions;
 
         Features EnabledFeatures{};
         Features AvailableFeatures{};
