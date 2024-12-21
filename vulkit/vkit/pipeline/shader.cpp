@@ -22,8 +22,7 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
 
     const auto fileSize = file.tellg();
 
-    // This is a dangerous hard limit. Files may be larger than this
-    TKit::StaticArray<char, 128 * 1024> code(fileSize);
+    TKit::StaticArray<char, VKIT_MAX_SHADER_SIZE> code(fileSize);
     file.seekg(0);
     file.read(code.data(), fileSize);
 

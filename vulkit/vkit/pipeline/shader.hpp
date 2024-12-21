@@ -3,6 +3,10 @@
 #include "vkit/backend/logical_device.hpp"
 #include <vulkan/vulkan.hpp>
 
+#ifndef VKIT_MAX_SHADER_SIZE
+#    define VKIT_MAX_SHADER_SIZE 128 * 1024
+#endif
+
 namespace VKit
 {
 /**
