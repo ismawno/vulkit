@@ -37,7 +37,9 @@ void ComputeJob::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<con
 {
     m_Pipeline.Bind(p_CommandBuffer);
     TKit::StaticArray8<VkDescriptorSet> descriptorSets;
-    for (u32 i = 0; i < m_DescriptorSets.size(); ++i)
+
+    const u32 descriptorCount = static_cast<u32>(m_DescriptorSets.size());
+    for (u32 i = 0; i < descriptorCount; ++i)
         if (m_DescriptorSets[i])
             descriptorSets.push_back(m_DescriptorSets[i]);
 
