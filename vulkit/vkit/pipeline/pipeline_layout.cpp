@@ -21,12 +21,16 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
     const VkResult result = vkCreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
         return Result<PipelineLayout>::Error(result, "Failed to create pipeline layout");
-    return Result<PipelineLayout>::Ok(m_Device, layout, m_PushConstantRanges);
+
+    PipelineLayout::Info info;
+    info.DescriptorSetLayouts = m_DescriptorSetLayouts;
+    info.PushConstantRanges = m_PushConstantRanges;
+    return Result<PipelineLayout>::Ok(m_Device, layout, info);
 }
 
 PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
-                               const TKit::StaticArray4<VkPushConstantRange> &p_PushConstantRanges) noexcept
-    : m_Device(p_Device), m_Layout(p_Layout), m_PushConstantRanges(p_PushConstantRanges)
+                               const Info &p_Info) noexcept
+    : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
 {
 }
 
@@ -43,9 +47,9 @@ void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([layout, device]() { vkDestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
 }
-const TKit::StaticArray4<VkPushConstantRange> &PipelineLayout::GetPushConstantRanges() const noexcept
+const PipelineLayout::Info &PipelineLayout::GetInfo() const noexcept
 {
-    return m_PushConstantRanges;
+    return m_Info;
 }
 VkPipelineLayout PipelineLayout::GetLayout() const noexcept
 {

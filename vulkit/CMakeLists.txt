@@ -12,6 +12,7 @@ set(SOURCES
     vkit/rendering/swap_chain.cpp
     vkit/buffer/buffer.cpp
     vkit/pipeline/compute_pipeline.cpp
+    vkit/pipeline/compute_job.cpp
     vkit/pipeline/graphics_pipeline.cpp
     vkit/pipeline/pipeline_layout.cpp
     vkit/pipeline/shader.cpp

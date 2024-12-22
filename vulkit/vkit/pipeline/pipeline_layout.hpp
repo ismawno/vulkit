@@ -53,14 +53,19 @@ class VKIT_API PipelineLayout
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 
+    struct Info
+    {
+        TKit::StaticArray8<VkDescriptorSetLayout> DescriptorSetLayouts;
+        TKit::StaticArray4<VkPushConstantRange> PushConstantRanges;
+    };
+
     PipelineLayout() noexcept = default;
-    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout,
-                   const TKit::StaticArray4<VkPushConstantRange> &p_PushConstantRanges) noexcept;
+    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, const Info &p_Info) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
-    const TKit::StaticArray4<VkPushConstantRange> &GetPushConstantRanges() const noexcept;
+    const Info &GetInfo() const noexcept;
 
     VkPipelineLayout GetLayout() const noexcept;
     explicit(false) operator VkPipelineLayout() const noexcept;
@@ -69,6 +74,6 @@ class VKIT_API PipelineLayout
   private:
     LogicalDevice::Proxy m_Device{};
     VkPipelineLayout m_Layout = VK_NULL_HANDLE;
-    TKit::StaticArray4<VkPushConstantRange> m_PushConstantRanges;
+    Info m_Info;
 };
 } // namespace VKit
