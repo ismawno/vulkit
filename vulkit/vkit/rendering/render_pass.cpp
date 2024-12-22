@@ -226,6 +226,11 @@ Result<RenderPass::ImageData> RenderPass::CreateImageData(const u32 p_Attachment
     else if ((attachment.TypeFlags & Attachment::Flag_Depth) || (attachment.TypeFlags & Attachment::Flag_Stencil))
         imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
+    if (attachment.TypeFlags & Attachment::Flag_Input)
+        imageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+    if (attachment.TypeFlags & Attachment::Flag_Sampled)
+        imageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+
     return CreateImageData(p_AttachmentIndex, imageInfo);
 }
 Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageView p_ImageView) const noexcept
