@@ -4,9 +4,8 @@
 #include "vkit/core/alias.hpp"
 #include "vkit/backend/logical_device.hpp"
 #include "vkit/descriptors/descriptor_set.hpp"
-#include "tkit/profiling/vulkan.hpp"
 
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 #include <span>
 
 namespace VKit

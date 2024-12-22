@@ -5,7 +5,7 @@
 #include "vkit/pipeline/shader.hpp"
 #include "tkit/core/non_copyable.hpp"
 
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 namespace VKit
 {

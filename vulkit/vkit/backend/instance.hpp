@@ -5,7 +5,7 @@
 #include "vkit/backend/system.hpp"
 #include "tkit/memory/ptr.hpp"
 #include "tkit/utilities/result.hpp"
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 namespace VKit
 {

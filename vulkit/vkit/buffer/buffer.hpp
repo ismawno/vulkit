@@ -6,7 +6,7 @@
 
 #include "tkit/memory/block_allocator.hpp"
 
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 // User may not use mutable buffer methods if the buffer is not/cannot be mapped
 
