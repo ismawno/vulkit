@@ -67,7 +67,7 @@ i32 Shader::CompileIfModified(const std::string_view p_SourcePath, const std::st
     if (sourceTime > binaryTime)
         return Compile(p_SourcePath, p_BinaryPath);
 
-    return 0;
+    return INT32_MAX;
 }
 
 void Shader::Destroy() noexcept
