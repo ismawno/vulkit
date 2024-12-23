@@ -46,12 +46,28 @@ i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view 
 
     std::filesystem::create_directories(binaryPath.parent_path());
     const std::string compileCommand = VKIT_GLSL_BINARY " " + std::string(p_SourcePath) + " -o " + binaryPath.string();
+    return std::system(compileCommand.c_str());
+}
 
-    const i32 result = std::system(compileCommand.c_str());
-    if (result != 0)
-        return result;
+i32 Shader::CompileIfModified(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+{
+    namespace fs = std::filesystem;
+    const fs::path sourcePath = p_SourcePath;
+    const fs::path binaryPath = p_BinaryPath;
 
-    return result;
+    if (!fs::exists(sourcePath))
+        return 1;
+
+    if (!fs::exists(binaryPath))
+        return Compile(p_SourcePath, p_BinaryPath);
+
+    const auto sourceTime = fs::last_write_time(sourcePath);
+    const auto binaryTime = fs::last_write_time(binaryPath);
+
+    if (sourceTime > binaryTime)
+        return Compile(p_SourcePath, p_BinaryPath);
+
+    return 0;
 }
 
 void Shader::Destroy() noexcept
