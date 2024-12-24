@@ -4,8 +4,7 @@
 
 namespace VKit
 {
-DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set, const VkDescriptorSetLayout p_Layout) noexcept
-    : m_Set(p_Set), m_Layout(p_Layout)
+DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set) noexcept : m_Set(p_Set)
 {
 }
 
@@ -39,10 +38,6 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkDescript
 VkDescriptorSet DescriptorSet::GetDescriptorSet() const noexcept
 {
     return m_Set;
-}
-VkDescriptorSetLayout DescriptorSet::GetLayout() const noexcept
-{
-    return m_Layout;
 }
 DescriptorSet::operator VkDescriptorSet() const noexcept
 {

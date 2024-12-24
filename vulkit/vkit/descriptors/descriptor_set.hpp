@@ -5,6 +5,14 @@
 namespace VKit
 {
 class Buffer;
+
+/**
+ * @brief Represents a Vulkan descriptor set.
+ *
+ * Manages the binding of resources to a descriptor set, providing methods for
+ * binding buffers and images to the set. It is an extremely thin wrapper.
+ *
+ */
 class DescriptorSet
 {
   public:
@@ -60,7 +68,7 @@ class DescriptorSet
     };
 
     DescriptorSet() noexcept = default;
-    DescriptorSet(VkDescriptorSet p_Set, VkDescriptorSetLayout p_Layout) noexcept;
+    DescriptorSet(VkDescriptorSet p_Set) noexcept;
 
     void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
               std::span<const u32> p_DynamicOffsets = {}) const noexcept;
@@ -74,13 +82,11 @@ class DescriptorSet
                      std::span<const u32> p_DynamicOffsets = {}) noexcept;
 
     VkDescriptorSet GetDescriptorSet() const noexcept;
-    VkDescriptorSetLayout GetLayout() const noexcept;
 
     explicit(false) operator VkDescriptorSet() const noexcept;
     explicit(false) operator bool() const noexcept;
 
   private:
     VkDescriptorSet m_Set = VK_NULL_HANDLE;
-    VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
 };
 } // namespace VKit

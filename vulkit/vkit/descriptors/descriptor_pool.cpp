@@ -65,7 +65,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     if (result != VK_SUCCESS)
         return Result<DescriptorSet>::Error(result, "Failed to allocate descriptor set");
 
-    return Result<DescriptorSet>::Ok(set, p_Layout);
+    return Result<DescriptorSet>::Ok(set);
 }
 
 void DescriptorPool::Deallocate(const std::span<const VkDescriptorSet> p_Sets) const noexcept
