@@ -3,9 +3,8 @@
 
 namespace VKit
 {
-ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_Layout,
-                                 const Shader &p_ComputeShader) noexcept
-    : m_Device(p_Device), m_Pipeline(p_Pipeline), m_Layout(p_Layout), m_ComputeShader(p_ComputeShader)
+ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept
+    : m_Device(p_Device), m_Pipeline(p_Pipeline)
 {
 }
 
@@ -14,7 +13,6 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
     if (!p_Specs.Layout)
         return Result<VkComputePipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                                           "Pipeline layout must be provided");
-
     if (!p_Specs.ComputeShader)
         return Result<VkComputePipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
                                                           "Compute shader must be provided");
@@ -44,35 +42,30 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
     if (result != VK_SUCCESS)
         return Result<ComputePipeline>::Error(result, "Failed to create compute pipeline");
 
-    return Result<ComputePipeline>::Ok(p_Device, pipeline, p_Specs.Layout, p_Specs.ComputeShader);
+    return Result<ComputePipeline>::Ok(p_Device, pipeline);
 }
 VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<const Specs> p_Specs,
-                                     const std::span<ComputePipeline> p_Pipelines) noexcept
+                                     const std::span<ComputePipeline> p_Pipelines,
+                                     const VkPipelineCache p_Cache) noexcept
 {
-    if (p_Specs.size() != p_Pipelines.size())
-        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
-    if (p_Specs.size() == 0)
-        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
-
     TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
         if (!result)
             return result.GetError();
-        const VkComputePipelineCreateInfo &pipelineInfo = result.GetValue();
-        pipelineInfos.push_back(pipelineInfo);
+        pipelineInfos.push_back(result.GetValue());
     }
 
     TKit::StaticArray32<VkPipeline> pipelines{p_Specs.size()};
     const VkResult result =
-        vkCreateComputePipelines(p_Device, p_Specs[0].Cache, static_cast<u32>(p_Specs.size()), pipelineInfos.data(),
+        vkCreateComputePipelines(p_Device, p_Cache, static_cast<u32>(p_Specs.size()), pipelineInfos.data(),
                                  p_Device.AllocationCallbacks, pipelines.data());
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to create compute pipelines");
 
     for (usize i = 0; i < p_Specs.size(); ++i)
-        p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i], p_Specs[i].Layout, p_Specs[i].ComputeShader);
+        p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i]);
     return VulkanResult::Success();
 }
 
@@ -95,10 +88,6 @@ void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
     vkCmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
 }
 
-VkPipelineLayout ComputePipeline::GetLayout() const noexcept
-{
-    return m_Layout;
-}
 VkPipeline ComputePipeline::GetPipeline() const noexcept
 {
     return m_Pipeline;

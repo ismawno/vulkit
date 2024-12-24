@@ -18,28 +18,66 @@ namespace VKit
 class VKIT_API GraphicsPipeline
 {
   public:
+    class Builder;
+
+  private:
+    class ColorAttachmentBuilder
+    {
+      public:
+        explicit ColorAttachmentBuilder(Builder *p_Builder) noexcept;
+
+        ColorAttachmentBuilder &EnableBlending() noexcept;
+        ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags p_Mask) noexcept;
+
+        ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor p_SrcColor, VkBlendFactor p_DstColor) noexcept;
+        ColorAttachmentBuilder &SetColorBlendOperation(VkBlendOp p_ColorOp) noexcept;
+
+        ColorAttachmentBuilder &SetAlphaBlendFactors(VkBlendFactor p_SrcAlpha, VkBlendFactor p_DstAlpha) noexcept;
+        ColorAttachmentBuilder &SetAlphaBlendOperation(VkBlendOp p_AlphaOp) noexcept;
+
+        Builder &EndColorAttachment() noexcept;
+
+      private:
+        Builder *m_Builder;
+        VkPipelineColorBlendAttachmentState m_ColorBlendAttachmentInfo{};
+
+        friend class Builder;
+    };
+
+  public:
     /**
-     * @brief Configuration for creating a Vulkan graphics pipeline.
+     * @brief Builder for creating a Vulkan graphics pipeline.
      *
      * Contains all the necessary settings for pipeline creation, including shaders,
      * layout, render pass, and state settings. Provides utility methods for internal
      * setup and pipeline creation.
      */
-
-    struct Specs
+    class Builder
     {
-        /**
-         * @brief Constructs a Specs object with default initialization.
-         */
-        Specs() noexcept;
+      public:
+        enum FlagBits : u8
+        {
+            Flag_StencilFront = 1 << 0,
+            Flag_StencilBack = 1 << 1,
+        };
+        using Flags = u8;
+
+        Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
+                u32 p_Subpass = 0) noexcept;
 
         /**
-         * @brief Populates the internal state of the pipeline specifications.
+         * @brief Builds the graphics pipeline based on the current settings.
          *
-         * Ensures that pointers within the specs point to valid internal members. This
-         * method should be called after copying or modifying the specs to maintain consistency.
+         * Creates the Vulkan graphics pipeline using the current configuration.
+         * This method is used to finalize the pipeline and prepare it for use.
+         *
+         * Take into account that this method cannot be marked const because internal linkage must
+         * happen to create the pipeline. Still, the builder will be left in a valid state after the call.
+         *
+         * @param p_Device The logical device proxy for Vulkan operations.
+         * @return A result containing the created GraphicsPipeline or an error if the creation fails.
          */
-        void Populate() noexcept;
+        Result<GraphicsPipeline> Build() noexcept;
 
         /**
          * @brief Generates the `VkGraphicsPipelineCreateInfo` object.
@@ -47,48 +85,112 @@ class VKIT_API GraphicsPipeline
          * Constructs the Vulkan graphics pipeline creation info based on the specs.
          * This is used internally during pipeline creation.
          *
-         * @return A result containing the created `VkGraphicsPipelineCreateInfo` or an error.
+         * @return A `VkGraphicsPipelineCreateInfo` that represents the current pipeline configuration.
          */
-        Result<VkGraphicsPipelineCreateInfo> CreatePipelineInfo() noexcept;
+        VkGraphicsPipelineCreateInfo CreatePipelineInfo() noexcept;
 
-        VkPipelineViewportStateCreateInfo ViewportInfo{};
-        VkPipelineInputAssemblyStateCreateInfo InputAssemblyInfo{};
-        VkPipelineRasterizationStateCreateInfo RasterizationInfo{};
-        VkPipelineMultisampleStateCreateInfo MultisampleInfo{};
-        VkPipelineColorBlendAttachmentState ColorBlendAttachment{};
-        VkPipelineColorBlendStateCreateInfo ColorBlendInfo{};
-        VkPipelineDepthStencilStateCreateInfo DepthStencilInfo{};
+        Builder &SetBasePipeline(VkPipeline p_BasePipeline) noexcept;
+        Builder &SetBasePipelineIndex(i32 p_BasePipelineIndex) noexcept;
+        Builder &SetCache(VkPipelineCache p_Cache) noexcept;
 
-        VkPipelineLayout Layout = VK_NULL_HANDLE;
-        VkPipelineCache Cache = VK_NULL_HANDLE;
-        VkPipelineDynamicStateCreateInfo DynamicStateInfo{};
-        VkRenderPass RenderPass = VK_NULL_HANDLE;
+        // Input Assembly
+        Builder &SetTopology(VkPrimitiveTopology p_Topology) noexcept;
+        Builder &EnablePrimitiveRestart() noexcept;
 
-        u32 Subpass = 0;
+        // Viewport and Scissor
+        Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor) noexcept;
+        Builder &SetViewportCount(u32 p_ViewportCount) noexcept;
 
-        Shader VertexShader{};
-        Shader FragmentShader{};
+        // Rasterization
+        Builder &EnableRasterizerDiscard() noexcept;
+        Builder &EnableDepthClamp() noexcept;
+        Builder &SetPolygonMode(VkPolygonMode p_Mode) noexcept;
+        Builder &SetLineWidth(f32 p_Width) noexcept;
+        Builder &SetCullMode(VkCullModeFlags p_Mode) noexcept;
+        Builder &SetFrontFace(VkFrontFace p_FrontFace) noexcept;
+        Builder &EnableDepthBias() noexcept;
+        Builder &SetDepthBias(f32 p_ConstantFactor, f32 p_Clamp, f32 p_SlopeFactor) noexcept;
 
-        std::span<const VkDynamicState> DynamicStates;
-        std::span<const VkVertexInputBindingDescription> BindingDescriptions;
-        std::span<const VkVertexInputAttributeDescription> AttributeDescriptions;
+        // Multisampling
+        Builder &EnableSampleShading() noexcept;
+        Builder &SetSampleCount(VkSampleCountFlagBits p_SampleCount) noexcept;
+        Builder &SetMinSampleShading(f32 p_MinSampleShading) noexcept;
+        Builder &SetSampleMask(const VkSampleMask *p_SampleMask) noexcept;
+        Builder &EnableAlphaToCoverage() noexcept;
+        Builder &EnableAlphaToOne() noexcept;
 
-        // Automatically populated, user does not need to touch this! (It is easier to leave it here bc of impl details)
-        std::array<VkPipelineShaderStageCreateInfo, 2> ShaderStages{};
-        VkPipelineVertexInputStateCreateInfo VertexInputInfo{};
+        // Color Blending
+        Builder &EnableLogicOperation() noexcept;
+        Builder &SetLogicOperation(VkLogicOp p_Operation) noexcept;
+        Builder &SetBlendConstants(const f32 *p_Constants) noexcept;
+        Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4) noexcept;
+        Builder &SetBlendConstant(u32 p_Index, f32 p_Value) noexcept;
+        ColorAttachmentBuilder &BeginColorAttachment() noexcept;
+
+        // Depth and Stencil
+        Builder &EnableDepthTest() noexcept;
+        Builder &EnableDepthWrite() noexcept;
+        Builder &EnableDepthBoundsTest() noexcept;
+        Builder &EnableStencilTest() noexcept;
+        Builder &SetDepthCompareOperation(VkCompareOp p_Op) noexcept;
+        Builder &SetDepthBounds(f32 p_Min, f32 p_Max) noexcept;
+        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, Flags p_Flags) noexcept;
+        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, Flags p_Flags) noexcept;
+        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, Flags p_Flags) noexcept;
+        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, Flags p_Flags) noexcept;
+        Builder &SetStencilCompareMask(u32 p_Mask, Flags p_Flags) noexcept;
+        Builder &SetStencilWriteMask(u32 p_Mask, Flags p_Flags) noexcept;
+        Builder &SetStencilReference(u32 p_Reference, Flags p_Flags) noexcept;
+
+        // Vertex Input
+        Builder &AddBindingDescription(VkVertexInputRate p_InputRate, u32 p_Stride) noexcept;
+        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate p_InputRate) noexcept
+        {
+            AddBindingDescription(p_InputRate, sizeof(T));
+            return *this;
+        }
+        Builder &AddAttributeDescription(u32 p_Binding, VkFormat p_Format, u32 p_Offset) noexcept;
+
+        // Shader Stages
+        Builder &AddShaderStage(VkShaderModule p_Module, VkShaderStageFlagBits p_Stage,
+                                VkPipelineShaderStageCreateFlags p_Flags = 0,
+                                const VkSpecializationInfo *p_Info = nullptr,
+                                const char *p_EntryPoint = "main") noexcept;
+
+        // Dynamic State
+        Builder &AddDynamicState(VkDynamicState p_State) noexcept;
+
+      private:
+        LogicalDevice::Proxy m_Device;
+
+        VkPipelineInputAssemblyStateCreateInfo m_InputAssemblyInfo{};
+        VkPipelineViewportStateCreateInfo m_ViewportInfo{};
+        VkPipelineRasterizationStateCreateInfo m_RasterizationInfo{};
+        VkPipelineMultisampleStateCreateInfo m_MultisampleInfo{};
+        VkPipelineColorBlendStateCreateInfo m_ColorBlendInfo{};
+        VkPipelineDepthStencilStateCreateInfo m_DepthStencilInfo{};
+        VkPipelineVertexInputStateCreateInfo m_VertexInputInfo{};
+        VkPipelineDynamicStateCreateInfo m_DynamicStateInfo{};
+
+        VkPipelineLayout m_Layout;
+        VkRenderPass m_RenderPass;
+
+        VkPipeline m_BasePipeline = VK_NULL_HANDLE;
+        VkPipelineCache m_Cache = VK_NULL_HANDLE;
+        i32 m_BasePipelineIndex = -1;
+
+        u32 m_Subpass;
+
+        Shader m_VertexShader{};
+        Shader m_FragmentShader{};
+
+        TKit::StaticArray128<VkDynamicState> m_DynamicStates;
+        TKit::StaticArray16<VkVertexInputBindingDescription> m_BindingDescriptions;
+        TKit::StaticArray16<VkVertexInputAttributeDescription> m_AttributeDescriptions;
+        TKit::StaticArray8<ColorAttachmentBuilder> m_ColorAttachmentBuilders;
+        TKit::StaticArray4<VkPipelineShaderStageCreateInfo> m_ShaderStages;
+        TKit::StaticArray4<std::pair<VkViewport, VkRect2D>> m_Viewports;
     };
-
-    /**
-     * @brief Creates a graphics pipeline based on the provided specifications.
-     *
-     * Initializes a Vulkan graphics pipeline using the specified logical device
-     * and pipeline configuration.
-     *
-     * @param p_Device The logical device proxy for Vulkan operations.
-     * @param p_Specs The specifications for the graphics pipeline.
-     * @return A result containing the created GraphicsPipeline or an error.
-     */
-    static Result<GraphicsPipeline> Create(const LogicalDevice::Proxy &p_Device, Specs &p_Specs) noexcept;
 
     /**
      * @brief Creates multiple graphics pipelines in a batch.
@@ -97,16 +199,16 @@ class VKIT_API GraphicsPipeline
      * and logical device.
      *
      * @param p_Device The logical device proxy for Vulkan operations.
-     * @param p_Specs A span of specifications for the graphics pipelines.
+     * @param p_Specs A span of pipeline builders containing the specifications for each pipeline.
      * @param p_Pipelines A span to store the created pipelines.
      * @return A VulkanResult indicating success or failure for the batch operation.
      */
-    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<Specs> p_Specs,
-                               std::span<GraphicsPipeline> p_Pipelines) noexcept;
+    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<Builder> p_Builders,
+                               std::span<GraphicsPipeline> p_Pipelines,
+                               VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 
     GraphicsPipeline() noexcept = default;
-    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
-                     const Shader &p_VertexShader, const Shader &p_FragmentShader) noexcept;
+    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -125,7 +227,6 @@ class VKIT_API GraphicsPipeline
      *
      * @return The Vulkan pipeline layout.
      */
-    VkPipelineLayout GetLayout() const noexcept;
 
     VkPipeline GetPipeline() const noexcept;
     explicit(false) operator VkPipeline() const noexcept;
@@ -134,8 +235,5 @@ class VKIT_API GraphicsPipeline
   private:
     LogicalDevice::Proxy m_Device{};
     VkPipeline m_Pipeline = VK_NULL_HANDLE;
-    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
-    Shader m_VertexShader{};
-    Shader m_FragmentShader{};
 };
 } // namespace VKit

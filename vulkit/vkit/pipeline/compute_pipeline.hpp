@@ -43,11 +43,11 @@ class VKIT_API ComputePipeline
      * @return A VulkanResult indicating success or failure for the batch operation.
      */
     static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
-                               std::span<ComputePipeline> p_Pipelines) noexcept;
+                               std::span<ComputePipeline> p_Pipelines,
+                               VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 
     ComputePipeline() noexcept = default;
-    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline, VkPipelineLayout p_PipelineLayout,
-                    const Shader &p_ComputeShader) noexcept;
+    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -62,8 +62,6 @@ class VKIT_API ComputePipeline
 
     void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
 
-    VkPipelineLayout GetLayout() const noexcept;
-
     VkPipeline GetPipeline() const noexcept;
     explicit(false) operator VkPipeline() const noexcept;
     explicit(false) operator bool() const noexcept;
@@ -71,7 +69,5 @@ class VKIT_API ComputePipeline
   private:
     LogicalDevice::Proxy m_Device{};
     VkPipeline m_Pipeline = VK_NULL_HANDLE;
-    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
-    Shader m_ComputeShader{};
 };
 } // namespace VKit

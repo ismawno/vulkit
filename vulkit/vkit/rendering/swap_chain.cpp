@@ -38,7 +38,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     if (devInfo.PresentIndex == UINT32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
-    const auto checkFlag = [this](const Flags p_Flag) -> bool { return m_Flags & p_Flag; };
+    const auto checkFlag = [this](const FlagBits p_Flag) -> bool { return m_Flags & p_Flag; };
 
     TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
     TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
