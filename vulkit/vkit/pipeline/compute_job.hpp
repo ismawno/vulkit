@@ -8,9 +8,6 @@ namespace VKit
 class ComputeJob
 {
   public:
-    static Result<ComputeJob> Create(const LogicalDevice::Proxy &p_Device, const PipelineLayout &p_Layout,
-                                     const Shader &p_ComputeShader) noexcept;
-
     ComputeJob() noexcept = default;
     ComputeJob(const ComputePipeline &p_Pipeline, VkPipelineLayout p_Layout) noexcept;
 

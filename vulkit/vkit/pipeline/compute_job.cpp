@@ -4,19 +4,6 @@
 
 namespace VKit
 {
-Result<ComputeJob> ComputeJob::Create(const LogicalDevice::Proxy &p_Device, const PipelineLayout &p_Layout,
-                                      const Shader &p_ComputeShader) noexcept
-{
-    ComputePipeline::Specs specs{};
-    specs.Layout = p_Layout;
-    specs.ComputeShader = p_ComputeShader;
-    const auto result = ComputePipeline::Create(p_Device, specs);
-    if (!result)
-        return Result<ComputeJob>::Error(result.GetError());
-
-    return Result<ComputeJob>::Ok(p_Layout, result.GetValue());
-}
-
 ComputeJob::ComputeJob(const ComputePipeline &p_Pipeline, const VkPipelineLayout p_Layout) noexcept
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
