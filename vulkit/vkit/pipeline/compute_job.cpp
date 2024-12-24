@@ -17,20 +17,18 @@ Result<ComputeJob> ComputeJob::Create(const LogicalDevice::Proxy &p_Device, cons
     return Result<ComputeJob>::Ok(p_Layout, result.GetValue());
 }
 
-ComputeJob::ComputeJob(const PipelineLayout &p_Layout, const ComputePipeline &p_Pipeline) noexcept
-    : m_Layout(p_Layout), m_Pipeline(p_Pipeline)
+ComputeJob::ComputeJob(const ComputePipeline &p_Pipeline, const VkPipelineLayout p_Layout) noexcept
+    : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
-    m_DescriptorSets.resize(m_Layout.GetInfo().DescriptorSetLayouts.size());
-    m_PushData.resize(m_Layout.GetInfo().PushConstantRanges.size());
 }
 
+void ComputeJob::AddDescriptorSet(VkDescriptorSet p_DescriptorSet) noexcept
+{
+    m_DescriptorSets.push_back(p_DescriptorSet);
+}
 void ComputeJob::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept
 {
     m_DescriptorSets[p_Index] = p_DescriptorSet;
-}
-void ComputeJob::UpdateDescriptorSet(VkDescriptorSet p_DescriptorSet) noexcept
-{
-    UpdateDescriptorSet(0, p_DescriptorSet);
 }
 
 void ComputeJob::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<const u32> p_DynamicOffsets) const noexcept
@@ -60,6 +58,10 @@ void ComputeJob::Dispatch(const VkCommandBuffer p_CommandBuffer, const u32 p_Gro
                           const u32 p_GroupCountZ) const noexcept
 {
     vkCmdDispatch(p_CommandBuffer, p_GroupCountX, p_GroupCountY, p_GroupCountZ);
+}
+ComputeJob::operator bool() const noexcept
+{
+    return m_Pipeline;
 }
 
 } // namespace VKit
