@@ -32,7 +32,7 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
         const PushDataInfo &info = m_PushData[i];
         if (!info.Data)
             continue;
-        vkCmdPushConstants(p_CommandBuffer, m_Layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, info.Size, info.Data);
+        vkCmdPushConstants(p_CommandBuffer, m_Layout, info.Stages, offset, info.Size, info.Data);
         offset += info.Size;
     }
 
