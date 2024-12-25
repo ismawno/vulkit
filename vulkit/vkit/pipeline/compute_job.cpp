@@ -21,22 +21,17 @@ void ComputeJob::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSe
 void ComputeJob::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<const u32> p_DynamicOffsets) const noexcept
 {
     m_Pipeline.Bind(p_CommandBuffer);
-    TKit::StaticArray8<VkDescriptorSet> descriptorSets;
 
-    const u32 descriptorCount = static_cast<u32>(m_DescriptorSets.size());
-    for (u32 i = 0; i < descriptorCount; ++i)
-        if (m_DescriptorSets[i])
-            descriptorSets.push_back(m_DescriptorSets[i]);
-
-    DescriptorSet::Bind(p_CommandBuffer, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, m_Layout, 0, p_DynamicOffsets);
+    DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, m_Layout, 0,
+                        p_DynamicOffsets);
 
     u32 offset = 0;
     const u32 pushCount = static_cast<u32>(m_PushData.size());
+
+    // Data may not need to be pushed every frame... but I guess it is a small price to pay for the flexibility
     for (u32 i = 0; i < pushCount; ++i)
     {
         const PushDataInfo &info = m_PushData[i];
-        if (!info.Data)
-            continue;
         vkCmdPushConstants(p_CommandBuffer, m_Layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, info.Size, info.Data);
         offset += info.Size;
     }

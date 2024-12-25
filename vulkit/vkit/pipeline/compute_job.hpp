@@ -37,7 +37,7 @@ class ComputeJob
     };
 
     ComputePipeline m_Pipeline{};
-    VkPipelineLayout m_Layout;
+    VkPipelineLayout m_Layout = VK_NULL_HANDLE;
     TKit::StaticArray8<VkDescriptorSet> m_DescriptorSets;
     TKit::StaticArray4<PushDataInfo> m_PushData;
 };

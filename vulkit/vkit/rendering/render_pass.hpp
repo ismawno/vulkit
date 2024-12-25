@@ -242,7 +242,7 @@ class RenderPass
         {
             for (u32 j = 0; j < attachmentCount; ++j)
             {
-                const auto imresult = p_CreateImageData(i, j);
+                const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
                 if (!imresult)
                 {
                     resources.Destroy();
