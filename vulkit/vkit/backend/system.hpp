@@ -33,11 +33,15 @@
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_RESULT(result)                                                                                 \
         if constexpr (requires { result.GetError(); })                                                                 \
+        {                                                                                                              \
             TKIT_ASSERT(result, "VkResult: '{}' - Onyx message: '{}'",                                                 \
                         VKit::VkResultToString(result.GetError().Result), result.GetError().Message);                  \
+        }                                                                                                              \
         else                                                                                                           \
+        {                                                                                                              \
             TKIT_ASSERT(result, "VkResult: '{}' - Onyx message: '{}'", VKit::VkResultToString(result.Result),          \
-                        result.Message);
+                        result.Message);                                                                               \
+        }
 
 #else
 #    define VKIT_ASSERT_RESULT(result) (void)result
@@ -46,11 +50,15 @@
 #ifdef TKIT_ENABLE_INFO_LOGS
 #    define VKIT_LOG_RESULT(result)                                                                                    \
         if constexpr (requires { result.GetError(); })                                                                 \
+        {                                                                                                              \
             TKIT_LOG_INFO_IF(!result, "VkResult: '{}' - Onyx message: '{}'",                                           \
                              VKit::VkResultToString(result.GetError().Result), result.GetError().Message);             \
+        }                                                                                                              \
         else                                                                                                           \
+        {                                                                                                              \
             TKIT_LOG_INFO_IF(!result, "VkResult: '{}' - Onyx message: '{}'", VKit::VkResultToString(result.Result),    \
-                             result.Message);
+                             result.Message);                                                                          \
+        }
 #else
 #    define VKIT_LOG_RESULT(result) (void)result
 #endif
@@ -58,11 +66,15 @@
 #ifdef TKIT_ENABLE_WARNING_LOGS
 #    define VKIT_WARN_RESULT(result)                                                                                   \
         if constexpr (requires { result.GetError(); })                                                                 \
+        {                                                                                                              \
             TKIT_LOG_WARNING_IF(!result, "VkResult: '{}' - Onyx message: '{}'",                                        \
                                 VKit::VkResultToString(result.GetError().Result), result.GetError().Message);          \
+        }                                                                                                              \
         else                                                                                                           \
+        {                                                                                                              \
             TKIT_LOG_WARNING_IF(!result, "VkResult: '{}' - Onyx message: '{}'", VKit::VkResultToString(result.Result), \
-                                result.Message);
+                                result.Message);                                                                       \
+        }
 #else
 #    define VKIT_WARN_RESULT(result) (void)result
 #endif
