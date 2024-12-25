@@ -8,8 +8,8 @@ template <Pipeline Pip>
 IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
-    m_DescriptorSets.resize(p_Layout.GetInfo().PushConstantRanges.size(), VK_NULL_HANDLE);
-    m_PushData.resize(p_Layout.GetInfo().DescriptorSetLayouts.size());
+    m_DescriptorSets.resize(p_Layout.GetInfo().DescriptorSetLayouts.size(), VK_NULL_HANDLE);
+    m_PushData.resize(p_Layout.GetInfo().PushConstantRanges.size());
 }
 
 template <Pipeline Pip>
