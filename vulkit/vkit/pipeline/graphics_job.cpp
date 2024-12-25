@@ -54,5 +54,9 @@ void GraphicsJob::DrawIndexed(const VkCommandBuffer p_CommandBuffer, const u32 p
 {
     vkCmdDrawIndexed(p_CommandBuffer, p_IndexCount, p_InstanceCount, p_FirstIndex, p_VertexOffset, p_FirstInstance);
 }
+GraphicsJob::operator bool() const noexcept
+{
+    return m_Pipeline;
+}
 
 } // namespace VKit
