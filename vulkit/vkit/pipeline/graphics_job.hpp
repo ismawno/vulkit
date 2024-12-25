@@ -24,7 +24,7 @@ class GraphicsJob
         m_PushData[p_Index] = PushDataInfo{p_Data, sizeof(T), p_Stages};
     }
 
-    void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FrameIndex, u32 p_ImageIndex,
+    void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FrameIndex,
               std::span<const u32> p_DynamicOffsets = {}) const noexcept;
 
     void Draw(VkCommandBuffer p_CommandBuffer, u32 p_VertexCount, u32 p_InstanceCount = 1, u32 p_FirstVertex = 0,

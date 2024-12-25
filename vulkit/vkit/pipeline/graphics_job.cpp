@@ -23,7 +23,7 @@ void GraphicsJob::UpdateDescriptorSet(const u32 p_Index, const std::span<const V
         m_DescriptorSets[i][p_Index] = p_Sets[i];
 }
 
-void GraphicsJob::Bind(const VkCommandBuffer p_CommandBuffer, const u32 p_FrameIndex, const u32 p_ImageIndex,
+void GraphicsJob::Bind(const VkCommandBuffer p_CommandBuffer, const u32 p_FrameIndex,
                        const std::span<const u32> p_DynamicOffsets) const noexcept
 {
     m_Pipeline.Bind(p_CommandBuffer);
@@ -42,6 +42,17 @@ void GraphicsJob::Bind(const VkCommandBuffer p_CommandBuffer, const u32 p_FrameI
         vkCmdPushConstants(p_CommandBuffer, m_Layout, info.Stages, offset, info.Size, info.Data);
         offset += info.Size;
     }
+}
+
+void GraphicsJob::Draw(const VkCommandBuffer p_CommandBuffer, const u32 p_VertexCount, const u32 p_InstanceCount,
+                       const u32 p_FirstVertex, const u32 p_FirstInstance) noexcept
+{
+    vkCmdDraw(p_CommandBuffer, p_VertexCount, p_InstanceCount, p_FirstVertex, p_FirstInstance);
+}
+void GraphicsJob::DrawIndexed(const VkCommandBuffer p_CommandBuffer, const u32 p_IndexCount, const u32 p_InstanceCount,
+                              const u32 p_FirstIndex, const i32 p_VertexOffset, const u32 p_FirstInstance) noexcept
+{
+    vkCmdDrawIndexed(p_CommandBuffer, p_IndexCount, p_InstanceCount, p_FirstIndex, p_VertexOffset, p_FirstInstance);
 }
 
 } // namespace VKit
