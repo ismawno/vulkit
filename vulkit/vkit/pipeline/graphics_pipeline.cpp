@@ -65,6 +65,8 @@ GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const V
     m_DynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     m_DynamicStateInfo.pDynamicStates = nullptr;
     m_DynamicStateInfo.dynamicStateCount = 0;
+
+    m_VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 }
 
 Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
@@ -155,7 +157,6 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noe
     m_DynamicStateInfo.dynamicStateCount = static_cast<u32>(m_DynamicStates.size());
     m_DynamicStateInfo.pDynamicStates = m_DynamicStates.empty() ? nullptr : m_DynamicStates.data();
 
-    m_VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     m_VertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(m_AttributeDescriptions.size());
     m_VertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(m_BindingDescriptions.size());
     m_VertexInputInfo.pVertexAttributeDescriptions =
@@ -392,6 +393,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment() noexcept
 {
     m_ColorAttachmentBuilders.emplace_back(this);
+    m_ColorAttachments.push_back(m_ColorAttachmentBuilders.back().m_ColorBlendAttachmentInfo);
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorAttachment() noexcept
@@ -635,6 +637,7 @@ GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuild
 }
 GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAttachment() noexcept
 {
+    m_Builder->m_ColorAttachments.push_back(m_ColorBlendAttachmentInfo);
     return *m_Builder;
 }
 
