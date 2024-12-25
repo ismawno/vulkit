@@ -155,6 +155,7 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noe
     m_DynamicStateInfo.dynamicStateCount = static_cast<u32>(m_DynamicStates.size());
     m_DynamicStateInfo.pDynamicStates = m_DynamicStates.empty() ? nullptr : m_DynamicStates.data();
 
+    m_VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     m_VertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(m_AttributeDescriptions.size());
     m_VertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(m_BindingDescriptions.size());
     m_VertexInputInfo.pVertexAttributeDescriptions =
