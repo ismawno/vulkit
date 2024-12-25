@@ -27,6 +27,8 @@ class VKIT_API GraphicsPipeline
         explicit ColorAttachmentBuilder(Builder *p_Builder) noexcept;
 
         ColorAttachmentBuilder &EnableBlending() noexcept;
+        ColorAttachmentBuilder &DisableBlending() noexcept;
+
         ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags p_Mask) noexcept;
 
         ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor p_SrcColor, VkBlendFactor p_DstColor) noexcept;
@@ -96,31 +98,41 @@ class VKIT_API GraphicsPipeline
         // Input Assembly
         Builder &SetTopology(VkPrimitiveTopology p_Topology) noexcept;
         Builder &EnablePrimitiveRestart() noexcept;
+        Builder &DisablePrimitiveRestart() noexcept;
 
         // Viewport and Scissor
         Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor) noexcept;
+        Builder &AddViewports(std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
+        Builder &SetViewports(std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
         Builder &SetViewportCount(u32 p_ViewportCount) noexcept;
 
         // Rasterization
         Builder &EnableRasterizerDiscard() noexcept;
         Builder &EnableDepthClamp() noexcept;
+        Builder &EnableDepthBias() noexcept;
+        Builder &DisableRasterizerDiscard() noexcept;
+        Builder &DisableDepthClamp() noexcept;
+        Builder &DisableDepthBias() noexcept;
         Builder &SetPolygonMode(VkPolygonMode p_Mode) noexcept;
         Builder &SetLineWidth(f32 p_Width) noexcept;
         Builder &SetCullMode(VkCullModeFlags p_Mode) noexcept;
         Builder &SetFrontFace(VkFrontFace p_FrontFace) noexcept;
-        Builder &EnableDepthBias() noexcept;
         Builder &SetDepthBias(f32 p_ConstantFactor, f32 p_Clamp, f32 p_SlopeFactor) noexcept;
 
         // Multisampling
         Builder &EnableSampleShading() noexcept;
+        Builder &EnableAlphaToCoverage() noexcept;
+        Builder &EnableAlphaToOne() noexcept;
+        Builder &DisableSampleShading() noexcept;
+        Builder &DisableAlphaToCoverage() noexcept;
+        Builder &DisableAlphaToOne() noexcept;
         Builder &SetSampleCount(VkSampleCountFlagBits p_SampleCount) noexcept;
         Builder &SetMinSampleShading(f32 p_MinSampleShading) noexcept;
         Builder &SetSampleMask(const VkSampleMask *p_SampleMask) noexcept;
-        Builder &EnableAlphaToCoverage() noexcept;
-        Builder &EnableAlphaToOne() noexcept;
 
         // Color Blending
         Builder &EnableLogicOperation() noexcept;
+        Builder &DisableLogicOperation() noexcept;
         Builder &SetLogicOperation(VkLogicOp p_Operation) noexcept;
         Builder &SetBlendConstants(const f32 *p_Constants) noexcept;
         Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4) noexcept;
@@ -132,6 +144,10 @@ class VKIT_API GraphicsPipeline
         Builder &EnableDepthWrite() noexcept;
         Builder &EnableDepthBoundsTest() noexcept;
         Builder &EnableStencilTest() noexcept;
+        Builder &DisableDepthTest() noexcept;
+        Builder &DisableDepthWrite() noexcept;
+        Builder &DisableDepthBoundsTest() noexcept;
+        Builder &DisableStencilTest() noexcept;
         Builder &SetDepthCompareOperation(VkCompareOp p_Op) noexcept;
         Builder &SetDepthBounds(f32 p_Min, f32 p_Max) noexcept;
         Builder &SetStencilFailOperation(VkStencilOp p_FailOp, Flags p_Flags) noexcept;
@@ -159,6 +175,8 @@ class VKIT_API GraphicsPipeline
 
         // Dynamic State
         Builder &AddDynamicState(VkDynamicState p_State) noexcept;
+        Builder &AddDynamicStates(std::span<const VkDynamicState> p_States) noexcept;
+        Builder &SetDynamicStates(std::span<const VkDynamicState> p_States) noexcept;
 
       private:
         LogicalDevice::Proxy m_Device;

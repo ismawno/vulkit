@@ -212,12 +212,31 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart() n
     m_InputAssemblyInfo.primitiveRestartEnable = VK_TRUE;
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart() noexcept
+{
+    m_InputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+    return *this;
+}
 
 // Viewport and Scissor
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport,
                                                                   const VkRect2D p_Scissor) noexcept
 {
     m_Viewports.push_back(std::make_pair(p_Viewport, p_Scissor));
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewports(
+    const std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+{
+    for (const auto &viewport : p_Viewports)
+        m_Viewports.push_back(viewport);
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewports(
+    const std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+{
+    m_Viewports.clear();
+    AddViewports(p_Viewports);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount) noexcept
@@ -238,6 +257,16 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableRasterizerDiscard() 
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp() noexcept
 {
     m_RasterizationInfo.depthClampEnable = VK_TRUE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableRasterizerDiscard() noexcept
+{
+    m_RasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthClamp() noexcept
+{
+    m_RasterizationInfo.depthClampEnable = VK_FALSE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode p_Mode) noexcept
@@ -280,6 +309,11 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableSampleShading() noex
     m_MultisampleInfo.sampleShadingEnable = VK_TRUE;
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableSampleShading() noexcept
+{
+    m_MultisampleInfo.sampleShadingEnable = VK_FALSE;
+    return *this;
+}
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits p_SampleCount) noexcept
 {
     m_MultisampleInfo.rasterizationSamples = p_SampleCount;
@@ -305,11 +339,26 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToOne() noexcep
     m_MultisampleInfo.alphaToOneEnable = VK_TRUE;
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToCoverage() noexcept
+{
+    m_MultisampleInfo.alphaToCoverageEnable = VK_FALSE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToOne() noexcept
+{
+    m_MultisampleInfo.alphaToOneEnable = VK_FALSE;
+    return *this;
+}
 
 // Color Blending
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation() noexcept
 {
     m_ColorBlendInfo.logicOpEnable = VK_TRUE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableLogicOperation() noexcept
+{
+    m_ColorBlendInfo.logicOpEnable = VK_FALSE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp p_Operation) noexcept
@@ -363,6 +412,26 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBoundsTest() no
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableStencilTest() noexcept
 {
     m_DepthStencilInfo.stencilTestEnable = VK_TRUE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthTest() noexcept
+{
+    m_DepthStencilInfo.depthTestEnable = VK_FALSE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthWrite() noexcept
+{
+    m_DepthStencilInfo.depthWriteEnable = VK_FALSE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBoundsTest() noexcept
+{
+    m_DepthStencilInfo.depthBoundsTestEnable = VK_FALSE;
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableStencilTest() noexcept
+{
+    m_DepthStencilInfo.stencilTestEnable = VK_FALSE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp p_Op) noexcept
@@ -488,6 +557,20 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDy
     m_DynamicStates.push_back(p_State);
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(
+    const std::span<const VkDynamicState> p_States) noexcept
+{
+    for (const VkDynamicState state : p_States)
+        m_DynamicStates.push_back(state);
+    return *this;
+}
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(
+    const std::span<const VkDynamicState> p_States) noexcept
+{
+    m_DynamicStates.clear();
+    AddDynamicStates(p_States);
+    return *this;
+}
 
 GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Builder) noexcept : m_Builder(p_Builder)
 {
@@ -505,6 +588,11 @@ GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Buil
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::EnableBlending() noexcept
 {
     m_ColorBlendAttachmentInfo.blendEnable = VK_TRUE;
+    return *this;
+}
+GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::DisableBlending() noexcept
+{
+    m_ColorBlendAttachmentInfo.blendEnable = VK_FALSE;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorWriteMask(
