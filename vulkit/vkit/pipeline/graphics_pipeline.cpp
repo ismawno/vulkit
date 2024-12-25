@@ -147,12 +147,9 @@ GraphicsPipeline::operator bool() const noexcept
 
 VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noexcept
 {
-    TKit::StaticArray8<VkPipelineColorBlendAttachmentState> attachments;
-    for (const ColorAttachmentBuilder &builder : m_ColorAttachmentBuilders)
-        attachments.push_back(builder.m_ColorBlendAttachmentInfo);
 
-    m_ColorBlendInfo.attachmentCount = static_cast<u32>(attachments.size());
-    m_ColorBlendInfo.pAttachments = attachments.empty() ? nullptr : attachments.data();
+    m_ColorBlendInfo.attachmentCount = static_cast<u32>(m_ColorAttachments.size());
+    m_ColorBlendInfo.pAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
 
     m_DynamicStateInfo.dynamicStateCount = static_cast<u32>(m_DynamicStates.size());
     m_DynamicStateInfo.pDynamicStates = m_DynamicStates.empty() ? nullptr : m_DynamicStates.data();
