@@ -14,6 +14,7 @@ set(SOURCES
     vkit/pipeline/compute_pipeline.cpp
     vkit/pipeline/compute_job.cpp
     vkit/pipeline/graphics_pipeline.cpp
+    vkit/pipeline/graphics_job.cpp
     vkit/pipeline/pipeline_layout.cpp
     vkit/pipeline/shader.cpp
     vkit/descriptors/descriptor_pool.cpp
