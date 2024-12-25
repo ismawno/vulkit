@@ -147,7 +147,6 @@ GraphicsPipeline::operator bool() const noexcept
 
 VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noexcept
 {
-
     m_ColorBlendInfo.attachmentCount = static_cast<u32>(m_ColorAttachments.size());
     m_ColorBlendInfo.pAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
 
