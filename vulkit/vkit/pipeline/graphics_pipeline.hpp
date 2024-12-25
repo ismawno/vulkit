@@ -137,6 +137,7 @@ class VKIT_API GraphicsPipeline
         Builder &SetBlendConstants(const f32 *p_Constants) noexcept;
         Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4) noexcept;
         Builder &SetBlendConstant(u32 p_Index, f32 p_Value) noexcept;
+        Builder &AddDefaultColorAttachment() noexcept;
         ColorAttachmentBuilder &BeginColorAttachment() noexcept;
 
         // Depth and Stencil

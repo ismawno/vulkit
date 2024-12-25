@@ -388,6 +388,11 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32
     m_ColorBlendInfo.blendConstants[p_Index] = p_Value;
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment() noexcept
+{
+    m_ColorAttachmentBuilders.emplace_back(this);
+    return *this;
+}
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorAttachment() noexcept
 {
     return m_ColorAttachmentBuilders.emplace_back(this);
