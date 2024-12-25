@@ -65,9 +65,9 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
     using IPipelineJob<GraphicsPipeline>::IPipelineJob;
 
     void Draw(VkCommandBuffer p_CommandBuffer, u32 p_VertexCount, u32 p_InstanceCount = 1, u32 p_FirstVertex = 0,
-              u32 p_Firstinstance = 0) noexcept;
+              u32 p_Firstinstance = 0) const noexcept;
     void DrawIndexed(VkCommandBuffer commandBuffer, u32 p_IndexCount, u32 p_InstanceCount = 1, u32 p_FirstIndex = 0,
-                     i32 p_VertexOffset = 0, u32 p_FirstInstance = 0) noexcept;
+                     i32 p_VertexOffset = 0, u32 p_FirstInstance = 0) const noexcept;
 };
 
 template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipelineJob<ComputePipeline>

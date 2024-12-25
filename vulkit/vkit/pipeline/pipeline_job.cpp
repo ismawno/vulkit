@@ -49,23 +49,23 @@ template <Pipeline Pip> IPipelineJob<Pip>::operator bool() const noexcept
     return m_Pipeline;
 }
 
-void PipelineJob<ComputePipeline>::Dispatch(const VkCommandBuffer p_CommandBuffer, const u32 p_GroupCountX,
-                                            const u32 p_GroupCountY, const u32 p_GroupCountZ) const noexcept
-{
-    vkCmdDispatch(p_CommandBuffer, p_GroupCountX, p_GroupCountY, p_GroupCountZ);
-}
-
 void PipelineJob<GraphicsPipeline>::Draw(const VkCommandBuffer p_CommandBuffer, const u32 p_VertexCount,
                                          const u32 p_InstanceCount, const u32 p_FirstVertex,
-                                         const u32 p_FirstInstance) noexcept
+                                         const u32 p_FirstInstance) const noexcept
 {
     vkCmdDraw(p_CommandBuffer, p_VertexCount, p_InstanceCount, p_FirstVertex, p_FirstInstance);
 }
 void PipelineJob<GraphicsPipeline>::DrawIndexed(const VkCommandBuffer p_CommandBuffer, const u32 p_IndexCount,
                                                 const u32 p_InstanceCount, const u32 p_FirstIndex,
-                                                const i32 p_VertexOffset, const u32 p_FirstInstance) noexcept
+                                                const i32 p_VertexOffset, const u32 p_FirstInstance) const noexcept
 {
     vkCmdDrawIndexed(p_CommandBuffer, p_IndexCount, p_InstanceCount, p_FirstIndex, p_VertexOffset, p_FirstInstance);
+}
+
+void PipelineJob<ComputePipeline>::Dispatch(const VkCommandBuffer p_CommandBuffer, const u32 p_GroupCountX,
+                                            const u32 p_GroupCountY, const u32 p_GroupCountZ) const noexcept
+{
+    vkCmdDispatch(p_CommandBuffer, p_GroupCountX, p_GroupCountY, p_GroupCountZ);
 }
 
 template class IPipelineJob<ComputePipeline>;
