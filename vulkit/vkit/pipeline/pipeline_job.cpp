@@ -5,7 +5,7 @@
 namespace VKit
 {
 template <Pipeline Pip>
-IPipelineJob<Pip>::IPipelineJob(const ComputePipeline &p_Pipeline, const VkPipelineLayout p_Layout) noexcept
+IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const VkPipelineLayout p_Layout) noexcept
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
 }

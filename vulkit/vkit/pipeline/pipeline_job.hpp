@@ -21,7 +21,7 @@ template <Pipeline Pip> class VKIT_API IPipelineJob
 {
   public:
     IPipelineJob() noexcept = default;
-    IPipelineJob(const Pipeline &p_Pipeline, VkPipelineLayout p_Layout) noexcept;
+    IPipelineJob(const Pip &p_Pipeline, VkPipelineLayout p_Layout) noexcept;
 
     void AddDescriptorSet(VkDescriptorSet p_DescriptorSet) noexcept;
     void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept;
@@ -51,7 +51,7 @@ template <Pipeline Pip> class VKIT_API IPipelineJob
         VkShaderStageFlags Stages = 0;
     };
 
-    Pipeline m_Pipeline{};
+    Pip m_Pipeline{};
     VkPipelineLayout m_Layout = VK_NULL_HANDLE;
     TKit::StaticArray8<VkDescriptorSet> m_DescriptorSets;
     TKit::StaticArray4<PushDataInfo> m_PushData;
