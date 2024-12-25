@@ -23,18 +23,6 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
                              const std::span<const u32> p_DynamicOffsets) const noexcept
 {
     m_Pipeline.Bind(p_CommandBuffer);
-    TKit::StaticArray8<VkDescriptorSet> descriptorSets;
-    for (const VkDescriptorSet set : m_DescriptorSets)
-        if (set)
-            descriptorSets.push_back(set);
-
-    if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
-        DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Layout, p_FirstSet,
-                            p_DynamicOffsets);
-    else
-        DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, m_Layout, p_FirstSet,
-                            p_DynamicOffsets);
-
     u32 offset = 0;
     const u32 pushCount = static_cast<u32>(m_PushData.size());
 
@@ -47,6 +35,20 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
         vkCmdPushConstants(p_CommandBuffer, m_Layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, info.Size, info.Data);
         offset += info.Size;
     }
+
+    TKit::StaticArray8<VkDescriptorSet> descriptorSets;
+    for (const VkDescriptorSet set : m_DescriptorSets)
+        if (set)
+            descriptorSets.push_back(set);
+    if (descriptorSets.empty())
+        return;
+
+    if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
+        DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Layout, p_FirstSet,
+                            p_DynamicOffsets);
+    else
+        DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, m_Layout, p_FirstSet,
+                            p_DynamicOffsets);
 }
 template <Pipeline Pip> IPipelineJob<Pip>::operator bool() const noexcept
 {
