@@ -271,6 +271,11 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthClamp() noexce
     m_RasterizationInfo.depthClampEnable = VK_FALSE;
     return *this;
 }
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBias() noexcept
+{
+    m_RasterizationInfo.depthBiasEnable = VK_FALSE;
+    return *this;
+}
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode p_Mode) noexcept
 {
     m_RasterizationInfo.polygonMode = p_Mode;
