@@ -5,15 +5,13 @@
 namespace VKit
 {
 template <Pipeline Pip>
-IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const VkPipelineLayout p_Layout) noexcept
+IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
+    m_DescriptorSets.resize(p_Layout.GetInfo().PushConstantRanges.size(), VK_NULL_HANDLE);
+    m_PushData.resize(p_Layout.GetInfo().DescriptorSetLayouts.size());
 }
 
-template <Pipeline Pip> void IPipelineJob<Pip>::AddDescriptorSet(VkDescriptorSet p_DescriptorSet) noexcept
-{
-    m_DescriptorSets.push_back(p_DescriptorSet);
-}
 template <Pipeline Pip>
 void IPipelineJob<Pip>::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept
 {
@@ -25,6 +23,10 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
                              const std::span<const u32> p_DynamicOffsets) const noexcept
 {
     m_Pipeline.Bind(p_CommandBuffer);
+    TKit::StaticArray8<VkDescriptorSet> descriptorSets;
+    for (const VkDescriptorSet set : m_DescriptorSets)
+        if (set)
+            descriptorSets.push_back(set);
 
     if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
         DescriptorSet::Bind(p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Layout, p_FirstSet,
@@ -40,6 +42,8 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
     for (u32 i = 0; i < pushCount; ++i)
     {
         const PushDataInfo &info = m_PushData[i];
+        if (!info.Data)
+            continue;
         vkCmdPushConstants(p_CommandBuffer, m_Layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, info.Size, info.Data);
         offset += info.Size;
     }

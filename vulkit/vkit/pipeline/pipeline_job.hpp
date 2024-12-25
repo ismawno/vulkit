@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/pipeline/compute_pipeline.hpp"
+#include "vkit/pipeline/pipeline_layout.hpp"
 #include "vkit/pipeline/graphics_pipeline.hpp"
 #include "vkit/pipeline/compute_pipeline.hpp"
 
@@ -21,16 +21,10 @@ template <Pipeline Pip> class VKIT_API IPipelineJob
 {
   public:
     IPipelineJob() noexcept = default;
-    IPipelineJob(const Pip &p_Pipeline, VkPipelineLayout p_Layout) noexcept;
+    IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
 
-    void AddDescriptorSet(VkDescriptorSet p_DescriptorSet) noexcept;
     void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept;
 
-    template <typename T>
-    void AddPushConstantRange(const T *p_Data, const VkShaderStageFlags p_Stages = DefaultShaderStage<Pip>()) noexcept
-    {
-        m_PushData.push_back(PushDataInfo{p_Data, sizeof(T), p_Stages});
-    }
     template <typename T>
     void UpdatePushConstantRange(u32 p_Index, const T *p_Data,
                                  const VkShaderStageFlags p_Stages = DefaultShaderStage<Pip>()) noexcept
