@@ -157,6 +157,7 @@ Vulkit provides many more abstractions, slightly simpler than the ones presented
 - [Buffers](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/buffer): Provides both low-level and high-level abstractions for various buffer usages (device-local and host-visible), as well as utility functions for creating vertex, index, uniform, and storage buffers.
 - [Descriptors](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/descriptors): Includes three abstractions for managing descriptor pools, descriptor set layouts, and descriptor sets.
 - [Pipelines and Shaders](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/pipeline): Offers abstractions for both graphics and compute pipelines. Additionally, a Shader class is provided, capable of compiling GLSL shaders into SPIR-V format by invoking the `glslc` compiler.
+- [Pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/pipeline/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline
 
 ## Dependencies and Third-Party Libraries
 

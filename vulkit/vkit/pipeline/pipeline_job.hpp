@@ -12,7 +12,7 @@ concept Pipeline = std::is_same_v<T, GraphicsPipeline> || std::is_same_v<T, Comp
 template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexcept
 {
     if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
-        return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        return VK_SHADER_STAGE_ALL_GRAPHICS;
     else
         return VK_SHADER_STAGE_COMPUTE_BIT;
 }
