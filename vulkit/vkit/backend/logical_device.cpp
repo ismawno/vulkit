@@ -68,9 +68,9 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
 {
-    const usize queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.size();
+    const u32 queueFamilyCount = static_cast<u32>(p_PhysicalDevice.GetInfo().QueueFamilies.size());
     TKit::StaticArray8<QueuePriorities> queuePriorities;
-    for (usize i = 0; i < queueFamilyCount; ++i)
+    for (u32 i = 0; i < queueFamilyCount; ++i)
     {
         QueuePriorities priorities;
         priorities.Index = i;

@@ -15,7 +15,7 @@ Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) no
 FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
                                        const std::string_view p_BinaryPath) noexcept
 {
-    std::ifstream file{p_BinaryPath, std::ios::ate | std::ios::binary};
+    std::ifstream file{p_BinaryPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return FormattedResult<Shader>::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path {} not found", p_BinaryPath));
