@@ -5,6 +5,7 @@
 
 namespace VKit
 {
+#ifdef TKIT_ENABLE_ASSERTS
 static const char *toString(VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
 {
     switch (p_Severity)
@@ -48,6 +49,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(VkDebugUtilsMessageSe
     TKIT_ERROR("<{}: {}> {}", toString(p_Severity), toString(p_MessageType), p_CallbackData->pMessage);
     return VK_FALSE;
 }
+#endif
 
 static bool contains(const std::span<const char *const> p_Extensions, const char *p_Extension) noexcept
 {
@@ -203,7 +205,11 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         msgInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
                               VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
                               VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+#ifdef TKIT_ENABLE_ASSERTS
         msgInfo.pfnUserCallback = m_DebugCallback ? m_DebugCallback : defaultDebugCallback;
+#else
+        msgInfo.pfnUserCallback = m_DebugCallback;
+#endif
         msgInfo.pUserData = m_DebugMessengerUserData;
     }
 
