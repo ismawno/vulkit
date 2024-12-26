@@ -40,7 +40,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
 {
     const auto [ptr1, size1] = getFeatureIterable(p_Supported);
     const auto [ptr2, size2] = getFeatureIterable(p_Requested);
-    TKIT_ASSERT(size1 == size2, "Feature struct sizes do not match");
+    TKIT_ASSERT(size1 == size2, "VULKIT: Feature struct sizes do not match");
 
     for (usize i = 0; i < size1; ++i)
         if (!ptr1[i] && ptr2[i])

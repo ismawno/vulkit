@@ -25,7 +25,7 @@ CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPo
 
 void CommandPool::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Pool, "The command pool is a NULL handle");
+    TKIT_ASSERT(m_Pool, "VULKIT: The command pool is a NULL handle");
     LogicalDevice::WaitIdle(m_Device);
     vkDestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;

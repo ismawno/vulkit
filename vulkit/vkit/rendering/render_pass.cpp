@@ -89,7 +89,7 @@ RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass 
 
 void RenderPass::destroy() const noexcept
 {
-    TKIT_ASSERT(m_RenderPass, "Render pass is already destroyed");
+    TKIT_ASSERT(m_RenderPass, "VULKIT: Render pass is already destroyed");
     vkDestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
 }
 
@@ -331,7 +331,7 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
                                                  const Attachment::Flags p_TypeFlags) noexcept
     : m_Builder(p_Builder)
 {
-    TKIT_ASSERT(p_TypeFlags, "Attachment must have at least one type flag");
+    TKIT_ASSERT(p_TypeFlags, "VULKIT: Attachment must have at least one type flag");
     TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Depth)),
                 "Attachment must be color or depth, not both");
     TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Stencil)),

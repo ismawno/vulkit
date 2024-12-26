@@ -116,7 +116,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const V
 
 void GraphicsPipeline::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Pipeline, "The graphics pipeline is a NULL handle");
+    TKIT_ASSERT(m_Pipeline, "VULKIT: The graphics pipeline is a NULL handle");
     vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }

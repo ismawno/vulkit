@@ -36,7 +36,7 @@ PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPip
 
 void PipelineLayout::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Layout, "The pipeline layout is a NULL handle");
+    TKIT_ASSERT(m_Layout, "VULKIT: The pipeline layout is a NULL handle");
     vkDestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }

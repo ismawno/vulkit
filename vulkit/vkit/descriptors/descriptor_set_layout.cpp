@@ -29,7 +29,7 @@ DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, c
 
 void DescriptorSetLayout::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Layout, "The descriptor set layout is a NULL handle");
+    TKIT_ASSERT(m_Layout, "VULKIT: The descriptor set layout is a NULL handle");
     vkDestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }
