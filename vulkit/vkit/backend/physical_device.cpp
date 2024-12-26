@@ -446,26 +446,31 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
                 "Requested memory must be greater than or equal to required memory");
 
-    skipDevice = false;
+    bool hasDeviceLocalMemory = false;
+    bool hasRequestedMemory = m_RequestedMemory == 0;
+    bool hasRequiredMemory = m_RequiredMemory == 0;
     for (u32 i = 0; i < properties.Memory.memoryHeapCount; ++i)
     {
         if (!(properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
-            return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                        "The device {} does not have device local memory", name));
+            continue;
+        hasDeviceLocalMemory = true;
+        if (hasRequestedMemory)
+            break;
 
         const VkDeviceSize size = properties.Memory.memoryHeaps[i].size;
-        if (m_RequiredMemory > 0 && size < m_RequiredMemory)
-        {
-            skipDevice = true;
-            break;
-        }
-        if (m_RequestedMemory > 0 && size < m_RequestedMemory)
-            fullySuitable = false;
+        if (size >= m_RequestedMemory)
+            hasRequestedMemory = true;
+        if (size >= m_RequiredMemory)
+            hasRequiredMemory = true;
     }
-    if (skipDevice)
+    if (!hasDeviceLocalMemory)
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have device local memory", name));
+    if (!hasRequiredMemory)
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
                                                     "The device {} does not have the required memory size", name));
 
+    fullySuitable &= hasRequestedMemory;
     if (fullySuitable)
         deviceFlags |= PhysicalDevice::Flag_Optimal;
 
