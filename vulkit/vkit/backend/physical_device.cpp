@@ -173,8 +173,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
     const auto checkFlag = [this](const FlagBits p_Flag) -> bool { return m_Flags & p_Flag; };
 
-    if (checkFlag(Flag_PortabilitySubset))
+    if (checkFlag(Flag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
         enabledExtensions.push_back("VK_KHR_portability_subset");
+
     if (checkFlag(Flag_RequirePresentQueue))
         enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
