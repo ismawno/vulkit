@@ -18,13 +18,13 @@ static void CheckDevices(const std::span<const FormattedResult<PhysicalDevice>> 
 
         const PhysicalDevice::Info &info = device.GetInfo();
         if (info.Flags & PhysicalDevice::Flag_Optimal)
-            TKIT_LOG_INFO("VULKIT: Found optimal device: {}", info.Properties.Core.deviceName);
+            TKIT_LOG_INFO("[VULKIT] Found optimal device: {}", info.Properties.Core.deviceName);
         else
-            TKIT_LOG_INFO("VULKIT: Found partially suitable device: {}", info.Properties.Core.deviceName);
+            TKIT_LOG_INFO("[VULKIT] Found partially suitable device: {}", info.Properties.Core.deviceName);
 
-        TKIT_LOG_INFO("VULKIT: Enabled extensions:");
+        TKIT_LOG_INFO("[VULKIT] Enabled extensions:");
         for (const auto &extension : info.EnabledExtensions)
-            TKIT_LOG_INFO("VULKIT:     {}", extension);
+            TKIT_LOG_INFO("[VULKIT]     {}", extension);
     }
     if (none)
         FAIL("No physical devices found");

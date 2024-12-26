@@ -40,7 +40,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
 {
     const auto [ptr1, size1] = getFeatureIterable(p_Supported);
     const auto [ptr2, size2] = getFeatureIterable(p_Requested);
-    TKIT_ASSERT(size1 == size2, "VULKIT: Feature struct sizes do not match");
+    TKIT_ASSERT(size1 == size2, "[VULKIT] Feature struct sizes do not match");
 
     for (usize i = 0; i < size1; ++i)
         if (!ptr1[i] && ptr2[i])
@@ -235,11 +235,11 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
     TKIT_ASSERT(checkFlag(Flag_RequireComputeQueue) ||
                     (!checkFlag(Flag_RequireDedicatedComputeQueue) && !checkFlag(Flag_RequireSeparateComputeQueue)),
-                "Flags mismatch: Must require compute queue to request dedicated or separate compute queue");
+                "[VULKIT] Flags mismatch: Must require compute queue to request dedicated or separate compute queue");
 
     TKIT_ASSERT(checkFlag(Flag_RequireTransferQueue) ||
                     (!checkFlag(Flag_RequireDedicatedTransferQueue) && !checkFlag(Flag_RequireSeparateTransferQueue)),
-                "Flags mismatch: Must require transfer queue to request dedicated or separate transfer queue");
+                "[VULKIT] Flags mismatch: Must require transfer queue to request dedicated or separate transfer queue");
 
     u16 deviceFlags = 0;
     const u32 dedicatedCompute =
@@ -445,7 +445,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
     vkGetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
-                "Requested memory must be greater than or equal to required memory");
+                "[VULKIT] Requested memory must be greater than or equal to required memory");
 
     bool hasDeviceLocalMemory = false;
     bool hasRequestedMemory = m_RequestedMemory == 0;

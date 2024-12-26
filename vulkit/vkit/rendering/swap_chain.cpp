@@ -235,11 +235,11 @@ SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_Swap
 
 void SwapChain::destroy() const noexcept
 {
-    TKIT_ASSERT(m_SwapChain, "VULKIT: The swap chain is a NULL handle");
+    TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
 
     const auto destroySwapChain =
         System::GetDeviceFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR", m_Device);
-    TKIT_ASSERT(destroySwapChain, "VULKIT: Failed to get the vkDestroySwapchainKHR function");
+    TKIT_ASSERT(destroySwapChain, "[VULKIT] Failed to get the vkDestroySwapchainKHR function");
 
     if (m_Info.Flags & Flag_HasImageViews)
         for (const ImageData &data : m_Info.ImageData)

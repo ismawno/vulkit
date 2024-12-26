@@ -71,7 +71,7 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
 
 void ComputePipeline::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Pipeline, "VULKIT: The compute pipeline is a NULL handle");
+    TKIT_ASSERT(m_Pipeline, "[VULKIT] The compute pipeline is a NULL handle");
     vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }

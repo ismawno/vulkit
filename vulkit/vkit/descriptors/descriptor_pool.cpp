@@ -36,7 +36,7 @@ DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDes
 
 void DescriptorPool::Destroy() noexcept
 {
-    TKIT_ASSERT(m_Pool, "VULKIT: The descriptor pool is a NULL handle");
+    TKIT_ASSERT(m_Pool, "[VULKIT] The descriptor pool is a NULL handle");
     vkDestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;
 }

@@ -76,7 +76,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     };
 
     TKIT_ASSERT(m_RequestedApiVersion >= m_RequiredApiVersion,
-                "The requested api version must be greater than or equal to the required api version");
+                "[VULKIT] The requested api version must be greater than or equal to the required api version");
 
     FormattedResult<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
@@ -105,7 +105,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = System::IsExtensionSupported(extension);
-        TKIT_LOG_WARNING_IF(!supported, "VULKIT: The extension {} is not suported", extension);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The extension {} is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.push_back(extension);
     }
@@ -118,7 +118,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = System::IsLayerSupported(layer);
-        TKIT_LOG_WARNING_IF(!supported, "VULKIT: The layer {} is not suported", layer);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The layer {} is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.push_back(layer);
     }
@@ -274,7 +274,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         info.Flags |= Flag_Properties2Extension;
 
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
-                "The debug messenger must be available if validation layers are enabled");
+                "[VULKIT] The debug messenger must be available if validation layers are enabled");
 
     return FormattedResult<Instance>::Ok(vkinstance, info);
 }
@@ -294,14 +294,14 @@ bool Instance::IsLayerEnabled(const char *p_Layer) const noexcept
 
 static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) noexcept
 {
-    TKIT_ASSERT(p_Instance, "VULKIT: The vulkan instance is null, which probably means it has already been destroyed");
+    TKIT_ASSERT(p_Instance, "[VULKIT] The vulkan instance is null, which probably means it has already been destroyed");
     // Should be already available if user managed to create instance
 
     if ((p_Info.Flags & Instance::Flag_HasValidationLayers) && p_Info.DebugMessenger)
     {
         const auto destroyDebugMessenger = System::GetInstanceFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
             "vkDestroyDebugUtilsMessengerEXT", p_Instance);
-        TKIT_ASSERT(destroyDebugMessenger, "VULKIT: Failed to get the vkDestroyDebugUtilsMessengerEXT function");
+        TKIT_ASSERT(destroyDebugMessenger, "[VULKIT] Failed to get the vkDestroyDebugUtilsMessengerEXT function");
         destroyDebugMessenger(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
     }
     vkDestroyInstance(p_Instance, p_Info.AllocationCallbacks);

@@ -60,7 +60,7 @@ void Buffer::Map() noexcept
     if (m_Data)
         Unmap();
     TKIT_ASSERT_RETURNS(vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data), VK_SUCCESS,
-                        "Failed to map buffer memory");
+                        "[VULKIT] Failed to map buffer memory");
 }
 
 void Buffer::Unmap() noexcept
@@ -73,10 +73,10 @@ void Buffer::Unmap() noexcept
 
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
-    TKIT_ASSERT(m_Data, "VULKIT: Cannot copy to unmapped buffer");
+    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT((p_Size == VK_WHOLE_SIZE && p_Offset == 0) ||
                     (p_Size != VK_WHOLE_SIZE && (p_Offset + p_Size) <= m_Info.Size),
-                "Size + offset must be lower than the buffer size");
+                "[VULKIT] Size + offset must be lower than the buffer size");
 
     if (p_Size == VK_WHOLE_SIZE)
         p_Size = m_Info.Size - p_Offset;
@@ -91,31 +91,31 @@ void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p
 }
 void Buffer::WriteAt(const usize p_Index, const void *p_Data) noexcept
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "VULKIT: Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Write(p_Data, m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
-    TKIT_ASSERT(m_Data, "VULKIT: Cannot flush unmapped buffer");
+    TKIT_ASSERT(m_Data, "[VULKIT] Cannot flush unmapped buffer");
     TKIT_ASSERT_RETURNS(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
-                        "Failed to flush buffer memory");
+                        "[VULKIT] Failed to flush buffer memory");
 }
 void Buffer::FlushAt(const usize p_Index) noexcept
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "VULKIT: Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Flush(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
 }
 
 void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
-    TKIT_ASSERT(m_Data, "VULKIT: Cannot invalidate unmapped buffer");
+    TKIT_ASSERT(m_Data, "[VULKIT] Cannot invalidate unmapped buffer");
     TKIT_ASSERT_RETURNS(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
-                        "Failed to invalidate buffer memory");
+                        "[VULKIT] Failed to invalidate buffer memory");
 }
 void Buffer::InvalidateAt(const usize p_Index) noexcept
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "VULKIT: Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Invalidate(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
 }
 
@@ -129,7 +129,7 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, cons
 }
 VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const usize p_Index) const noexcept
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "VULKIT: Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
 }
 
@@ -139,13 +139,13 @@ void *Buffer::GetData() const noexcept
 }
 void *Buffer::ReadAt(const usize p_Index) const noexcept
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "VULKIT: Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return static_cast<std::byte *>(m_Data) + m_Info.AlignedInstanceSize * p_Index;
 }
 
 VulkanResult Buffer::CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
 {
-    TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "VULKIT: Cannot copy buffers of different sizes");
+    TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "[VULKIT] Cannot copy buffers of different sizes");
     const auto result1 = p_Pool.BeginSingleTimeCommands();
     if (!result1)
         return result1.GetError();

@@ -32,10 +32,11 @@
 
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_VULKAN_RESULT(result)                                                                          \
-        TKIT_ASSERT(result, "VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result), result.Message)
+        TKIT_ASSERT(result, "[VULKIT] VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result),          \
+                    result.Message)
 #    define VKIT_ASSERT_RESULT(result)                                                                                 \
-        TKIT_ASSERT(result, "VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.GetError().Result),        \
-                    result.GetError().Message)
+        TKIT_ASSERT(result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                                 \
+                    VKit::VkResultToString(result.GetError().Result), result.GetError().Message)
 #else
 #    define VKIT_ASSERT_VULKAN_RESULT(result) (void)result
 #    define VKIT_ASSERT_RESULT(result)
@@ -43,11 +44,11 @@
 
 #ifdef TKIT_ENABLE_INFO_LOGS
 #    define VKIT_LOG_VULKAN_RESULT(result)                                                                             \
-        TKIT_LOG_INFO_IF(!result, "VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result),             \
+        TKIT_LOG_INFO_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result),    \
                          result.Message)
 #    define VKIT_LOG_RESULT(result)                                                                                    \
-        TKIT_LOG_INFO_IF(!result, "VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.GetError().Result),  \
-                         result.GetError().Message)
+        TKIT_LOG_INFO_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                           \
+                         VKit::VkResultToString(result.GetError().Result), result.GetError().Message)
 #else
 #    define VKIT_LOG_VULKAN_RESULT(result) (void)result
 #    define VKIT_LOG_RESULT(result)
@@ -55,10 +56,10 @@
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
 #    define VKIT_WARN_VULKAN_RESULT(result)                                                                            \
-        TKIT_LOG_WARNING_IF(!result, "VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result),          \
+        TKIT_LOG_WARNING_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result), \
                             result.Message)
 #    define VKIT_WARN_RESULT(result)                                                                                   \
-        TKIT_LOG_WARNING_IF(!result, "VkResult: '{}' - Message: '{}'",                                                 \
+        TKIT_LOG_WARNING_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                        \
                             VKit::VkResultToString(result.GetError().Result), result.GetError().Message)
 #else
 #    define VKIT_WARN_VULKAN_RESULT(result) (void)result

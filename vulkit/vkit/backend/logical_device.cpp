@@ -108,7 +108,7 @@ const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const noexcept
 void LogicalDevice::WaitIdle(const VkDevice p_Device) noexcept
 {
     TKIT_ASSERT_RETURNS(vkDeviceWaitIdle(p_Device), VK_SUCCESS,
-                        "VULKIT: Failed to wait for the logical device to be idle");
+                        "[VULKIT] Failed to wait for the logical device to be idle");
 }
 void LogicalDevice::WaitIdle() const noexcept
 {

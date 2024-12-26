@@ -89,7 +89,7 @@ RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass 
 
 void RenderPass::destroy() const noexcept
 {
-    TKIT_ASSERT(m_RenderPass, "VULKIT: Render pass is already destroyed");
+    TKIT_ASSERT(m_RenderPass, "[VULKIT] Render pass is already destroyed");
     vkDestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
 }
 
@@ -331,11 +331,11 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
                                                  const Attachment::Flags p_TypeFlags) noexcept
     : m_Builder(p_Builder)
 {
-    TKIT_ASSERT(p_TypeFlags, "VULKIT: Attachment must have at least one type flag");
+    TKIT_ASSERT(p_TypeFlags, "[VULKIT] Attachment must have at least one type flag");
     TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Depth)),
-                "Attachment must be color or depth, not both");
+                "[VULKIT] Attachment must be color or depth, not both");
     TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Stencil)),
-                "Attachment must be color or stencil, not both");
+                "[VULKIT] Attachment must be color or stencil, not both");
 
     m_Attachment.Description.samples = VK_SAMPLE_COUNT_1_BIT;
     m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -453,7 +453,7 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
     {
         m_ResolveAttachments.push_back(VkAttachmentReference{p_ResolveIndex, p_Layout});
         TKIT_ASSERT(m_ResolveAttachments.size() == m_ColorAttachments.size(),
-                    "Mismatched color and resolve attachments");
+                    "[VULKIT] Mismatched color and resolve attachments");
     }
     return *this;
 }

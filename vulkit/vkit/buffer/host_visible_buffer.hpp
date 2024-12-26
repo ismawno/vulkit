@@ -175,7 +175,7 @@ template <typename T> class HostVisibleBuffer
     void Write(const std::span<const T> p_Data) noexcept
     {
         TKIT_ASSERT(m_Buffer.GetInfo().AlignedInstanceSize == m_Buffer.GetInfo().InstanceSize,
-                    "Cannot 'mindlessly' write data to a buffer with a non-trivial alignment requirement");
+                    "[VULKIT] Cannot 'mindlessly' write data to a buffer with a non-trivial alignment requirement");
         m_Buffer.Write(p_Data.data(), p_Data.size() * sizeof(T));
     }
 
