@@ -105,7 +105,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = System::IsExtensionSupported(extension);
-        TKIT_LOG_WARNING_IF(!supported, "The extension {} is not suported", extension);
+        TKIT_LOG_WARNING_IF(!supported, "VULKIT: The extension {} is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.push_back(extension);
     }
@@ -118,7 +118,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = System::IsLayerSupported(layer);
-        TKIT_LOG_WARNING_IF(!supported, "The layer {} is not suported", layer);
+        TKIT_LOG_WARNING_IF(!supported, "VULKIT: The layer {} is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.push_back(layer);
     }
