@@ -145,8 +145,8 @@ class VKIT_API PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::StaticArray128<std::string> m_RequiredExtensions;
-        TKit::StaticArray128<std::string> m_RequestedExtensions;
+        TKit::StaticArray256<std::string> m_RequiredExtensions;
+        TKit::StaticArray256<std::string> m_RequestedExtensions;
 
         Features m_RequiredFeatures{};
     };
@@ -184,8 +184,8 @@ class VKIT_API PhysicalDevice
         TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::StaticArray128<std::string> EnabledExtensions;
-        TKit::StaticArray128<std::string> AvailableExtensions;
+        TKit::StaticArray256<std::string> EnabledExtensions;
+        TKit::StaticArray256<std::string> AvailableExtensions;
 
         Features EnabledFeatures{};
         Features AvailableFeatures{};

@@ -139,17 +139,17 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
 
-    TKit::StaticArray128<VkExtensionProperties> extensionsProps{extensionCount};
+    TKit::StaticArray256<VkExtensionProperties> extensionsProps{extensionCount};
     result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.data());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
 
-    TKit::StaticArray128<std::string> availableExtensions;
+    TKit::StaticArray256<std::string> availableExtensions;
     for (const VkExtensionProperties &extension : extensionsProps)
         availableExtensions.push_back(extension.extensionName);
 
-    TKit::StaticArray128<std::string> enabledExtensions;
+    TKit::StaticArray256<std::string> enabledExtensions;
     bool skipDevice = false;
     for (const std::string &extension : m_RequiredExtensions)
     {
