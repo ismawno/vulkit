@@ -20,7 +20,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
-    TKit::StaticArray128<const char *> enabledExtensions;
+    TKit::StaticArray256<const char *> enabledExtensions;
     for (const std::string &extension : devInfo.EnabledExtensions)
         enabledExtensions.push_back(extension.c_str());
 
