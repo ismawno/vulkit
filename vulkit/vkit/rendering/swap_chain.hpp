@@ -122,12 +122,14 @@ class VKIT_API SwapChain
     struct Info
     {
         VkSurfaceFormatKHR SurfaceFormat;
-
         VkPresentModeKHR PresentMode;
+
         VkExtent2D Extent;
         VkImageUsageFlags ImageUsage;
+
         Flags Flags;
 
+        PhysicalDevice::SwapChainSupportDetails SupportDetails;
         TKit::StaticArray4<ImageData> ImageData;
     };
 

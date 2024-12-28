@@ -159,6 +159,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     info.PresentMode = presentMode;
     info.ImageUsage = m_ImageUsage;
     info.Flags = m_Flags;
+    info.SupportDetails = support;
 
     const auto earlyDestroy = [proxy, swapChain, &destroySwapChain, &checkFlag, &info]() {
         if (checkFlag(Flag_CreateImageViews))
