@@ -5,16 +5,16 @@ project(vulkit-root)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "Available build types" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build" FORCE)
+    set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-option(VULKIT_BUILD_TESTS "Build the demos" OFF)
+set(VULKIT_BUILD_TESTS OFF)
 
 message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 
