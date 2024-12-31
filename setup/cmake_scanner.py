@@ -31,7 +31,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument(
         "--keep-preffixes",
         action="store_true",
-        default=True,
+        default=False,
         help="Keep the preffixes in the option name. Default is to strip them.",
     )
     parser.add_argument(
