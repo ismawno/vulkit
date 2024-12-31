@@ -8,13 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-endif()
+function(define_option varname default)
+    if (NOT DEFINED ${varname})
+        set(${varname} ${default} PARENT_SCOPE)
+    endif()
+endfunction()
+
+define_option(CMAKE_BUILD_TYPE "Debug")
+define_option(VULKIT_BUILD_TESTS OFF)
 
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-set(VULKIT_BUILD_TESTS OFF)
 
 message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 
