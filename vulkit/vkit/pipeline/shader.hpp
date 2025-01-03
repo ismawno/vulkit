@@ -47,7 +47,7 @@ class VKIT_API Shader
      *
      * @param p_SourcePath The path to the shader source file.
      * @param p_BinaryPath The path where the compiled binary will be saved.
-     * @return An integer status code (0 for success, non-zero for failure). INT32_MAX if the binary is up-to-date.
+     * @return An integer status code (0 for success, non-zero for failure). `INT32_MAX` if the binary is up-to-date.
      */
     static i32 CompileIfModified(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
 

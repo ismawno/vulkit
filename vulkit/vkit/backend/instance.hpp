@@ -13,7 +13,7 @@ namespace VKit
  * @brief Represents a Vulkan instance.
  *
  * A handle to the Vulkan API that manages extensions, layers, and debug configurations.
- * The underlying resources must be destroyed explicitly using the `Destroy` method.
+ * The underlying resources must be destroyed explicitly using the `Destroy()` method.
  */
 class VKIT_API Instance
 {
@@ -22,7 +22,7 @@ class VKIT_API Instance
      * @brief A utility for setting up and creating a Vulkan instance.
      *
      * Provides methods to define application details, API versions, extensions,
-     * and layers. `Require` methods enforce strict conditions, while `Request`
+     * and layers. `Require()` methods enforce strict conditions, while `Request()`
      * methods try to enable features without failing if unavailable.
      */
     class Builder

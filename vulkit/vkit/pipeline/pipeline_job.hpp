@@ -23,7 +23,7 @@ template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexce
  * This class helps with the resource management related to pipelines and descriptor sets, allowing
  * for easier bindings of said resources and the automation of push constant updates.
  *
- * @tparam Pip The type of pipeline to bind. Either GraphicsPipeline or ComputePipeline.
+ * @tparam Pip The type of pipeline to bind. Either `GraphicsPipeline` or `ComputePipeline`.
  */
 template <Pipeline Pip> class VKIT_API IPipelineJob
 {
