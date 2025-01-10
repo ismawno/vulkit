@@ -87,7 +87,7 @@ class VKIT_API Buffer
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
      */
-    void WriteAt(usize p_Index, const void *p_Data) noexcept;
+    void WriteAt(u32 p_Index, const void *p_Data) noexcept;
 
     /**
      * @brief Flushes a range of the buffer's memory to ensure visibility to the device.
@@ -106,17 +106,17 @@ class VKIT_API Buffer
      *
      * @param p_Index The index of the buffer instance to flush.
      */
-    void FlushAt(usize p_Index) noexcept;
+    void FlushAt(u32 p_Index) noexcept;
 
     void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
-    void InvalidateAt(usize p_Index) noexcept;
+    void InvalidateAt(u32 p_Index) noexcept;
 
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE,
                                              VkDeviceSize p_Offset = 0) const noexcept;
-    VkDescriptorBufferInfo GetDescriptorInfoAt(usize p_Index) const noexcept;
+    VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const noexcept;
 
     void *GetData() const noexcept;
-    void *ReadAt(usize p_Index) const noexcept;
+    void *ReadAt(u32 p_Index) const noexcept;
 
     /**
      * @brief Copies data from another buffer into this buffer.

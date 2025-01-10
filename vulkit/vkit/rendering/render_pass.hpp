@@ -236,11 +236,9 @@ class RenderPass
         resources.m_Allocator = m_Info.Allocator;
 
         TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.size(), VK_NULL_HANDLE};
-        const u32 attachmentCount = static_cast<u32>(attachments.size());
-
         for (u32 i = 0; i < m_Info.ImageCount; ++i)
         {
-            for (u32 j = 0; j < attachmentCount; ++j)
+            for (u32 j = 0; j < attachments.size(); ++j)
             {
                 const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
                 if (!imresult)
@@ -256,7 +254,7 @@ class RenderPass
             VkFramebufferCreateInfo frameBufferInfo{};
             frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             frameBufferInfo.renderPass = m_RenderPass;
-            frameBufferInfo.attachmentCount = static_cast<u32>(attachments.size());
+            frameBufferInfo.attachmentCount = attachments.size();
             frameBufferInfo.pAttachments = attachments.data();
             frameBufferInfo.width = p_Extent.width;
             frameBufferInfo.height = p_Extent.height;

@@ -224,9 +224,9 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     VkInstanceCreateInfo instanceInfo{};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pApplicationInfo = &appInfo;
-    instanceInfo.enabledExtensionCount = static_cast<u32>(extensions.size());
+    instanceInfo.enabledExtensionCount = extensions.size();
     instanceInfo.ppEnabledExtensionNames = extensions.data();
-    instanceInfo.enabledLayerCount = static_cast<u32>(layers.size());
+    instanceInfo.enabledLayerCount = layers.size();
     instanceInfo.ppEnabledLayerNames = layers.data();
     instanceInfo.pNext = validationLayers ? &msgInfo : nullptr;
 #ifdef VK_KHR_portability_enumeration

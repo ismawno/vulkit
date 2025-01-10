@@ -4,7 +4,7 @@
 namespace VKit
 {
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                            std::span<const QueuePriorities> p_QueuePriorities) noexcept
+                                            const std::span<const QueuePriorities> p_QueuePriorities) noexcept
 {
     const Instance::Info &instanceInfo = p_Instance.GetInfo();
     PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
@@ -51,11 +51,11 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     else
         createInfo.pEnabledFeatures = &devInfo.EnabledFeatures.Core;
 
-    createInfo.queueCreateInfoCount = static_cast<u32>(queueCreateInfos.size());
+    createInfo.queueCreateInfoCount = queueCreateInfos.size();
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
-    createInfo.enabledExtensionCount = static_cast<u32>(enabledExtensions.size());
+    createInfo.enabledExtensionCount = enabledExtensions.size();
     createInfo.ppEnabledExtensionNames = enabledExtensions.data();
-    createInfo.enabledLayerCount = static_cast<u32>(instanceInfo.EnabledLayers.size());
+    createInfo.enabledLayerCount = instanceInfo.EnabledLayers.size();
     createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.data();
 
     VkDevice device;

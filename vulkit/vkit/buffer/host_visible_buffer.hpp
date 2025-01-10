@@ -190,7 +190,7 @@ template <typename T> class HostVisibleBuffer
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
      */
-    void WriteAt(const usize p_Index, const T *p_Data) noexcept
+    void WriteAt(const u32 p_Index, const T *p_Data) noexcept
     {
         m_Buffer.WriteAt(p_Index, p_Data);
     }
@@ -199,7 +199,7 @@ template <typename T> class HostVisibleBuffer
     {
         m_Buffer.Flush();
     }
-    void FlushAt(const usize p_Index) noexcept
+    void FlushAt(const u32 p_Index) noexcept
     {
         m_Buffer.FlushAt(p_Index);
     }
@@ -208,7 +208,7 @@ template <typename T> class HostVisibleBuffer
     {
         m_Buffer.Invalidate();
     }
-    void InvalidateAt(const usize p_Index) noexcept
+    void InvalidateAt(const u32 p_Index) noexcept
     {
         m_Buffer.InvalidateAt(p_Index);
     }
@@ -217,7 +217,7 @@ template <typename T> class HostVisibleBuffer
     {
         return m_Buffer.GetDescriptorInfo();
     }
-    VkDescriptorBufferInfo GetDescriptorInfoAt(const usize p_Index) const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const noexcept
     {
         return m_Buffer.GetDescriptorInfoAt(p_Index);
     }
@@ -226,7 +226,7 @@ template <typename T> class HostVisibleBuffer
     {
         return static_cast<T *>(m_Buffer.GetData());
     }
-    T *ReadAt(const usize p_Index) const noexcept
+    T *ReadAt(const u32 p_Index) const noexcept
     {
         return static_cast<T *>(m_Buffer.ReadAt(p_Index));
     }

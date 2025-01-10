@@ -11,7 +11,7 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
 {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = static_cast<u32>(m_Bindings.size());
+    layoutInfo.bindingCount = m_Bindings.size();
     layoutInfo.pBindings = m_Bindings.data();
 
     VkDescriptorSetLayout layout;
@@ -62,7 +62,7 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescrip
                                                                        u32 p_Count) noexcept
 {
     VkDescriptorSetLayoutBinding binding{};
-    binding.binding = static_cast<u32>(m_Bindings.size());
+    binding.binding = m_Bindings.size();
     binding.descriptorType = p_Type;
     binding.descriptorCount = p_Count;
     binding.stageFlags = p_StageFlags;

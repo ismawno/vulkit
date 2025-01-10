@@ -11,7 +11,7 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
 {
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = static_cast<u32>(m_PoolSizes.size());
+    poolInfo.poolSizeCount = m_PoolSizes.size();
     poolInfo.pPoolSizes = m_PoolSizes.data();
     poolInfo.maxSets = m_MaxSets;
     poolInfo.flags = m_Flags;

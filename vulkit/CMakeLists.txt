@@ -30,6 +30,7 @@ FetchContent_Declare(
     GIT_TAG main
 )
 FetchContent_MakeAvailable(toolkit)
+target_compile_definitions(toolkit PUBLIC TKIT_SIZE_TYPE=u32 TKIT_DIFFERENCE_TYPE=i32)
 
 FetchContent_Declare(
     vma

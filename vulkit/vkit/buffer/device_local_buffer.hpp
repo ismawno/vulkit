@@ -85,7 +85,7 @@ template <typename T> class DeviceLocalBuffer
         if (p_Specs.MinimumAlignment == 1)
             stagingBuffer.Write(p_Specs.Data.data());
         else
-            for (usize i = 0; i < p_Specs.Data.size(); ++i)
+            for (u32 i = 0; i < p_Specs.Data.size(); ++i)
                 stagingBuffer.WriteAt(i, &p_Specs.Data[i]);
         stagingBuffer.Flush();
         stagingBuffer.Unmap();
@@ -271,7 +271,7 @@ template <typename T> class DeviceLocalBuffer
     {
         return m_Buffer.GetDescriptorInfo();
     }
-    VkDescriptorBufferInfo GetDescriptorInfoAt(const usize p_Index) const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const noexcept
     {
         return m_Buffer.GetDescriptorInfoAt(p_Index);
     }

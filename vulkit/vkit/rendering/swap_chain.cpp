@@ -252,7 +252,7 @@ void SwapChain::destroy() const noexcept
 VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
                                           const std::span<SyncData> p_Objects) noexcept
 {
-    for (usize i = 0; i < p_Objects.size(); ++i)
+    for (u32 i = 0; i < p_Objects.size(); ++i)
     {
         VkSemaphoreCreateInfo semaphoreInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

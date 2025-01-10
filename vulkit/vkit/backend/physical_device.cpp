@@ -8,9 +8,9 @@ template <typename C, typename T> static bool contains(const C &p_Container, con
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
 }
 
-template <typename T> std::pair<const VkBool32 *, usize> getFeatureIterable(const T &p_Features) noexcept
+template <typename T> std::pair<const VkBool32 *, u32> getFeatureIterable(const T &p_Features) noexcept
 {
-    usize size;
+    u32 size;
     const VkBool32 *ptr;
     if constexpr (std::is_same_v<T, VkPhysicalDeviceFeatures>)
     {
@@ -19,7 +19,7 @@ template <typename T> std::pair<const VkBool32 *, usize> getFeatureIterable(cons
     }
     else
     {
-        const usize offset = sizeof(VkStructureType) + sizeof(void *);
+        const u32 offset = sizeof(VkStructureType) + sizeof(void *);
         size = (sizeof(T) - offset) / sizeof(VkBool32);
         const std::byte *rawPtr = reinterpret_cast<const std::byte *>(&p_Features) + offset;
         ptr = reinterpret_cast<const VkBool32 *>(rawPtr);
@@ -30,7 +30,7 @@ template <typename T> std::pair<const VkBool32 *, usize> getFeatureIterable(cons
 template <typename T> static bool isAnyFeatureSet(const T &p_Features) noexcept
 {
     const auto [ptr, size] = getFeatureIterable(p_Features);
-    for (usize i = 0; i < size; ++i)
+    for (u32 i = 0; i < size; ++i)
         if (ptr[i])
             return true;
     return false;
@@ -42,7 +42,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     const auto [ptr2, size2] = getFeatureIterable(p_Requested);
     TKIT_ASSERT(size1 == size2, "[VULKIT] Feature struct sizes do not match");
 
-    for (usize i = 0; i < size1; ++i)
+    for (u32 i = 0; i < size1; ++i)
         if (!ptr1[i] && ptr2[i])
             return false;
     return true;

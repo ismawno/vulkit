@@ -58,11 +58,11 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
 
     VkRenderPassCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    createInfo.attachmentCount = static_cast<u32>(attDescriptions.size());
+    createInfo.attachmentCount = attDescriptions.size();
     createInfo.pAttachments = attDescriptions.data();
-    createInfo.subpassCount = static_cast<u32>(subpasses.size());
+    createInfo.subpassCount = subpasses.size();
     createInfo.pSubpasses = subpasses.data();
-    createInfo.dependencyCount = static_cast<u32>(dependencies.size());
+    createInfo.dependencyCount = dependencies.size();
     createInfo.pDependencies = dependencies.data();
     createInfo.flags = m_Flags;
 
@@ -285,7 +285,7 @@ void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const noex
 
 VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const noexcept
 {
-    const u32 attachmentCount = static_cast<u32>(m_Images.size() / m_FrameBuffers.size());
+    const u32 attachmentCount = m_Images.size() / m_FrameBuffers.size();
     return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
 }
 VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) const noexcept
@@ -486,11 +486,11 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetFlags(const VkSubpass
 }
 RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass() noexcept
 {
-    m_Description.colorAttachmentCount = static_cast<u32>(m_ColorAttachments.size());
+    m_Description.colorAttachmentCount = m_ColorAttachments.size();
     m_Description.pColorAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
-    m_Description.inputAttachmentCount = static_cast<u32>(m_InputAttachments.size());
+    m_Description.inputAttachmentCount = m_InputAttachments.size();
     m_Description.pInputAttachments = m_InputAttachments.empty() ? nullptr : m_InputAttachments.data();
-    m_Description.preserveAttachmentCount = static_cast<u32>(m_PreserveAttachments.size());
+    m_Description.preserveAttachmentCount = m_PreserveAttachments.size();
     m_Description.pPreserveAttachments = m_PreserveAttachments.empty() ? nullptr : m_PreserveAttachments.data();
     m_Description.pResolveAttachments = m_ResolveAttachments.empty() ? nullptr : m_ResolveAttachments.data();
     m_Description.pDepthStencilAttachment =

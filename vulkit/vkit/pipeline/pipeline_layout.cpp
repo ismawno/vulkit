@@ -11,9 +11,9 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
 {
     VkPipelineLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    layoutInfo.setLayoutCount = static_cast<u32>(m_DescriptorSetLayouts.size());
+    layoutInfo.setLayoutCount = m_DescriptorSetLayouts.size();
     layoutInfo.pSetLayouts = m_DescriptorSetLayouts.empty() ? nullptr : m_DescriptorSetLayouts.data();
-    layoutInfo.pushConstantRangeCount = static_cast<u32>(m_PushConstantRanges.size());
+    layoutInfo.pushConstantRangeCount = m_PushConstantRanges.size();
     layoutInfo.pPushConstantRanges = m_PushConstantRanges.empty() ? nullptr : m_PushConstantRanges.data();
     layoutInfo.flags = m_Flags;
 

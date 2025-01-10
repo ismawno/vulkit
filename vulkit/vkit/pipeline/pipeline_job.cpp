@@ -24,10 +24,9 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
 {
     m_Pipeline.Bind(p_CommandBuffer);
     u32 offset = 0;
-    const u32 pushCount = static_cast<u32>(m_PushData.size());
 
     // Data may not need to be pushed every frame... but I guess it is a small price to pay for the flexibility
-    for (u32 i = 0; i < pushCount; ++i)
+    for (u32 i = 0; i < m_PushData.size(); ++i)
     {
         const PushDataInfo &info = m_PushData[i];
         if (!info.Data)

@@ -89,7 +89,7 @@ void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p
         std::memcpy(offsetted, p_Data, p_Size);
     }
 }
-void Buffer::WriteAt(const usize p_Index, const void *p_Data) noexcept
+void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Write(p_Data, m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
@@ -101,7 +101,7 @@ void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexc
     TKIT_ASSERT_RETURNS(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "[VULKIT] Failed to flush buffer memory");
 }
-void Buffer::FlushAt(const usize p_Index) noexcept
+void Buffer::FlushAt(const u32 p_Index) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Flush(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
@@ -113,7 +113,7 @@ void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) 
     TKIT_ASSERT_RETURNS(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "[VULKIT] Failed to invalidate buffer memory");
 }
-void Buffer::InvalidateAt(const usize p_Index) noexcept
+void Buffer::InvalidateAt(const u32 p_Index) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Invalidate(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
@@ -127,7 +127,7 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, cons
     info.range = p_Size;
     return info;
 }
-VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const usize p_Index) const noexcept
+VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
@@ -137,7 +137,7 @@ void *Buffer::GetData() const noexcept
 {
     return m_Data;
 }
-void *Buffer::ReadAt(const usize p_Index) const noexcept
+void *Buffer::ReadAt(const u32 p_Index) const noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return static_cast<std::byte *>(m_Data) + m_Info.AlignedInstanceSize * p_Index;

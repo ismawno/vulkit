@@ -95,15 +95,15 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
     for (Builder &builder : p_Builders)
         pipelineInfos.push_back(builder.CreatePipelineInfo());
 
-    TKit::StaticArray32<VkPipeline> pipelines{p_Builders.size()};
-    const VkResult result =
-        vkCreateGraphicsPipelines(p_Device, p_Cache, static_cast<u32>(p_Builders.size()), pipelineInfos.data(),
-                                  p_Device.AllocationCallbacks, pipelines.data());
+    const u32 count = p_Builders.size();
+    TKit::StaticArray32<VkPipeline> pipelines{count};
+    const VkResult result = vkCreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.data(),
+                                                      p_Device.AllocationCallbacks, pipelines.data());
 
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to create graphics pipelines");
 
-    for (usize i = 0; i < p_Builders.size(); ++i)
+    for (u32 i = 0; i < count; ++i)
         p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i]);
 
     return VulkanResult::Success();
@@ -147,14 +147,14 @@ GraphicsPipeline::operator bool() const noexcept
 
 VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noexcept
 {
-    m_ColorBlendInfo.attachmentCount = static_cast<u32>(m_ColorAttachments.size());
+    m_ColorBlendInfo.attachmentCount = m_ColorAttachments.size();
     m_ColorBlendInfo.pAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
 
-    m_DynamicStateInfo.dynamicStateCount = static_cast<u32>(m_DynamicStates.size());
+    m_DynamicStateInfo.dynamicStateCount = m_DynamicStates.size();
     m_DynamicStateInfo.pDynamicStates = m_DynamicStates.empty() ? nullptr : m_DynamicStates.data();
 
-    m_VertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(m_AttributeDescriptions.size());
-    m_VertexInputInfo.vertexBindingDescriptionCount = static_cast<u32>(m_BindingDescriptions.size());
+    m_VertexInputInfo.vertexAttributeDescriptionCount = m_AttributeDescriptions.size();
+    m_VertexInputInfo.vertexBindingDescriptionCount = m_BindingDescriptions.size();
     m_VertexInputInfo.pVertexAttributeDescriptions =
         m_AttributeDescriptions.empty() ? nullptr : m_AttributeDescriptions.data();
     m_VertexInputInfo.pVertexBindingDescriptions =
@@ -162,7 +162,7 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noe
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = static_cast<u32>(m_ShaderStages.size());
+    pipelineInfo.stageCount = m_ShaderStages.size();
     pipelineInfo.pStages = m_ShaderStages.empty() ? nullptr : m_ShaderStages.data();
     pipelineInfo.pVertexInputState = &m_VertexInputInfo;
     pipelineInfo.pInputAssemblyState = &m_InputAssemblyInfo;
@@ -523,7 +523,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(cons
                                                                             const u32 p_Stride) noexcept
 {
     VkVertexInputBindingDescription binding{};
-    binding.binding = static_cast<u32>(m_BindingDescriptions.size());
+    binding.binding = m_BindingDescriptions.size();
     binding.stride = p_Stride;
     binding.inputRate = p_InputRate;
     m_BindingDescriptions.push_back(binding);
@@ -536,7 +536,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(co
     VkVertexInputAttributeDescription attribute{};
     attribute.binding = p_Binding;
     attribute.format = p_Format;
-    attribute.location = static_cast<u32>(m_AttributeDescriptions.size());
+    attribute.location = m_AttributeDescriptions.size();
     attribute.offset = p_Offset;
     m_AttributeDescriptions.push_back(attribute);
     return *this;
