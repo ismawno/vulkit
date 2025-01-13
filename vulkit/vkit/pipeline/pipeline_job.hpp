@@ -70,7 +70,7 @@ template <Pipeline Pip> class VKIT_API IPipelineJob
      * @param p_DynamicOffsets The dynamic offsets to use for the descriptor sets.
      */
     void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FirstSet = 0,
-              std::span<const u32> p_DynamicOffsets = {}) const noexcept;
+              TKit::Span<const u32> p_DynamicOffsets = {}) const noexcept;
 
     explicit(false) operator bool() const noexcept;
 

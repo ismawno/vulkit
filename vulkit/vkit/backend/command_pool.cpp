@@ -42,7 +42,7 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     });
 }
 
-VulkanResult CommandPool::Allocate(const std::span<VkCommandBuffer> p_CommandBuffers,
+VulkanResult CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffers,
                                    const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBufferAllocateInfo allocateInfo{};
@@ -59,7 +59,7 @@ VulkanResult CommandPool::Allocate(const std::span<VkCommandBuffer> p_CommandBuf
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBuffer commandBuffer;
-    const std::span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
+    const TKit::Span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
 
     const VulkanResult result = Allocate(commandBuffers, p_Level);
     if (result)
@@ -67,13 +67,13 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
     return Result<VkCommandBuffer>::Error(result);
 }
 
-void CommandPool::Deallocate(const std::span<const VkCommandBuffer> p_CommandBuffers) const noexcept
+void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept
 {
     vkFreeCommandBuffers(m_Device, m_Pool, static_cast<u32>(p_CommandBuffers.size()), p_CommandBuffers.data());
 }
 void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexcept
 {
-    const std::span<const VkCommandBuffer> commandBuffers(&p_CommandBuffer, 1);
+    const TKit::Span<const VkCommandBuffer> commandBuffers(&p_CommandBuffer, 1);
     Deallocate(commandBuffers);
 }
 

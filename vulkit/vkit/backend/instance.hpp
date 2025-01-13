@@ -5,6 +5,7 @@
 #include "vkit/backend/system.hpp"
 #include "tkit/memory/ptr.hpp"
 #include "tkit/utilities/result.hpp"
+#include "tkit/container/span.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit
@@ -53,16 +54,16 @@ class VKIT_API Instance
         Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
 
         Builder &RequireExtension(const char *p_Extension) noexcept;
-        Builder &RequireExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Builder &RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
 
         Builder &RequestExtension(const char *p_Extension) noexcept;
-        Builder &RequestExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Builder &RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
 
         Builder &RequireLayer(const char *p_Layer) noexcept;
-        Builder &RequireLayers(std::span<const char *const> p_Layers) noexcept;
+        Builder &RequireLayers(TKit::Span<const char *const> p_Layers) noexcept;
 
         Builder &RequestLayer(const char *p_Layer) noexcept;
-        Builder &RequestLayers(std::span<const char *const> p_Layers) noexcept;
+        Builder &RequestLayers(TKit::Span<const char *const> p_Layers) noexcept;
 
         Builder &RequireValidationLayers() noexcept;
         Builder &RequestValidationLayers() noexcept;

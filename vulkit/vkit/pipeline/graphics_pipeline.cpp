@@ -82,8 +82,8 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
 
-VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const std::span<Builder> p_Builders,
-                                      const std::span<GraphicsPipeline> p_Pipelines,
+VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
+                                      const TKit::Span<GraphicsPipeline> p_Pipelines,
                                       const VkPipelineCache p_Cache) noexcept
 {
     if (p_Builders.size() != p_Pipelines.size())
@@ -224,14 +224,14 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewpo
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewports(
-    const std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
 {
     for (const auto &viewport : p_Viewports)
         m_Viewports.push_back(viewport);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewports(
-    const std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
 {
     m_Viewports.clear();
     AddViewports(p_Viewports);
@@ -567,14 +567,14 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDy
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(
-    const std::span<const VkDynamicState> p_States) noexcept
+    const TKit::Span<const VkDynamicState> p_States) noexcept
 {
     for (const VkDynamicState state : p_States)
         m_DynamicStates.push_back(state);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(
-    const std::span<const VkDynamicState> p_States) noexcept
+    const TKit::Span<const VkDynamicState> p_States) noexcept
 {
     m_DynamicStates.clear();
     AddDynamicStates(p_States);

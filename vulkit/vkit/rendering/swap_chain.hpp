@@ -170,7 +170,8 @@ struct SyncData
  * @param p_Objects A span of `SyncData` structures to populate with the created objects.
  * @return A VulkanResult indicating success or failure of the operation.
  */
-VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device, std::span<SyncData> p_Objects) noexcept;
+VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
+                                          TKit::Span<SyncData> p_Objects) noexcept;
 
 /**
  * @brief Destroys synchronization objects.
@@ -180,6 +181,6 @@ VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device, 
  * @param p_Device The logical device used to destroy the synchronization objects.
  * @param p_Objects A span of `SyncData` structures whose resources will be destroyed.
  */
-void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device, std::span<const SyncData> p_Objects) noexcept;
+void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device, TKit::Span<const SyncData> p_Objects) noexcept;
 
 } // namespace VKit

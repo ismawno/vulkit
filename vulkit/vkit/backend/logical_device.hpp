@@ -59,7 +59,7 @@ class VKIT_API LogicalDevice
      * @return A result containing the created LogicalDevice or an error if the creation fails.
      */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                        std::span<const QueuePriorities> p_QueuePriorities) noexcept;
+                                        TKit::Span<const QueuePriorities> p_QueuePriorities) noexcept;
 
     /**
      * @brief Creates a Vulkan logical device with the specified parameters.
@@ -88,7 +88,7 @@ class VKIT_API LogicalDevice
     VkDevice GetDevice() const noexcept;
 
     Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const noexcept;
-    Result<VkFormat> FindSupportedFormat(std::span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
+    Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
                                          VkFormatFeatureFlags p_Features) const noexcept;
 
     static void WaitIdle(VkDevice p_Device) noexcept;

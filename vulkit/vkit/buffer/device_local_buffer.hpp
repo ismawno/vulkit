@@ -20,7 +20,7 @@ template <typename T> class DeviceLocalBuffer
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        std::span<const T> Data;
+        TKit::Span<const T> Data;
         VkBufferUsageFlags Usage;
         CommandPool *CommandPool;
         VkQueue Queue;
@@ -31,7 +31,7 @@ template <typename T> class DeviceLocalBuffer
     struct SpecializedSpecs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        std::span<const T> Data;
+        TKit::Span<const T> Data;
         CommandPool *CommandPool;
         VkQueue Queue;
         VmaAllocationCreateFlags AllocationFlags = 0;
@@ -245,8 +245,8 @@ template <typename T> class DeviceLocalBuffer
      * @param p_Buffers A span containing the buffers to bind.
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
-    static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const std::span<const VkBuffer> p_Buffers,
-                                   const std::span<const VkDeviceSize> p_Offsets = {}) noexcept
+    static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
+                                   const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
         if (!p_Offsets.empty())
             vkCmdBindVertexBuffers(p_CommandBuffer, 0, static_cast<u32>(p_Buffers.size()), p_Buffers.data(),

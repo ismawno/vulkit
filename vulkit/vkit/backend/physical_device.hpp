@@ -115,10 +115,10 @@ class VKIT_API PhysicalDevice
         Selector &PreferType(Type p_Type) noexcept;
 
         Selector &RequireExtension(const char *p_Extension) noexcept;
-        Selector &RequireExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Selector &RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
 
         Selector &RequestExtension(const char *p_Extension) noexcept;
-        Selector &RequestExtensions(std::span<const char *const> p_Extensions) noexcept;
+        Selector &RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
 
         Selector &RequireMemory(const VkDeviceSize p_Size) noexcept;
         Selector &RequestMemory(const VkDeviceSize p_Size) noexcept;

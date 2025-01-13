@@ -600,7 +600,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char 
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(
-    const std::span<const char *const> p_Extensions) noexcept
+    const TKit::Span<const char *const> p_Extensions) noexcept
 {
     m_RequiredExtensions.insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
@@ -611,7 +611,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char 
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(
-    const std::span<const char *const> p_Extensions) noexcept
+    const TKit::Span<const char *const> p_Extensions) noexcept
 {
     m_RequestedExtensions.insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;

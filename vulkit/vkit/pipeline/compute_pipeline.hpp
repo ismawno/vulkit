@@ -42,8 +42,8 @@ class VKIT_API ComputePipeline
      * @param p_Pipelines A span to store the created pipelines.
      * @return A VulkanResult indicating success or failure for the batch operation.
      */
-    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<const Specs> p_Specs,
-                               std::span<ComputePipeline> p_Pipelines,
+    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, TKit::Span<const Specs> p_Specs,
+                               TKit::Span<ComputePipeline> p_Pipelines,
                                VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 
     ComputePipeline() noexcept = default;

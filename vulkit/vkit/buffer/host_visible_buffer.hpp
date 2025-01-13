@@ -172,7 +172,7 @@ template <typename T> class HostVisibleBuffer
      *
      * @param p_Data A span containing the data to write.
      */
-    void Write(const std::span<const T> p_Data) noexcept
+    void Write(const TKit::Span<const T> p_Data) noexcept
     {
         TKIT_ASSERT(m_Buffer.GetInfo().AlignedInstanceSize == m_Buffer.GetInfo().InstanceSize,
                     "[VULKIT] Cannot 'mindlessly' write data to a buffer with a non-trivial alignment requirement");
@@ -274,8 +274,8 @@ template <typename T> class HostVisibleBuffer
      * @param p_Buffers A span containing the buffers to bind.
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
-    static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const std::span<const VkBuffer> p_Buffers,
-                                   const std::span<const VkDeviceSize> p_Offsets = {}) noexcept
+    static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
+                                   const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
         if (!p_Offsets.empty())
             vkCmdBindVertexBuffers(p_CommandBuffer, 0, static_cast<u32>(p_Buffers.size()), p_Buffers.data(),

@@ -4,7 +4,7 @@
 namespace VKit
 {
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                            const std::span<const QueuePriorities> p_QueuePriorities) noexcept
+                                            const TKit::Span<const QueuePriorities> p_QueuePriorities) noexcept
 {
     const Instance::Info &instanceInfo = p_Instance.GetInfo();
     PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
@@ -135,7 +135,7 @@ Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSup
     return m_PhysicalDevice.QuerySwapChainSupport(m_Instance, p_Surface);
 }
 
-Result<VkFormat> LogicalDevice::FindSupportedFormat(std::span<const VkFormat> p_Candidates,
+Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates,
                                                     const VkImageTiling p_Tiling,
                                                     const VkFormatFeatureFlags p_Features) const noexcept
 {

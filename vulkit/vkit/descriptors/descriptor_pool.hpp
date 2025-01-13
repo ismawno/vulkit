@@ -84,7 +84,7 @@ class VKIT_API DescriptorPool
      *
      * @param p_Sets A span containing the descriptor sets to deallocate.
      */
-    void Deallocate(std::span<const VkDescriptorSet> p_Sets) const noexcept;
+    void Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const noexcept;
 
     /**
      * @brief Deallocates a descriptor set from the pool.

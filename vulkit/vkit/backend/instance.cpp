@@ -51,7 +51,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(VkDebugUtilsMessageSe
 }
 #endif
 
-static bool contains(const std::span<const char *const> p_Extensions, const char *p_Extension) noexcept
+static bool contains(const TKit::Span<const char *const> p_Extensions, const char *p_Extension) noexcept
 {
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
@@ -392,7 +392,7 @@ Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension) 
     m_RequiredExtensions.push_back(p_Extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireExtensions(std::span<const char *const> p_Extensions) noexcept
+Instance::Builder &Instance::Builder::RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept
 {
     m_RequiredExtensions.insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
@@ -402,7 +402,7 @@ Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension) 
     m_RequestedExtensions.push_back(p_Extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestExtensions(std::span<const char *const> p_Extensions) noexcept
+Instance::Builder &Instance::Builder::RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept
 {
     m_RequestedExtensions.insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
@@ -412,7 +412,7 @@ Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer) noexcept
     m_RequiredLayers.push_back(p_Layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireLayers(std::span<const char *const> p_Layers) noexcept
+Instance::Builder &Instance::Builder::RequireLayers(TKit::Span<const char *const> p_Layers) noexcept
 {
     m_RequiredLayers.insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
@@ -422,7 +422,7 @@ Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer) noexcept
     m_RequestedLayers.push_back(p_Layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestLayers(std::span<const char *const> p_Layers) noexcept
+Instance::Builder &Instance::Builder::RequestLayers(TKit::Span<const char *const> p_Layers) noexcept
 {
     m_RequestedLayers.insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;

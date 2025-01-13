@@ -9,13 +9,13 @@ DescriptorSet::DescriptorSet(const VkDescriptorSet p_Set) noexcept : m_Set(p_Set
 }
 
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const std::span<const u32> p_DynamicOffsets) const noexcept
+                         const VkPipelineLayout p_Layout, const TKit::Span<const u32> p_DynamicOffsets) const noexcept
 {
     Bind(p_CommandBuffer, m_Set, p_BindPoint, p_Layout, 0, p_DynamicOffsets);
 }
-void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<const VkDescriptorSet> p_Sets,
+void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkDescriptorSet> p_Sets,
                          const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const std::span<const u32> p_DynamicOffsets) noexcept
+                         const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
     if (!p_DynamicOffsets.empty())
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
@@ -26,7 +26,7 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const std::span<
 }
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkDescriptorSet p_Set,
                          const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const std::span<const u32> p_DynamicOffsets) noexcept
+                         const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
     if (!p_DynamicOffsets.empty())
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,

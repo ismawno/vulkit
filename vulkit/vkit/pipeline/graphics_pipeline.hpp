@@ -102,8 +102,8 @@ class VKIT_API GraphicsPipeline
 
         // Viewport and Scissor
         Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor) noexcept;
-        Builder &AddViewports(std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
-        Builder &SetViewports(std::span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
+        Builder &AddViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
+        Builder &SetViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
         Builder &SetViewportCount(u32 p_ViewportCount) noexcept;
 
         // Rasterization
@@ -176,8 +176,8 @@ class VKIT_API GraphicsPipeline
 
         // Dynamic State
         Builder &AddDynamicState(VkDynamicState p_State) noexcept;
-        Builder &AddDynamicStates(std::span<const VkDynamicState> p_States) noexcept;
-        Builder &SetDynamicStates(std::span<const VkDynamicState> p_States) noexcept;
+        Builder &AddDynamicStates(TKit::Span<const VkDynamicState> p_States) noexcept;
+        Builder &SetDynamicStates(TKit::Span<const VkDynamicState> p_States) noexcept;
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -228,8 +228,8 @@ class VKIT_API GraphicsPipeline
      * @param p_Pipelines A span to store the created pipelines.
      * @return A VulkanResult indicating success or failure for the batch operation.
      */
-    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, std::span<Builder> p_Builders,
-                               std::span<GraphicsPipeline> p_Pipelines,
+    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
+                               TKit::Span<GraphicsPipeline> p_Pipelines,
                                VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 
     GraphicsPipeline() noexcept = default;

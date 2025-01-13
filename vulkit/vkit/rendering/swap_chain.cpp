@@ -8,8 +8,8 @@ SwapChain::Builder::Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surfac
 {
 }
 
-Result<VkSurfaceFormatKHR> selectFormat(const std::span<const VkSurfaceFormatKHR> p_Requested,
-                                        const std::span<const VkSurfaceFormatKHR> p_Supported) noexcept
+Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
+                                        const TKit::Span<const VkSurfaceFormatKHR> p_Supported) noexcept
 {
     for (const VkSurfaceFormatKHR &desired : p_Requested)
         for (const VkSurfaceFormatKHR &supported : p_Supported)
@@ -19,8 +19,8 @@ Result<VkSurfaceFormatKHR> selectFormat(const std::span<const VkSurfaceFormatKHR
                                              "No desired format that is supported found");
 }
 
-Result<VkPresentModeKHR> selectPresentMode(const std::span<const VkPresentModeKHR> p_Requested,
-                                           const std::span<const VkPresentModeKHR> p_Supported) noexcept
+Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
+                                           const TKit::Span<const VkPresentModeKHR> p_Supported) noexcept
 {
     for (const VkPresentModeKHR &desired : p_Requested)
         for (const VkPresentModeKHR &supported : p_Supported)
@@ -250,7 +250,7 @@ void SwapChain::destroy() const noexcept
 }
 
 VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                          const std::span<SyncData> p_Objects) noexcept
+                                          const TKit::Span<SyncData> p_Objects) noexcept
 {
     for (u32 i = 0; i < p_Objects.size(); ++i)
     {
@@ -287,7 +287,7 @@ VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
     return VulkanResult::Success();
 }
 void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                   const std::span<const SyncData> p_Objects) noexcept
+                                   const TKit::Span<const SyncData> p_Objects) noexcept
 {
     for (const SyncData &data : p_Objects)
     {

@@ -20,7 +20,7 @@ void IPipelineJob<Pip>::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_Descr
 
 template <Pipeline Pip>
 void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstSet,
-                             const std::span<const u32> p_DynamicOffsets) const noexcept
+                             const TKit::Span<const u32> p_DynamicOffsets) const noexcept
 {
     m_Pipeline.Bind(p_CommandBuffer);
     u32 offset = 0;

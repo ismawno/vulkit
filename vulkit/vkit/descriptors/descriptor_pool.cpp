@@ -68,7 +68,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     return Result<DescriptorSet>::Ok(set);
 }
 
-void DescriptorPool::Deallocate(const std::span<const VkDescriptorSet> p_Sets) const noexcept
+void DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
 {
     vkFreeDescriptorSets(m_Device, m_Pool, static_cast<u32>(p_Sets.size()), p_Sets.data());
 }

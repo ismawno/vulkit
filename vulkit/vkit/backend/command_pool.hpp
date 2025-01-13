@@ -54,7 +54,7 @@ class VKIT_API CommandPool
      * @param p_Level The level of the command buffers (primary or secondary).
      * @return A VulkanResult indicating success or failure.
      */
-    VulkanResult Allocate(std::span<VkCommandBuffer> p_CommandBuffers,
+    VulkanResult Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
                           VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
 
     /**
@@ -73,7 +73,7 @@ class VKIT_API CommandPool
      *
      * @param p_CommandBuffers The span of command buffers to deallocate.
      */
-    void Deallocate(std::span<const VkCommandBuffer> p_CommandBuffers) const noexcept;
+    void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept;
 
     /**
      * @brief Begins a single-time command operation.
