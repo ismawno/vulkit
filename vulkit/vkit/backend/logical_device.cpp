@@ -15,7 +15,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfo.queueFamilyIndex = priorities.Index;
-        queueCreateInfo.queueCount = static_cast<u32>(priorities.Priorities.size());
+        queueCreateInfo.queueCount = priorities.Priorities.size();
         queueCreateInfo.pQueuePriorities = priorities.Priorities.data();
         queueCreateInfos.push_back(queueCreateInfo);
     }
@@ -68,7 +68,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
 {
-    const u32 queueFamilyCount = static_cast<u32>(p_PhysicalDevice.GetInfo().QueueFamilies.size());
+    const u32 queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.size();
     TKit::StaticArray8<QueuePriorities> queuePriorities;
     for (u32 i = 0; i < queueFamilyCount; ++i)
     {

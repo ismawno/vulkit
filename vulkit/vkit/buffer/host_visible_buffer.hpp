@@ -278,10 +278,9 @@ template <typename T> class HostVisibleBuffer
                                    const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
         if (!p_Offsets.empty())
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, static_cast<u32>(p_Buffers.size()), p_Buffers.data(),
-                                   p_Offsets.data());
+            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), p_Offsets.data());
         else
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, static_cast<u32>(p_Buffers.size()), p_Buffers.data(), nullptr);
+            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), nullptr);
     }
 
     /**

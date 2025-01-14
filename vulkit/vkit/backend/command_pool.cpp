@@ -49,7 +49,7 @@ VulkanResult CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBu
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.commandPool = m_Pool;
     allocateInfo.level = p_Level;
-    allocateInfo.commandBufferCount = static_cast<u32>(p_CommandBuffers.size());
+    allocateInfo.commandBufferCount = p_CommandBuffers.size();
 
     const VkResult result = vkAllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.data());
     if (result != VK_SUCCESS)
@@ -69,7 +69,7 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
 
 void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept
 {
-    vkFreeCommandBuffers(m_Device, m_Pool, static_cast<u32>(p_CommandBuffers.size()), p_CommandBuffers.data());
+    vkFreeCommandBuffers(m_Device, m_Pool, p_CommandBuffers.size(), p_CommandBuffers.data());
 }
 void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexcept
 {

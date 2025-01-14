@@ -18,19 +18,19 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const TKit::Span
                          const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
     if (!p_DynamicOffsets.empty())
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
-                                p_Sets.data(), static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.size(), p_Sets.data(),
+                                p_DynamicOffsets.size(), p_DynamicOffsets.data());
     else
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, static_cast<u32>(p_Sets.size()),
-                                p_Sets.data(), 0, nullptr);
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.size(), p_Sets.data(), 0,
+                                nullptr);
 }
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkDescriptorSet p_Set,
                          const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
     if (!p_DynamicOffsets.empty())
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,
-                                static_cast<u32>(p_DynamicOffsets.size()), p_DynamicOffsets.data());
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, p_DynamicOffsets.size(),
+                                p_DynamicOffsets.data());
     else
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, 0, nullptr);
 }
@@ -94,7 +94,7 @@ void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set) noexcept
 {
     for (VkWriteDescriptorSet &write : m_Writes)
         write.dstSet = p_Set;
-    vkUpdateDescriptorSets(m_Device, static_cast<u32>(m_Writes.size()), m_Writes.data(), 0, nullptr);
+    vkUpdateDescriptorSets(m_Device, m_Writes.size(), m_Writes.data(), 0, nullptr);
 }
 
 } // namespace VKit
