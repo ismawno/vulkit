@@ -205,7 +205,7 @@ template <typename T> class DeviceLocalBuffer
     /**
      * @brief Binds the buffer as an index buffer to a command buffer.
      *
-     * Automatically detects the index type (u8, u16, or u32) based on the buffer's template parameter.
+     * Automatically detects the index type (`u8`, `u16`, or `u32`) based on the buffer's template parameter.
      *
      * @param p_CommandBuffer The command buffer to bind the index buffer to.
      * @param p_Offset The offset within the buffer (default: 0).

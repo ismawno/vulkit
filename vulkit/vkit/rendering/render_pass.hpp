@@ -167,7 +167,7 @@ class RenderPass
     /**
      * @brief Manages frame buffers and image views associated with a render pass.
      *
-     * Can be created with the CreateResources method, which generates frame buffers and image views for each
+     * Can be created with the `CreateResources()` method, which generates frame buffers and image views for each
      * attachment. The user is responsible for destroying the resources when they are no longer needed.
      *
      */
@@ -209,9 +209,9 @@ class RenderPass
      * @brief Creates resources for the render pass, including frame buffers and image data.
      *
      * Populates frame buffers and associated images based on the provided extent and a user-defined image creation
-     * callback. The RenderPass class provides many high-level options for ImageData struct creation, including the case
-     * where the underlying resource is directly provided by a SwapChain image. See the CreateImageData methods for
-     * more.
+     * callback. The `RenderPass` class provides many high-level options for `ImageData` struct creation, including the
+     * case where the underlying resource is directly provided by a `SwapChain` image. See the `CreateImageData()`
+     * methods for more.
      *
      * @tparam F The type of the callback function used for creating image data.
      * @param p_Extent The dimensions of the frame buffer.
@@ -354,11 +354,11 @@ class RenderPass
      * @brief Creates image data for a render pass attachment.
      *
      * A dummy method used when the user provides the image data directly. Commonly used when the image is provided by
-     * a SwapChain.
+     * a `SwapChain`.
      *
      * The underlying Resources struct will not take ownership of the image data (will skip this resource when the
-     * Destroy() method is called), and the user is responsible for managing the image and image view (which will very
-     * likely be automatically handled by the SwapChain itself).
+     * `Destroy()` method is called), and the user is responsible for managing the image and image view (which will very
+     * likely be automatically handled by the `SwapChain` itself).
      *
      * @param p_ImageView The image view to use.
      * @return A result containing the created image data or an error.
