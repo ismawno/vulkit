@@ -49,7 +49,7 @@ class VKIT_API Buffer
      * Initializes the buffer with the specified size, usage, and memory allocation settings.
      *
      * @param p_Specs The specifications for the buffer.
-     * @return A result containing the created Buffer or an error.
+     * @return A `Result` containing the created `Buffer` or an error.
      */
     static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 

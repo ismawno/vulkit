@@ -44,7 +44,7 @@ template <typename T> class HostVisibleBuffer
      * Allocates and maps a Vulkan buffer in host-visible memory based on the provided specifications.
      *
      * @param p_Specs The specifications for the buffer.
-     * @return A result containing the created HostVisibleBuffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> Create(const Specs &p_Specs) noexcept
     {
@@ -73,7 +73,7 @@ template <typename T> class HostVisibleBuffer
      * Configures the buffer for vertex data and allocates memory in host-visible space.
      *
      * @param p_Specs The specifications for the vertex buffer.
-     * @return A result containing the created vertex buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
@@ -92,7 +92,7 @@ template <typename T> class HostVisibleBuffer
      * Configures the buffer for index data and allocates memory in host-visible space.
      *
      * @param p_Specs The specifications for the index buffer.
-     * @return A result containing the created index buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
@@ -112,7 +112,7 @@ template <typename T> class HostVisibleBuffer
      *
      * @param p_Specs The specifications for the uniform buffer.
      * @param p_Alignment The minimum alignment for the buffer.
-     * @return A result containing the created uniform buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
@@ -134,7 +134,7 @@ template <typename T> class HostVisibleBuffer
      *
      * @param p_Specs The specifications for the storage buffer.
      * @param p_Alignment The minimum alignment for the buffer.
-     * @return A result containing the created storage buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept

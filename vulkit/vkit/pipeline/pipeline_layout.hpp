@@ -30,7 +30,7 @@ class VKIT_API PipelineLayout
          *
          * Returns a pipeline layout object if the creation succeeds, or an error otherwise.
          *
-         * @return A result containing the created PipelineLayout or an error.
+         * @return A `Result` containing the created `PipelineLayout` or an error.
          */
         Result<PipelineLayout> Build() const noexcept;
 

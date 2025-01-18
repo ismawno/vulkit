@@ -43,7 +43,7 @@ class VKIT_API SwapChain
          *
          * Returns a swap chain object if the creation succeeds, or an error otherwise.
          *
-         * @return A result containing the created SwapChain or an error.
+         * @return A `Result` containing the created `SwapChain` or an error.
          */
         Result<SwapChain> Build() const noexcept;
 

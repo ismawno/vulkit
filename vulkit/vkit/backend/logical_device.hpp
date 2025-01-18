@@ -56,7 +56,7 @@ class VKIT_API LogicalDevice
      * @param p_PhysicalDevice The physical device to base the logical device on.
      * @param p_QueuePriorities The queue priorities to assign to the device's queues.
      *
-     * @return A result containing the created LogicalDevice or an error if the creation fails.
+     * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
      */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
                                         TKit::Span<const QueuePriorities> p_QueuePriorities) noexcept;
@@ -73,7 +73,7 @@ class VKIT_API LogicalDevice
      * @param p_Instance The Vulkan instance associated with the logical device.
      * @param p_PhysicalDevice The physical device to use for creating the logical device.
      *
-     * @return A result containing the created LogicalDevice or an error if the creation fails.
+     * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
      */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 

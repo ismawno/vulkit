@@ -77,7 +77,7 @@ class VKIT_API GraphicsPipeline
          * happen to create the pipeline. Still, the builder will be left in a valid state after the call.
          *
          * @param p_Device The logical device proxy for Vulkan operations.
-         * @return A result containing the created GraphicsPipeline or an error if the creation fails.
+         * @return A `Result` containing the created `GraphicsPipeline` or an error if the creation fails.
          */
         Result<GraphicsPipeline> Build() noexcept;
 

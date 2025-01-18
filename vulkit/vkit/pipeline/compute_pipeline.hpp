@@ -28,7 +28,7 @@ class VKIT_API ComputePipeline
      *
      * @param p_Device The logical device proxy for Vulkan operations.
      * @param p_Specs The specifications for the compute pipeline.
-     * @return A result containing the created ComputePipeline or an error.
+     * @return A `Result` containing the created `ComputePipeline` or an error.
      */
     static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 

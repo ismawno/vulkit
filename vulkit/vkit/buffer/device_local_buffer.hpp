@@ -49,7 +49,7 @@ template <typename T> class DeviceLocalBuffer
      * in device-local memory for optimal GPU access.
      *
      * @param p_Specs The specifications for the buffer.
-     * @return A result containing the created DeviceLocalBuffer or an error.
+     * @return A `Result` containing the created `DeviceLocalBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
     {
@@ -105,7 +105,7 @@ template <typename T> class DeviceLocalBuffer
      * to device-local memory.
      *
      * @param p_Specs The specifications for the vertex buffer.
-     * @return A result containing the created vertex buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
     {
@@ -126,7 +126,7 @@ template <typename T> class DeviceLocalBuffer
      * to device-local memory.
      *
      * @param p_Specs The specifications for the index buffer.
-     * @return A result containing the created index buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
     {
@@ -148,7 +148,7 @@ template <typename T> class DeviceLocalBuffer
      *
      * @param p_Specs The specifications for the uniform buffer.
      * @param p_Alignment The minimum alignment for the uniform buffer.
-     * @return A result containing the created uniform buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept
@@ -172,7 +172,7 @@ template <typename T> class DeviceLocalBuffer
      *
      * @param p_Specs The specifications for the storage buffer.
      * @param p_Alignment The minimum alignment for the storage buffer.
-     * @return A result containing the created storage buffer or an error.
+     * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
                                                          const VkDeviceSize p_Alignment) noexcept

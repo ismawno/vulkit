@@ -26,7 +26,7 @@ class VKIT_API CommandPool
      *
      * @param p_Device The logical device proxy to create the command pool on.
      * @param p_Specs The specifications for the command pool.
-     * @return A result containing the created CommandPool or an error.
+     * @return A `Result` containing the created `CommandPool` or an error.
      */
     static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 
@@ -41,7 +41,7 @@ class VKIT_API CommandPool
      * Creates a new command buffer at the specified level.
      *
      * @param p_Level The level of the command buffer (primary or secondary).
-     * @return A result containing the allocated command buffer or an error.
+     * @return A `Result` containing the allocated command buffer or an error.
      */
     Result<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
 
@@ -81,7 +81,7 @@ class VKIT_API CommandPool
      * Allocates and starts recording a command buffer intended for temporary use.
      * The command buffer is expected to be submitted and discarded after execution.
      *
-     * @return A result containing the allocated and started command buffer or an error.
+     * @return A `Result` containing the allocated and started command buffer or an error.
      */
     Result<VkCommandBuffer> BeginSingleTimeCommands() const noexcept;
 

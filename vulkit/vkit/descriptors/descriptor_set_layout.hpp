@@ -36,7 +36,7 @@ class VKIT_API DescriptorSetLayout
          *
          * Returns a descriptor set layout object if the creation succeeds, or an error otherwise.
          *
-         * @return A result containing the created DescriptorSetLayout or an error.
+         * @return A `Result` containing the created `DescriptorSetLayout` or an error.
          */
         Result<DescriptorSetLayout> Build() const noexcept;
 

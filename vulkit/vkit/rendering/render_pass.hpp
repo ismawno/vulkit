@@ -218,7 +218,7 @@ class RenderPass
      * @param p_CreateImageData A callback function that generates image data for each attachment. Takes the image index
      * and attachment index as arguments.
      * @param p_FrameBufferLayers The number of layers for each frame buffer (default: 1).
-     * @return A result containing the created resources or an error.
+     * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
     Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
@@ -284,7 +284,7 @@ class RenderPass
      * @param p_Info The Vulkan image creation info.
      * @param p_Range The subresource range for the image.
      * @param p_ViewType The type of image view to create.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range,
                                       VkImageViewType p_ViewType) const noexcept;
@@ -299,7 +299,7 @@ class RenderPass
      *
      * @param p_Info The Vulkan image creation info.
      * @param p_Range The subresource range for the image.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info,
                                       const VkImageSubresourceRange &p_Range) const noexcept;
@@ -315,7 +315,7 @@ class RenderPass
      * @param p_AttachmentIndex The index of the attachment.
      * @param p_Info The Vulkan image creation info.
      * @param p_ViewType The type of image view to create.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info,
                                       VkImageViewType p_ViewType) const noexcept;
@@ -331,7 +331,7 @@ class RenderPass
      *
      * @param p_AttachmentIndex The index of the attachment.
      * @param p_Info The Vulkan image creation info.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info) const noexcept;
 
@@ -346,7 +346,7 @@ class RenderPass
      *
      * @param p_AttachmentIndex The index of the attachment.
      * @param p_Extent The extent of the image.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkExtent2D &p_Extent) const noexcept;
 
@@ -361,7 +361,7 @@ class RenderPass
      * likely be automatically handled by the `SwapChain` itself).
      *
      * @param p_ImageView The image view to use.
-     * @return A result containing the created image data or an error.
+     * @return A `Result` containing the created `ImageData` or an error.
      */
     Result<ImageData> CreateImageData(VkImageView p_ImageView) const noexcept;
 

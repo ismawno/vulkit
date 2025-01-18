@@ -97,7 +97,7 @@ class VKIT_API PhysicalDevice
          * Based on the specified requirements and preferences, this method selects a
          * Vulkan physical device and returns it. If no suitable device is found, an error is returned.
          *
-         * @return A result containing the selected PhysicalDevice or an error.
+         * @return A `Result` containing the selected PhysicalDevice or an error.
          */
         FormattedResult<PhysicalDevice> Select() const noexcept;
 
@@ -107,7 +107,7 @@ class VKIT_API PhysicalDevice
          * Enumerates all Vulkan physical devices and evaluates them based on the selector's
          * criteria. Provides detailed results for each device.
          *
-         * @return A result containing an array of formatted results for each physical device.
+         * @return A `Result` containing an array of formatted results for each physical device.
          */
         Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
 

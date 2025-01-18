@@ -35,7 +35,7 @@ class VKIT_API DescriptorPool
          *
          * Returns a descriptor pool object if the creation succeeds, or an error otherwise.
          *
-         * @return A result containing the created DescriptorPool or an error.
+         * @return A `Result` containing the created `DescriptorPool` or an error.
          */
         Result<DescriptorPool> Build() const noexcept;
 
@@ -73,7 +73,7 @@ class VKIT_API DescriptorPool
      * Creates a descriptor set using the specified layout.
      *
      * @param p_Layout The descriptor set layout to use for allocation.
-     * @return A result containing the allocated descriptor set or an error.
+     * @return A `Result` containing the allocated descriptor set or an error.
      */
     Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
 

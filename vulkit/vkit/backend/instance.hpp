@@ -34,7 +34,7 @@ class VKIT_API Instance
          *
          * Returns a valid instance if all required parameters are met, or an error otherwise.
          *
-         * @return A result containing the created Instance or an error.
+         * @return A `Result` containing the created `Instance` or an error.
          */
         FormattedResult<Instance> Build() const noexcept;
 
