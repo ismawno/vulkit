@@ -4,11 +4,10 @@
 #include "vkit/pipeline/graphics_pipeline.hpp"
 #include "vkit/pipeline/compute_pipeline.hpp"
 
-namespace VKit
+namespace VKit::Detail
 {
 template <typename T>
 concept Pipeline = std::is_same_v<T, GraphicsPipeline> || std::is_same_v<T, ComputePipeline>;
-
 template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexcept
 {
     if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
@@ -161,8 +160,11 @@ template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipeline
     void Dispatch(VkCommandBuffer p_CommandBuffer, u32 p_GroupCountX, u32 p_GroupCountY,
                   u32 p_GroupCountZ) const noexcept;
 };
+} // namespace VKit::Detail
 
-using GraphicsJob = PipelineJob<GraphicsPipeline>;
-using ComputeJob = PipelineJob<ComputePipeline>;
+namespace VKit
+{
+using GraphicsJob = Detail::PipelineJob<GraphicsPipeline>;
+using ComputeJob = Detail::PipelineJob<ComputePipeline>;
 
 } // namespace VKit

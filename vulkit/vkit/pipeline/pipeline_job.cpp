@@ -2,7 +2,7 @@
 #include "vkit/pipeline/pipeline_job.hpp"
 #include "vkit/descriptors/descriptor_set.hpp"
 
-namespace VKit
+namespace VKit::Detail
 {
 template <Pipeline Pip>
 IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept
@@ -76,4 +76,4 @@ void PipelineJob<ComputePipeline>::Dispatch(const VkCommandBuffer p_CommandBuffe
 template class IPipelineJob<ComputePipeline>;
 template class IPipelineJob<GraphicsPipeline>;
 
-} // namespace VKit
+} // namespace VKit::Detail

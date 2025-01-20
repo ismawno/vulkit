@@ -19,7 +19,7 @@ struct VKIT_API QueuePriorities
     TKit::StaticArray8<f32> Priorities;
 };
 
-enum class QueueType : u32
+enum class VKIT_API QueueType : u32
 {
     Graphics = 0,
     Compute = 1,
