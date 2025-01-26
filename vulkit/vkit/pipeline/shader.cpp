@@ -39,35 +39,32 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
     return FormattedResult<Shader>::Ok(p_Device, module);
 }
 
-i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath,
+                    const std::string_view p_Arguments) noexcept
 {
     namespace fs = std::filesystem;
     const fs::path binaryPath = p_BinaryPath;
 
     std::filesystem::create_directories(binaryPath.parent_path());
-    const std::string compileCommand = VKIT_GLSL_BINARY " " + std::string(p_SourcePath) + " -o " + binaryPath.string();
+    const std::string compileCommand =
+        VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + binaryPath.string();
     return std::system(compileCommand.c_str());
 }
 
-i32 Shader::CompileIfModified(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
 {
     namespace fs = std::filesystem;
     const fs::path sourcePath = p_SourcePath;
     const fs::path binaryPath = p_BinaryPath;
 
-    if (!fs::exists(sourcePath))
-        return 1;
+    TKIT_ASSERT(fs::exists(sourcePath), "[VULKIT] Source file does not exist");
 
     if (!fs::exists(binaryPath))
-        return Compile(p_SourcePath, p_BinaryPath);
+        return true;
 
     const auto sourceTime = fs::last_write_time(sourcePath);
     const auto binaryTime = fs::last_write_time(binaryPath);
-
-    if (sourceTime > binaryTime)
-        return Compile(p_SourcePath, p_BinaryPath);
-
-    return INT32_MAX;
+    return sourceTime > binaryTime;
 }
 
 void Shader::Destroy() noexcept

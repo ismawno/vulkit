@@ -36,20 +36,22 @@ class VKIT_API Shader
      *
      * @param p_SourcePath The path to the shader source file.
      * @param p_BinaryPath The path where the compiled binary will be saved.
+     * @param p_Arguments Additional arguments to pass to the compiler.
      * @return An integer status code (0 for success, non-zero for failure).
      */
-    static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
+    static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath,
+                       std::string_view p_Arguments = "") noexcept;
 
     /**
-     * @brief Compiles a shader source file into a binary file if the source has been modified.
+     * @brief Determines if a shader source file must be compiled.
      *
      * Compares the modification times of the source and binary files to determine if recompilation is necessary.
      *
      * @param p_SourcePath The path to the shader source file.
      * @param p_BinaryPath The path where the compiled binary will be saved.
-     * @return An integer status code (0 for success, non-zero for failure). `INT32_MAX` if the binary is up-to-date.
+     * @return `true` if the source must be compiled, `false` if the binary is up-to-date.
      */
-    static i32 CompileIfModified(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
+    static bool MustCompile(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
 
     Shader() noexcept = default;
     Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) noexcept;
