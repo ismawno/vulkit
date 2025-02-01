@@ -169,7 +169,9 @@ Vulkit relies on the following dependencies:
 
 ## Building
 
-The build process is straightforward. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
+The building process is (fortunately) very straightforward. Because of how much I hate how CMake cache works (I just don't even know what configuration I am building half of the time as soon as I am 3 or 4 `cmake` commands in), I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder. Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire CMake execution process for you. You can enter `python setup/build.py -h` to see the available options.
+
+If you prefer using CMake directly, that's perfectly fine as well. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
 
 Compile the project with your preferred editor or IDE, and run the tests to ensure everything works as expected. If the tests pass, you're good to go!
 
