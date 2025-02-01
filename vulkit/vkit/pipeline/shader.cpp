@@ -12,6 +12,9 @@ Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) no
 {
 }
 
+TKIT_COMPILER_WARNING_IGNORE_PUSH()
+TKIT_MSVC_WARNING_IGNORE(6262)
+
 FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
                                        const std::string_view p_BinaryPath) noexcept
 {
@@ -22,7 +25,7 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
 
     const auto fileSize = file.tellg();
 
-    TKit::StaticArray<char, VKIT_MAX_SHADER_SIZE> code(fileSize);
+    TKit::StaticArray<char, VKIT_MAX_SHADER_SIZE> code(static_cast<u32>(fileSize));
     file.seekg(0);
     file.read(code.data(), fileSize);
 
@@ -38,6 +41,8 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
 
     return FormattedResult<Shader>::Ok(p_Device, module);
 }
+
+TKIT_COMPILER_WARNING_IGNORE_POP()
 
 i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath,
                     const std::string_view p_Arguments) noexcept
