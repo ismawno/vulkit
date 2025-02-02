@@ -55,6 +55,7 @@ template <typename T> class HostVisibleBuffer
         specs.Usage = p_Specs.Usage;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+        specs.AllocationInfo.preferredFlags = 0;
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
         if (p_Specs.Coherent)
             specs.AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
