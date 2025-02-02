@@ -60,6 +60,7 @@ template <typename T> class DeviceLocalBuffer
         specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+        specs.AllocationInfo.preferredFlags = 0;
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
         specs.MinimumAlignment = p_Specs.MinimumAlignment;
 
