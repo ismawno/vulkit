@@ -21,7 +21,7 @@ template <typename T> class HostVisibleBuffer
         VkDeviceSize Capacity;
         VkBufferUsageFlags Usage;
         VkDeviceSize MinimumAlignment = 1;
-        VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+        VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         bool Coherent = false;
     };
 
@@ -29,7 +29,7 @@ template <typename T> class HostVisibleBuffer
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
         VkDeviceSize Capacity;
-        VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+        VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         bool Coherent = false;
     };
 
