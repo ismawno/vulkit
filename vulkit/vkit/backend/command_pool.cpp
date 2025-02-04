@@ -77,9 +77,12 @@ void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexce
     Deallocate(commandBuffers);
 }
 
-void CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
+VulkanResult CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
 {
-    vkResetCommandPool(m_Device, m_Pool, p_Flags);
+    const VkResult result = vkResetCommandPool(m_Device, m_Pool, p_Flags);
+    if (result != VK_SUCCESS)
+        return VulkanResult::Error(result, "Failed to reset command pool");
+    return VulkanResult::Success();
 }
 
 Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept

@@ -82,8 +82,9 @@ class VKIT_API CommandPool
      * Resets all command buffers in the pool to an initial state.
      *
      * @param p_ResetFlags The flags to use when resetting the command pool.
+     * @return A `VulkanResult` indicating success or failure.
      */
-    void Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
+    VulkanResult Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
 
     /**
      * @brief Begins a single-time command operation.
