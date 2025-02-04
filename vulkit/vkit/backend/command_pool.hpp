@@ -32,6 +32,7 @@ class VKIT_API CommandPool
 
     CommandPool() noexcept = default;
     CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
+
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
@@ -74,6 +75,15 @@ class VKIT_API CommandPool
      * @param p_CommandBuffers The span of command buffers to deallocate.
      */
     void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept;
+
+    /**
+     * @brief Resets the command pool.
+     *
+     * Resets all command buffers in the pool to an initial state.
+     *
+     * @param p_ResetFlags The flags to use when resetting the command pool.
+     */
+    void Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
 
     /**
      * @brief Begins a single-time command operation.

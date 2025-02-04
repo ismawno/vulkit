@@ -77,6 +77,11 @@ void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexce
     Deallocate(commandBuffers);
 }
 
+void CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
+{
+    vkResetCommandPool(m_Device, m_Pool, p_Flags);
+}
+
 Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
 {
     const Result<VkCommandBuffer> result = Allocate();
