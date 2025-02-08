@@ -167,6 +167,10 @@ Vulkit relies on the following dependencies:
 - [Vulkan Memory Allocator (VMA)](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator): Simplifies Vulkan memory management.
 - [Vulkan Loader](https://github.com/KhronosGroup/Vulkan-Loader): Provides the Vulkan API.
 
+## Versioning
+
+As some Vulkit dependencies are being developed by me and are under constant change, I can only guarantee this project will build from the `main` branch or a specific tagged commit. This is because such dependencies are fetched with `CMake`'s `FetchContent` module with the `GIT_TAG` parameter set to `main` for all commits except for tagged ones. This makes my life easier when it comes to updating the dependencies according to my needs.
+
 ## Building
 
 The building process is (fortunately) very straightforward. Because of how much I hate how CMake cache works (I just don't even know what configuration I am building half of the time as soon as I am 3 or 4 `cmake` commands in), I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder. Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire CMake execution process for you. You can enter `python setup/build.py -h` to see the available options.

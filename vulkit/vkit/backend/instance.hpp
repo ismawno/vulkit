@@ -4,7 +4,7 @@
 #include "vkit/core/alias.hpp"
 #include "vkit/backend/system.hpp"
 #include "tkit/memory/ptr.hpp"
-#include "tkit/utilities/result.hpp"
+#include "tkit/utils/result.hpp"
 #include "tkit/container/span.hpp"
 #include <vulkan/vulkan.h>
 

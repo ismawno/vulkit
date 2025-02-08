@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/pipeline/graphics_pipeline.hpp"
-#include "tkit/core/logging.hpp"
+#include "tkit/utils/logging.hpp"
 #include "tkit/memory/stack_allocator.hpp"
 
 #include <filesystem>

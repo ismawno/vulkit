@@ -1,7 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/backend/instance.hpp"
 #include "vkit/core/alias.hpp"
-#include "tkit/core/logging.hpp"
+#include "tkit/utils/logging.hpp"
 
 namespace VKit
 {
