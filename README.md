@@ -173,7 +173,11 @@ As some Vulkit dependencies are being developed by me and are under constant cha
 
 ## Building
 
-The building process is (fortunately) very straightforward. Because of how much I hate how CMake cache works (I just don't even know what configuration I am building half of the time as soon as I am 3 or 4 `cmake` commands in), I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder. Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire CMake execution process for you. You can enter `python setup/build.py -h` to see the available options.
+The building process is (fortunately) very straightforward. Because of how much I hate how the CMake cache works, I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder.
+
+The reason behind this is that CMake sometimes stores some variables in cache that you may not want to persist. This results in some default values for variables being only relevant if the variable itself is not already stored in cache. The problem with this is that I feel it is very easy to lose track of what configuration is being built unless I type in all my CMake flags explicitly every time I build the project, and that is just unbearable. Hence, these python scripts provide flags with reliable defaults stored in a `build.ini` file that are always applied unless explicitly changed with a command line argument.
+
+Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire CMake execution process for you. You can enter `python setup/build.py -h` to see the available options.
 
 If you prefer using CMake directly, that's perfectly fine as well. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
 

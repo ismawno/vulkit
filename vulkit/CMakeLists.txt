@@ -55,9 +55,9 @@ target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/p
 target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}" VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
 
 if (MSVC)
-    configure_compile_link_options(vulkit FLAGS /W4 /WX)
+    tkit_configure_compile_link_options(vulkit FLAGS /W4 /WX)
 else()
-    configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic -Werror)
+    tkit_configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic -Werror)
 endif()
 
 # No need for more: toolkit handles the rest. As it is a library I develop, I will be reusing its macros/configurations
