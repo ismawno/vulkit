@@ -99,19 +99,19 @@ class VKIT_API Instance
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
     };
 
+    using Flags = u8;
     /**
      * @brief Flags for configuring instance behavior.
      *
      * Use these flags to enable features like headless mode, validation layers,
      * or specific Vulkan extensions during instance creation.
      */
-    enum FlagBits : u8
+    enum FlagBit : Flags
     {
         Flag_Headless = 1 << 0,
         Flag_HasValidationLayers = 1 << 1,
         Flag_Properties2Extension = 1 << 2
     };
-    using Flags = u8;
 
     /**
      * @brief Stores the configuration details for a Vulkan instance.

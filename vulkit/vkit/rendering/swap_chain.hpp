@@ -23,18 +23,18 @@ class VKIT_API SwapChain
     class Builder
     {
       public:
+        using Flags = u8;
         /**
          * @brief Flags for configuring swap chain creation.
          *
          * These flags define optional behaviors for the swap chain, such as creating image views.
          *
          */
-        enum FlagBits : u8
+        enum FlagBit : Flags
         {
             Flag_Clipped = 1 << 0,
             Flag_CreateImageViews = 1 << 1
         };
-        using Flags = u8;
 
         Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) noexcept;
 
@@ -101,17 +101,17 @@ class VKIT_API SwapChain
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     };
 
+    using Flags = u8;
     /**
      * @brief Flags describing swap chain capabilities.
      *
      * Indicates features like whether the swap chain has image views.
      */
-    enum FlagBits : u8
+    enum FlagBit : Flags
     {
         Flag_Clipped = 1 << 0,
         Flag_HasImageViews = 1 << 1
     };
-    using Flags = u8;
 
     struct ImageData
     {

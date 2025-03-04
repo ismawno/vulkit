@@ -68,13 +68,14 @@ class VKIT_API PhysicalDevice
     class Selector
     {
       public:
+        using Flags = u16;
         /**
          * @brief Flags for specifying criteria when selecting a physical device.
          *
          * Used to filter devices based on required queue types, memory capabilities,
          * and extension support.
          */
-        enum FlagBits : u16
+        enum FlagBit : Flags
         {
             Flag_AnyType = 1 << 0,
             Flag_RequireDedicatedComputeQueue = 1 << 1,
@@ -87,7 +88,6 @@ class VKIT_API PhysicalDevice
             Flag_RequireTransferQueue = 1 << 8,
             Flag_RequirePresentQueue = 1 << 9
         };
-        using Flags = u16;
 
         explicit Selector(const Instance *p_Instance) noexcept;
 
@@ -151,13 +151,14 @@ class VKIT_API PhysicalDevice
         Features m_RequiredFeatures{};
     };
 
+    using Flags = u16;
     /**
      * @brief Flags to describe physical device capabilities.
      *
      * These flags indicate features like dedicated or separate queues, graphics
      * and compute support, and portability subset availability.
      */
-    enum FlagBits : u16
+    enum FlagBit : Flags
     {
         Flag_Optimal = 1 << 0,
         Flag_HasDedicatedComputeQueue = 1 << 1,
@@ -170,7 +171,6 @@ class VKIT_API PhysicalDevice
         Flag_HasTransferQueue = 1 << 8,
         Flag_HasPresentQueue = 1 << 9
     };
-    using Flags = u16;
 
     struct Info
     {

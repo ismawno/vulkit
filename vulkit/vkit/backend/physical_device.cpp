@@ -171,7 +171,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         else
             fullySuitable = false;
 
-    const auto checkFlag = [this](const FlagBits p_Flag) -> bool { return m_Flags & p_Flag; };
+    const auto checkFlag = [this](const FlagBit p_Flag) -> bool { return m_Flags & p_Flag; };
 
     if (checkFlag(Flag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
         enabledExtensions.push_back("VK_KHR_portability_subset");

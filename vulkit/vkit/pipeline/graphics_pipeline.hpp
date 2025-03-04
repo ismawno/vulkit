@@ -57,12 +57,12 @@ class VKIT_API GraphicsPipeline
     class Builder
     {
       public:
-        enum FlagBits : u8
+        using Flags = u8;
+        enum FlagBit : Flags
         {
             Flag_StencilFront = 1 << 0,
             Flag_StencilBack = 1 << 1,
         };
-        using Flags = u8;
 
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
                 u32 p_Subpass = 0) noexcept;

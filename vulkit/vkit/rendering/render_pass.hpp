@@ -8,7 +8,7 @@ namespace VKit
 {
 struct Attachment
 {
-    enum FlagBits : u8
+    enum FlagBit : u8
     {
         Flag_Color = 1 << 0,
         Flag_Depth = 1 << 1,
