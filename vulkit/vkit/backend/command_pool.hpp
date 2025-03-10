@@ -28,7 +28,8 @@ class VKIT_API CommandPool
      * @param p_Specs The specifications for the command pool.
      * @return A `Result` containing the created `CommandPool` or an error.
      */
-    static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
+    static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, u32 p_QueueFamilyIndex,
+                                      VkCommandPoolCreateFlags p_Flags = 0) noexcept;
 
     CommandPool() noexcept = default;
     CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;

@@ -3,12 +3,13 @@
 
 namespace VKit
 {
-Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
+Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const u32 p_QueueFamilyIndex,
+                                        const VkCommandPoolCreateFlags p_Flags) noexcept
 {
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    createInfo.queueFamilyIndex = p_Specs.QueueFamilyIndex;
-    createInfo.flags = p_Specs.Flags;
+    createInfo.queueFamilyIndex = p_QueueFamilyIndex;
+    createInfo.flags = p_Flags;
 
     VkCommandPool pool;
     const VkResult result = vkCreateCommandPool(p_Device, &createInfo, p_Device.AllocationCallbacks, &pool);
