@@ -200,9 +200,6 @@ class VKIT_API GraphicsPipeline
 
         u32 m_Subpass;
 
-        Shader m_VertexShader{};
-        Shader m_FragmentShader{};
-
         TKit::StaticArray128<VkDynamicState> m_DynamicStates;
         TKit::StaticArray16<VkVertexInputBindingDescription> m_BindingDescriptions;
         TKit::StaticArray16<VkVertexInputAttributeDescription> m_AttributeDescriptions;

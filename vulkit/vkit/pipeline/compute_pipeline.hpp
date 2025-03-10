@@ -16,7 +16,7 @@ class VKIT_API ComputePipeline
     struct Specs
     {
         VkPipelineLayout Layout = VK_NULL_HANDLE;
-        Shader ComputeShader{};
+        VkShaderModule ComputeShader = VK_NULL_HANDLE;
         const char *EntryPoint = "main";
         VkPipelineCache Cache = VK_NULL_HANDLE;
     };
