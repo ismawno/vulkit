@@ -5,6 +5,7 @@
 .DS_Store
 docs/html/
 docs/latex/
+__pycache__/
 
 # Prerequisites
 *.d
