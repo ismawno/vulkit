@@ -9,9 +9,9 @@ The reason I decided against using an existing Vulkan library to handle all of t
 ## Features
 
 Vulkit focuses on Vulkan API abstractions, which can be summed up as follows:
-- Significant speedup of the Vulkan API initialization process
-- Significant speedup of instance, physical device, and logical device creation
-- Useful abstractions of essential components of the Vulkan API, such as buffers, command pools, swap chains, render passes, etc.
+- **Significant speedup of the Vulkan API initialization process**
+- **Significant speedup of instance, physical device, and logical device creation**
+- **Useful abstractions of essential components of the Vulkan API, such as buffers, command pools, swap chains, render passes, etc.**
 
 ### API Initialization
 
