@@ -154,18 +154,26 @@ The result encapsulates a struct of type RenderPass::Resource, which the user is
 Vulkit provides many more abstractions, slightly simpler than the ones presented so far and using very similar building patterns:
 
 - [CommandPool](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/backend/command_pool.hpp): Simplifies the allocation and deallocation of command buffers, reducing verbosity.
+
 - [Buffers](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/buffer): Provides both low-level and high-level abstractions for various buffer usages (device-local and host-visible), as well as utility functions for creating vertex, index, uniform, and storage buffers.
+
 - [Descriptors](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/descriptors): Includes three abstractions for managing descriptor pools, descriptor set layouts, and descriptor sets.
+
 - [Pipelines and Shaders](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/pipeline): Offers abstractions for both graphics and compute pipelines. Additionally, a Shader class is provided, capable of compiling GLSL shaders into SPIR-V format by invoking the `glslc` compiler.
-- [Pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/pipeline/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline
+
+- [Pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/pipeline/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline.
 
 ## Dependencies and Third-Party Libraries
 
 Vulkit relies on the following dependencies:
 
 - [Toolkit](https://github.com/ismawno/toolkit): A utility library I developed.
+
 - [Vulkan Memory Allocator (VMA)](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator): Simplifies Vulkan memory management.
+
 - [Vulkan Loader](https://github.com/KhronosGroup/Vulkan-Loader): Provides the Vulkan API.
+
+**Note:** `CMake` is required to be manually installed in your system.
 
 ## Versioning
 
@@ -173,13 +181,13 @@ As some Vulkit dependencies are being developed by me and are under constant cha
 
 ## Building
 
-The building process is (fortunately) very straightforward. Because of how much I hate how the CMake cache works, I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder.
+The building process is very straightforward (or so I hope). Because of how much I hate how the `CMake` cache works, I have left some python building scripts in the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder.
 
-The reason behind this is that CMake sometimes stores some variables in cache that you may not want to persist. This results in some default values for variables being only relevant if the variable itself is not already stored in cache. The problem with this is that I feel it is very easy to lose track of what configuration is being built unless I type in all my CMake flags explicitly every time I build the project, and that is just unbearable. Hence, these python scripts provide flags with reliable defaults stored in a `build.ini` file that are always applied unless explicitly changed with a command line argument.
+The reason behind this is that `CMake` sometimes stores some variables in cache that you may not want to persist. This results in some default values for variables being only relevant if the variable itself is not already stored in cache. The problem with this is that I feel it is very easy to lose track of what configuration is being built unless I type in all my `CMake` flags explicitly every time I build the project, and that is just unbearable. Hence, these python scripts provide flags with reliable defaults stored in a `build.ini` file that are always applied unless explicitly changed with a command line argument.
 
-Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire CMake execution process for you. You can enter `python setup/build.py -h` to see the available options.
+Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) file, when executed from root, will handle the entire `CMake` execution process for you. You can enter `python setup/build.py -h` to see the available options.
 
-If you prefer using CMake directly, that's perfectly fine as well. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
+If you prefer using `CMake` directly, that's perfectly fine as well. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
 
 Compile the project with your preferred editor or IDE, and run the tests to ensure everything works as expected. If the tests pass, you're good to go!
 
