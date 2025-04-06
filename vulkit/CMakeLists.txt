@@ -27,7 +27,7 @@ include(FetchContent)
 FetchContent_Declare(
     toolkit
     GIT_REPOSITORY https://github.com/ismawno/toolkit.git
-    GIT_TAG v0.1.0
+    GIT_TAG main
 )
 FetchContent_MakeAvailable(toolkit)
 target_compile_definitions(toolkit PUBLIC TKIT_SIZE_TYPE=TKit::Alias::u32 TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
