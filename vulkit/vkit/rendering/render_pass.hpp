@@ -28,7 +28,7 @@ struct Attachment
  * Manages the configuration, creation, and destruction of Vulkan render passes, along with helper utilities for
  * attachments, subpasses, and dependencies. Also supports resource creation for associated frame buffers and images.
  */
-class RenderPass
+class VKIT_API RenderPass
 {
   public:
     class Builder;

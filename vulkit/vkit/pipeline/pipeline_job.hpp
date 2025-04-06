@@ -24,7 +24,7 @@ template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexce
  *
  * @tparam Pip The type of pipeline to bind. Either `GraphicsPipeline` or `ComputePipeline`.
  */
-template <Pipeline Pip> class VKIT_API IPipelineJob
+template <Pipeline Pip> class IPipelineJob
 {
   public:
     IPipelineJob() noexcept = default;

@@ -13,7 +13,7 @@ class Buffer;
  * binding buffers and images to the set. It is an extremely thin wrapper.
  *
  */
-class DescriptorSet
+class VKIT_API DescriptorSet
 {
   public:
     class Writer

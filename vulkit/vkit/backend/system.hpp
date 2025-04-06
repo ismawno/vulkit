@@ -83,7 +83,7 @@ concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::strin
  * when the message is a static string. The latter is used when explicit error message information can be provided based
  * on user input.
  */
-template <String MessageType> class VKIT_API VulkanResultInfo
+template <String MessageType> class VulkanResultInfo
 {
   public:
     /**

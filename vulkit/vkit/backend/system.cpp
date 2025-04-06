@@ -25,8 +25,8 @@ template <String MessageType> VulkanResultInfo<MessageType>::operator bool() con
     return Result == VK_SUCCESS;
 }
 
-template class VulkanResultInfo<const char *>;
-template class VulkanResultInfo<std::string>;
+template class VKIT_API VulkanResultInfo<const char *>;
+template class VKIT_API VulkanResultInfo<std::string>;
 
 VulkanFormattedResult ToFormatted(const VulkanResult &p_Result) noexcept
 {
