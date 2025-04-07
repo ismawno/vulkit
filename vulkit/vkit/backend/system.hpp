@@ -30,6 +30,30 @@
 #    define VKIT_API_VERSION_1_0 VKIT_MAKE_VERSION(0, 1, 0, 0)
 #endif
 
+#ifdef VK_API_VERSION_MAJOR
+#    define VKIT_API_VERSION_MAJOR(p_Version) VK_API_VERSION_MAJOR(p_Version)
+#elif defined(VK_VERSION_MAJOR)
+#    define VKIT_API_VERSION_MAJOR(p_Version) VK_VERSION_MAJOR(p_Version)
+#endif
+
+#ifdef VK_API_VERSION_MINOR
+#    define VKIT_API_VERSION_MINOR(p_Version) VK_API_VERSION_MINOR(p_Version)
+#elif defined(VK_VERSION_MINOR)
+#    define VKIT_API_VERSION_MINOR(p_Version) VK_VERSION_MINOR(p_Version)
+#endif
+
+#ifdef VK_API_VERSION_PATCH
+#    define VKIT_API_VERSION_PATCH(p_Version) VK_API_VERSION_PATCH(p_Version)
+#elif defined(VK_VERSION_PATCH)
+#    define VKIT_API_VERSION_PATCH(p_Version) VK_VERSION_PATCH(p_Version)
+#endif
+
+#ifdef VK_API_VERSION_VARIANT
+#    define VKIT_API_VERSION_VARIANT(p_Version) VK_API_VERSION_VARIANT(p_Version)
+#elif defined(VK_VERSION_VARIANT)
+#    define VKIT_API_VERSION_VARIANT(p_Version) VK_VERSION_VARIANT(p_Version)
+#endif
+
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_VULKAN_RESULT(result)                                                                          \
         TKIT_ASSERT(result, "[VULKIT] VkResult: '{}' - Message: '{}'", VKit::VkResultToString(result.Result),          \
