@@ -196,7 +196,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         enabledExtensions.push_back("VK_KHR_portability_subset");
 
     if (checkFlag(Flag_RequirePresentQueue))
-        enabledExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+        enabledExtensions.push_back("VK_KHR_swapchain");
 
     u32 familyCount;
     vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);

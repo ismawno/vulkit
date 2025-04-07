@@ -126,7 +126,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     bool validationLayers = false;
     if (m_RequestValidationLayers)
     {
-        validationLayers = System::IsExtensionSupported(VK_EXT_DEBUG_UTILS_EXTENSION_NAME) &&
+        validationLayers = System::IsExtensionSupported("VK_EXT_debug_utils") &&
                            System::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
@@ -134,24 +134,23 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
                 VK_ERROR_LAYER_NOT_PRESENT,
                 "Validation layers (along with the debug utils extension) are not suported");
 
-        if (validationLayers && !contains(extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
-            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        if (validationLayers && !contains(extensions, "VK_EXT_debug_utils"))
+            extensions.push_back("VK_EXT_debug_utils");
 
         if (validationLayers && !contains(layers, "VK_LAYER_KHRONOS_validation"))
             layers.push_back("VK_LAYER_KHRONOS_validation");
     }
 
-    const bool properties2Support =
-        apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
-        System::IsExtensionSupported(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+    const bool properties2Support = apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
+                                    System::IsExtensionSupported("VK_KHR_get_physical_device_properties2");
 
-    if (properties2Support && !contains(extensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
-        extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+    if (properties2Support && !contains(extensions, "VK_KHR_get_physical_device_properties2"))
+        extensions.push_back("VK_KHR_get_physical_device_properties2");
 
 #ifdef VK_KHR_portability_enumeration
-    const bool portabilitySupport = System::IsExtensionSupported(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-    if (portabilitySupport && !contains(extensions, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME))
-        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    const bool portabilitySupport = System::IsExtensionSupported("VK_KHR_portability_enumeration");
+    if (portabilitySupport && !contains(extensions, "VK_KHR_portability_enumeration"))
+        extensions.push_back("VK_KHR_portability_enumeration");
 #endif
 
     if (!m_Headless)
@@ -170,8 +169,8 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
                 "The extension {}, required for windowing capabilities, is not suported", p_Extension));
         };
 
-        if (!checkWindowingSupport(VK_KHR_SURFACE_EXTENSION_NAME))
-            return generateError(VK_KHR_SURFACE_EXTENSION_NAME);
+        if (!checkWindowingSupport("VK_KHR_surface"))
+            return generateError("VK_KHR_surface");
 
 #ifdef TKIT_OS_WINDOWS
         if (!checkWindowingSupport("VK_KHR_win32_surface"))
