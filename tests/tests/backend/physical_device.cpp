@@ -38,7 +38,7 @@ Instance SetupInstance()
 {
     SetupSystem();
     const auto result =
-        Instance::Builder().RequireValidationLayers().RequireApiVersion(1, 0, 0).SetHeadless(true).Build();
+        Instance::Builder().RequireValidationLayers().RequireApiVersion(1, 2, 0).SetHeadless(true).Build();
 
     CheckResult(result);
     return result.GetValue();
@@ -49,6 +49,7 @@ TEST_CASE("Basic physical device enumeration", "[physical_device]")
     Instance instance = SetupInstance();
     const auto result = PhysicalDevice::Selector(&instance)
                             .RequireExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+                            .RequireExtension(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)
                             .AddFlags(VKit::PhysicalDevice::Selector::Flag_AnyType)
                             .Enumerate();
     CheckResult(result);

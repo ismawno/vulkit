@@ -6,7 +6,7 @@
 namespace VKit
 {
 #ifdef TKIT_ENABLE_ASSERTS
-static const char *toString(VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
+static const char *toString(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
 {
     switch (p_Severity)
     {
@@ -22,7 +22,7 @@ static const char *toString(VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
         return "UNKNOWN";
     }
 }
-static const char *toString(VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
+static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
 {
     if (p_MessageType == 7)
         return "General | Validation | Performance";
@@ -41,8 +41,8 @@ static const char *toString(VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
     return "Unknown";
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity,
-                                                           VkDebugUtilsMessageTypeFlagsEXT p_MessageType,
+static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity,
+                                                           const VkDebugUtilsMessageTypeFlagsEXT p_MessageType,
                                                            const VkDebugUtilsMessengerCallbackDataEXT *p_CallbackData,
                                                            void *)
 {

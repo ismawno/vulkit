@@ -28,6 +28,8 @@ class VKIT_API PhysicalDevice
 
     struct Features
     {
+        Features() noexcept;
+
         VkPhysicalDeviceFeatures Core{};
 #ifdef VKIT_API_VERSION_1_2
         VkPhysicalDeviceVulkan11Features Vulkan11{};

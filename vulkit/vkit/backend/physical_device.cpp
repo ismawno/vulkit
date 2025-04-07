@@ -8,32 +8,39 @@ template <typename C, typename T> static bool contains(const C &p_Container, con
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
 }
 
-template <typename T> std::pair<const VkBool32 *, u32> getFeatureIterable(const T &p_Features) noexcept
+template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> getFeatureIterable(T &p_Features) noexcept
 {
     u32 size;
-    const VkBool32 *ptr;
+    Bool *ptr;
     if constexpr (std::is_same_v<T, VkPhysicalDeviceFeatures>)
     {
-        size = sizeof(VkPhysicalDeviceFeatures) / sizeof(VkBool32);
-        ptr = reinterpret_cast<const VkBool32 *>(&p_Features);
+        size = sizeof(VkPhysicalDeviceFeatures) / sizeof(Bool);
+        ptr = reinterpret_cast<Bool *>(&p_Features);
     }
     else
     {
         const u32 offset = sizeof(VkStructureType) + sizeof(void *);
-        size = (sizeof(T) - offset) / sizeof(VkBool32);
-        const std::byte *rawPtr = reinterpret_cast<const std::byte *>(&p_Features) + offset;
-        ptr = reinterpret_cast<const VkBool32 *>(rawPtr);
+        size = (sizeof(T) - offset) / sizeof(Bool);
+
+        if constexpr (std::is_const_v<T>)
+        {
+            const std::byte *rawPtr = reinterpret_cast<const std::byte *>(&p_Features) + offset;
+            ptr = reinterpret_cast<Bool *>(rawPtr);
+        }
+        else
+        {
+            std::byte *rawPtr = reinterpret_cast<std::byte *>(&p_Features) + offset;
+            ptr = reinterpret_cast<Bool *>(rawPtr);
+        }
     }
     return {ptr, size};
 }
 
-template <typename T> static bool isAnyFeatureSet(const T &p_Features) noexcept
+template <typename T> void setFeaturesToFalse(T &p_Features) noexcept
 {
-    const auto [ptr, size] = getFeatureIterable(p_Features);
+    auto [ptr, size] = getFeatureIterable<T, VkBool32>(p_Features);
     for (u32 i = 0; i < size; ++i)
-        if (ptr[i])
-            return true;
-    return false;
+        ptr[i] = VK_FALSE;
 }
 
 template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested) noexcept
@@ -95,6 +102,18 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
         return Res::Error(result, "Failed to get the present modes");
 
     return Res::Ok(details);
+}
+
+PhysicalDevice::Features::Features() noexcept
+{
+    setFeaturesToFalse(Core);
+#ifdef VKIT_API_VERSION_1_2
+    setFeaturesToFalse(Vulkan11);
+    setFeaturesToFalse(Vulkan12);
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    setFeaturesToFalse(Vulkan13);
+#endif
 }
 
 PhysicalDevice::Selector::Selector(const Instance *p_Instance) noexcept : m_Instance(p_Instance)
