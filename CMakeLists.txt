@@ -5,6 +5,10 @@ project(vulkit-root)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
+endif()
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

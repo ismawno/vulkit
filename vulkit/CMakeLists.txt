@@ -44,11 +44,19 @@ FetchContent_MakeAvailable(vma)
 find_package(Vulkan REQUIRED)
 message(STATUS "VULKIT: Vulkan SDK found")
 
+function(vkit_add_vulkan_executable_macos_rpath target)
+    get_filename_component(VULKAN_LIB_DIR ${Vulkan_LIBRARY} DIRECTORY)
+    set_target_properties(${target} PROPERTIES
+        BUILD_WITH_INSTALL_RPATH TRUE
+        INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib;${VULKAN_LIB_DIR}"
+        INSTALL_RPATH_USE_LINK_PATH TRUE
+    )
+endfunction()
+
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-# Vulkan and GLFW are already linked with imgui
 target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan VulkanMemoryAllocator)
 
 target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
