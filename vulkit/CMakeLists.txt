@@ -45,6 +45,15 @@ FetchContent_MakeAvailable(vma)
 find_package(Vulkan REQUIRED)
 message(STATUS "VULKIT: Vulkan SDK found")
 
+function(vkit_add_vulkan_executable_macos_rpath target)
+  get_filename_component(VULKAN_LIB_DIR ${Vulkan_LIBRARY} DIRECTORY)
+  set_target_properties(
+    ${target}
+    PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE
+               INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib;${VULKAN_LIB_DIR}"
+               INSTALL_RPATH_USE_LINK_PATH TRUE)
+endfunction()
+
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
@@ -76,4 +85,3 @@ endif()
 
 # No need for more: toolkit handles the rest. As it is a library I develop, I
 # will be reusing its macros/configurations
-

@@ -18,6 +18,10 @@ set(SOURCES tests/utils.cpp tests/backend/instance.cpp
 add_executable(vulkit-tests ${SOURCES})
 
 target_link_libraries(vulkit-tests PRIVATE Catch2::Catch2WithMain vulkit)
+if (APPLE)
+    vkit_add_vulkan_executable_macos_rpath(vulkit-tests)
+endif()
+
 target_include_directories(vulkit-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(MSVC)
