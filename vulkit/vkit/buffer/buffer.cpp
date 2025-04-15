@@ -16,8 +16,8 @@ Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
     info.Allocator = p_Specs.Allocator;
     info.InstanceSize = p_Specs.InstanceSize;
     info.InstanceCount = p_Specs.InstanceCount;
-    info.AlignedInstanceSize = alignedSize(p_Specs.InstanceSize, p_Specs.MinimumAlignment);
-    info.Size = info.AlignedInstanceSize * p_Specs.InstanceCount;
+    info.InstanceAlignedSize = alignedSize(p_Specs.InstanceSize, p_Specs.MinimumAlignment);
+    info.Size = info.InstanceAlignedSize * p_Specs.InstanceCount;
 
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -71,28 +71,32 @@ void Buffer::Unmap() noexcept
     m_Data = nullptr;
 }
 
+void Buffer::Write(const void *p_Data) noexcept
+{
+    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
+    TKit::Memory::Copy(m_Data, p_Data, m_Info.Size);
+}
+
+void Buffer::Write(const void *p_Data, const VkDeviceSize p_Size) noexcept
+{
+    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
+    TKIT_ASSERT(m_Info.Size >= p_Size, "[VULKIT] Buffer size is smaller than the data size");
+    TKit::Memory::Copy(m_Data, p_Data, p_Size);
+}
+
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKIT_ASSERT((p_Size == VK_WHOLE_SIZE && p_Offset == 0) ||
-                    (p_Size != VK_WHOLE_SIZE && (p_Offset + p_Size) <= m_Info.Size),
-                "[VULKIT] Size + offset must be lower than the buffer size");
+    TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
 
-    if (p_Size == VK_WHOLE_SIZE)
-        p_Size = m_Info.Size - p_Offset;
-
-    if (p_Size == m_Info.Size)
-        std::memcpy(m_Data, p_Data, p_Size);
-    else
-    {
-        std::byte *offsetted = static_cast<std::byte *>(m_Data) + p_Offset;
-        std::memcpy(offsetted, p_Data, p_Size);
-    }
+    std::byte *offsetted = static_cast<std::byte *>(m_Data) + p_Offset;
+    TKit::Memory::Copy(offsetted, p_Data, p_Size);
 }
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    Write(p_Data, m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
+    std::byte *offsetted = static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+    TKit::Memory::Copy(offsetted, p_Data, m_Info.InstanceSize);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
@@ -104,7 +108,7 @@ void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexc
 void Buffer::FlushAt(const u32 p_Index) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    Flush(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
+    Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
 void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
@@ -116,7 +120,7 @@ void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) 
 void Buffer::InvalidateAt(const u32 p_Index) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    Invalidate(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
+    Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
 VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const noexcept
@@ -130,7 +134,7 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, cons
 VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    return GetDescriptorInfo(m_Info.InstanceSize, m_Info.AlignedInstanceSize * p_Index);
+    return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
 void *Buffer::GetData() const noexcept
@@ -140,10 +144,10 @@ void *Buffer::GetData() const noexcept
 void *Buffer::ReadAt(const u32 p_Index) const noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    return static_cast<std::byte *>(m_Data) + m_Info.AlignedInstanceSize * p_Index;
+    return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
 }
 
-VulkanResult Buffer::CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
+VulkanResult Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
 {
     TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "[VULKIT] Cannot copy buffers of different sizes");
     const auto result1 = p_Pool.BeginSingleTimeCommands();

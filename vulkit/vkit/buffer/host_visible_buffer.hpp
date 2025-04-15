@@ -166,18 +166,45 @@ template <typename T> class HostVisibleBuffer
     }
 
     /**
-     * @brief Writes data to the buffer.
+     * @brief Writes data to the buffer, up to the buffer size.
      *
-     * Copies the given data into the buffer. The buffer must have a trivial alignment
-     * requirement to use this method.
+     * The buffer must be mapped before calling this method.
+     * Be very mindful of the alignment requirements of the buffer.
      *
-     * @param p_Data A span containing the data to write.
+     * @param p_Data A pointer to the data to write.
      */
-    void Write(const TKit::Span<const T> p_Data) noexcept
+    void Write(const T *p_Data) noexcept
     {
-        TKIT_ASSERT(m_Buffer.GetInfo().AlignedInstanceSize == m_Buffer.GetInfo().InstanceSize,
-                    "[VULKIT] Cannot 'mindlessly' write data to a buffer with a non-trivial alignment requirement");
-        m_Buffer.Write(p_Data.data(), p_Data.size() * sizeof(T));
+        m_Buffer.Write(p_Data);
+    }
+
+    /**
+     * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
+     *
+     * The buffer must be mapped before calling this method.
+     * Be very mindful of the alignment requirements of the buffer.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Size The size of the data to write.
+     */
+    void Write(const T *p_Data, VkDeviceSize p_Size) noexcept
+    {
+        m_Buffer.Write(p_Data, p_Size);
+    }
+
+    /**
+     * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
+     *
+     * The buffer must be mapped before calling this method.
+     * Be very mindful of the alignment requirements of the buffer.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Size The size of the data to write.
+     * @param p_Offset The offset within the buffer to start writing.
+     */
+    void Write(const T *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset) noexcept
+    {
+        m_Buffer.Write(p_Data, p_Size, p_Offset);
     }
 
     /**

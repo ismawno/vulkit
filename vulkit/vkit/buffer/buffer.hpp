@@ -37,7 +37,7 @@ class VKIT_API Buffer
 
         VkDeviceSize InstanceSize;
         VkDeviceSize InstanceCount;
-        VkDeviceSize AlignedInstanceSize;
+        VkDeviceSize InstanceAlignedSize;
         VkDeviceSize Size;
     };
 
@@ -61,23 +61,41 @@ class VKIT_API Buffer
     void Unmap() noexcept;
 
     /**
-     * @brief Writes data to the buffer.
+     * @brief Writes data to the buffer, up to the buffer size.
      *
-     * Copies the provided data into the buffer at the specified offset and size.
      * The buffer must be mapped before calling this method.
-     *
      * Be very mindful of the alignment requirements of the buffer.
      *
      * @param p_Data A pointer to the data to write.
-     * @param p_Size The size of the data to write (default: entire buffer).
-     * @param p_Offset The offset within the buffer to start writing (default: 0).
      */
-    void Write(const void *p_Data, VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
+    void Write(const void *p_Data) noexcept;
+
+    /**
+     * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
+     *
+     * The buffer must be mapped before calling this method.
+     * Be very mindful of the alignment requirements of the buffer.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Size The size of the data to write.
+     */
+    void Write(const void *p_Data, VkDeviceSize p_Size) noexcept;
+
+    /**
+     * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
+     *
+     * The buffer must be mapped before calling this method.
+     * Be very mindful of the alignment requirements of the buffer.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Size The size of the data to write.
+     * @param p_Offset The offset within the buffer to start writing.
+     */
+    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset) noexcept;
 
     /**
      * @brief Writes data to the buffer at the specified index.
      *
-     * Copies the provided data into the buffer at the specified index.
      * The buffer must be mapped before calling this method.
      *
      * Automatically handles alignment requirements.
@@ -126,7 +144,7 @@ class VKIT_API Buffer
      * @param p_Queue The queue to submit the copy command.
      * @return A VulkanResult indicating success or failure.
      */
-    VulkanResult CopyFrom(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
+    VulkanResult DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;
     explicit(false) operator VkBuffer() const noexcept;
