@@ -15,7 +15,9 @@ namespace VKit
  *
  * @tparam T The type of data stored in the buffer.
  */
-template <typename T> class DeviceLocalBuffer
+template <typename T>
+    requires(std::is_trivially_destructible_v<T> && std::is_trivially_copyable_v<T>)
+class DeviceLocalBuffer
 {
   public:
     struct Specs
