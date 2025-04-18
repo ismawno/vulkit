@@ -2,6 +2,7 @@
 
 #include "vkit/buffer/buffer.hpp"
 #include "vkit/backend/command_pool.hpp"
+#include "tkit/container/buffer.hpp"
 
 namespace VKit
 {
@@ -20,10 +21,10 @@ template <typename T> class DeviceLocalBuffer
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        TKit::Span<const T> Data;
+        const TKit::Buffer<T> *Data = nullptr;
         VkBufferUsageFlags Usage;
-        CommandPool *CommandPool;
-        VkQueue Queue;
+        CommandPool *CommandPool = nullptr;
+        VkQueue Queue = VK_NULL_HANDLE;
         VkDeviceSize MinimumAlignment = 1;
         VmaAllocationCreateFlags AllocationFlags = 0;
     };
@@ -31,9 +32,9 @@ template <typename T> class DeviceLocalBuffer
     struct SpecializedSpecs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        TKit::Span<const T> Data;
-        CommandPool *CommandPool;
-        VkQueue Queue;
+        const TKit::Buffer<T> *Data = nullptr;
+        CommandPool *CommandPool = nullptr;
+        VkQueue Queue = VK_NULL_HANDLE;
         VmaAllocationCreateFlags AllocationFlags = 0;
     };
 
@@ -53,9 +54,12 @@ template <typename T> class DeviceLocalBuffer
      */
     static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
     {
+        TKIT_ASSERT(p_Specs.Data->GetMinimumInstanceAlignment() == p_Specs.MinimumAlignment,
+                    "[VULKIT] Provided buffer's minimum alignment does not match the specified minimum alignment");
+
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
-        specs.InstanceCount = p_Specs.Data.size();
+        specs.InstanceCount = p_Specs.Data->GetInstanceCount();
         specs.InstanceSize = sizeof(T);
         specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
@@ -83,11 +87,7 @@ template <typename T> class DeviceLocalBuffer
 
         Buffer &stagingBuffer = result2.GetValue();
         stagingBuffer.Map();
-        if (p_Specs.MinimumAlignment == 1)
-            stagingBuffer.Write(p_Specs.Data.data());
-        else
-            for (u32 i = 0; i < p_Specs.Data.size(); ++i)
-                stagingBuffer.WriteAt(i, &p_Specs.Data[i]);
+        stagingBuffer.Write(p_Specs.Data->GetData());
         stagingBuffer.Flush();
         stagingBuffer.Unmap();
 
