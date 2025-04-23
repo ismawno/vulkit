@@ -148,6 +148,18 @@ class HostVisibleBuffer
     }
 
     /**
+     * @brief Writes a span of data to the buffer.
+     *
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
+     *
+     * @param p_Data A span containing the data to write.
+     */
+    void Write(const TKit::Span<const T> p_Data) noexcept
+    {
+        m_Buffer.Write(p_Data.GetData(), p_Data.GetSize() * sizeof(T));
+    }
+
+    /**
      * @brief Writes data to the buffer at the specified index.
      *
      * Copies the provided data into the buffer at the specified index.
