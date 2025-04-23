@@ -142,7 +142,7 @@ class HostVisibleBuffer
      * @param p_Size The size of the data to write.
      * @param p_Offset The offset within the buffer to start writing.
      */
-    void Write(const T *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0) noexcept
+    void Write(const T *p_Data, const VkDeviceSize p_Size, const VkDeviceSize p_Offset = 0) noexcept
     {
         m_Buffer.Write(p_Data, p_Size, p_Offset);
     }
@@ -153,10 +153,11 @@ class HostVisibleBuffer
      * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Data A span containing the data to write.
+     * @param p_Offset The offset within the buffer to start writing, not in bytes but in elements.
      */
-    void Write(const TKit::Span<const T> p_Data) noexcept
+    void Write(const TKit::Span<const T> p_Data, const usize p_Offset = 0) noexcept
     {
-        m_Buffer.Write(p_Data.GetData(), p_Data.GetSize() * sizeof(T));
+        m_Buffer.Write(p_Data.GetData(), p_Data.GetSize() * sizeof(T), p_Offset * sizeof(T));
     }
 
     /**
