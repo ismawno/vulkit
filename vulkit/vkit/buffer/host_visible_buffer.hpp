@@ -24,21 +24,7 @@ class HostVisibleBuffer
         VkBufferUsageFlags Usage;
         VkDeviceSize PerInstanceMinimumAlignment = 1;
         VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
-        bool Coherent = false;
     };
-
-    struct SpecializedSpecs
-    {
-        VmaAllocator Allocator = VK_NULL_HANDLE;
-        VkDeviceSize Capacity;
-        VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
-        bool Coherent = false;
-    };
-
-    using VertexSpecs = SpecializedSpecs;
-    using IndexSpecs = SpecializedSpecs;
-    using UniformSpecs = SpecializedSpecs;
-    using StorageSpecs = SpecializedSpecs;
 
     /**
      * @brief Creates a host-visible buffer with the specified settings.
@@ -48,19 +34,17 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> Create(const Specs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> Create(const Specs &p_Specs, const VkBufferUsageFlags p_Usage) noexcept
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Capacity;
         specs.InstanceSize = sizeof(T);
-        specs.Usage = p_Specs.Usage;
+        specs.Usage = p_Usage;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
         specs.AllocationInfo.preferredFlags = 0;
-        specs.AllocationInfo.flags = p_Specs.AllocationFlags;
-        if (p_Specs.Coherent)
-            specs.AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        specs.AllocationInfo.flags = p_Specs.AllocationFlags | VMA_ALLOCATION_CREATE_MAPPED_BIT;
         specs.PerInstanceMinimumAlignment = p_Specs.PerInstanceMinimumAlignment;
 
         const auto result = Buffer::Create(specs);
@@ -78,15 +62,9 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the vertex buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateVertexBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Capacity = p_Specs.Capacity;
-        specs.Usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.Coherent = p_Specs.Coherent;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
     /**
@@ -97,15 +75,9 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the index buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateIndexBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Capacity = p_Specs.Capacity;
-        specs.Usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.Coherent = p_Specs.Coherent;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
 
     /**
@@ -114,20 +86,11 @@ class HostVisibleBuffer
      * Configures the buffer for uniform data and allocates memory with the required alignment.
      *
      * @param p_Specs The specifications for the uniform buffer.
-     * @param p_Alignment The minimum alignment for the buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
-                                                         const VkDeviceSize p_Alignment) noexcept
+    static Result<HostVisibleBuffer> CreateUniformBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Capacity = p_Specs.Capacity;
-        specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.Coherent = p_Specs.Coherent;
-        specs.PerInstanceMinimumAlignment = p_Alignment;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
 
     /**
@@ -136,20 +99,11 @@ class HostVisibleBuffer
      * Configures the buffer for storage data and allocates memory with the required alignment.
      *
      * @param p_Specs The specifications for the storage buffer.
-     * @param p_Alignment The minimum alignment for the buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
-                                                         const VkDeviceSize p_Alignment) noexcept
+    static Result<HostVisibleBuffer> CreateStorageBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Capacity = p_Specs.Capacity;
-        specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.Coherent = p_Specs.Coherent;
-        specs.PerInstanceMinimumAlignment = p_Alignment;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
     HostVisibleBuffer() noexcept = default;
@@ -170,8 +124,7 @@ class HostVisibleBuffer
     /**
      * @brief Writes data to the buffer, up to the buffer size.
      *
-     * The buffer must be host visible and mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Data A pointer to the data to write.
      */
@@ -181,30 +134,15 @@ class HostVisibleBuffer
     }
 
     /**
-     * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
-     *
-     * The buffer must be host visible and mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
-     *
-     * @param p_Data A pointer to the data to write.
-     * @param p_Size The size of the data to write.
-     */
-    void Write(const T *p_Data, VkDeviceSize p_Size) noexcept
-    {
-        m_Buffer.Write(p_Data, p_Size);
-    }
-
-    /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be host visible and mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Size The size of the data to write.
      * @param p_Offset The offset within the buffer to start writing.
      */
-    void Write(const T *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset) noexcept
+    void Write(const T *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0) noexcept
     {
         m_Buffer.Write(p_Data, p_Size, p_Offset);
     }
@@ -213,9 +151,7 @@ class HostVisibleBuffer
      * @brief Writes data to the buffer at the specified index.
      *
      * Copies the provided data into the buffer at the specified index.
-     * The buffer must be host visible and mapped before calling this method.
-     *
-     * Automatically handles alignment requirements.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.

@@ -26,23 +26,27 @@ Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VkBuffer buffer;
-    const VkResult result =
-        vmaCreateBuffer(p_Specs.Allocator, &bufferInfo, &p_Specs.AllocationInfo, &buffer, &info.Allocation, nullptr);
+    VmaAllocationInfo allocationInfo;
+    const VkResult result = vmaCreateBuffer(p_Specs.Allocator, &bufferInfo, &p_Specs.AllocationInfo, &buffer,
+                                            &info.Allocation, &allocationInfo);
+
+    void *data = nullptr;
+    if (p_Specs.AllocationInfo.flags & VMA_ALLOCATION_CREATE_MAPPED_BIT)
+        data = allocationInfo.pMappedData;
+
     if (result != VK_SUCCESS)
         return Result<Buffer>::Error(result, "Failed to create buffer");
 
-    return Result<Buffer>::Ok(buffer, info);
+    return Result<Buffer>::Ok(buffer, info, data);
 }
 
-Buffer::Buffer(const VkBuffer p_Buffer, const Info &p_Info) noexcept : m_Buffer(p_Buffer), m_Info(p_Info)
+Buffer::Buffer(const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept
+    : m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
 {
 }
 
 void Buffer::Destroy() noexcept
 {
-    if (m_Data)
-        Unmap();
-
     vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
     m_Buffer = VK_NULL_HANDLE;
 }
@@ -57,46 +61,40 @@ void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 
 void Buffer::Map() noexcept
 {
-    if (m_Data)
-        Unmap();
+    TKIT_ASSERT(!m_Data, "[VULKIT] Buffer is already mapped");
     TKIT_ASSERT_RETURNS(vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data), VK_SUCCESS,
                         "[VULKIT] Failed to map buffer memory");
 }
 
 void Buffer::Unmap() noexcept
 {
-    if (!m_Data)
-        return;
+    TKIT_ASSERT(m_Data, "[VULKIT] Buffer is not mapped");
     vmaUnmapMemory(m_Info.Allocator, m_Info.Allocation);
     m_Data = nullptr;
+}
+
+bool Buffer::IsMapped() const noexcept
+{
+    return m_Data != nullptr;
 }
 
 void Buffer::Write(const void *p_Data) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKit::Memory::ForwardCopy(m_Data, p_Data, m_Info.Size);
-}
-
-void Buffer::Write(const void *p_Data, const VkDeviceSize p_Size) noexcept
-{
-    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKIT_ASSERT(m_Info.Size >= p_Size, "[VULKIT] Buffer size is smaller than the data size");
-    TKit::Memory::ForwardCopy(m_Data, p_Data, p_Size);
+    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, 0, m_Info.Size);
 }
 
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
-
-    std::byte *offsetted = static_cast<std::byte *>(m_Data) + p_Offset;
-    TKit::Memory::ForwardCopy(offsetted, p_Data, p_Size);
+    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, p_Offset, p_Size);
 }
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    std::byte *offsetted = static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
-    TKit::Memory::ForwardCopy(offsetted, p_Data, m_Info.InstanceSize);
+    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, m_Info.InstanceAlignedSize * p_Index,
+                              m_Info.InstanceSize);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept

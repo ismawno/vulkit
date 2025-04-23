@@ -5,6 +5,8 @@
 
 namespace VKit
 {
+// considering adding Map/Unmap. Intel GPUs may allow it?
+
 /**
  * @brief Represents a buffer stored in device-local memory.
  *
@@ -30,20 +32,6 @@ class DeviceLocalBuffer
         VmaAllocationCreateFlags AllocationFlags = 0;
     };
 
-    struct SpecializedSpecs
-    {
-        VmaAllocator Allocator = VK_NULL_HANDLE;
-        TKit::Span<const T> Data;
-        CommandPool *CommandPool = nullptr;
-        VkQueue Queue = VK_NULL_HANDLE;
-        VmaAllocationCreateFlags AllocationFlags = 0;
-    };
-
-    using VertexSpecs = SpecializedSpecs;
-    using IndexSpecs = SpecializedSpecs;
-    using UniformSpecs = SpecializedSpecs;
-    using StorageSpecs = SpecializedSpecs;
-
     /**
      * @brief Creates a device-local buffer with the specified settings.
      *
@@ -53,13 +41,13 @@ class DeviceLocalBuffer
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `DeviceLocalBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> Create(const Specs &p_Specs, const VkBufferUsageFlags p_Usage) noexcept
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Data.GetSize();
         specs.InstanceSize = sizeof(T);
-        specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        specs.Usage = p_Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         specs.AllocationInfo.preferredFlags = 0;
@@ -75,17 +63,15 @@ class DeviceLocalBuffer
         Buffer::Specs stagingSpecs = specs;
         stagingSpecs.Usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         stagingSpecs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
-        stagingSpecs.AllocationInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+        stagingSpecs.AllocationInfo.flags =
+            VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
         auto result2 = Buffer::Create(stagingSpecs);
         if (!result2)
             return Result<DeviceLocalBuffer>::Error(result2.GetError().Result, "Failed to create staging buffer");
 
         Buffer &stagingBuffer = result2.GetValue();
-        stagingBuffer.Map();
         stagingBuffer.Write(p_Specs.Data.GetData());
-        stagingBuffer.Flush();
-        stagingBuffer.Unmap();
 
         const auto result3 = buffer.DeviceCopy(stagingBuffer, *p_Specs.CommandPool, p_Specs.Queue);
         stagingBuffer.Destroy();
@@ -104,16 +90,9 @@ class DeviceLocalBuffer
      * @param p_Specs The specifications for the vertex buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateVertexBuffer(const VertexSpecs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateVertexBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Data = p_Specs.Data;
-        specs.Usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        specs.CommandPool = p_Specs.CommandPool;
-        specs.Queue = p_Specs.Queue;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
     /**
@@ -125,16 +104,9 @@ class DeviceLocalBuffer
      * @param p_Specs The specifications for the index buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateIndexBuffer(const IndexSpecs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateIndexBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Data = p_Specs.Data;
-        specs.Usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        specs.CommandPool = p_Specs.CommandPool;
-        specs.Queue = p_Specs.Queue;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
 
     /**
@@ -144,21 +116,11 @@ class DeviceLocalBuffer
      * to device-local memory.
      *
      * @param p_Specs The specifications for the uniform buffer.
-     * @param p_Alignment The minimum alignment for the uniform buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateUniformBuffer(const UniformSpecs &p_Specs,
-                                                         const VkDeviceSize p_Alignment) noexcept
+    static Result<DeviceLocalBuffer> CreateUniformBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Data = p_Specs.Data;
-        specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        specs.CommandPool = p_Specs.CommandPool;
-        specs.Queue = p_Specs.Queue;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.PerInstanceMinimumAlignment = p_Alignment;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
 
     /**
@@ -168,21 +130,11 @@ class DeviceLocalBuffer
      * to device-local memory.
      *
      * @param p_Specs The specifications for the storage buffer.
-     * @param p_Alignment The minimum alignment for the storage buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateStorageBuffer(const StorageSpecs &p_Specs,
-                                                         const VkDeviceSize p_Alignment) noexcept
+    static Result<DeviceLocalBuffer> CreateStorageBuffer(const Specs &p_Specs) noexcept
     {
-        Specs specs{};
-        specs.Allocator = p_Specs.Allocator;
-        specs.Data = p_Specs.Data;
-        specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-        specs.CommandPool = p_Specs.CommandPool;
-        specs.Queue = p_Specs.Queue;
-        specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.PerInstanceMinimumAlignment = p_Alignment;
-        return Create(specs);
+        return Create(p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
     DeviceLocalBuffer() noexcept = default;

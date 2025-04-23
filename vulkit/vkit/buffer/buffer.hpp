@@ -3,6 +3,7 @@
 #include "vkit/backend/system.hpp"
 #include "vkit/core/alias.hpp"
 #include "vkit/core/vma.hpp"
+#include "tkit/container/span.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -60,48 +61,39 @@ class VKIT_API Buffer
     static Result<Buffer> Create(const Specs &p_Specs) noexcept;
 
     Buffer() noexcept = default;
-    Buffer(VkBuffer p_Buffer, const Info &p_Info) noexcept;
+    Buffer(VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     void Map() noexcept;
     void Unmap() noexcept;
+    bool IsMapped() const noexcept;
 
     /**
      * @brief Writes data to the buffer, up to the buffer size.
      *
-     * The buffer must be host visible and mapped before calling this method.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Data A pointer to the data to write.
      */
     void Write(const void *p_Data) noexcept;
 
     /**
-     * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
-     *
-     * The buffer must be host visible and mapped before calling this method.
-     *
-     * @param p_Data A pointer to the data to write.
-     * @param p_Size The size of the data to write.
-     */
-    void Write(const void *p_Data, VkDeviceSize p_Size) noexcept;
-
-    /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be host visible and mapped before calling this method.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Size The size of the data to write.
      * @param p_Offset The offset within the buffer to start writing.
      */
-    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset) noexcept;
+    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0) noexcept;
 
     /**
      * @brief Writes data to the buffer at the specified index.
      *
-     * The buffer must be host visible and mapped before calling this method.
+     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
      *
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
