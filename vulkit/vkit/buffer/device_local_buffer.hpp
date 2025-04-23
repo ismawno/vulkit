@@ -2,7 +2,6 @@
 
 #include "vkit/buffer/buffer.hpp"
 #include "vkit/backend/command_pool.hpp"
-#include "tkit/container/buffer.hpp"
 
 namespace VKit
 {
@@ -23,18 +22,18 @@ class DeviceLocalBuffer
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        const TKit::Buffer<T> *Data = nullptr;
+        TKit::Span<const T> Data;
         VkBufferUsageFlags Usage;
         CommandPool *CommandPool = nullptr;
         VkQueue Queue = VK_NULL_HANDLE;
-        VkDeviceSize MinimumAlignment = 1;
+        VkDeviceSize PerInstanceMinimumAlignment = 1;
         VmaAllocationCreateFlags AllocationFlags = 0;
     };
 
     struct SpecializedSpecs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        const TKit::Buffer<T> *Data = nullptr;
+        TKit::Span<const T> Data;
         CommandPool *CommandPool = nullptr;
         VkQueue Queue = VK_NULL_HANDLE;
         VmaAllocationCreateFlags AllocationFlags = 0;
@@ -56,19 +55,16 @@ class DeviceLocalBuffer
      */
     static Result<DeviceLocalBuffer> Create(const Specs &p_Specs) noexcept
     {
-        TKIT_ASSERT(p_Specs.Data->GetMinimumInstanceAlignment() == p_Specs.MinimumAlignment,
-                    "[VULKIT] Provided buffer's minimum alignment does not match the specified minimum alignment");
-
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
-        specs.InstanceCount = p_Specs.Data->GetInstanceCount();
+        specs.InstanceCount = p_Specs.Data.GetSize();
         specs.InstanceSize = sizeof(T);
         specs.Usage = p_Specs.Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         specs.AllocationInfo.preferredFlags = 0;
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
-        specs.MinimumAlignment = p_Specs.MinimumAlignment;
+        specs.PerInstanceMinimumAlignment = p_Specs.PerInstanceMinimumAlignment;
 
         auto result1 = Buffer::Create(specs);
         if (!result1)
@@ -79,9 +75,7 @@ class DeviceLocalBuffer
         Buffer::Specs stagingSpecs = specs;
         stagingSpecs.Usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         stagingSpecs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
-
-        // WARNING: Is this a good option even when MinimumAlignment is not 1?
-        stagingSpecs.AllocationInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
+        stagingSpecs.AllocationInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
 
         auto result2 = Buffer::Create(stagingSpecs);
         if (!result2)
@@ -89,7 +83,7 @@ class DeviceLocalBuffer
 
         Buffer &stagingBuffer = result2.GetValue();
         stagingBuffer.Map();
-        stagingBuffer.Write(p_Specs.Data->GetData());
+        stagingBuffer.Write(p_Specs.Data.GetData());
         stagingBuffer.Flush();
         stagingBuffer.Unmap();
 
@@ -163,7 +157,7 @@ class DeviceLocalBuffer
         specs.CommandPool = p_Specs.CommandPool;
         specs.Queue = p_Specs.Queue;
         specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.MinimumAlignment = p_Alignment;
+        specs.PerInstanceMinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
@@ -187,7 +181,7 @@ class DeviceLocalBuffer
         specs.CommandPool = p_Specs.CommandPool;
         specs.Queue = p_Specs.Queue;
         specs.AllocationFlags = p_Specs.AllocationFlags;
-        specs.MinimumAlignment = p_Alignment;
+        specs.PerInstanceMinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
@@ -215,18 +209,7 @@ class DeviceLocalBuffer
      */
     void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
-        if constexpr (std::is_same_v<T, u8>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT8_EXT);
-        else if constexpr (std::is_same_v<T, u16>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT16);
-        else if constexpr (std::is_same_v<T, u32>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT32);
-#ifdef TKIT_ENABLE_ASSERTS
-        else
-        {
-            TKIT_ERROR("Invalid index type");
-        }
-#endif
+        m_Buffer.BindAsIndexBuffer<T>(p_CommandBuffer, p_Offset);
     }
 
     /**
@@ -237,8 +220,7 @@ class DeviceLocalBuffer
      */
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
-        const VkBuffer buffer = m_Buffer.GetBuffer();
-        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &buffer, &p_Offset);
+        m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Offset);
     }
 
     /**
@@ -249,12 +231,10 @@ class DeviceLocalBuffer
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
     static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
+                                   const u32 p_FirstBinding = 0,
                                    const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
-        if (!p_Offsets.empty())
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), p_Offsets.data());
-        else
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), nullptr);
+        Buffer::BindAsVertexBuffer(p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
     }
 
     /**
@@ -266,7 +246,7 @@ class DeviceLocalBuffer
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
                             const VkDeviceSize p_Offset = 0) const noexcept
     {
-        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+        m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Buffer, p_Offset);
     }
 
     VkDescriptorBufferInfo GetDescriptorInfo() const noexcept

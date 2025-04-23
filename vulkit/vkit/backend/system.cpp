@@ -47,8 +47,8 @@ VulkanResult System::Initialize() noexcept
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to get the number of instance extensions");
 
-    AvailableExtensions.resize(extensionCount);
-    result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.data());
+    AvailableExtensions.Resize(extensionCount);
+    result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.GetData());
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to get the instance extensions");
 
@@ -63,8 +63,8 @@ VulkanResult System::Initialize() noexcept
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to get the number of instance layers");
 
-    AvailableLayers.resize(layerCount);
-    result = enumerateLayers(&layerCount, AvailableLayers.data());
+    AvailableLayers.Resize(layerCount);
+    result = enumerateLayers(&layerCount, AvailableLayers.GetData());
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to get the instance layers");
 
@@ -105,13 +105,13 @@ bool System::IsLayerSupported(const char *p_Name) noexcept
 
 void DeletionQueue::Push(std::function<void()> &&p_Deleter) noexcept
 {
-    m_Deleters.push_back(std::move(p_Deleter));
+    m_Deleters.Append(std::move(p_Deleter));
 }
 void DeletionQueue::Flush() noexcept
 {
-    for (auto it = m_Deleters.rbegin(); it != m_Deleters.rend(); ++it)
-        (*it)();
-    m_Deleters.clear();
+    for (u32 i = m_Deleters.GetSize(); i > 0; --i)
+        m_Deleters[i - 1]();
+    m_Deleters.Clear();
 }
 
 const char *VkResultToString(const VkResult p_Result) noexcept

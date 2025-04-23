@@ -11,8 +11,8 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
 {
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = m_PoolSizes.size();
-    poolInfo.pPoolSizes = m_PoolSizes.data();
+    poolInfo.poolSizeCount = m_PoolSizes.GetSize();
+    poolInfo.pPoolSizes = m_PoolSizes.GetData();
     poolInfo.maxSets = m_MaxSets;
     poolInfo.flags = m_Flags;
 
@@ -70,7 +70,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
 
 void DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
 {
-    vkFreeDescriptorSets(m_Device, m_Pool, p_Sets.size(), p_Sets.data());
+    vkFreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
 }
 
 void DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
@@ -118,7 +118,7 @@ DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCr
 }
 DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept
 {
-    m_PoolSizes.push_back(VkDescriptorPoolSize{p_Type, p_Size});
+    m_PoolSizes.Append(VkDescriptorPoolSize{p_Type, p_Size});
     return *this;
 }
 

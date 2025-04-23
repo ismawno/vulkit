@@ -8,8 +8,8 @@ template <Pipeline Pip>
 IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
-    m_DescriptorSets.resize(p_Layout.GetInfo().DescriptorSetLayouts.size(), VK_NULL_HANDLE);
-    m_PushData.resize(p_Layout.GetInfo().PushConstantRanges.size());
+    m_DescriptorSets.Resize(p_Layout.GetInfo().DescriptorSetLayouts.GetSize(), VK_NULL_HANDLE);
+    m_PushData.Resize(p_Layout.GetInfo().PushConstantRanges.GetSize());
 }
 
 template <Pipeline Pip>
@@ -26,7 +26,7 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
     u32 offset = 0;
 
     // Data may not need to be pushed every frame... but I guess it is a small price to pay for the flexibility
-    for (u32 i = 0; i < m_PushData.size(); ++i)
+    for (u32 i = 0; i < m_PushData.GetSize(); ++i)
     {
         const PushDataInfo &info = m_PushData[i];
         if (!info.Data)
@@ -38,8 +38,8 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
     TKit::StaticArray8<VkDescriptorSet> descriptorSets;
     for (const VkDescriptorSet set : m_DescriptorSets)
         if (set)
-            descriptorSets.push_back(set);
-    if (descriptorSets.empty())
+            descriptorSets.Append(set);
+    if (descriptorSets.IsEmpty())
         return;
 
     if constexpr (std::is_same_v<Pip, GraphicsPipeline>)

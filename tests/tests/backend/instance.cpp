@@ -18,7 +18,7 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
     REQUIRE(info.EngineVersion == VKIT_MAKE_VERSION(0, 1, 0, 0));
     REQUIRE(info.ApiVersion == VKIT_MAKE_VERSION(0, 1, 0, 0));
     REQUIRE(info.Flags & Instance::Flag_Headless);
-    REQUIRE(info.EnabledLayers.size() == 0);
+    REQUIRE(info.EnabledLayers.GetSize() == 0);
     REQUIRE(!info.DebugMessenger);
     REQUIRE(!info.AllocationCallbacks);
 
@@ -48,7 +48,7 @@ TEST_CASE("Validation layers", "[instance][validation]")
 
     REQUIRE(info.Flags & Instance::Flag_HasValidationLayers);
     REQUIRE(info.Flags & Instance::Flag_Headless);
-    REQUIRE(info.EnabledLayers.size() > 0);
+    REQUIRE(info.EnabledLayers.GetSize() > 0);
     REQUIRE(info.DebugMessenger);
 
     instance.Destroy();

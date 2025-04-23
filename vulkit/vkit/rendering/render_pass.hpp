@@ -186,7 +186,7 @@ class VKIT_API RenderPass
         LogicalDevice::Proxy m_Device{};
         VmaAllocator m_Allocator = VK_NULL_HANDLE;
 
-        TKit::StaticArray64<ImageData> m_Images;          // size: m_ImageCount * m_Attachments.size()
+        TKit::StaticArray64<ImageData> m_Images;          // size: m_ImageCount * m_Attachments.GetSize()
         TKit::StaticArray4<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
@@ -235,10 +235,10 @@ class VKIT_API RenderPass
         resources.m_Device = m_Device;
         resources.m_Allocator = m_Info.Allocator;
 
-        TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.size(), VK_NULL_HANDLE};
+        TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.GetSize(), VK_NULL_HANDLE};
         for (u32 i = 0; i < m_Info.ImageCount; ++i)
         {
-            for (u32 j = 0; j < attachments.size(); ++j)
+            for (u32 j = 0; j < attachments.GetSize(); ++j)
             {
                 const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
                 if (!imresult)
@@ -248,14 +248,14 @@ class VKIT_API RenderPass
                 }
 
                 const ImageData &imageData = imresult.GetValue();
-                resources.m_Images.push_back(imageData);
+                resources.m_Images.Append(imageData);
                 attachments[j] = imageData.ImageView;
             }
             VkFramebufferCreateInfo frameBufferInfo{};
             frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             frameBufferInfo.renderPass = m_RenderPass;
-            frameBufferInfo.attachmentCount = attachments.size();
-            frameBufferInfo.pAttachments = attachments.data();
+            frameBufferInfo.attachmentCount = attachments.GetSize();
+            frameBufferInfo.pAttachments = attachments.GetData();
             frameBufferInfo.width = p_Extent.width;
             frameBufferInfo.height = p_Extent.height;
             frameBufferInfo.layers = p_FrameBufferLayers;
@@ -269,7 +269,7 @@ class VKIT_API RenderPass
                 return Result<Resources>::Error(result, "Failed to create the frame buffer");
             }
 
-            resources.m_FrameBuffers.push_back(frameBuffer);
+            resources.m_FrameBuffers.Append(frameBuffer);
         }
 
         return Result<Resources>::Ok(resources);

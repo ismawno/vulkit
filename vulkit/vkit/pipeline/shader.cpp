@@ -27,12 +27,12 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
 
     TKit::StaticArray<char, VKIT_MAX_SHADER_SIZE> code(static_cast<u32>(fileSize));
     file.seekg(0);
-    file.read(code.data(), fileSize);
+    file.read(code.GetData(), fileSize);
 
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = fileSize;
-    createInfo.pCode = reinterpret_cast<const u32 *>(code.data());
+    createInfo.pCode = reinterpret_cast<const u32 *>(code.GetData());
 
     VkShaderModule module;
     const VkResult result = vkCreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);

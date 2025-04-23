@@ -90,14 +90,14 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the surface capabilities");
 
-    details.Formats.resize(formatCount);
-    details.PresentModes.resize(modeCount);
+    details.Formats.Resize(formatCount);
+    details.PresentModes.Resize(modeCount);
 
-    result = querySurfaceFormats(p_Device, p_Surface, &formatCount, details.Formats.data());
+    result = querySurfaceFormats(p_Device, p_Surface, &formatCount, details.Formats.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the surface formats");
 
-    result = queryPresentModes(p_Device, p_Surface, &modeCount, details.PresentModes.data());
+    result = queryPresentModes(p_Device, p_Surface, &modeCount, details.PresentModes.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the present modes");
 
@@ -159,14 +159,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
 
     TKit::StaticArray256<VkExtensionProperties> extensionsProps{extensionCount};
-    result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.data());
+    result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
 
     TKit::StaticArray256<std::string> availableExtensions;
     for (const VkExtensionProperties &extension : extensionsProps)
-        availableExtensions.push_back(extension.extensionName);
+        availableExtensions.Append(extension.extensionName);
 
     TKit::StaticArray256<std::string> enabledExtensions;
     bool skipDevice = false;
@@ -177,7 +177,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             skipDevice = true;
             break;
         }
-        enabledExtensions.push_back(extension);
+        enabledExtensions.Append(extension);
     }
     if (skipDevice)
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
@@ -186,23 +186,23 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     bool fullySuitable = true;
     for (const std::string &extension : m_RequestedExtensions)
         if (contains(availableExtensions, extension))
-            enabledExtensions.push_back(extension);
+            enabledExtensions.Append(extension);
         else
             fullySuitable = false;
 
     const auto checkFlag = [this](const FlagBit p_Flag) -> bool { return m_Flags & p_Flag; };
 
     if (checkFlag(Flag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
-        enabledExtensions.push_back("VK_KHR_portability_subset");
+        enabledExtensions.Append("VK_KHR_portability_subset");
 
     if (checkFlag(Flag_RequirePresentQueue))
-        enabledExtensions.push_back("VK_KHR_swapchain");
+        enabledExtensions.Append("VK_KHR_swapchain");
 
     u32 familyCount;
     vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
 
     TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
-    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
 
     const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
         for (u32 i = 0; i < familyCount; ++i)
@@ -535,19 +535,19 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the number of physical devices");
 
-    vkdevices.resize(deviceCount);
-    result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, vkdevices.data());
+    vkdevices.Resize(deviceCount);
+    result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, vkdevices.GetData());
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the physical devices");
 
-    if (vkdevices.empty())
+    if (vkdevices.IsEmpty())
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
     TKit::StaticArray4<FormattedResult<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice);
-        devices.push_back(judgeResult);
+        devices.Append(judgeResult);
     }
 
     std::stable_partition(devices.begin(), devices.end(), [](const FormattedResult<PhysicalDevice> &p_Device) {
@@ -575,7 +575,7 @@ bool PhysicalDevice::EnableExtension(const char *p_Extension) noexcept
         return true;
     if (!IsExtensionSupported(p_Extension))
         return false;
-    m_Info.EnabledExtensions.push_back(p_Extension);
+    m_Info.EnabledExtensions.Append(p_Extension);
     return true;
 }
 
@@ -615,24 +615,24 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const Type p_Type
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *p_Extension) noexcept
 {
-    m_RequiredExtensions.push_back(p_Extension);
+    m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(
     const TKit::Span<const char *const> p_Extensions) noexcept
 {
-    m_RequiredExtensions.insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *p_Extension) noexcept
 {
-    m_RequestedExtensions.push_back(p_Extension);
+    m_RequestedExtensions.Append(p_Extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(
     const TKit::Span<const char *const> p_Extensions) noexcept
 {
-    m_RequestedExtensions.insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize p_Size) noexcept

@@ -10,7 +10,7 @@ RenderPass::Builder::Builder(const LogicalDevice *p_Device, const u32 p_ImageCou
 
 Result<RenderPass> RenderPass::Builder::Build() const noexcept
 {
-    if (m_Subpasses.empty())
+    if (m_Subpasses.IsEmpty())
         return Result<RenderPass>::Error(VK_ERROR_INITIALIZATION_FAILED, "Render must have at least one subpass");
 
     TKit::StaticArray16<Attachment> attachments;
@@ -18,17 +18,17 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
     for (const AttachmentBuilder &attachment : m_Attachments)
     {
         TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
-        if (formats.empty())
+        if (formats.IsEmpty())
         {
             if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Color)
-                formats.push_back(VK_FORMAT_B8G8R8A8_SRGB);
+                formats.Append(VK_FORMAT_B8G8R8A8_SRGB);
             else if ((attachment.m_Attachment.TypeFlags & Attachment::Flag_Depth) &&
                      (attachment.m_Attachment.TypeFlags & Attachment::Flag_Stencil))
-                formats.push_back(VK_FORMAT_D32_SFLOAT_S8_UINT);
+                formats.Append(VK_FORMAT_D32_SFLOAT_S8_UINT);
             else if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Depth)
-                formats.push_back(VK_FORMAT_D32_SFLOAT);
+                formats.Append(VK_FORMAT_D32_SFLOAT);
             else if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Stencil)
-                formats.push_back(VK_FORMAT_S8_UINT);
+                formats.Append(VK_FORMAT_S8_UINT);
         }
         VkFormatFeatureFlags flags = 0;
         if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Color)
@@ -44,26 +44,26 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
         Attachment att = attachment.m_Attachment;
         att.Description.format = result.GetValue();
 
-        attachments.push_back(att);
-        attDescriptions.push_back(att.Description);
+        attachments.Append(att);
+        attDescriptions.Append(att.Description);
     }
 
     TKit::StaticArray8<VkSubpassDescription> subpasses;
     for (const SubpassBuilder &subpass : m_Subpasses)
-        subpasses.push_back(subpass.m_Description);
+        subpasses.Append(subpass.m_Description);
 
     TKit::StaticArray8<VkSubpassDependency> dependencies;
     for (const DependencyBuilder &dependency : m_Dependencies)
-        dependencies.push_back(dependency.m_Dependency);
+        dependencies.Append(dependency.m_Dependency);
 
     VkRenderPassCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    createInfo.attachmentCount = attDescriptions.size();
-    createInfo.pAttachments = attDescriptions.data();
-    createInfo.subpassCount = subpasses.size();
-    createInfo.pSubpasses = subpasses.data();
-    createInfo.dependencyCount = dependencies.size();
-    createInfo.pDependencies = dependencies.data();
+    createInfo.attachmentCount = attDescriptions.GetSize();
+    createInfo.pAttachments = attDescriptions.GetData();
+    createInfo.subpassCount = subpasses.GetSize();
+    createInfo.pSubpasses = subpasses.GetData();
+    createInfo.dependencyCount = dependencies.GetSize();
+    createInfo.pDependencies = dependencies.GetData();
     createInfo.flags = m_Flags;
 
     const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
@@ -274,8 +274,8 @@ void RenderPass::Resources::destroy() const noexcept
 void RenderPass::Resources::Destroy() noexcept
 {
     destroy();
-    m_Images.clear();
-    m_FrameBuffers.clear();
+    m_Images.Clear();
+    m_FrameBuffers.Clear();
 }
 void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
@@ -285,7 +285,7 @@ void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const noex
 
 VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const noexcept
 {
-    const u32 attachmentCount = m_Images.size() / m_FrameBuffers.size();
+    const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
     return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
 }
 VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) const noexcept
@@ -295,16 +295,16 @@ VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) cons
 
 RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const Attachment::Flags p_TypeFlags) noexcept
 {
-    return m_Attachments.emplace_back(this, p_TypeFlags);
+    return m_Attachments.Append(this, p_TypeFlags);
 }
 RenderPass::SubpassBuilder &RenderPass::Builder::BeginSubpass(const VkPipelineBindPoint p_BindPoint) noexcept
 {
-    return m_Subpasses.emplace_back(this, p_BindPoint);
+    return m_Subpasses.Append(this, p_BindPoint);
 }
 RenderPass::DependencyBuilder &RenderPass::Builder::BeginDependency(const u32 p_SourceSubpass,
                                                                     const u32 p_DestinationSubpass) noexcept
 {
-    return m_Dependencies.emplace_back(this, p_SourceSubpass, p_DestinationSubpass);
+    return m_Dependencies.Append(this, p_SourceSubpass, p_DestinationSubpass);
 }
 RenderPass::Builder &RenderPass::Builder::SetAllocator(const VmaAllocator p_Allocator) noexcept
 {
@@ -394,12 +394,12 @@ RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetStencilStoreOpe
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::RequestFormat(const VkFormat p_Format) noexcept
 {
-    m_Formats.insert(m_Formats.begin(), p_Format);
+    m_Formats.Insert(m_Formats.begin(), p_Format);
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::AllowFormat(const VkFormat p_Format) noexcept
 {
-    m_Formats.push_back(p_Format);
+    m_Formats.Append(p_Format);
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetLayouts(const VkImageLayout p_InitialLayout,
@@ -448,11 +448,11 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
                                                                            const VkImageLayout p_Layout,
                                                                            const u32 p_ResolveIndex) noexcept
 {
-    m_ColorAttachments.push_back(VkAttachmentReference{p_AttachmentIndex, p_Layout});
+    m_ColorAttachments.Append(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     if (p_ResolveIndex != UINT32_MAX)
     {
-        m_ResolveAttachments.push_back(VkAttachmentReference{p_ResolveIndex, p_Layout});
-        TKIT_ASSERT(m_ResolveAttachments.size() == m_ColorAttachments.size(),
+        m_ResolveAttachments.Append(VkAttachmentReference{p_ResolveIndex, p_Layout});
+        TKIT_ASSERT(m_ResolveAttachments.GetSize() == m_ColorAttachments.GetSize(),
                     "[VULKIT] Mismatched color and resolve attachments");
     }
     return *this;
@@ -465,12 +465,12 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddInputAttachment(const u32 p_AttachmentIndex,
                                                                            const VkImageLayout p_Layout) noexcept
 {
-    m_InputAttachments.push_back(VkAttachmentReference{p_AttachmentIndex, p_Layout});
+    m_InputAttachments.Append(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     return *this;
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddPreserveAttachment(const u32 p_AttachmentIndex) noexcept
 {
-    m_PreserveAttachments.push_back(p_AttachmentIndex);
+    m_PreserveAttachments.Append(p_AttachmentIndex);
     return *this;
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetDepthStencilAttachment(const u32 p_AttachmentIndex,
@@ -486,13 +486,13 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetFlags(const VkSubpass
 }
 RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass() noexcept
 {
-    m_Description.colorAttachmentCount = m_ColorAttachments.size();
-    m_Description.pColorAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
-    m_Description.inputAttachmentCount = m_InputAttachments.size();
-    m_Description.pInputAttachments = m_InputAttachments.empty() ? nullptr : m_InputAttachments.data();
-    m_Description.preserveAttachmentCount = m_PreserveAttachments.size();
-    m_Description.pPreserveAttachments = m_PreserveAttachments.empty() ? nullptr : m_PreserveAttachments.data();
-    m_Description.pResolveAttachments = m_ResolveAttachments.empty() ? nullptr : m_ResolveAttachments.data();
+    m_Description.colorAttachmentCount = m_ColorAttachments.GetSize();
+    m_Description.pColorAttachments = m_ColorAttachments.IsEmpty() ? nullptr : m_ColorAttachments.GetData();
+    m_Description.inputAttachmentCount = m_InputAttachments.GetSize();
+    m_Description.pInputAttachments = m_InputAttachments.IsEmpty() ? nullptr : m_InputAttachments.GetData();
+    m_Description.preserveAttachmentCount = m_PreserveAttachments.GetSize();
+    m_Description.pPreserveAttachments = m_PreserveAttachments.IsEmpty() ? nullptr : m_PreserveAttachments.GetData();
+    m_Description.pResolveAttachments = m_ResolveAttachments.IsEmpty() ? nullptr : m_ResolveAttachments.GetData();
     m_Description.pDepthStencilAttachment =
         m_DepthStencilAttachment.attachment == UINT32_MAX ? nullptr : &m_DepthStencilAttachment;
 

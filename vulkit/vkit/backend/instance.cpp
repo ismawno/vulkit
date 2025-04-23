@@ -100,27 +100,27 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     TKit::StaticArray64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
         if (!contains(extensions, extension))
-            extensions.push_back(extension);
+            extensions.Append(extension);
 
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = System::IsExtensionSupported(extension);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The extension {} is not suported", extension);
         if (supported && !contains(extensions, extension))
-            extensions.push_back(extension);
+            extensions.Append(extension);
     }
 
     TKit::StaticArray16<const char *> layers;
     for (const char *layer : m_RequiredLayers)
         if (!contains(layers, layer))
-            layers.push_back(layer);
+            layers.Append(layer);
 
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = System::IsLayerSupported(layer);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The layer {} is not suported", layer);
         if (supported && !contains(layers, layer))
-            layers.push_back(layer);
+            layers.Append(layer);
     }
 
     bool validationLayers = false;
@@ -135,22 +135,22 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
                 "Validation layers (along with the debug utils extension) are not suported");
 
         if (validationLayers && !contains(extensions, "VK_EXT_debug_utils"))
-            extensions.push_back("VK_EXT_debug_utils");
+            extensions.Append("VK_EXT_debug_utils");
 
         if (validationLayers && !contains(layers, "VK_LAYER_KHRONOS_validation"))
-            layers.push_back("VK_LAYER_KHRONOS_validation");
+            layers.Append("VK_LAYER_KHRONOS_validation");
     }
 
     const bool properties2Support = apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
                                     System::IsExtensionSupported("VK_KHR_get_physical_device_properties2");
 
     if (properties2Support && !contains(extensions, "VK_KHR_get_physical_device_properties2"))
-        extensions.push_back("VK_KHR_get_physical_device_properties2");
+        extensions.Append("VK_KHR_get_physical_device_properties2");
 
 #ifdef VK_KHR_portability_enumeration
     const bool portabilitySupport = System::IsExtensionSupported("VK_KHR_portability_enumeration");
     if (portabilitySupport && !contains(extensions, "VK_KHR_portability_enumeration"))
-        extensions.push_back("VK_KHR_portability_enumeration");
+        extensions.Append("VK_KHR_portability_enumeration");
 #endif
 
     if (!m_Headless)
@@ -159,7 +159,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
             if (!System::IsExtensionSupported(p_Extension))
                 return false;
             if (!contains(extensions, p_Extension))
-                extensions.push_back(p_Extension);
+                extensions.Append(p_Extension);
             return true;
         };
 
@@ -223,10 +223,10 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     VkInstanceCreateInfo instanceInfo{};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pApplicationInfo = &appInfo;
-    instanceInfo.enabledExtensionCount = extensions.size();
-    instanceInfo.ppEnabledExtensionNames = extensions.data();
-    instanceInfo.enabledLayerCount = layers.size();
-    instanceInfo.ppEnabledLayerNames = layers.data();
+    instanceInfo.enabledExtensionCount = extensions.GetSize();
+    instanceInfo.ppEnabledExtensionNames = extensions.GetData();
+    instanceInfo.enabledLayerCount = layers.GetSize();
+    instanceInfo.ppEnabledLayerNames = layers.GetData();
     instanceInfo.pNext = validationLayers ? &msgInfo : nullptr;
 #ifdef VK_KHR_portability_enumeration
     if (portabilitySupport)
@@ -388,42 +388,42 @@ Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Major, u32 p_Minor
 }
 Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension) noexcept
 {
-    m_RequiredExtensions.push_back(p_Extension);
+    m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept
 {
-    m_RequiredExtensions.insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension) noexcept
 {
-    m_RequestedExtensions.push_back(p_Extension);
+    m_RequestedExtensions.Append(p_Extension);
     return *this;
 }
 Instance::Builder &Instance::Builder::RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept
 {
-    m_RequestedExtensions.insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
+    m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer) noexcept
 {
-    m_RequiredLayers.push_back(p_Layer);
+    m_RequiredLayers.Append(p_Layer);
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireLayers(TKit::Span<const char *const> p_Layers) noexcept
 {
-    m_RequiredLayers.insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
+    m_RequiredLayers.Insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer) noexcept
 {
-    m_RequestedLayers.push_back(p_Layer);
+    m_RequestedLayers.Append(p_Layer);
     return *this;
 }
 Instance::Builder &Instance::Builder::RequestLayers(TKit::Span<const char *const> p_Layers) noexcept
 {
-    m_RequestedLayers.insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
+    m_RequestedLayers.Insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireValidationLayers() noexcept

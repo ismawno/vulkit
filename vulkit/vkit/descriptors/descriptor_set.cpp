@@ -17,20 +17,20 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const TKit::Span
                          const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
-    if (!p_DynamicOffsets.empty())
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.size(), p_Sets.data(),
-                                p_DynamicOffsets.size(), p_DynamicOffsets.data());
+    if (!p_DynamicOffsets.IsEmpty())
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(), p_Sets.GetData(),
+                                p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
     else
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.size(), p_Sets.data(), 0,
-                                nullptr);
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(), p_Sets.GetData(),
+                                0, nullptr);
 }
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkDescriptorSet p_Set,
                          const VkPipelineBindPoint p_BindPoint, const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets) noexcept
 {
-    if (!p_DynamicOffsets.empty())
-        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, p_DynamicOffsets.size(),
-                                p_DynamicOffsets.data());
+    if (!p_DynamicOffsets.IsEmpty())
+        vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,
+                                p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
     else
         vkCmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, 0, nullptr);
 }
@@ -66,7 +66,7 @@ void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorB
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
 
-    m_Writes.push_back(write);
+    m_Writes.Append(write);
 }
 
 void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const Buffer &p_Buffer) noexcept
@@ -87,14 +87,14 @@ void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorIm
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
 
-    m_Writes.push_back(write);
+    m_Writes.Append(write);
 }
 
 void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set) noexcept
 {
     for (VkWriteDescriptorSet &write : m_Writes)
         write.dstSet = p_Set;
-    vkUpdateDescriptorSets(m_Device, m_Writes.size(), m_Writes.data(), 0, nullptr);
+    vkUpdateDescriptorSets(m_Device, m_Writes.GetSize(), m_Writes.GetData(), 0, nullptr);
 }
 
 } // namespace VKit

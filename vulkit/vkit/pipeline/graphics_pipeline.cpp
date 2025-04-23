@@ -85,19 +85,19 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
                                       const TKit::Span<GraphicsPipeline> p_Pipelines,
                                       const VkPipelineCache p_Cache) noexcept
 {
-    if (p_Builders.size() != p_Pipelines.size())
+    if (p_Builders.GetSize() != p_Pipelines.GetSize())
         return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
-    if (p_Builders.size() == 0)
+    if (p_Builders.GetSize() == 0)
         return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
 
     TKit::StaticArray32<VkGraphicsPipelineCreateInfo> pipelineInfos;
     for (Builder &builder : p_Builders)
-        pipelineInfos.push_back(builder.CreatePipelineInfo());
+        pipelineInfos.Append(builder.CreatePipelineInfo());
 
-    const u32 count = p_Builders.size();
+    const u32 count = p_Builders.GetSize();
     TKit::StaticArray32<VkPipeline> pipelines{count};
-    const VkResult result = vkCreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.data(),
-                                                      p_Device.AllocationCallbacks, pipelines.data());
+    const VkResult result = vkCreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
+                                                      p_Device.AllocationCallbacks, pipelines.GetData());
 
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to create graphics pipelines");
@@ -146,23 +146,23 @@ GraphicsPipeline::operator bool() const noexcept
 
 VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noexcept
 {
-    m_ColorBlendInfo.attachmentCount = m_ColorAttachments.size();
-    m_ColorBlendInfo.pAttachments = m_ColorAttachments.empty() ? nullptr : m_ColorAttachments.data();
+    m_ColorBlendInfo.attachmentCount = m_ColorAttachments.GetSize();
+    m_ColorBlendInfo.pAttachments = m_ColorAttachments.IsEmpty() ? nullptr : m_ColorAttachments.GetData();
 
-    m_DynamicStateInfo.dynamicStateCount = m_DynamicStates.size();
-    m_DynamicStateInfo.pDynamicStates = m_DynamicStates.empty() ? nullptr : m_DynamicStates.data();
+    m_DynamicStateInfo.dynamicStateCount = m_DynamicStates.GetSize();
+    m_DynamicStateInfo.pDynamicStates = m_DynamicStates.IsEmpty() ? nullptr : m_DynamicStates.GetData();
 
-    m_VertexInputInfo.vertexAttributeDescriptionCount = m_AttributeDescriptions.size();
-    m_VertexInputInfo.vertexBindingDescriptionCount = m_BindingDescriptions.size();
+    m_VertexInputInfo.vertexAttributeDescriptionCount = m_AttributeDescriptions.GetSize();
+    m_VertexInputInfo.vertexBindingDescriptionCount = m_BindingDescriptions.GetSize();
     m_VertexInputInfo.pVertexAttributeDescriptions =
-        m_AttributeDescriptions.empty() ? nullptr : m_AttributeDescriptions.data();
+        m_AttributeDescriptions.IsEmpty() ? nullptr : m_AttributeDescriptions.GetData();
     m_VertexInputInfo.pVertexBindingDescriptions =
-        m_BindingDescriptions.empty() ? nullptr : m_BindingDescriptions.data();
+        m_BindingDescriptions.IsEmpty() ? nullptr : m_BindingDescriptions.GetData();
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = m_ShaderStages.size();
-    pipelineInfo.pStages = m_ShaderStages.empty() ? nullptr : m_ShaderStages.data();
+    pipelineInfo.stageCount = m_ShaderStages.GetSize();
+    pipelineInfo.pStages = m_ShaderStages.IsEmpty() ? nullptr : m_ShaderStages.GetData();
     pipelineInfo.pVertexInputState = &m_VertexInputInfo;
     pipelineInfo.pInputAssemblyState = &m_InputAssemblyInfo;
     pipelineInfo.pViewportState = &m_ViewportInfo;
@@ -219,20 +219,20 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart() 
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport,
                                                                   const VkRect2D p_Scissor) noexcept
 {
-    m_Viewports.push_back(std::make_pair(p_Viewport, p_Scissor));
+    m_Viewports.Append(std::make_pair(p_Viewport, p_Scissor));
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewports(
     const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
 {
     for (const auto &viewport : p_Viewports)
-        m_Viewports.push_back(viewport);
+        m_Viewports.Append(viewport);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewports(
     const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
 {
-    m_Viewports.clear();
+    m_Viewports.Clear();
     AddViewports(p_Viewports);
     return *this;
 }
@@ -392,13 +392,13 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment() noexcept
 {
-    m_ColorAttachmentBuilders.emplace_back(this);
-    m_ColorAttachments.push_back(m_ColorAttachmentBuilders.back().m_ColorBlendAttachmentInfo);
+    m_ColorAttachmentBuilders.Append(this);
+    m_ColorAttachments.Append(m_ColorAttachmentBuilders.GetBack().m_ColorBlendAttachmentInfo);
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorAttachment() noexcept
 {
-    return m_ColorAttachmentBuilders.emplace_back(this);
+    return m_ColorAttachmentBuilders.Append(this);
 }
 
 // Depth and Stencil
@@ -522,10 +522,10 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(cons
                                                                             const u32 p_Stride) noexcept
 {
     VkVertexInputBindingDescription binding{};
-    binding.binding = m_BindingDescriptions.size();
+    binding.binding = m_BindingDescriptions.GetSize();
     binding.stride = p_Stride;
     binding.inputRate = p_InputRate;
-    m_BindingDescriptions.push_back(binding);
+    m_BindingDescriptions.Append(binding);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(const u32 p_Binding,
@@ -535,9 +535,9 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(co
     VkVertexInputAttributeDescription attribute{};
     attribute.binding = p_Binding;
     attribute.format = p_Format;
-    attribute.location = m_AttributeDescriptions.size();
+    attribute.location = m_AttributeDescriptions.GetSize();
     attribute.offset = p_Offset;
-    m_AttributeDescriptions.push_back(attribute);
+    m_AttributeDescriptions.Append(attribute);
     return *this;
 }
 
@@ -555,27 +555,27 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkSha
     stage.flags = p_Flags;
     stage.pSpecializationInfo = p_Info;
     stage.pName = p_EntryPoint;
-    m_ShaderStages.push_back(stage);
+    m_ShaderStages.Append(stage);
     return *this;
 }
 
 // Dynamic State
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState p_State) noexcept
 {
-    m_DynamicStates.push_back(p_State);
+    m_DynamicStates.Append(p_State);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(
     const TKit::Span<const VkDynamicState> p_States) noexcept
 {
     for (const VkDynamicState state : p_States)
-        m_DynamicStates.push_back(state);
+        m_DynamicStates.Append(state);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(
     const TKit::Span<const VkDynamicState> p_States) noexcept
 {
-    m_DynamicStates.clear();
+    m_DynamicStates.Clear();
     AddDynamicStates(p_States);
     return *this;
 }
@@ -637,7 +637,7 @@ GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuild
 }
 GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAttachment() noexcept
 {
-    m_Builder->m_ColorAttachments.push_back(m_ColorBlendAttachmentInfo);
+    m_Builder->m_ColorAttachments.Append(m_ColorBlendAttachmentInfo);
     return *m_Builder;
 }
 

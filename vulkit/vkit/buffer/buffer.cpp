@@ -16,7 +16,7 @@ Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
     info.Allocator = p_Specs.Allocator;
     info.InstanceSize = p_Specs.InstanceSize;
     info.InstanceCount = p_Specs.InstanceCount;
-    info.InstanceAlignedSize = alignedSize(p_Specs.InstanceSize, p_Specs.MinimumAlignment);
+    info.InstanceAlignedSize = alignedSize(p_Specs.InstanceSize, p_Specs.PerInstanceMinimumAlignment);
     info.Size = info.InstanceAlignedSize * p_Specs.InstanceCount;
 
     VkBufferCreateInfo bufferInfo{};
@@ -74,14 +74,14 @@ void Buffer::Unmap() noexcept
 void Buffer::Write(const void *p_Data) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKit::Memory::Copy(m_Data, p_Data, m_Info.Size);
+    TKit::Memory::ForwardCopy(m_Data, p_Data, m_Info.Size);
 }
 
 void Buffer::Write(const void *p_Data, const VkDeviceSize p_Size) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= p_Size, "[VULKIT] Buffer size is smaller than the data size");
-    TKit::Memory::Copy(m_Data, p_Data, p_Size);
+    TKit::Memory::ForwardCopy(m_Data, p_Data, p_Size);
 }
 
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
@@ -90,13 +90,13 @@ void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p
     TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
 
     std::byte *offsetted = static_cast<std::byte *>(m_Data) + p_Offset;
-    TKit::Memory::Copy(offsetted, p_Data, p_Size);
+    TKit::Memory::ForwardCopy(offsetted, p_Data, p_Size);
 }
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     std::byte *offsetted = static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
-    TKit::Memory::Copy(offsetted, p_Data, m_Info.InstanceSize);
+    TKit::Memory::ForwardCopy(offsetted, p_Data, m_Info.InstanceSize);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
@@ -122,6 +122,42 @@ void Buffer::InvalidateAt(const u32 p_Index) noexcept
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
+
+template <typename Index>
+void Buffer::BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
+{
+    if constexpr (std::is_same_v<Index, u8>)
+        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
+    else if constexpr (std::is_same_v<Index, u16>)
+        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
+    else if constexpr (std::is_same_v<Index, u32>)
+        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
+}
+
+void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
+{
+    vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
+}
+
+void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
+                                const u32 p_FirstBinding, const TKit::Span<const VkDeviceSize> p_Offsets) noexcept
+{
+    if (!p_Offsets.IsEmpty())
+        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
+                               p_Offsets.GetData());
+    else
+        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(), nullptr);
+}
+
+void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
+                                const VkDeviceSize p_Offset) const noexcept
+{
+    vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+}
+
+template void Buffer::BindAsIndexBuffer<u8>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
+template void Buffer::BindAsIndexBuffer<u16>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
+template void Buffer::BindAsIndexBuffer<u32>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
 
 VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const noexcept
 {

@@ -11,8 +11,8 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
 {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = m_Bindings.size();
-    layoutInfo.pBindings = m_Bindings.data();
+    layoutInfo.bindingCount = m_Bindings.GetSize();
+    layoutInfo.pBindings = m_Bindings.GetData();
 
     VkDescriptorSetLayout layout;
     const VkResult result = vkCreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
@@ -62,11 +62,11 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescrip
                                                                        u32 p_Count) noexcept
 {
     VkDescriptorSetLayoutBinding binding{};
-    binding.binding = m_Bindings.size();
+    binding.binding = m_Bindings.GetSize();
     binding.descriptorType = p_Type;
     binding.descriptorCount = p_Count;
     binding.stageFlags = p_StageFlags;
-    m_Bindings.push_back(binding);
+    m_Bindings.Append(binding);
     return *this;
 }
 

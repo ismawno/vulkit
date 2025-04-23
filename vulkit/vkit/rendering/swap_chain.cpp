@@ -42,12 +42,12 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
     TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
-    if (imageFormats.empty())
-        imageFormats.push_back(VkSurfaceFormatKHR{VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
-    if (presentModes.empty())
+    if (imageFormats.IsEmpty())
+        imageFormats.Append(VkSurfaceFormatKHR{VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
+    if (presentModes.IsEmpty())
     {
-        presentModes.push_back(VK_PRESENT_MODE_MAILBOX_KHR);
-        presentModes.push_back(VK_PRESENT_MODE_FIFO_KHR);
+        presentModes.Append(VK_PRESENT_MODE_MAILBOX_KHR);
+        presentModes.Append(VK_PRESENT_MODE_FIFO_KHR);
     }
 
     const auto suppResult = m_Device->QuerySwapChainSupport(m_Surface);
@@ -187,16 +187,16 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     }
 
     TKit::StaticArray4<VkImage> images;
-    images.resize(imageCount);
+    images.Resize(imageCount);
 
-    result = getImages(proxy, swapChain, &imageCount, images.data());
+    result = getImages(proxy, swapChain, &imageCount, images.GetData());
     if (result != VK_SUCCESS)
     {
         earlyDestroy();
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images");
     }
 
-    info.ImageData.resize(imageCount);
+    info.ImageData.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
     {
         info.ImageData[i].Image = images[i];
@@ -252,7 +252,7 @@ void SwapChain::destroy() const noexcept
 VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
                                           const TKit::Span<SyncData> p_Objects) noexcept
 {
-    for (u32 i = 0; i < p_Objects.size(); ++i)
+    for (u32 i = 0; i < p_Objects.GetSize(); ++i)
     {
         VkSemaphoreCreateInfo semaphoreInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -330,22 +330,22 @@ SwapChain::operator bool() const noexcept
 
 SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format) noexcept
 {
-    m_SurfaceFormats.insert(m_SurfaceFormats.begin(), p_Format);
+    m_SurfaceFormats.Insert(m_SurfaceFormats.begin(), p_Format);
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormatKHR p_Format) noexcept
 {
-    m_SurfaceFormats.push_back(p_Format);
+    m_SurfaceFormats.Append(p_Format);
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode) noexcept
 {
-    m_PresentModes.insert(m_PresentModes.begin(), p_Mode);
+    m_PresentModes.Insert(m_PresentModes.begin(), p_Mode);
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::AllowPresentMode(const VkPresentModeKHR p_Mode) noexcept
 {
-    m_PresentModes.push_back(p_Mode);
+    m_PresentModes.Append(p_Mode);
     return *this;
 }
 SwapChain::Builder &SwapChain::Builder::RequestImageCount(const u32 p_Images) noexcept

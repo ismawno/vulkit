@@ -22,7 +22,7 @@ class HostVisibleBuffer
         VmaAllocator Allocator = VK_NULL_HANDLE;
         VkDeviceSize Capacity;
         VkBufferUsageFlags Usage;
-        VkDeviceSize MinimumAlignment = 1;
+        VkDeviceSize PerInstanceMinimumAlignment = 1;
         VmaAllocationCreateFlags AllocationFlags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         bool Coherent = false;
     };
@@ -61,7 +61,7 @@ class HostVisibleBuffer
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
         if (p_Specs.Coherent)
             specs.AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-        specs.MinimumAlignment = p_Specs.MinimumAlignment;
+        specs.PerInstanceMinimumAlignment = p_Specs.PerInstanceMinimumAlignment;
 
         const auto result = Buffer::Create(specs);
         if (!result)
@@ -126,7 +126,7 @@ class HostVisibleBuffer
         specs.Usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
         specs.Coherent = p_Specs.Coherent;
-        specs.MinimumAlignment = p_Alignment;
+        specs.PerInstanceMinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
@@ -148,7 +148,7 @@ class HostVisibleBuffer
         specs.Usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
         specs.AllocationFlags = p_Specs.AllocationFlags;
         specs.Coherent = p_Specs.Coherent;
-        specs.MinimumAlignment = p_Alignment;
+        specs.PerInstanceMinimumAlignment = p_Alignment;
         return Create(specs);
     }
 
@@ -170,7 +170,7 @@ class HostVisibleBuffer
     /**
      * @brief Writes data to the buffer, up to the buffer size.
      *
-     * The buffer must be mapped before calling this method.
+     * The buffer must be host visible and mapped before calling this method.
      * Be very mindful of the alignment requirements of the buffer.
      *
      * @param p_Data A pointer to the data to write.
@@ -183,7 +183,7 @@ class HostVisibleBuffer
     /**
      * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be mapped before calling this method.
+     * The buffer must be host visible and mapped before calling this method.
      * Be very mindful of the alignment requirements of the buffer.
      *
      * @param p_Data A pointer to the data to write.
@@ -197,7 +197,7 @@ class HostVisibleBuffer
     /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be mapped before calling this method.
+     * The buffer must be host visible and mapped before calling this method.
      * Be very mindful of the alignment requirements of the buffer.
      *
      * @param p_Data A pointer to the data to write.
@@ -213,7 +213,7 @@ class HostVisibleBuffer
      * @brief Writes data to the buffer at the specified index.
      *
      * Copies the provided data into the buffer at the specified index.
-     * The buffer must be mapped before calling this method.
+     * The buffer must be host visible and mapped before calling this method.
      *
      * Automatically handles alignment requirements.
      *
@@ -264,25 +264,14 @@ class HostVisibleBuffer
     /**
      * @brief Binds the buffer as an index buffer to a command buffer.
      *
-     * Automatically determines the index type (`u8`, `u16`, or `u32`) based on the buffer's template parameter.
+     * Automatically detects the index type (`u8`, `u16`, or `u32`) based on the buffer's template parameter.
      *
      * @param p_CommandBuffer The command buffer to bind the index buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
     void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
-        if constexpr (std::is_same_v<T, u8>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT8_EXT);
-        else if constexpr (std::is_same_v<T, u16>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT16);
-        else if constexpr (std::is_same_v<T, u32>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer.GetBuffer(), p_Offset, VK_INDEX_TYPE_UINT32);
-#ifdef TKIT_ENABLE_ASSERTS
-        else
-        {
-            TKIT_ERROR("Invalid index type");
-        }
-#endif
+        m_Buffer.BindAsIndexBuffer<T>(p_CommandBuffer, p_Offset);
     }
 
     /**
@@ -293,8 +282,7 @@ class HostVisibleBuffer
      */
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
     {
-        const VkBuffer buffer = m_Buffer.GetBuffer();
-        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &buffer, &p_Offset);
+        m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Offset);
     }
 
     /**
@@ -305,12 +293,10 @@ class HostVisibleBuffer
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
     static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
+                                   const u32 p_FirstBinding = 0,
                                    const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
-        if (!p_Offsets.empty())
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), p_Offsets.data());
-        else
-            vkCmdBindVertexBuffers(p_CommandBuffer, 0, p_Buffers.size(), p_Buffers.data(), nullptr);
+        Buffer::BindAsVertexBuffer(p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
     }
 
     /**
@@ -322,7 +308,7 @@ class HostVisibleBuffer
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
                             const VkDeviceSize p_Offset = 0) const noexcept
     {
-        vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+        m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Buffer, p_Offset);
     }
 
     VkBuffer GetBuffer() const noexcept

@@ -20,6 +20,14 @@ class CommandPool;
 class VKIT_API Buffer
 {
   public:
+    /**
+     * @brief Specifications for creating a Vulkan buffer.
+     *
+     * @note: The `PerInstanceMinimumAlignment` is only needed when binding, flushing or invalidating specific parts of
+     * the buffer, as the offsets used have to be aligned to a certain offset, provided by the device. If the buffer is
+     * going to be operated on as a whole, this must be set to 1.
+     */
+
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
@@ -27,7 +35,7 @@ class VKIT_API Buffer
         VkDeviceSize InstanceSize;
         VkBufferUsageFlags Usage;
         VmaAllocationCreateInfo AllocationInfo;
-        VkDeviceSize MinimumAlignment = 1;
+        VkDeviceSize PerInstanceMinimumAlignment = 1;
     };
 
     struct Info
@@ -63,8 +71,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer, up to the buffer size.
      *
-     * The buffer must be mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
+     * The buffer must be host visible and mapped before calling this method.
      *
      * @param p_Data A pointer to the data to write.
      */
@@ -73,8 +80,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer, up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
+     * The buffer must be host visible and mapped before calling this method.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Size The size of the data to write.
@@ -84,8 +90,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be mapped before calling this method.
-     * Be very mindful of the alignment requirements of the buffer.
+     * The buffer must be host visible and mapped before calling this method.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Size The size of the data to write.
@@ -96,9 +101,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer at the specified index.
      *
-     * The buffer must be mapped before calling this method.
-     *
-     * Automatically handles alignment requirements.
+     * The buffer must be host visible and mapped before calling this method.
      *
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
@@ -126,6 +129,44 @@ class VKIT_API Buffer
 
     void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
     void InvalidateAt(u32 p_Index) noexcept;
+
+    /**
+     * @brief Binds the buffer as an index buffer to a command buffer.
+     *
+     * Automatically detects the index type (`u8`, `u16`, or `u32`) based on the buffer's template parameter.
+     *
+     * @param p_CommandBuffer The command buffer to bind the index buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    template <typename Index>
+    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
+
+    /**
+     * @brief Binds the buffer as a vertex buffer to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
+
+    /**
+     * @brief Binds multiple buffers as vertex buffers to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffers to.
+     * @param p_Buffers A span containing the buffers to bind.
+     * @param p_Offsets A span containing the offsets within the buffers (default: 0).
+     */
+    static void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, TKit::Span<const VkBuffer> p_Buffers,
+                                   u32 p_FirstBinding = 0, TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept;
+
+    /**
+     * @brief Binds a buffer as a vertex buffer to a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
+     * @param p_Offset The offset within the buffer (default: 0).
+     */
+    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer,
+                            VkDeviceSize p_Offset = 0) const noexcept;
 
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE,
                                              VkDeviceSize p_Offset = 0) const noexcept;

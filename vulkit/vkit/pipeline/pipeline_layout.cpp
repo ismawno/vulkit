@@ -11,10 +11,10 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
 {
     VkPipelineLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    layoutInfo.setLayoutCount = m_DescriptorSetLayouts.size();
-    layoutInfo.pSetLayouts = m_DescriptorSetLayouts.empty() ? nullptr : m_DescriptorSetLayouts.data();
-    layoutInfo.pushConstantRangeCount = m_PushConstantRanges.size();
-    layoutInfo.pPushConstantRanges = m_PushConstantRanges.empty() ? nullptr : m_PushConstantRanges.data();
+    layoutInfo.setLayoutCount = m_DescriptorSetLayouts.GetSize();
+    layoutInfo.pSetLayouts = m_DescriptorSetLayouts.IsEmpty() ? nullptr : m_DescriptorSetLayouts.GetData();
+    layoutInfo.pushConstantRangeCount = m_PushConstantRanges.GetSize();
+    layoutInfo.pPushConstantRanges = m_PushConstantRanges.IsEmpty() ? nullptr : m_PushConstantRanges.GetData();
     layoutInfo.flags = m_Flags;
 
     VkPipelineLayout layout;
@@ -66,13 +66,13 @@ PipelineLayout::operator bool() const noexcept
 
 PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout) noexcept
 {
-    m_DescriptorSetLayouts.push_back(p_Layout);
+    m_DescriptorSetLayouts.Append(p_Layout);
     return *this;
 }
 PipelineLayout::Builder &PipelineLayout::Builder::AddPushConstantRange(const VkShaderStageFlags p_Stages,
                                                                        const u32 p_Size, const u32 p_Offset) noexcept
 {
-    m_PushConstantRanges.push_back(VkPushConstantRange{p_Stages, p_Offset, p_Size});
+    m_PushConstantRanges.Append(VkPushConstantRange{p_Stages, p_Offset, p_Size});
     return *this;
 }
 PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags p_Flags) noexcept

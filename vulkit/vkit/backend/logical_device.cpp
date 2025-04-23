@@ -15,14 +15,14 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfo.queueFamilyIndex = priorities.Index;
-        queueCreateInfo.queueCount = priorities.Priorities.size();
-        queueCreateInfo.pQueuePriorities = priorities.Priorities.data();
-        queueCreateInfos.push_back(queueCreateInfo);
+        queueCreateInfo.queueCount = priorities.Priorities.GetSize();
+        queueCreateInfo.pQueuePriorities = priorities.Priorities.GetData();
+        queueCreateInfos.Append(queueCreateInfo);
     }
 
     TKit::StaticArray256<const char *> enabledExtensions;
     for (const std::string &extension : devInfo.EnabledExtensions)
-        enabledExtensions.push_back(extension.c_str());
+        enabledExtensions.Append(extension.c_str());
 
     const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
     const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
@@ -51,12 +51,12 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     else
         createInfo.pEnabledFeatures = &devInfo.EnabledFeatures.Core;
 
-    createInfo.queueCreateInfoCount = queueCreateInfos.size();
-    createInfo.pQueueCreateInfos = queueCreateInfos.data();
-    createInfo.enabledExtensionCount = enabledExtensions.size();
-    createInfo.ppEnabledExtensionNames = enabledExtensions.data();
-    createInfo.enabledLayerCount = instanceInfo.EnabledLayers.size();
-    createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.data();
+    createInfo.queueCreateInfoCount = queueCreateInfos.GetSize();
+    createInfo.pQueueCreateInfos = queueCreateInfos.GetData();
+    createInfo.enabledExtensionCount = enabledExtensions.GetSize();
+    createInfo.ppEnabledExtensionNames = enabledExtensions.GetData();
+    createInfo.enabledLayerCount = instanceInfo.EnabledLayers.GetSize();
+    createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.GetData();
 
     VkDevice device;
     const VkResult result = vkCreateDevice(p_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
@@ -68,14 +68,14 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
 {
-    const u32 queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.size();
+    const u32 queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.GetSize();
     TKit::StaticArray8<QueuePriorities> queuePriorities;
     for (u32 i = 0; i < queueFamilyCount; ++i)
     {
         QueuePriorities priorities;
         priorities.Index = i;
-        priorities.Priorities.resize(1, 1.0f);
-        queuePriorities.push_back(priorities);
+        priorities.Priorities.Resize(1, 1.0f);
+        queuePriorities.Append(priorities);
     }
     return Create(p_Instance, p_PhysicalDevice, queuePriorities);
 }

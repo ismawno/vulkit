@@ -54,13 +54,13 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
         const auto result = createPipelineInfo(specs);
         if (!result)
             return result.GetError();
-        pipelineInfos.push_back(result.GetValue());
+        pipelineInfos.Append(result.GetValue());
     }
 
-    const u32 count = p_Specs.size();
+    const u32 count = p_Specs.GetSize();
     TKit::StaticArray32<VkPipeline> pipelines{count};
-    const VkResult result = vkCreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.data(),
-                                                     p_Device.AllocationCallbacks, pipelines.data());
+    const VkResult result = vkCreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
+                                                     p_Device.AllocationCallbacks, pipelines.GetData());
     if (result != VK_SUCCESS)
         return VulkanResult::Error(result, "Failed to create compute pipelines");
 
