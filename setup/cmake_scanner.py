@@ -181,7 +181,7 @@ cfg = ConfigParser(allow_no_value=True)
 cfg.read(root / "build.ini")
 
 sections = {sc: dict(cfg[sc]) for sc in cfg.sections()}
-cfg.Clear()
+cfg.clear()
 
 cfg.add_section("default-values")
 cfg.set(
