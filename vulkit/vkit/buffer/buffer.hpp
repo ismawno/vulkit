@@ -131,8 +131,17 @@ class VKIT_API Buffer
      * @param p_Offset The offset within the buffer (default: 0).
      */
     template <typename Index>
-    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
-
+    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept
+    {
+        static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
+                      "[VULKIT] Index type must be u8, u16 or u32");
+        if constexpr (std::is_same_v<Index, u8>)
+            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
+        else if constexpr (std::is_same_v<Index, u16>)
+            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
+        else if constexpr (std::is_same_v<Index, u32>)
+            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
+    }
     /**
      * @brief Binds the buffer as a vertex buffer to a command buffer.
      *

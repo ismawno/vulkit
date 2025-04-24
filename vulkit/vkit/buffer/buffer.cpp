@@ -121,17 +121,6 @@ void Buffer::InvalidateAt(const u32 p_Index) noexcept
     Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-template <typename Index>
-void Buffer::BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
-{
-    if constexpr (std::is_same_v<Index, u8>)
-        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
-    else if constexpr (std::is_same_v<Index, u16>)
-        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
-    else if constexpr (std::is_same_v<Index, u32>)
-        vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
-}
-
 void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
 {
     vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
@@ -152,10 +141,6 @@ void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkB
 {
     vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
 }
-
-template void Buffer::BindAsIndexBuffer<u8>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
-template void Buffer::BindAsIndexBuffer<u16>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
-template void Buffer::BindAsIndexBuffer<u32>(const VkCommandBuffer, const VkDeviceSize) const noexcept;
 
 VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const noexcept
 {
