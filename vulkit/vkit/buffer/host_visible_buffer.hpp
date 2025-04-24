@@ -109,7 +109,6 @@ class HostVisibleBuffer
     HostVisibleBuffer() noexcept = default;
     explicit HostVisibleBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
     {
-        m_Buffer.Map();
     }
 
     void Destroy() noexcept
