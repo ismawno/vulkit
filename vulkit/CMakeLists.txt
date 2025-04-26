@@ -3,11 +3,11 @@ project(vulkit)
 
 set(SOURCES
     vkit/core/pch.cpp
-    vkit/backend/logical_device.cpp
-    vkit/backend/physical_device.cpp
-    vkit/backend/instance.cpp
-    vkit/backend/system.cpp
-    vkit/backend/command_pool.cpp
+    vkit/vulkan/logical_device.cpp
+    vkit/vulkan/physical_device.cpp
+    vkit/vulkan/instance.cpp
+    vkit/vulkan/system.cpp
+    vkit/rendering/command_pool.cpp
     vkit/rendering/render_pass.cpp
     vkit/rendering/swap_chain.cpp
     vkit/buffer/buffer.cpp

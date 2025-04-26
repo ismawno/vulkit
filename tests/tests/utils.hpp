@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/backend/system.hpp"
+#include "vkit/vulkan/system.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 namespace VKit

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/backend/instance.hpp"
+#include "vkit/vulkan/instance.hpp"
 
 namespace VKit
 {

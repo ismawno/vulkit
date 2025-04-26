@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vkit/buffer/buffer.hpp"
-#include "vkit/backend/command_pool.hpp"
+#include "vkit/rendering/command_pool.hpp"
 
 namespace VKit
 {

@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/backend/instance.hpp"
+#include "vkit/vulkan/instance.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/logging.hpp"
 
@@ -62,8 +62,13 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         if (p_Version < VKIT_MAKE_VERSION(0, 1, 1, 0))
             return FormattedResult<u32>::Ok(p_Version); // You just cant check versions at this point
 
+        const auto enumerateInstanceVersion =
+            System::GetInstanceFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
+        if (!enumerateInstanceVersion)
+            return FormattedResult<u32>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                               "The vkEnumerateInstanceVersion function does not exist");
         u32 version;
-        const VkResult result = vkEnumerateInstanceVersion(&version);
+        const VkResult result = enumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
             return FormattedResult<u32>::Error(result, "Failed to get the vulkan instance version");
 

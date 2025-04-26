@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/backend/physical_device.hpp"
+#include "vkit/vulkan/physical_device.hpp"
 
 #ifndef VKIT_MAX_QUEUES_PER_FAMILY
 #    define VKIT_MAX_QUEUES_PER_FAMILY 4

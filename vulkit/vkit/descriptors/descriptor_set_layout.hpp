@@ -2,7 +2,7 @@
 
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/backend/logical_device.hpp"
+#include "vkit/vulkan/logical_device.hpp"
 #include "tkit/utils/non_copyable.hpp"
 
 #include <vulkan/vulkan.h>

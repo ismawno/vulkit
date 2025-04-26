@@ -1,7 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/buffer/buffer.hpp"
-#include "vkit/backend/command_pool.hpp"
-#include "vkit/backend/system.hpp"
+#include "vkit/rendering/command_pool.hpp"
+#include "vkit/vulkan/system.hpp"
 
 namespace VKit
 {

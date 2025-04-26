@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vkit/core/alias.hpp"
-#include "vkit/backend/logical_device.hpp"
+#include "vkit/vulkan/logical_device.hpp"
 
 namespace VKit
 {

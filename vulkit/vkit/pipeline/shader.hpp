@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/backend/logical_device.hpp"
+#include "vkit/vulkan/logical_device.hpp"
 #include <vulkan/vulkan.h>
 
 #ifndef VKIT_MAX_SHADER_SIZE
