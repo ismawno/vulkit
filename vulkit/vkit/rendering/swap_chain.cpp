@@ -249,8 +249,8 @@ void SwapChain::destroy() const noexcept
     destroySwapChain(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 }
 
-VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                          const TKit::Span<SyncData> p_Objects) noexcept
+Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
+                                      const TKit::Span<SyncData> p_Objects) noexcept
 {
     for (u32 i = 0; i < p_Objects.GetSize(); ++i)
     {
@@ -266,7 +266,7 @@ VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
-            return VulkanResult::Error(result, "Failed to create the image available semaphore");
+            return Result<>::Error(result, "Failed to create the image available semaphore");
         }
 
         result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
@@ -274,17 +274,17 @@ VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
-            return VulkanResult::Error(result, "Failed to create the image available semaphore");
+            return Result<>::Error(result, "Failed to create the image available semaphore");
         }
 
         result = vkCreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks, &p_Objects[i].InFlightFence);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
-            return VulkanResult::Error(result, "Failed to create the image available semaphore");
+            return Result<>::Error(result, "Failed to create the image available semaphore");
         }
     }
-    return VulkanResult::Success();
+    return Result<>::Ok();
 }
 void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
                                    const TKit::Span<const SyncData> p_Objects) noexcept

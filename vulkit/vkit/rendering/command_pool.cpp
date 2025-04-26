@@ -43,8 +43,8 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     });
 }
 
-VulkanResult CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                                   const VkCommandBufferLevel p_Level) const noexcept
+Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffers,
+                               const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBufferAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -54,18 +54,18 @@ VulkanResult CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBu
 
     const VkResult result = vkAllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.GetData());
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to allocate command buffers");
-    return VulkanResult::Success();
+        return Result<>::Error(result, "Failed to allocate command buffers");
+    return Result<>::Ok();
 }
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const noexcept
 {
     VkCommandBuffer commandBuffer;
     const TKit::Span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
 
-    const VulkanResult result = Allocate(commandBuffers, p_Level);
+    const Result<> result = Allocate(commandBuffers, p_Level);
     if (result)
         return Result<VkCommandBuffer>::Ok(commandBuffer);
-    return Result<VkCommandBuffer>::Error(result);
+    return Result<VkCommandBuffer>::Error(result.GetError());
 }
 
 void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept
@@ -78,12 +78,12 @@ void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexce
     Deallocate(commandBuffers);
 }
 
-VulkanResult CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
+Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
 {
     const VkResult result = vkResetCommandPool(m_Device, m_Pool, p_Flags);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to reset command pool");
-    return VulkanResult::Success();
+        return Result<>::Error(result, "Failed to reset command pool");
+    return Result<>::Ok();
 }
 
 Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
@@ -104,12 +104,11 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
     return Result<VkCommandBuffer>::Ok(commandBuffer);
 }
 
-VulkanResult CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer,
-                                                const VkQueue p_Queue) const noexcept
+Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer, const VkQueue p_Queue) const noexcept
 {
     VkResult result = vkEndCommandBuffer(p_CommandBuffer);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to end command buffer");
+        return Result<>::Error(result, "Failed to end command buffer");
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -118,14 +117,14 @@ VulkanResult CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandB
 
     result = vkQueueSubmit(p_Queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to submit command buffer");
+        return Result<>::Error(result, "Failed to submit command buffer");
 
     result = vkQueueWaitIdle(p_Queue);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to wait for queue to idle");
+        return Result<>::Error(result, "Failed to wait for queue to idle");
 
     Deallocate(p_CommandBuffer);
-    return VulkanResult::Success();
+    return Result<>::Ok();
 }
 
 VkCommandPool CommandPool::GetPool() const noexcept

@@ -166,12 +166,12 @@ void *Buffer::ReadAt(const u32 p_Index) const noexcept
     return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
 }
 
-VulkanResult Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
+Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
 {
     TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "[VULKIT] Cannot copy buffers of different sizes");
     const auto result1 = p_Pool.BeginSingleTimeCommands();
     if (!result1)
-        return result1.GetError();
+        return Result<>::Error(result1.GetError());
 
     const VkCommandBuffer commandBuffer = result1.GetValue();
 

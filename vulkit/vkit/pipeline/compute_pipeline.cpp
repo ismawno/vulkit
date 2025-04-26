@@ -44,16 +44,15 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
 
     return Result<ComputePipeline>::Ok(p_Device, pipeline);
 }
-VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<const Specs> p_Specs,
-                                     const TKit::Span<ComputePipeline> p_Pipelines,
-                                     const VkPipelineCache p_Cache) noexcept
+Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<const Specs> p_Specs,
+                                 const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache) noexcept
 {
     TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
         if (!result)
-            return result.GetError();
+            return Result<>::Error(result.GetError());
         pipelineInfos.Append(result.GetValue());
     }
 
@@ -62,11 +61,11 @@ VulkanResult ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const
     const VkResult result = vkCreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                      p_Device.AllocationCallbacks, pipelines.GetData());
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to create compute pipelines");
+        return Result<>::Error(result, "Failed to create compute pipelines");
 
     for (u32 i = 0; i < count; ++i)
         p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i]);
-    return VulkanResult::Success();
+    return Result<>::Ok();
 }
 
 void ComputePipeline::Destroy() noexcept

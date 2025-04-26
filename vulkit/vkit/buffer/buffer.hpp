@@ -184,9 +184,9 @@ class VKIT_API Buffer
      * @param p_Source The source buffer to copy from.
      * @param p_Pool The command pool to allocate the copy command.
      * @param p_Queue The queue to submit the copy command.
-     * @return A VulkanResult indicating success or failure.
+     * @return A `Result` indicating success or failure.
      */
-    VulkanResult DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
+    Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
     VkBuffer GetBuffer() const noexcept;
     explicit(false) operator VkBuffer() const noexcept;

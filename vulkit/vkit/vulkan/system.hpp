@@ -20,9 +20,10 @@ struct VKIT_API System
      * Prepares the system by loading available extensions and layers.
      * This should be called before any other Vulkit operations.
      *
-     * @return A VulkanResult indicating success or an error if initialization fails.
+     * @return A `Result` indicating success or an error if initialization fails.
      */
-    static VulkanResult Initialize() noexcept;
+    static Result<> Initialize() noexcept;
+    static void Terminate() noexcept;
 
     static bool IsExtensionSupported(const char *p_Name) noexcept;
     static bool IsLayerSupported(const char *p_Name) noexcept;

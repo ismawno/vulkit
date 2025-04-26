@@ -54,10 +54,10 @@ class VKIT_API CommandPool
      *
      * @param p_CommandBuffers The span of command buffers to allocate.
      * @param p_Level The level of the command buffers (primary or secondary).
-     * @return A VulkanResult indicating success or failure.
+     * @return A `Result` indicating success or failure.
      */
-    VulkanResult Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                          VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
+    Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
+                      VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
 
     /**
      * @brief Deallocates a Vulkan command buffer from the pool.
@@ -83,9 +83,9 @@ class VKIT_API CommandPool
      * Resets all command buffers in the pool to an initial state.
      *
      * @param p_ResetFlags The flags to use when resetting the command pool.
-     * @return A `VulkanResult` indicating success or failure.
+     * @return A `Result<>` indicating success or failure.
      */
-    VulkanResult Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
+    Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
 
     /**
      * @brief Begins a single-time command operation.
@@ -104,9 +104,9 @@ class VKIT_API CommandPool
      *
      * @param p_CommandBuffer The command buffer to submit and clean up.
      * @param p_Queue The queue to submit the command buffer to.
-     * @return A VulkanResult indicating success or failure.
+     * @return A `Result` indicating success or failure.
      */
-    VulkanResult EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
+    Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
 
     VkCommandPool GetPool() const noexcept;
     explicit(false) operator VkCommandPool() const noexcept;

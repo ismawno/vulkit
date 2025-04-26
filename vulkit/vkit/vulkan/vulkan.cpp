@@ -4,32 +4,21 @@
 namespace VKit
 {
 template <String MessageType>
-VulkanResultInfo<MessageType>::VulkanResultInfo(VkResult p_Result, const MessageType &p_Message) noexcept
-    : Result(p_Result), Message(p_Message)
+ErrorInfo<MessageType>::ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept
+    : ErrorCode(p_Error), Message(p_Message)
 {
 }
 
-template <String MessageType> VulkanResultInfo<MessageType> VulkanResultInfo<MessageType>::Success() noexcept
-{
-    return VulkanResultInfo{};
-}
-template <String MessageType>
-VulkanResultInfo<MessageType> VulkanResultInfo<MessageType>::Error(VkResult p_Result,
-                                                                   const MessageType &p_Message) noexcept
-{
-    return VulkanResultInfo(p_Result, p_Message);
-}
-
-template <String MessageType> VulkanResultInfo<MessageType>::operator bool() const noexcept
+template <String MessageType> ErrorInfo<MessageType>::operator bool() const noexcept
 {
     return Result == VK_SUCCESS;
 }
 
-template class VKIT_API VulkanResultInfo<const char *>;
-template class VKIT_API VulkanResultInfo<std::string>;
+template class VKIT_API ErrorInfo<const char *>;
+template class VKIT_API ErrorInfo<std::string>;
 
-VulkanFormattedResult ToFormatted(const VulkanResult &p_Result) noexcept
+FormattedError ToFormatted(const Error &p_Error) noexcept
 {
-    return VulkanFormattedResult{p_Result.Result, p_Result.Message};
+    return FormattedError{p_Error.ErrorCode, p_Error.Message};
 }
 } // namespace VKit

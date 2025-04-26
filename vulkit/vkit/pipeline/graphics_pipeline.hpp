@@ -223,9 +223,9 @@ class VKIT_API GraphicsPipeline
      * @param p_Device The logical device proxy for Vulkan operations.
      * @param p_Specs A span of pipeline builders containing the specifications for each pipeline.
      * @param p_Pipelines A span to store the created pipelines.
-     * @return A VulkanResult indicating success or failure for the batch operation.
+     * @return A `Result` indicating success or failure for the batch operation.
      */
-    static VulkanResult Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
+    static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
                                TKit::Span<GraphicsPipeline> p_Pipelines,
                                VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 

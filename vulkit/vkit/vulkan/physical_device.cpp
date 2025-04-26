@@ -134,7 +134,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcep
 {
     const auto result = Enumerate();
     if (!result)
-        return FormattedResult<PhysicalDevice>::Error(result.GetError().Result, result.GetError().Message);
+        return FormattedResult<PhysicalDevice>::Error(result.GetError().ErrorCode, result.GetError().Message);
 
     const auto &devices = result.GetValue();
     return devices[0];
@@ -353,7 +353,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         const auto qresult = querySwapChainSupport(*m_Instance, p_Device, m_Surface);
         if (!qresult)
             return JudgeResult::Error(
-                VKIT_FORMAT_ERROR(qresult.GetError().Result, "{}. Device: {}", qresult.GetError().Message, name));
+                VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}", qresult.GetError().Message, name));
     }
 
     const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);

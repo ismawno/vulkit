@@ -1,44 +1,96 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/vulkan/system.hpp"
 
+#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
+#    include <dlfcn.h>
+#elif defined(TKIT_OS_WINDOWS)
+#    include <windows.h>
+#else
+#    error "[VULKIT] Unsupported platform to load Vulkan library"
+#endif
+
 namespace VKit
 {
-VulkanResult System::Initialize() noexcept
+#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
+static void *s_Library = nullptr;
+#else
+static HMODULE s_Library = nullptr;
+#endif
+
+Result<> System::Initialize() noexcept
 {
+#if defined(TKIT_OS_APPLE)
+    s_Library = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("@executable_path/../Frameworks/libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("@executable_path/../Frameworks/libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("@executable_path/../Frameworks/libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
+#elif defined(TKIT_OS_LINUX)
+    s_Library = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
+    if (!s_Library)
+        s_Library = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
+#else
+    s_Library = LoadLibraryA("vulkan-1.dll");
+    if (!s_Library)
+        s_Library = LoadLibraryA("vulkan.dll");
+#endif
+    if (!s_Library)
+        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Failed to load Vulkan library");
+
+    // Loader::Load(s_Library);
+
     const auto enumerateExtensions =
         GetInstanceFunction<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
     if (!enumerateExtensions)
-        return VulkanResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                   "Failed to get the vkEnumerateInstanceExtensionProperties function");
+        return Result<>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                               "Failed to get the vkEnumerateInstanceExtensionProperties function");
 
     u32 extensionCount = 0;
     VkResult result;
     result = enumerateExtensions(nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to get the number of instance extensions");
+        return Result<>::Error(result, "Failed to get the number of instance extensions");
 
     AvailableExtensions.Resize(extensionCount);
     result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.GetData());
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to get the instance extensions");
+        return Result<>::Error(result, "Failed to get the instance extensions");
 
     const auto enumerateLayers =
         GetInstanceFunction<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
     if (!enumerateLayers)
-        return VulkanResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                   "Failed to get the vkEnumerateInstanceLayerProperties function");
+        return Result<>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                               "Failed to get the vkEnumerateInstanceLayerProperties function");
 
     u32 layerCount = 0;
     result = enumerateLayers(&layerCount, nullptr);
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to get the number of instance layers");
+        return Result<>::Error(result, "Failed to get the number of instance layers");
 
     AvailableLayers.Resize(layerCount);
     result = enumerateLayers(&layerCount, AvailableLayers.GetData());
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to get the instance layers");
+        return Result<>::Error(result, "Failed to get the instance layers");
 
-    return VulkanResult::Success();
+    return Result<>::Ok();
+}
+
+void System::Terminate() noexcept
+{
+    if (!s_Library)
+        return;
+#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
+    dlclose(s_Library);
+#else
+    FreeLibrary(s_Library);
+#endif
+    s_Library = nullptr;
 }
 
 const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept

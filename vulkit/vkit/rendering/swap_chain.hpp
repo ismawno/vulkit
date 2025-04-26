@@ -168,10 +168,9 @@ struct SyncData
  *
  * @param p_Device The logical device to create the synchronization objects with.
  * @param p_Objects A span of `SyncData` structures to populate with the created objects.
- * @return A VulkanResult indicating success or failure of the operation.
+ * @return A `Result` indicating success or failure of the operation.
  */
-VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                          TKit::Span<SyncData> p_Objects) noexcept;
+Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device, TKit::Span<SyncData> p_Objects) noexcept;
 
 /**
  * @brief Destroys synchronization objects.

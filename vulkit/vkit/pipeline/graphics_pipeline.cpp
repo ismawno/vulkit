@@ -81,14 +81,14 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
 
-VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
-                                      const TKit::Span<GraphicsPipeline> p_Pipelines,
-                                      const VkPipelineCache p_Cache) noexcept
+Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
+                                  const TKit::Span<GraphicsPipeline> p_Pipelines,
+                                  const VkPipelineCache p_Cache) noexcept
 {
     if (p_Builders.GetSize() != p_Pipelines.GetSize())
-        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
+        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
     if (p_Builders.GetSize() == 0)
-        return VulkanResult::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
+        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
 
     TKit::StaticArray32<VkGraphicsPipelineCreateInfo> pipelineInfos;
     for (Builder &builder : p_Builders)
@@ -100,12 +100,12 @@ VulkanResult GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, cons
                                                       p_Device.AllocationCallbacks, pipelines.GetData());
 
     if (result != VK_SUCCESS)
-        return VulkanResult::Error(result, "Failed to create graphics pipelines");
+        return Result<>::Error(result, "Failed to create graphics pipelines");
 
     for (u32 i = 0; i < count; ++i)
         p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i]);
 
-    return VulkanResult::Success();
+    return Result<>::Ok();
 }
 
 GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline) noexcept
