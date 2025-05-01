@@ -8,6 +8,7 @@ docs/html/
 docs/latex/
 __pycache__/
 reminders.txt
+timeline.txt
 
 # Prerequisites
 *.d

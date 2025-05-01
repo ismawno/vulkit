@@ -356,8 +356,19 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                 VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}", qresult.GetError().Message, name));
     }
 
+#ifdef VKIT_API_VERSION_1_1
     const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+#else
+    const bool v11 = false;
+#endif
+
     const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
+#ifndef VK_KHR_get_physical_device_properties2
+    if (prop2)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(
+            VK_ERROR_EXTENSION_NOT_PRESENT,
+            "The device {} does not support the 'VK_KHR_get_physical_device_properties2' extension", name));
+#endif
 
     Features features{};
     Properties properties{};
@@ -372,9 +383,10 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
     properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
 #endif
-
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     if (v11 || prop2)
     {
+#    ifdef VKIT_API_VERSION_1_1
         VkPhysicalDeviceFeatures2 featuresChain{};
         VkPhysicalDeviceProperties2 propertiesChain{};
         featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -383,6 +395,16 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         // 2 and 2KHR have the same signature
         PFN_vkGetPhysicalDeviceFeatures2 getFeatures2;
         PFN_vkGetPhysicalDeviceProperties2 getProperties2;
+#    else
+        VkPhysicalDeviceFeatures2KHR featuresChain{};
+        VkPhysicalDeviceProperties2KHR propertiesChain{};
+        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+        propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
+
+        // 2 and 2KHR have the same signature
+        PFN_vkGetPhysicalDeviceFeatures2KHR getFeatures2;
+        PFN_vkGetPhysicalDeviceProperties2KHR getProperties2;
+#    endif
 
         if (v11)
         {
@@ -400,9 +422,11 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         if (!getFeatures2 || !getProperties2)
             return JudgeResult::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_EXTENSION_NOT_PRESENT,
-                "Failed to get the vkGetPhysicalDeviceFeatures2(KHR) function for the device: {}", name));
+                "Failed to get the vkGetPhysicalDeviceFeatures2(KHR)/vkGetPhysicalDeviceProperties2(KHR) function for "
+                "the device: {}",
+                name));
 
-#ifdef VKIT_API_VERSION_1_2
+#    ifdef VKIT_API_VERSION_1_2
         if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
         {
             featuresChain.pNext = &features.Vulkan11;
@@ -411,14 +435,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             features.Vulkan11.pNext = &features.Vulkan12;
             properties.Vulkan11.pNext = &properties.Vulkan12;
         }
-#endif
-#ifdef VKIT_API_VERSION_1_3
+#    endif
+#    ifdef VKIT_API_VERSION_1_3
         if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
         {
             features.Vulkan12.pNext = &features.Vulkan13;
             properties.Vulkan12.pNext = &properties.Vulkan13;
         }
-#endif
+#    endif
 
         getFeatures2(p_Device, &featuresChain);
         getProperties2(p_Device, &propertiesChain);
@@ -431,6 +455,10 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         vkGetPhysicalDeviceFeatures(p_Device, &features.Core);
         vkGetPhysicalDeviceProperties(p_Device, &properties.Core);
     }
+#else
+    vkGetPhysicalDeviceFeatures(p_Device, &features.Core);
+    vkGetPhysicalDeviceProperties(p_Device, &properties.Core);
+#endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
