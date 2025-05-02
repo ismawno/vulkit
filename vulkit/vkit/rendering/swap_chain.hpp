@@ -140,7 +140,9 @@ class VKIT_API SwapChain
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     const Info &GetInfo() const noexcept;
-    VkSwapchainKHR GetSwapChain() const noexcept;
+
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkSwapchainKHR GetHandle() const noexcept;
 
     explicit(false) operator VkSwapchainKHR() const noexcept;
     explicit(false) operator bool() const noexcept;

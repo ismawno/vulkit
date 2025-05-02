@@ -73,6 +73,9 @@ template <Pipeline Pip> class IPipelineJob
 
     explicit(false) operator bool() const noexcept;
 
+  protected:
+    Pip m_Pipeline{};
+
   private:
     struct PushDataInfo
     {
@@ -81,7 +84,6 @@ template <Pipeline Pip> class IPipelineJob
         VkShaderStageFlags Stages = 0;
     };
 
-    Pip m_Pipeline{};
     VkPipelineLayout m_Layout = VK_NULL_HANDLE;
     TKit::StaticArray8<VkDescriptorSet> m_DescriptorSets;
     TKit::StaticArray4<PushDataInfo> m_PushData;
@@ -103,8 +105,10 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
   public:
     using IPipelineJob<GraphicsPipeline>::IPipelineJob;
 
+    static Result<PipelineJob> Create(const GraphicsPipeline &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
+
     /**
-     * @brief A simple wrapper around vkCmdDraw to draw the pipeline job.
+     * @brief A simple wrapper around `vkCmdDraw` to draw the pipeline job.
      *
      * This method is used to draw the pipeline job with the specified parameters.
      *
@@ -118,7 +122,7 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
               u32 p_Firstinstance = 0) const noexcept;
 
     /**
-     * @brief A simple wrapper around vkCmdDrawIndexed to draw the pipeline job with indices.
+     * @brief A simple wrapper around `vkCmdDrawIndexed` to draw the pipeline job with indices.
      *
      * This method is used to draw the pipeline job with the specified parameters.
      *
@@ -147,8 +151,10 @@ template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipeline
   public:
     using IPipelineJob<ComputePipeline>::IPipelineJob;
 
+    static Result<PipelineJob> Create(const ComputePipeline &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
+
     /**
-     * @brief A simple wrapper around vkCmdDispatch to dispatch the pipeline job.
+     * @brief A simple wrapper around `vkCmdDispatch` to dispatch the pipeline job.
      *
      * This method is used to dispatch the pipeline job with the specified parameters.
      *

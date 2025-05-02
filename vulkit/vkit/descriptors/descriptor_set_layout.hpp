@@ -55,7 +55,6 @@ class VKIT_API DescriptorSetLayout
 
       private:
         LogicalDevice::Proxy m_Device;
-
         TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
@@ -66,7 +65,8 @@ class VKIT_API DescriptorSetLayout
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
-    VkDescriptorSetLayout GetLayout() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkDescriptorSetLayout GetHandle() const noexcept;
     explicit(false) operator VkDescriptorSetLayout() const noexcept;
     explicit(false) operator bool() const noexcept;
 

@@ -40,6 +40,7 @@ class VKIT_API LogicalDevice
     {
         VkDevice Device = VK_NULL_HANDLE;
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
+        const Vulkan::DeviceTable *Table = nullptr;
 
         explicit(false) operator VkDevice() const noexcept;
         explicit(false) operator bool() const noexcept;
@@ -78,39 +79,39 @@ class VKIT_API LogicalDevice
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
 
     LogicalDevice() noexcept = default;
-    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice, VkDevice p_Device) noexcept;
+    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
+                  const Vulkan::DeviceTable &p_Table, VkDevice p_Device) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
     const Instance &GetInstance() const noexcept;
     const PhysicalDevice &GetPhysicalDevice() const noexcept;
-    VkDevice GetDevice() const noexcept;
+    VkDevice GetHandle() const noexcept;
 
+#ifdef VK_KHR_surface
     Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const noexcept;
+#endif
     Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
                                          VkFormatFeatureFlags p_Features) const noexcept;
 
-    static void WaitIdle(VkDevice p_Device) noexcept;
+    static void WaitIdle(const Proxy &p_Device) noexcept;
     void WaitIdle() const noexcept;
 
     VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const noexcept;
     VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const noexcept;
 
     Proxy CreateProxy() const noexcept;
+    const Vulkan::DeviceTable &GetTable() const noexcept;
 
     explicit(false) operator VkDevice() const noexcept;
     explicit(false) operator Proxy() const noexcept;
     explicit(false) operator bool() const noexcept;
 
-    template <typename F> F GetFunction(const char *p_Name) const noexcept
-    {
-        return reinterpret_cast<F>(vkGetDeviceProcAddr(m_Device, p_Name));
-    }
-
   private:
     Instance m_Instance{};
     PhysicalDevice m_PhysicalDevice{};
+    Vulkan::DeviceTable m_Table{};
     VkDevice m_Device = VK_NULL_HANDLE;
 };
 } // namespace VKit

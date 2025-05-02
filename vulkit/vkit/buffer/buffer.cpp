@@ -10,8 +10,12 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
 }
 
-Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
+Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindVertexBuffers, Result<Buffer>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdCopyBuffer, Result<Buffer>);
+
     Info info{};
     info.Allocator = p_Specs.Allocator;
     info.InstanceSize = p_Specs.InstanceSize;
@@ -37,11 +41,12 @@ Result<Buffer> Buffer::Create(const Specs &p_Specs) noexcept
     if (result != VK_SUCCESS)
         return Result<Buffer>::Error(result, "Failed to create buffer");
 
-    return Result<Buffer>::Ok(buffer, info, data);
+    return Result<Buffer>::Ok(p_Device, buffer, info, data);
 }
 
-Buffer::Buffer(const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept
-    : m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
+Buffer::Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info,
+               void *p_MappedData) noexcept
+    : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
 {
 }
 
@@ -123,23 +128,25 @@ void Buffer::InvalidateAt(const u32 p_Index) noexcept
 
 void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
 {
-    vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
+    m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
 }
 
-void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
-                                const u32 p_FirstBinding, const TKit::Span<const VkDeviceSize> p_Offsets) noexcept
+void Buffer::BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+                                const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
+                                const TKit::Span<const VkDeviceSize> p_Offsets) noexcept
 {
     if (!p_Offsets.IsEmpty())
-        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
-                               p_Offsets.GetData());
+        p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
+                                             p_Offsets.GetData());
     else
-        vkCmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(), nullptr);
+        p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
+                                             nullptr);
 }
 
 void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
                                 const VkDeviceSize p_Offset) const noexcept
 {
-    vkCmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+    m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
 }
 
 VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const noexcept
@@ -179,12 +186,16 @@ Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const V
     copyRegion.srcOffset = 0;
     copyRegion.dstOffset = 0;
     copyRegion.size = m_Info.Size;
-    vkCmdCopyBuffer(commandBuffer, p_Source.m_Buffer, m_Buffer, 1, &copyRegion);
+    m_Device.Table->CmdCopyBuffer(commandBuffer, p_Source.m_Buffer, m_Buffer, 1, &copyRegion);
 
     return p_Pool.EndSingleTimeCommands(commandBuffer, p_Queue);
 }
 
-VkBuffer Buffer::GetBuffer() const noexcept
+const LogicalDevice::Proxy &Buffer::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkBuffer Buffer::GetHandle() const noexcept
 {
     return m_Buffer;
 }

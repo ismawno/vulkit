@@ -53,12 +53,14 @@ class VKIT_API PhysicalDevice
 #endif
     };
 
+#ifdef VK_KHR_surface
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
         TKit::StaticArray128<VkSurfaceFormatKHR> Formats;
         TKit::StaticArray8<VkPresentModeKHR> PresentModes;
     };
+#endif
 
     /**
      * @brief A helper class for selecting a Vulkan physical device.
@@ -131,7 +133,9 @@ class VKIT_API PhysicalDevice
         Selector &AddFlags(Flags p_Flags) noexcept;
         Selector &RemoveFlags(Flags p_Flags) noexcept;
 
+#ifdef VK_KHR_surface
         Selector &SetSurface(VkSurfaceKHR p_Surface) noexcept;
+#endif
 
       private:
         FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const noexcept;
@@ -139,7 +143,9 @@ class VKIT_API PhysicalDevice
         const Instance *m_Instance;
         const char *m_Name = nullptr;
 
+#ifdef VK_KHR_surface
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
+#endif
         Type m_PreferredType = Discrete;
 
         Flags m_Flags = 0;
@@ -203,11 +209,13 @@ class VKIT_API PhysicalDevice
 
     bool EnableExtension(const char *p_Extension) noexcept;
 
-    VkPhysicalDevice GetDevice() const noexcept;
+    VkPhysicalDevice GetHandle() const noexcept;
     const Info &GetInfo() const noexcept;
 
-    Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance &p_Instance,
+#ifdef VK_KHR_surface
+    Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
                                                           VkSurfaceKHR p_Surface) const noexcept;
+#endif
 
     explicit(false) operator VkPhysicalDevice() const noexcept;
     explicit(false) operator bool() const noexcept;

@@ -108,7 +108,8 @@ class VKIT_API CommandPool
      */
     Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
 
-    VkCommandPool GetPool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkCommandPool GetHandle() const noexcept;
     explicit(false) operator VkCommandPool() const noexcept;
     explicit(false) operator bool() const noexcept;
 

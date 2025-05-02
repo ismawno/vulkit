@@ -6,13 +6,23 @@ namespace VKit
 Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const u32 p_QueueFamilyIndex,
                                         const VkCommandPoolCreateFlags p_Flags) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateCommandPool, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyCommandPool, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkAllocateCommandBuffers, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkResetCommandPool, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkBeginCommandBuffer, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkEndCommandBuffer, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkQueueSubmit, Result<CommandPool>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkQueueWaitIdle, Result<CommandPool>);
+
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.queueFamilyIndex = p_QueueFamilyIndex;
     createInfo.flags = p_Flags;
 
     VkCommandPool pool;
-    const VkResult result = vkCreateCommandPool(p_Device, &createInfo, p_Device.AllocationCallbacks, &pool);
+    const VkResult result =
+        p_Device.Table->CreateCommandPool(p_Device, &createInfo, p_Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
         return Result<CommandPool>::Error(result, "Failed to create the command pool");
 
@@ -28,18 +38,18 @@ void CommandPool::Destroy() noexcept
 {
     TKIT_ASSERT(m_Pool, "[VULKIT] The command pool is a NULL handle");
     LogicalDevice::WaitIdle(m_Device);
-    vkDestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;
 }
 
 void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
-    const VkDevice device = m_Device;
+    const LogicalDevice::Proxy device = m_Device;
     const VkCommandPool pool = m_Pool;
     const VkAllocationCallbacks *alloc = m_Device.AllocationCallbacks;
     p_Queue.Push([device, pool, alloc]() {
         LogicalDevice::WaitIdle(device);
-        vkDestroyCommandPool(device, pool, alloc);
+        device.Table->DestroyCommandPool(device, pool, alloc);
     });
 }
 
@@ -52,7 +62,7 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffer
     allocateInfo.level = p_Level;
     allocateInfo.commandBufferCount = p_CommandBuffers.GetSize();
 
-    const VkResult result = vkAllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.GetData());
+    const VkResult result = m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.GetData());
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to allocate command buffers");
     return Result<>::Ok();
@@ -70,7 +80,7 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
 
 void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept
 {
-    vkFreeCommandBuffers(m_Device, m_Pool, p_CommandBuffers.GetSize(), p_CommandBuffers.GetData());
+    m_Device.Table->FreeCommandBuffers(m_Device, m_Pool, p_CommandBuffers.GetSize(), p_CommandBuffers.GetData());
 }
 void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexcept
 {
@@ -80,7 +90,7 @@ void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexce
 
 Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
 {
-    const VkResult result = vkResetCommandPool(m_Device, m_Pool, p_Flags);
+    const VkResult result = m_Device.Table->ResetCommandPool(m_Device, m_Pool, p_Flags);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to reset command pool");
     return Result<>::Ok();
@@ -97,7 +107,7 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    const VkResult vkresult = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    const VkResult vkresult = m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo);
     if (vkresult != VK_SUCCESS)
         return Result<VkCommandBuffer>::Error(vkresult, "Failed to begin command buffer");
 
@@ -106,7 +116,7 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
 
 Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer, const VkQueue p_Queue) const noexcept
 {
-    VkResult result = vkEndCommandBuffer(p_CommandBuffer);
+    VkResult result = m_Device.Table->EndCommandBuffer(p_CommandBuffer);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to end command buffer");
 
@@ -115,11 +125,11 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &p_CommandBuffer;
 
-    result = vkQueueSubmit(p_Queue, 1, &submitInfo, VK_NULL_HANDLE);
+    result = m_Device.Table->QueueSubmit(p_Queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to submit command buffer");
 
-    result = vkQueueWaitIdle(p_Queue);
+    result = m_Device.Table->QueueWaitIdle(p_Queue);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to wait for queue to idle");
 
@@ -127,7 +137,12 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
     return Result<>::Ok();
 }
 
-VkCommandPool CommandPool::GetPool() const noexcept
+const LogicalDevice::Proxy &CommandPool::GetDevice() const noexcept
+{
+    return m_Device;
+}
+
+VkCommandPool CommandPool::GetHandle() const noexcept
 {
     return m_Pool;
 }

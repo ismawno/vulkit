@@ -18,6 +18,9 @@ TKIT_MSVC_WARNING_IGNORE(6262)
 FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
                                        const std::string_view p_BinaryPath) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, FormattedResult<Shader>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, FormattedResult<Shader>);
+
     std::ifstream file{p_BinaryPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return FormattedResult<Shader>::Error(
@@ -35,7 +38,8 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
     createInfo.pCode = reinterpret_cast<const u32 *>(code.GetData());
 
     VkShaderModule module;
-    const VkResult result = vkCreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
+    const VkResult result =
+        p_Device.Table->CreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
     if (result != VK_SUCCESS)
         return FormattedResult<Shader>::Error(result, "Failed to create shader module");
 
@@ -75,17 +79,21 @@ bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_
 void Shader::Destroy() noexcept
 {
     TKIT_ASSERT(m_Module, "[VULKIT] The shader is a NULL handle");
-    vkDestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
     m_Module = VK_NULL_HANDLE;
 }
 void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkShaderModule module = m_Module;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([module, device]() { vkDestroyShaderModule(device, module, device.AllocationCallbacks); });
+    p_Queue.Push([module, device]() { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
 }
 
-VkShaderModule Shader::GetModule() const noexcept
+const LogicalDevice::Proxy &Shader::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkShaderModule Shader::GetHandle() const noexcept
 {
     return m_Module;
 }

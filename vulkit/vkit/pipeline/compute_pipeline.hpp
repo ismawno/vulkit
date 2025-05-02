@@ -58,10 +58,10 @@ class VKIT_API ComputePipeline
      *
      * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
      */
-
     void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
 
-    VkPipeline GetPipeline() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkPipeline GetHandle() const noexcept;
     explicit(false) operator VkPipeline() const noexcept;
     explicit(false) operator bool() const noexcept;
 

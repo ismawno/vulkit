@@ -226,8 +226,7 @@ class VKIT_API GraphicsPipeline
      * @return A `Result` indicating success or failure for the batch operation.
      */
     static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
-                               TKit::Span<GraphicsPipeline> p_Pipelines,
-                               VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
+                           TKit::Span<GraphicsPipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
 
     GraphicsPipeline() noexcept = default;
     GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept;
@@ -244,13 +243,8 @@ class VKIT_API GraphicsPipeline
      */
     void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
 
-    /**
-     * @brief Retrieves the pipeline layout.
-     *
-     * @return The Vulkan pipeline layout.
-     */
-
-    VkPipeline GetPipeline() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkPipeline GetHandle() const noexcept;
     explicit(false) operator VkPipeline() const noexcept;
     explicit(false) operator bool() const noexcept;
 

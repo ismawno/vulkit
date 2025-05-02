@@ -70,11 +70,15 @@ GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const V
 
 Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
 {
-    const VkGraphicsPipelineCreateInfo pipelineInfo = CreatePipelineInfo();
-    VkPipeline pipeline;
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateGraphicsPipelines, Result<GraphicsPipeline>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipeline, Result<GraphicsPipeline>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindPipeline, Result<GraphicsPipeline>);
 
-    const VkResult result =
-        vkCreateGraphicsPipelines(m_Device, m_Cache, 1, &pipelineInfo, m_Device.AllocationCallbacks, &pipeline);
+    const VkGraphicsPipelineCreateInfo pipelineInfo = CreatePipelineInfo();
+
+    VkPipeline pipeline;
+    const VkResult result = m_Device.Table->CreateGraphicsPipelines(m_Device, m_Cache, 1, &pipelineInfo,
+                                                                    m_Device.AllocationCallbacks, &pipeline);
     if (result != VK_SUCCESS)
         return Result<GraphicsPipeline>::Error(result, "Failed to create graphics pipeline");
 
@@ -85,6 +89,10 @@ Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TK
                                   const TKit::Span<GraphicsPipeline> p_Pipelines,
                                   const VkPipelineCache p_Cache) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateGraphicsPipelines, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<>);
+
     if (p_Builders.GetSize() != p_Pipelines.GetSize())
         return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
     if (p_Builders.GetSize() == 0)
@@ -96,8 +104,8 @@ Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TK
 
     const u32 count = p_Builders.GetSize();
     TKit::StaticArray32<VkPipeline> pipelines{count};
-    const VkResult result = vkCreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
-                                                      p_Device.AllocationCallbacks, pipelines.GetData());
+    const VkResult result = p_Device.Table->CreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
+                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
 
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to create graphics pipelines");
@@ -116,22 +124,26 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const V
 void GraphicsPipeline::Destroy() noexcept
 {
     TKIT_ASSERT(m_Pipeline, "[VULKIT] The graphics pipeline is a NULL handle");
-    vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
 void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([pipeline, device]() { vkDestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+    p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
 void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
 {
-    vkCmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+    m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 }
 
-VkPipeline GraphicsPipeline::GetPipeline() const noexcept
+const LogicalDevice::Proxy &GraphicsPipeline::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkPipeline GraphicsPipeline::GetHandle() const noexcept
 {
     return m_Pipeline;
 }

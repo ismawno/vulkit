@@ -43,38 +43,29 @@ Result<> System::Initialize() noexcept
     if (!s_Library)
         return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Failed to load Vulkan library");
 
-    // Loader::Load(s_Library);
+    Vulkan::Load(s_Library);
 
-    const auto enumerateExtensions =
-        GetInstanceFunction<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
-    if (!enumerateExtensions)
-        return Result<>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                               "Failed to get the vkEnumerateInstanceExtensionProperties function");
+    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceExtensionProperties, Result<>);
+    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceLayerProperties, Result<>);
 
     u32 extensionCount = 0;
     VkResult result;
-    result = enumerateExtensions(nullptr, &extensionCount, nullptr);
+    result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to get the number of instance extensions");
 
     AvailableExtensions.Resize(extensionCount);
-    result = enumerateExtensions(nullptr, &extensionCount, AvailableExtensions.GetData());
+    result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, AvailableExtensions.GetData());
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to get the instance extensions");
 
-    const auto enumerateLayers =
-        GetInstanceFunction<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
-    if (!enumerateLayers)
-        return Result<>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                               "Failed to get the vkEnumerateInstanceLayerProperties function");
-
     u32 layerCount = 0;
-    result = enumerateLayers(&layerCount, nullptr);
+    result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to get the number of instance layers");
 
     AvailableLayers.Resize(layerCount);
-    result = enumerateLayers(&layerCount, AvailableLayers.GetData());
+    result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, AvailableLayers.GetData());
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to get the instance layers");
 

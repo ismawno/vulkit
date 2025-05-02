@@ -9,13 +9,17 @@ DescriptorSetLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) noex
 
 Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateDescriptorSetLayout, Result<DescriptorSetLayout>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyDescriptorSetLayout, Result<DescriptorSetLayout>);
+
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = m_Bindings.GetSize();
     layoutInfo.pBindings = m_Bindings.GetData();
 
     VkDescriptorSetLayout layout;
-    const VkResult result = vkCreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
+    const VkResult result =
+        m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
         return Result<DescriptorSetLayout>::Error(result, "Failed to create descriptor set layout");
     return Result<DescriptorSetLayout>::Ok(m_Device, layout, m_Bindings);
@@ -30,21 +34,26 @@ DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, c
 void DescriptorSetLayout::Destroy() noexcept
 {
     TKIT_ASSERT(m_Layout, "[VULKIT] The descriptor set layout is a NULL handle");
-    vkDestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }
 void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkDescriptorSetLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([layout, device]() { vkDestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
+    p_Queue.Push(
+        [layout, device]() { device.Table->DestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
 }
 
 const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const noexcept
 {
     return m_Bindings;
 }
-VkDescriptorSetLayout DescriptorSetLayout::GetLayout() const noexcept
+const LogicalDevice::Proxy &DescriptorSetLayout::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkDescriptorSetLayout DescriptorSetLayout::GetHandle() const noexcept
 {
     return m_Layout;
 }

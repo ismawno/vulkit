@@ -235,6 +235,8 @@ class VKIT_API RenderPass
         resources.m_Device = m_Device;
         resources.m_Allocator = m_Info.Allocator;
 
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateFramebuffer, Result<Resources>);
+
         TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.GetSize(), VK_NULL_HANDLE};
         for (u32 i = 0; i < m_Info.ImageCount; ++i)
         {
@@ -261,8 +263,8 @@ class VKIT_API RenderPass
             frameBufferInfo.layers = p_FrameBufferLayers;
 
             VkFramebuffer frameBuffer;
-            const VkResult result =
-                vkCreateFramebuffer(m_Device, &frameBufferInfo, m_Device.AllocationCallbacks, &frameBuffer);
+            const VkResult result = m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
+                                                                      m_Device.AllocationCallbacks, &frameBuffer);
             if (result != VK_SUCCESS)
             {
                 resources.Destroy();
@@ -367,7 +369,8 @@ class VKIT_API RenderPass
 
     const Info &GetInfo() const noexcept;
 
-    VkRenderPass GetRenderPass() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkRenderPass GetHandle() const noexcept;
 
     explicit(false) operator VkRenderPass() const noexcept;
     explicit(false) operator bool() const noexcept;

@@ -30,6 +30,10 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
 
 Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<ComputePipeline>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<ComputePipeline>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<ComputePipeline>);
+
     const auto presult = createPipelineInfo(p_Specs);
     if (!presult)
         return Result<ComputePipeline>::Error(presult.GetError());
@@ -37,8 +41,8 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
     const VkComputePipelineCreateInfo &pipelineInfo = presult.GetValue();
 
     VkPipeline pipeline;
-    const VkResult result =
-        vkCreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo, p_Device.AllocationCallbacks, &pipeline);
+    const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo,
+                                                                   p_Device.AllocationCallbacks, &pipeline);
     if (result != VK_SUCCESS)
         return Result<ComputePipeline>::Error(result, "Failed to create compute pipeline");
 
@@ -47,6 +51,10 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
 Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<const Specs> p_Specs,
                                  const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<>);
+
     TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
@@ -58,8 +66,9 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
 
     const u32 count = p_Specs.GetSize();
     TKit::StaticArray32<VkPipeline> pipelines{count};
-    const VkResult result = vkCreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
-                                                     p_Device.AllocationCallbacks, pipelines.GetData());
+    const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
+                                                                   p_Device.AllocationCallbacks, pipelines.GetData());
+
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to create compute pipelines");
 
@@ -71,7 +80,7 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
 void ComputePipeline::Destroy() noexcept
 {
     TKIT_ASSERT(m_Pipeline, "[VULKIT] The compute pipeline is a NULL handle");
-    vkDestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
 
@@ -79,15 +88,19 @@ void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([pipeline, device]() { vkDestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+    p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
 void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
 {
-    vkCmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
+    m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
 }
 
-VkPipeline ComputePipeline::GetPipeline() const noexcept
+const LogicalDevice::Proxy &ComputePipeline::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkPipeline ComputePipeline::GetHandle() const noexcept
 {
     return m_Pipeline;
 }

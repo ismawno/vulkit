@@ -59,7 +59,8 @@ class VKIT_API Shader
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
-    VkShaderModule GetModule() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkShaderModule GetHandle() const noexcept;
     explicit(false) operator VkShaderModule() const noexcept;
     explicit(false) operator bool() const noexcept;
 

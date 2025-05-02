@@ -96,7 +96,8 @@ class VKIT_API DescriptorPool
     void Deallocate(VkDescriptorSet p_Set) const noexcept;
     void Reset() noexcept;
 
-    VkDescriptorPool GetPool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkDescriptorPool GetHandle() const noexcept;
     explicit(false) operator VkDescriptorPool() const noexcept;
     explicit(false) operator bool() const noexcept;
 

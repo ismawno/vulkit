@@ -9,6 +9,9 @@ PipelineLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) noexcept 
 
 Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreatePipelineLayout, Result<PipelineLayout>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipelineLayout, Result<PipelineLayout>);
+
     VkPipelineLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     layoutInfo.setLayoutCount = m_DescriptorSetLayouts.GetSize();
@@ -18,7 +21,8 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
     layoutInfo.flags = m_Flags;
 
     VkPipelineLayout layout;
-    const VkResult result = vkCreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
+    const VkResult result =
+        m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
         return Result<PipelineLayout>::Error(result, "Failed to create pipeline layout");
 
@@ -37,7 +41,7 @@ PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPip
 void PipelineLayout::Destroy() noexcept
 {
     TKIT_ASSERT(m_Layout, "[VULKIT] The pipeline layout is a NULL handle");
-    vkDestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }
 
@@ -45,13 +49,19 @@ void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 {
     const VkPipelineLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([layout, device]() { vkDestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
+    p_Queue.Push(
+        [layout, device]() { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
 }
 const PipelineLayout::Info &PipelineLayout::GetInfo() const noexcept
 {
     return m_Info;
 }
-VkPipelineLayout PipelineLayout::GetLayout() const noexcept
+
+const LogicalDevice::Proxy &PipelineLayout::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkPipelineLayout PipelineLayout::GetHandle() const noexcept
 {
     return m_Layout;
 }

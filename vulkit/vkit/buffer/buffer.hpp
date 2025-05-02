@@ -58,10 +58,10 @@ class VKIT_API Buffer
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `Buffer` or an error.
      */
-    static Result<Buffer> Create(const Specs &p_Specs) noexcept;
+    static Result<Buffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
 
     Buffer() noexcept = default;
-    Buffer(VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept;
+    Buffer(const LogicalDevice::Proxy &p_Device, VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept;
 
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
@@ -136,11 +136,11 @@ class VKIT_API Buffer
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
                       "[VULKIT] Index type must be u8, u16 or u32");
         if constexpr (std::is_same_v<Index, u8>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
+            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
         else if constexpr (std::is_same_v<Index, u16>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
+            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
         else if constexpr (std::is_same_v<Index, u32>)
-            vkCmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
+            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
     }
     /**
      * @brief Binds the buffer as a vertex buffer to a command buffer.
@@ -153,12 +153,14 @@ class VKIT_API Buffer
     /**
      * @brief Binds multiple buffers as vertex buffers to a command buffer.
      *
+     * @param p_Device The logical device to use for binding.
      * @param p_CommandBuffer The command buffer to bind the vertex buffers to.
      * @param p_Buffers A span containing the buffers to bind.
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
-    static void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, TKit::Span<const VkBuffer> p_Buffers,
-                                   u32 p_FirstBinding = 0, TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept;
+    static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, VkCommandBuffer p_CommandBuffer,
+                                   TKit::Span<const VkBuffer> p_Buffers, u32 p_FirstBinding = 0,
+                                   TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept;
 
     /**
      * @brief Binds a buffer as a vertex buffer to a command buffer.
@@ -188,13 +190,16 @@ class VKIT_API Buffer
      */
     Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
 
-    VkBuffer GetBuffer() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkBuffer GetHandle() const noexcept;
+
     explicit(false) operator VkBuffer() const noexcept;
     explicit(false) operator bool() const noexcept;
 
     const Info &GetInfo() const noexcept;
 
   private:
+    LogicalDevice::Proxy m_Device{};
     void *m_Data = nullptr;
     VkBuffer m_Buffer = VK_NULL_HANDLE;
     Info m_Info;

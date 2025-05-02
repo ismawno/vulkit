@@ -9,6 +9,7 @@ docs/latex/
 __pycache__/
 reminders.txt
 timeline.txt
+codegen/vendor
 
 # Prerequisites
 *.d

@@ -32,6 +32,13 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
 
 Result<SwapChain> SwapChain::Builder::Build() const noexcept
 {
+    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateSwapchainKHR, Result<SwapChain>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroySwapchainKHR, Result<SwapChain>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkGetSwapchainImagesKHR, Result<SwapChain>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateImageView, Result<SwapChain>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
+
     const PhysicalDevice::Info &devInfo = m_Device->GetPhysicalDevice().GetInfo();
     if (devInfo.GraphicsIndex == UINT32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No graphics queue found");
@@ -137,19 +144,8 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     createInfo.oldSwapchain = m_OldSwapChain;
     createInfo.flags = m_CreateFlags;
 
-    const auto createSwapChain = m_Device->GetFunction<PFN_vkCreateSwapchainKHR>("vkCreateSwapchainKHR");
-    if (!createSwapChain)
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                        "Failed to get the vkCreateSwapchainKHR function");
-
-    const auto destroySwapChain = m_Device->GetFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR");
-    if (!destroySwapChain)
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                        "Failed to get the vkDestroySwapchainKHR function");
-
-    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
     VkSwapchainKHR swapChain;
-    VkResult result = createSwapChain(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain);
+    VkResult result = proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain);
     if (result != VK_SUCCESS)
         return Result<SwapChain>::Error(result, "Failed to create the swap chain");
 
@@ -161,25 +157,17 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto earlyDestroy = [proxy, swapChain, &destroySwapChain, &checkFlag, &info]() {
+    const auto earlyDestroy = [proxy, swapChain, &checkFlag, &info]() {
         if (checkFlag(Flag_CreateImageViews))
             for (const ImageData &data : info.ImageData)
                 if (data.ImageView)
-                    vkDestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
+                    proxy.Table->DestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
 
-        destroySwapChain(proxy, swapChain, proxy.AllocationCallbacks);
+        proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
     };
 
-    const auto getImages = m_Device->GetFunction<PFN_vkGetSwapchainImagesKHR>("vkGetSwapchainImagesKHR");
-    if (!getImages)
-    {
-        earlyDestroy();
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                        "Failed to get the vkGetSwapchainImagesKHR function");
-    }
-
     u32 imageCount;
-    result = getImages(proxy, swapChain, &imageCount, nullptr);
+    result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr);
     if (result != VK_SUCCESS)
     {
         earlyDestroy();
@@ -189,7 +177,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     TKit::StaticArray4<VkImage> images;
     images.Resize(imageCount);
 
-    result = getImages(proxy, swapChain, &imageCount, images.GetData());
+    result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData());
     if (result != VK_SUCCESS)
     {
         earlyDestroy();
@@ -217,7 +205,8 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            result = vkCreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &info.ImageData[i].ImageView);
+            result =
+                proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &info.ImageData[i].ImageView);
             if (result != VK_SUCCESS)
             {
                 earlyDestroy();
@@ -238,20 +227,20 @@ void SwapChain::destroy() const noexcept
 {
     TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
 
-    const auto destroySwapChain =
-        System::GetDeviceFunction<PFN_vkDestroySwapchainKHR>("vkDestroySwapchainKHR", m_Device);
-    TKIT_ASSERT(destroySwapChain, "[VULKIT] Failed to get the vkDestroySwapchainKHR function");
-
     if (m_Info.Flags & Flag_HasImageViews)
         for (const ImageData &data : m_Info.ImageData)
-            vkDestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
+            m_Device.Table->DestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
 
-    destroySwapChain(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 }
 
 Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
                                       const TKit::Span<SyncData> p_Objects) noexcept
 {
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateSemaphore, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateFence, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroySemaphore, Result<>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyFence, Result<>);
     for (u32 i = 0; i < p_Objects.GetSize(); ++i)
     {
         VkSemaphoreCreateInfo semaphoreInfo{};
@@ -261,23 +250,24 @@ Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        VkResult result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                            &p_Objects[i].ImageAvailableSemaphore);
+        VkResult result = p_Device.Table->CreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
+                                                          &p_Objects[i].ImageAvailableSemaphore);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
             return Result<>::Error(result, "Failed to create the image available semaphore");
         }
 
-        result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                   &p_Objects[i].RenderFinishedSemaphore);
+        result = p_Device.Table->CreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
+                                                 &p_Objects[i].RenderFinishedSemaphore);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
             return Result<>::Error(result, "Failed to create the image available semaphore");
         }
 
-        result = vkCreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks, &p_Objects[i].InFlightFence);
+        result = p_Device.Table->CreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks,
+                                             &p_Objects[i].InFlightFence);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
@@ -292,11 +282,11 @@ void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
     for (const SyncData &data : p_Objects)
     {
         if (data.RenderFinishedSemaphore)
-            vkDestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
+            p_Device.Table->DestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
         if (data.ImageAvailableSemaphore)
-            vkDestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
+            p_Device.Table->DestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
         if (data.InFlightFence)
-            vkDestroyFence(p_Device, data.InFlightFence, p_Device.AllocationCallbacks);
+            p_Device.Table->DestroyFence(p_Device, data.InFlightFence, p_Device.AllocationCallbacks);
     }
 }
 
@@ -310,8 +300,11 @@ void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     const SwapChain swapChain = *this;
     p_Queue.Push([swapChain]() { swapChain.destroy(); }); // That is stupid...
 }
-
-VkSwapchainKHR SwapChain::GetSwapChain() const noexcept
+const LogicalDevice::Proxy &SwapChain::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkSwapchainKHR SwapChain::GetHandle() const noexcept
 {
     return m_SwapChain;
 }

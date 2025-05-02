@@ -55,30 +55,20 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
-static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Instance &p_Instance,
+#ifdef VK_KHR_surface
+static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *p_Table,
                                                                              const VkPhysicalDevice p_Device,
                                                                              const VkSurfaceKHR p_Surface) noexcept
 {
     using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
-    const auto querySurfaceFormats =
-        p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR");
-    const auto queryPresentModes = p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
-        "vkGetPhysicalDeviceSurfacePresentModesKHR");
-    const auto queryCapabilities = p_Instance.GetFunction<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>(
-        "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
-
-    if (!querySurfaceFormats || !queryPresentModes || !queryCapabilities)
-        return Res::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                          "Failed to get the required functions to query swap chain support");
-
     u32 formatCount = 0;
     u32 modeCount = 0;
 
-    VkResult result = querySurfaceFormats(p_Device, p_Surface, &formatCount, nullptr);
+    VkResult result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, nullptr);
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the number of surface formats");
 
-    result = queryPresentModes(p_Device, p_Surface, &modeCount, nullptr);
+    result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount, nullptr);
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the number of present modes");
 
@@ -86,23 +76,25 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
         return Res::Error(VK_ERROR_INITIALIZATION_FAILED, "No surface formats or present modes found");
 
     PhysicalDevice::SwapChainSupportDetails details;
-    result = queryCapabilities(p_Device, p_Surface, &details.Capabilities);
+    result = p_Table->GetPhysicalDeviceSurfaceCapabilitiesKHR(p_Device, p_Surface, &details.Capabilities);
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the surface capabilities");
 
     details.Formats.Resize(formatCount);
     details.PresentModes.Resize(modeCount);
 
-    result = querySurfaceFormats(p_Device, p_Surface, &formatCount, details.Formats.GetData());
+    result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, details.Formats.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the surface formats");
 
-    result = queryPresentModes(p_Device, p_Surface, &modeCount, details.PresentModes.GetData());
+    result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount,
+                                                              details.PresentModes.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the present modes");
 
     return Res::Ok(details);
 }
+#endif
 
 PhysicalDevice::Features::Features() noexcept
 {
@@ -144,22 +136,27 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 {
     using JudgeResult = FormattedResult<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
+    const Vulkan::InstanceTable *table = &instanceInfo.Table;
+
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
 
     VkPhysicalDeviceProperties quickProperties;
-    vkGetPhysicalDeviceProperties(p_Device, &quickProperties);
+    table->GetPhysicalDeviceProperties(p_Device, &quickProperties);
     const char *name = quickProperties.deviceName;
 
     if (m_Name != nullptr && strcmp(m_Name, name) != 0)
         return JudgeResult::Error(VK_ERROR_INITIALIZATION_FAILED, "The device name does not match the requested name");
 
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumerateDeviceExtensionProperties, JudgeResult);
+
     u32 extensionCount;
-    VkResult result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
+    VkResult result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
 
     TKit::StaticArray256<VkExtensionProperties> extensionsProps{extensionCount};
-    result = vkEnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
+    result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
@@ -198,11 +195,13 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     if (checkFlag(Flag_RequirePresentQueue))
         enabledExtensions.Append("VK_KHR_swapchain");
 
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceQueueFamilyProperties, JudgeResult);
+
     u32 familyCount;
-    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
+    table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
 
     TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
-    vkGetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
+    table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
 
     const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
         for (u32 i = 0; i < familyCount; ++i)
@@ -233,24 +232,22 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             }
         return index;
     };
-    const auto presentQueueIndex = [this, familyCount, p_Device](const VkSurfaceKHR p_Surface) -> u32 {
-        if (!p_Surface)
-            return UINT32_MAX;
 
-        const auto queryPresentSupport =
-            m_Instance->GetFunction<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>("vkGetPhysicalDeviceSurfaceSupportKHR");
-        if (!queryPresentSupport)
+#ifdef VK_KHR_surface
+    const auto presentQueueIndex = [this, familyCount, p_Device, &table](const VkSurfaceKHR p_Surface) -> u32 {
+        if (!p_Surface || !table->vkGetPhysicalDeviceSurfaceSupportKHR)
             return UINT32_MAX;
 
         for (u32 i = 0; i < familyCount; ++i)
         {
             VkBool32 presentSupport = VK_FALSE;
-            const VkResult result = queryPresentSupport(p_Device, i, p_Surface, &presentSupport);
+            const VkResult result = table->GetPhysicalDeviceSurfaceSupportKHR(p_Device, i, p_Surface, &presentSupport);
             if (result == VK_SUCCESS && presentSupport == VK_TRUE)
                 return i;
         }
         return UINT32_MAX;
     };
+#endif
 
     TKIT_ASSERT(checkFlag(Flag_RequireComputeQueue) ||
                     (!checkFlag(Flag_RequireDedicatedComputeQueue) && !checkFlag(Flag_RequireSeparateComputeQueue)),
@@ -273,7 +270,11 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     const u32 transferCompatible = compatibleQueueIndex(VK_QUEUE_TRANSFER_BIT);
 
     const u32 graphicsIndex = compatibleQueueIndex(VK_QUEUE_GRAPHICS_BIT);
+#ifdef VK_KHR_surface
     const u32 presentIndex = presentQueueIndex(m_Surface);
+#else
+    const u32 presentIndex = UINT32_MAX;
+#endif
     u32 computeIndex = UINT32_MAX;
     u32 transferIndex = UINT32_MAX;
 
@@ -348,13 +349,18 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
                                                     "The device {} does not have a separate transfer queue", name));
 
+#ifdef VK_KHR_surface
     if (checkFlag(Flag_RequirePresentQueue))
     {
-        const auto qresult = querySwapChainSupport(*m_Instance, p_Device, m_Surface);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceFormatsKHR, JudgeResult);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfacePresentModesKHR, JudgeResult);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceCapabilitiesKHR, JudgeResult);
+        const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
         if (!qresult)
             return JudgeResult::Error(
                 VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}", qresult.GetError().Message, name));
     }
+#endif
 
 #ifdef VKIT_API_VERSION_1_1
     const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
@@ -365,9 +371,8 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_EXTENSION_NOT_PRESENT,
-            "The device {} does not support the 'VK_KHR_get_physical_device_properties2' extension", name));
+        return JudgeResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                  "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
     Features features{};
@@ -392,39 +397,25 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
         propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2, JudgeResult);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2, JudgeResult);
+
         // 2 and 2KHR have the same signature
-        PFN_vkGetPhysicalDeviceFeatures2 getFeatures2;
-        PFN_vkGetPhysicalDeviceProperties2 getProperties2;
+        PFN_vkGetPhysicalDeviceFeatures2 getFeatures2 = table->vkGetPhysicalDeviceFeatures2;
+        PFN_vkGetPhysicalDeviceProperties2 getProperties2 = table->vkGetPhysicalDeviceProperties2;
 #    else
         VkPhysicalDeviceFeatures2KHR featuresChain{};
         VkPhysicalDeviceProperties2KHR propertiesChain{};
         featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
         propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
 
-        // 2 and 2KHR have the same signature
-        PFN_vkGetPhysicalDeviceFeatures2KHR getFeatures2;
-        PFN_vkGetPhysicalDeviceProperties2KHR getProperties2;
-#    endif
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2KHR, JudgeResult);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2KHR, JudgeResult);
 
-        if (v11)
-        {
-            getFeatures2 = m_Instance->GetFunction<PFN_vkGetPhysicalDeviceFeatures2>("vkGetPhysicalDeviceFeatures2");
-            getProperties2 =
-                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceProperties2>("vkGetPhysicalDeviceProperties2");
-        }
-        else
-        {
-            getFeatures2 =
-                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceFeatures2KHR>("vkGetPhysicalDeviceFeatures2KHR");
-            getProperties2 =
-                m_Instance->GetFunction<PFN_vkGetPhysicalDeviceProperties2KHR>("vkGetPhysicalDeviceProperties2KHR");
-        }
-        if (!getFeatures2 || !getProperties2)
-            return JudgeResult::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_EXTENSION_NOT_PRESENT,
-                "Failed to get the vkGetPhysicalDeviceFeatures2(KHR)/vkGetPhysicalDeviceProperties2(KHR) function for "
-                "the device: {}",
-                name));
+        // 2 and 2KHR have the same signature
+        PFN_vkGetPhysicalDeviceFeatures2KHR getFeatures2 = table->vkGetPhysicalDeviceFeatures2KHR;
+        PFN_vkGetPhysicalDeviceProperties2KHR getProperties2 = table->vkGetPhysicalDeviceProperties2KHR;
+#    endif
 
 #    ifdef VKIT_API_VERSION_1_2
         if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
@@ -490,7 +481,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         fullySuitable = false;
     }
 
-    vkGetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceMemoryProperties, JudgeResult);
+    table->GetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
+
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
                 "[VULKIT] Requested memory must be greater than or equal to required memory");
 
@@ -552,19 +545,30 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
 {
     using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
 
+#ifdef VK_KHR_surface
     if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)
+        return EnumerateResult::Error(
+            VK_ERROR_INITIALIZATION_FAILED,
+            "The surface must be set if the instance is not headless (requires present queue)");
+#else
+    if (m_Flags & Flag_RequirePresentQueue)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                      "The surface must be set if the instance is not headless");
+                                      "A present queue is not available with a device that does not support the "
+                                      "surface extension. The instance must be headless");
+#endif
 
     TKit::StaticArray4<VkPhysicalDevice> vkdevices;
 
+    const Vulkan::InstanceTable *table = &m_Instance->GetInfo().Table;
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumeratePhysicalDevices, EnumerateResult);
+
     u32 deviceCount = 0;
-    VkResult result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, nullptr);
+    VkResult result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr);
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the number of physical devices");
 
     vkdevices.Resize(deviceCount);
-    result = vkEnumeratePhysicalDevices(m_Instance->GetInstance(), &deviceCount, vkdevices.GetData());
+    result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData());
     if (result != VK_SUCCESS)
         return EnumerateResult::Error(result, "Failed to get the physical devices");
 
@@ -616,7 +620,7 @@ PhysicalDevice::operator bool() const noexcept
     return m_Device != VK_NULL_HANDLE;
 }
 
-VkPhysicalDevice PhysicalDevice::GetDevice() const noexcept
+VkPhysicalDevice PhysicalDevice::GetHandle() const noexcept
 {
     return m_Device;
 }
@@ -625,11 +629,13 @@ const PhysicalDevice::Info &PhysicalDevice::GetInfo() const noexcept
     return m_Info;
 }
 
+#ifdef VK_KHR_surface
 Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
-    const Instance &p_Instance, const VkSurfaceKHR p_Surface) const noexcept
+    const Instance::Proxy &p_Instance, const VkSurfaceKHR p_Surface) const noexcept
 {
-    return querySwapChainSupport(p_Instance, m_Device, p_Surface);
+    return querySwapChainSupport(p_Instance.Table, m_Device, p_Surface);
 }
+#endif
 
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name) noexcept
 {

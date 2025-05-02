@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vkit/vulkan/vulkan.hpp"
+#include "vkit/vulkan/loader.hpp"
 #include "tkit/container/static_array.hpp"
 #include <functional>
 
@@ -30,16 +31,6 @@ struct VKIT_API System
 
     static const VkExtensionProperties *GetExtension(const char *p_Name) noexcept;
     static const VkLayerProperties *GetLayer(const char *p_Name) noexcept;
-
-    template <typename F>
-    static F GetInstanceFunction(const char *p_Name, const VkInstance p_Instance = VK_NULL_HANDLE) noexcept
-    {
-        return reinterpret_cast<F>(vkGetInstanceProcAddr(p_Instance, p_Name));
-    }
-    template <typename F> static F GetDeviceFunction(const char *p_Name, const VkDevice p_Device) noexcept
-    {
-        return reinterpret_cast<F>(vkGetDeviceProcAddr(p_Device, p_Name));
-    }
 
     static inline TKit::StaticArray64<VkExtensionProperties> AvailableExtensions{};
     static inline TKit::StaticArray16<VkLayerProperties> AvailableLayers{};

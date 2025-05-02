@@ -59,19 +59,16 @@ static bool contains(const TKit::Span<const char *const> p_Extensions, const cha
 FormattedResult<Instance> Instance::Builder::Build() const noexcept
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
-        if (p_Version < VKIT_MAKE_VERSION(0, 1, 1, 0))
-            return FormattedResult<u32>::Ok(p_Version); // You just cant check versions at this point
+#ifdef VKIT_API_VERSION_1_1
+        VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceVersion, FormattedResult<u32>);
 
-        const auto enumerateInstanceVersion =
-            System::GetInstanceFunction<PFN_vkEnumerateInstanceVersion>("vkEnumerateInstanceVersion");
-        if (!enumerateInstanceVersion)
-            return FormattedResult<u32>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                               "The vkEnumerateInstanceVersion function does not exist");
         u32 version;
-        const VkResult result = enumerateInstanceVersion(&version);
+        const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
             return FormattedResult<u32>::Error(result, "Failed to get the vulkan instance version");
-
+#else
+        const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
+#endif
         if (version < p_Version)
             return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_INCOMPATIBLE_DRIVER,
@@ -238,27 +235,43 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
         instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
 
+    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkCreateInstance, FormattedResult<Instance>);
+
     VkInstance vkinstance;
-    VkResult result = vkCreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
+    VkResult result = Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
         return FormattedResult<Instance>::Error(result, "Failed to create the vulkan instance");
 
+    const Vulkan::InstanceTable table = Vulkan::InstanceTable::Create(vkinstance);
+
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyInstance, FormattedResult<Instance>);
+
+#ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
     {
-        const auto createDebugMessenger = System::GetInstanceFunction<PFN_vkCreateDebugUtilsMessengerEXT>(
-            "vkCreateDebugUtilsMessengerEXT", vkinstance);
-        if (!createDebugMessenger)
-            return FormattedResult<Instance>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                                    "Failed to get the vkCreateDebugUtilsMessengerEXT function");
-
-        result = createDebugMessenger(vkinstance, &msgInfo, nullptr, &debugMessenger);
+        if (!table.vkCreateDebugUtilsMessengerEXT || !table.vkDestroyDebugUtilsMessengerEXT)
+        {
+            table.DestroyInstance(vkinstance, m_AllocationCallbacks);
+            return FormattedResult<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER,
+                                                    "Failed to load Vulkan functions: "
+                                                    "vkCreate/DestroyDebugUtilsMessengerEXT");
+        }
+        result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
-            vkDestroyInstance(vkinstance, m_AllocationCallbacks);
+            table.DestroyInstance(vkinstance, m_AllocationCallbacks);
             return FormattedResult<Instance>::Error(result, "Failed to create the debug messenger");
         }
     }
+#else
+    if (validationLayers)
+    {
+        table.DestroyInstance(vkinstance, m_AllocationCallbacks);
+        return FormattedResult<Instance>::Error(
+            VK_ERROR_LAYER_NOT_PRESENT, "Validation layers (along with the debug utils extension) are not suported");
+    }
+#endif
 
     Instance::Info info{};
     info.ApplicationName = m_ApplicationName;
@@ -270,6 +283,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     info.EnabledLayers = layers;
     info.AllocationCallbacks = m_AllocationCallbacks;
     info.DebugMessenger = debugMessenger;
+    info.Table = table;
     if (m_Headless)
         info.Flags |= Flag_Headless;
     if (validationLayers)
@@ -299,16 +313,11 @@ bool Instance::IsLayerEnabled(const char *p_Layer) const noexcept
 static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) noexcept
 {
     TKIT_ASSERT(p_Instance, "[VULKIT] The vulkan instance is null, which probably means it has already been destroyed");
-    // Should be already available if user managed to create instance
 
     if ((p_Info.Flags & Instance::Flag_HasValidationLayers) && p_Info.DebugMessenger)
-    {
-        const auto destroyDebugMessenger = System::GetInstanceFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
-            "vkDestroyDebugUtilsMessengerEXT", p_Instance);
-        TKIT_ASSERT(destroyDebugMessenger, "[VULKIT] Failed to get the vkDestroyDebugUtilsMessengerEXT function");
-        destroyDebugMessenger(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
-    }
-    vkDestroyInstance(p_Instance, p_Info.AllocationCallbacks);
+        p_Info.Table.DestroyDebugUtilsMessengerEXT(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
+
+    p_Info.Table.DestroyInstance(p_Instance, p_Info.AllocationCallbacks);
 }
 
 void Instance::Destroy() noexcept
@@ -324,13 +333,21 @@ void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     p_Queue.Push([instance, info]() { destroy(instance, info); });
 }
 
-VkInstance Instance::GetInstance() const noexcept
+VkInstance Instance::GetHandle() const noexcept
 {
     return m_Instance;
 }
 const Instance::Info &Instance::GetInfo() const noexcept
 {
     return m_Info;
+}
+Instance::Proxy Instance::CreateProxy() const noexcept
+{
+    Proxy proxy;
+    proxy.Instance = m_Instance;
+    proxy.AllocationCallbacks = m_Info.AllocationCallbacks;
+    proxy.Table = &m_Info.Table;
+    return proxy;
 }
 Instance::operator VkInstance() const noexcept
 {

@@ -240,11 +240,11 @@ class HostVisibleBuffer
      * @param p_Buffers A span containing the buffers to bind.
      * @param p_Offsets A span containing the offsets within the buffers (default: 0).
      */
-    static void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const TKit::Span<const VkBuffer> p_Buffers,
-                                   const u32 p_FirstBinding = 0,
+    static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+                                   const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding = 0,
                                    const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
     {
-        Buffer::BindAsVertexBuffer(p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
+        Buffer::BindAsVertexBuffer(p_Device, p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
     }
 
     /**
@@ -259,9 +259,13 @@ class HostVisibleBuffer
         m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Buffer, p_Offset);
     }
 
-    VkBuffer GetBuffer() const noexcept
+    const LogicalDevice::Proxy &GetDevice() const noexcept
     {
-        return m_Buffer.GetBuffer();
+        return m_Buffer.GetDevice();
+    }
+    VkBuffer GetHandle() const noexcept
+    {
+        return m_Buffer.GetHandle();
     }
     explicit(false) operator const Buffer &() const noexcept
     {
@@ -269,7 +273,7 @@ class HostVisibleBuffer
     }
     explicit(false) operator VkBuffer() const noexcept
     {
-        return m_Buffer.GetBuffer();
+        return m_Buffer.GetHandle();
     }
     explicit(false) operator bool() const noexcept
     {

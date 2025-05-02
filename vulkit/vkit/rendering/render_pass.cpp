@@ -10,6 +10,13 @@ RenderPass::Builder::Builder(const LogicalDevice *p_Device, const u32 p_ImageCou
 
 Result<RenderPass> RenderPass::Builder::Build() const noexcept
 {
+    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateRenderPass, Result<RenderPass>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyRenderPass, Result<RenderPass>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateImageView, Result<RenderPass>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<RenderPass>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyFramebuffer, Result<RenderPass>);
+
     if (m_Subpasses.IsEmpty())
         return Result<RenderPass>::Error(VK_ERROR_INITIALIZATION_FAILED, "Render must have at least one subpass");
 
@@ -66,10 +73,8 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
     createInfo.pDependencies = dependencies.GetData();
     createInfo.flags = m_Flags;
 
-    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
-
     VkRenderPass renderPass;
-    const VkResult result = vkCreateRenderPass(proxy, &createInfo, proxy.AllocationCallbacks, &renderPass);
+    const VkResult result = proxy.Table->CreateRenderPass(proxy, &createInfo, proxy.AllocationCallbacks, &renderPass);
     if (result != VK_SUCCESS)
         return Result<RenderPass>::Error(result, "Failed to create render pass");
 
@@ -90,7 +95,7 @@ RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass 
 void RenderPass::destroy() const noexcept
 {
     TKIT_ASSERT(m_RenderPass, "[VULKIT] Render pass is already destroyed");
-    vkDestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
+    m_Device.Table->DestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
 }
 
 void RenderPass::Destroy() noexcept
@@ -128,7 +133,7 @@ Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageCreateInf
     viewInfo.format = p_Info.format;
     viewInfo.subresourceRange = p_Range;
 
-    result = vkCreateImageView(m_Device, &viewInfo, m_Device.AllocationCallbacks, &imageData.ImageView);
+    result = m_Device.Table->CreateImageView(m_Device, &viewInfo, m_Device.AllocationCallbacks, &imageData.ImageView);
     if (result != VK_SUCCESS)
     {
         vmaDestroyImage(m_Info.Allocator, imageData.Image, imageData.Allocation);
@@ -246,7 +251,11 @@ const RenderPass::Info &RenderPass::GetInfo() const noexcept
 {
     return m_Info;
 }
-VkRenderPass RenderPass::GetRenderPass() const noexcept
+const LogicalDevice::Proxy &RenderPass::GetDevice() const noexcept
+{
+    return m_Device;
+}
+VkRenderPass RenderPass::GetHandle() const noexcept
 {
     return m_RenderPass;
 }
@@ -265,11 +274,11 @@ void RenderPass::Resources::destroy() const noexcept
         if (data.Image)
         {
             vmaDestroyImage(m_Allocator, data.Image, data.Allocation);
-            vkDestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
+            m_Device.Table->DestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
         }
 
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
-        vkDestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
+        m_Device.Table->DestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
 }
 void RenderPass::Resources::Destroy() noexcept
 {

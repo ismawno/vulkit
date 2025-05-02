@@ -80,6 +80,19 @@
 
 #define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKIT_FORMAT(__VA_ARGS__))
 
+#ifdef TKIT_ENABLE_ASSERTS
+#    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)                                                     \
+        if (!VKit::Vulkan::p_Func)                                                                                     \
+        return p_Result::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: " #p_Func)
+
+#    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)                                             \
+        if (!p_Table->p_Func)                                                                                          \
+        return p_Result::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: " #p_Func)
+#else
+#    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)
+#    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)
+#endif
+
 namespace VKit
 {
 template <typename T>

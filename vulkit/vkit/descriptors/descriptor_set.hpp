@@ -67,26 +67,30 @@ class VKIT_API DescriptorSet
         TKit::StaticArray16<VkWriteDescriptorSet> m_Writes;
     };
 
+    static Result<DescriptorSet> Create(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set) noexcept;
+
     DescriptorSet() noexcept = default;
-    DescriptorSet(VkDescriptorSet p_Set) noexcept;
+    DescriptorSet(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set) noexcept;
 
     void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
               TKit::Span<const u32> p_DynamicOffsets = {}) const noexcept;
 
-    static void Bind(const VkCommandBuffer p_CommandBuffer, TKit::Span<const VkDescriptorSet> p_Sets,
-                     VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
-                     TKit::Span<const u32> p_DynamicOffsets = {}) noexcept;
-
-    static void Bind(const VkCommandBuffer p_CommandBuffer, VkDescriptorSet p_Set, VkPipelineBindPoint p_BindPoint,
+    static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+                     TKit::Span<const VkDescriptorSet> p_Sets, VkPipelineBindPoint p_BindPoint,
                      VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
                      TKit::Span<const u32> p_DynamicOffsets = {}) noexcept;
 
-    VkDescriptorSet GetDescriptorSet() const noexcept;
+    static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer, VkDescriptorSet p_Set,
+                     VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
+                     TKit::Span<const u32> p_DynamicOffsets = {}) noexcept;
 
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkDescriptorSet GetHandle() const noexcept;
     explicit(false) operator VkDescriptorSet() const noexcept;
     explicit(false) operator bool() const noexcept;
 
   private:
+    LogicalDevice::Proxy m_Device{};
     VkDescriptorSet m_Set = VK_NULL_HANDLE;
 };
 } // namespace VKit

@@ -67,7 +67,8 @@ class VKIT_API PipelineLayout
 
     const Info &GetInfo() const noexcept;
 
-    VkPipelineLayout GetLayout() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    VkPipelineLayout GetHandle() const noexcept;
     explicit(false) operator VkPipelineLayout() const noexcept;
     explicit(false) operator bool() const noexcept;
 

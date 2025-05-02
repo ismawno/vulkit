@@ -19,6 +19,16 @@ namespace VKit
 class VKIT_API Instance
 {
   public:
+    struct Proxy
+    {
+        VkInstance Instance = VK_NULL_HANDLE;
+        const VkAllocationCallbacks *AllocationCallbacks = nullptr;
+        const Vulkan::InstanceTable *Table = nullptr;
+
+        explicit(false) operator VkInstance() const noexcept;
+        explicit(false) operator bool() const noexcept;
+    };
+
     /**
      * @brief A utility for setting up and creating a Vulkan instance.
      *
@@ -124,14 +134,16 @@ class VKIT_API Instance
         const char *ApplicationName;
         const char *EngineName;
 
+        TKit::StaticArray64<const char *> EnabledExtensions;
+        TKit::StaticArray16<const char *> EnabledLayers;
+
+        Vulkan::InstanceTable Table;
+
         u32 ApplicationVersion;
         u32 EngineVersion;
         u32 ApiVersion;
 
         Flags Flags;
-
-        TKit::StaticArray64<const char *> EnabledExtensions;
-        TKit::StaticArray16<const char *> EnabledLayers;
 
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;
@@ -146,23 +158,14 @@ class VKIT_API Instance
     void Destroy() noexcept;
     void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
 
-    VkInstance GetInstance() const noexcept;
+    VkInstance GetHandle() const noexcept;
     const Info &GetInfo() const noexcept;
 
-    explicit(false) operator VkInstance() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    Proxy CreateProxy() const noexcept;
 
-    /**
-     * @brief Retrieves an instance function by name.
-     *
-     * @tparam F Function type to cast to.
-     * @param p_Name Name of the function.
-     * @return The function pointer casted to the specified type.
-     */
-    template <typename F> F GetFunction(const char *p_Name) const noexcept
-    {
-        return reinterpret_cast<F>(vkGetInstanceProcAddr(m_Instance, p_Name));
-    }
+    explicit(false) operator VkInstance() const noexcept;
+    explicit(false) operator Proxy() const noexcept;
+    explicit(false) operator bool() const noexcept;
 
   private:
     VkInstance m_Instance = VK_NULL_HANDLE;
