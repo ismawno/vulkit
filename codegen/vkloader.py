@@ -557,7 +557,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
 cpp = CPPFile("loader.cpp")
 cpp.disclaimer("vkloader.py")
 cpp.include("vkit/core/pch.hpp", quotes=True)
-cpp.include((output / "loader.hpp").resolve(), quotes=True)
+cpp.include("vkit/vulkan/loader.hpp", quotes=True)
 cpp.include("tkit/utils/logging.hpp", quotes=True)
 cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
 cpp.include("dlfcn.h")

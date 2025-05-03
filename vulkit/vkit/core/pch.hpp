@@ -28,4 +28,3 @@
 #include <cstdlib>
 #include <filesystem>
 #include <vulkan/vulkan.h>
-#include "vkit/core/vma.hpp"
