@@ -1,3 +1,5 @@
+#pragma once
+
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
@@ -123,8 +125,6 @@ template <String MessageType> class ErrorInfo
      * @return A ErrorInfo instance representing the error.
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept;
-
-    explicit(false) operator bool() const noexcept;
 
     VkResult ErrorCode{};
     MessageType Message{};

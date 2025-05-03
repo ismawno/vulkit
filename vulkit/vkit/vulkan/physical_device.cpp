@@ -234,7 +234,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     };
 
 #ifdef VK_KHR_surface
-    const auto presentQueueIndex = [this, familyCount, p_Device, &table](const VkSurfaceKHR p_Surface) -> u32 {
+    const auto presentQueueIndex = [familyCount, p_Device, &table](const VkSurfaceKHR p_Surface) -> u32 {
         if (!p_Surface || !table->vkGetPhysicalDeviceSurfaceSupportKHR)
             return UINT32_MAX;
 

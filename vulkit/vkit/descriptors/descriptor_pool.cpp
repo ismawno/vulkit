@@ -72,22 +72,31 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     if (result != VK_SUCCESS)
         return Result<DescriptorSet>::Error(result, "Failed to allocate descriptor set");
 
-    return Result<DescriptorSet>::Ok(set);
+    return Result<DescriptorSet>::Ok(m_Device, set);
 }
 
-void DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
+Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
 {
-    m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
+    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+    return Result<>::Ok();
 }
 
-void DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
+Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
 {
-    m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
+    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+    return Result<>::Ok();
 }
 
-void DescriptorPool::Reset() noexcept
+Result<> DescriptorPool::Reset() noexcept
 {
-    m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, 0);
+    const VkResult result = m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, 0);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+    return Result<>::Ok();
 }
 
 const LogicalDevice::Proxy &DescriptorPool::GetDevice() const noexcept

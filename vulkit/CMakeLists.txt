@@ -7,6 +7,8 @@ set(SOURCES
     vkit/vulkan/physical_device.cpp
     vkit/vulkan/instance.cpp
     vkit/vulkan/system.cpp
+    vkit/vulkan/loader.cpp
+    vkit/vulkan/vulkan.cpp
     vkit/rendering/command_pool.cpp
     vkit/rendering/render_pass.cpp
     vkit/rendering/swap_chain.cpp
@@ -56,7 +58,7 @@ endfunction()
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
-target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS})
 target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan VulkanMemoryAllocator)
 
 target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)

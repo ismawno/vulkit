@@ -10,6 +10,7 @@ __pycache__/
 reminders.txt
 timeline.txt
 codegen/vendor
+generate.sh
 
 # Prerequisites
 *.d

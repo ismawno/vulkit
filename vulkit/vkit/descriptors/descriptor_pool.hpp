@@ -83,8 +83,9 @@ class VKIT_API DescriptorPool
      * Frees the specified descriptor sets, making their resources available for reallocation.
      *
      * @param p_Sets A span containing the descriptor sets to deallocate.
+     * @return A `Result` indicating success or failure.
      */
-    void Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const noexcept;
+    Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const noexcept;
 
     /**
      * @brief Deallocates a descriptor set from the pool.
@@ -92,9 +93,16 @@ class VKIT_API DescriptorPool
      * Frees the specified descriptor set, making its resources available for reallocation.
      *
      * @param p_Set The descriptor set to deallocate.
+     * @return A `Result` indicating success or failure.
      */
-    void Deallocate(VkDescriptorSet p_Set) const noexcept;
-    void Reset() noexcept;
+    Result<> Deallocate(VkDescriptorSet p_Set) const noexcept;
+
+    /**
+     * @brief Resets the descriptor pool, making all resources available for reallocation.
+     *
+     * @return A `Result` indicating success or failure.
+     */
+    Result<> Reset() noexcept;
 
     const LogicalDevice::Proxy &GetDevice() const noexcept;
     VkDescriptorPool GetHandle() const noexcept;
