@@ -462,16 +462,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                                                     "The device {} does not have the required features", name));
 
 #ifdef VKIT_API_VERSION_1_2
-    if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0) &&
-        (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
-         !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12)))
+    if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
+        !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
                               "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0) &&
-        !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
+    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
 #endif
