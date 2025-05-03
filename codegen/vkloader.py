@@ -498,6 +498,7 @@ def guard_if_needed(
 
 hpp = CPPFile("loader.hpp")
 hpp.disclaimer("vkloader.py")
+hpp("#pragma once")
 hpp.include("vkit/vulkan/vulkan.hpp", quotes=True)
 
 
