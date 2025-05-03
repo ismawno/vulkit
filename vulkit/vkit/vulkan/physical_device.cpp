@@ -463,12 +463,18 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     }
     else
     {
-        vkGetPhysicalDeviceFeatures(p_Device, &features.Core);
-        vkGetPhysicalDeviceProperties(p_Device, &properties.Core);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures, JudgeResult);
+        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
+
+        table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
+        table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
     }
 #else
-    vkGetPhysicalDeviceFeatures(p_Device, &features.Core);
-    vkGetPhysicalDeviceProperties(p_Device, &properties.Core);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures, JudgeResult);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
+
+    table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
+    table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
 #endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))

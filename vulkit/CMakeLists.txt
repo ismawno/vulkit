@@ -59,7 +59,11 @@ find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan VulkanMemoryAllocator)
+target_link_libraries(vulkit PUBLIC toolkit VulkanMemoryAllocator)
+# link dlopen
+if (UNIX AND NOT APPLE)
+    target_link_libraries(vulkit PUBLIC ${CMAKE_DL_LIBS})
+endif()
 
 target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
 target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}" VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")

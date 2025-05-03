@@ -2,7 +2,7 @@
 
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/core/vma.hpp"
+#include "vkit/vulkan/allocator.hpp"
 #include "tkit/container/span.hpp"
 
 #include <vulkan/vulkan.h>

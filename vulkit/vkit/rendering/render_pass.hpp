@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vkit/vulkan/logical_device.hpp"
-#include "vkit/core/vma.hpp"
+#include "vkit/vulkan/allocator.hpp"
 #include "tkit/container/static_array.hpp"
 
 namespace VKit
