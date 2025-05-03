@@ -118,6 +118,12 @@ class VKIT_API PhysicalDevice
         Selector &SetName(const char *p_Name) noexcept;
         Selector &PreferType(Type p_Type) noexcept;
 
+        Selector &RequireApiVersion(u32 p_Version) noexcept;
+        Selector &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+
+        Selector &RequestApiVersion(u32 p_Version) noexcept;
+        Selector &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+
         Selector &RequireExtension(const char *p_Extension) noexcept;
         Selector &RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
 
@@ -142,6 +148,9 @@ class VKIT_API PhysicalDevice
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;
+
+        u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+        u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
 #ifdef VK_KHR_surface
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
@@ -185,6 +194,7 @@ class VKIT_API PhysicalDevice
         Type Type;
         Flags Flags;
 
+        u32 ApiVersion;
         u32 GraphicsIndex;
         u32 ComputeIndex;
         u32 TransferIndex;

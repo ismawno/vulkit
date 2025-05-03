@@ -144,8 +144,15 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     table->GetPhysicalDeviceProperties(p_Device, &quickProperties);
     const char *name = quickProperties.deviceName;
 
+    if (quickProperties.apiVersion < m_RequiredApiVersion)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INCOMPATIBLE_DRIVER,
+                                                    "The device {} does not support the required API version", name));
+
+    bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
+
     if (m_Name != nullptr && strcmp(m_Name, name) != 0)
-        return JudgeResult::Error(VK_ERROR_INITIALIZATION_FAILED, "The device name does not match the requested name");
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                    "The device name ({}) does not match the requested name", name));
 
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumerateDeviceExtensionProperties, JudgeResult);
 
@@ -180,7 +187,6 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_EXTENSION_NOT_PRESENT, "The required extensions are not supported for the device: {}", name));
 
-    bool fullySuitable = true;
     for (const std::string &extension : m_RequestedExtensions)
         if (contains(availableExtensions, extension))
             enabledExtensions.Append(extension);
@@ -363,7 +369,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 
 #ifdef VKIT_API_VERSION_1_1
-    const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+    const bool v11 = quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
 #else
     const bool v11 = false;
 #endif
@@ -418,7 +424,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #    endif
 
 #    ifdef VKIT_API_VERSION_1_2
-        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+        if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
         {
             featuresChain.pNext = &features.Vulkan11;
             propertiesChain.pNext = &properties.Vulkan11;
@@ -428,7 +434,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         }
 #    endif
 #    ifdef VKIT_API_VERSION_1_3
-        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+        if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
         {
             features.Vulkan12.pNext = &features.Vulkan13;
             properties.Vulkan12.pNext = &properties.Vulkan13;
@@ -456,7 +462,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                                                     "The device {} does not have the required features", name));
 
 #ifdef VKIT_API_VERSION_1_2
-    if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0) &&
+    if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0) &&
         (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
          !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12)))
         return JudgeResult::Error(
@@ -464,15 +470,11 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
                               "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0) &&
+    if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0) &&
         !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
 #endif
-
-    if (properties.Core.apiVersion < instanceInfo.ApiVersion)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not support the required API version", name));
     if (m_PreferredType != Type(properties.Core.deviceType))
     {
         if (!checkFlag(Flag_AnyType))
@@ -646,6 +648,28 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const Type p_Type
 {
     m_PreferredType = p_Type;
     return *this;
+}
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Version) noexcept
+{
+    m_RequiredApiVersion = p_Version;
+    if (m_RequestedApiVersion < m_RequiredApiVersion)
+        m_RequestedApiVersion = m_RequiredApiVersion;
+    return *this;
+}
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    return RequireApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+}
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Version) noexcept
+{
+    m_RequestedApiVersion = p_Version;
+    if (m_RequestedApiVersion < m_RequiredApiVersion)
+        m_RequiredApiVersion = m_RequestedApiVersion;
+    return *this;
+}
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+{
+    return RequestApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *p_Extension) noexcept
 {
