@@ -126,6 +126,8 @@ template <String MessageType> class ErrorInfo
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept;
 
+    operator VkResult() const noexcept;
+
     VkResult ErrorCode{};
     MessageType Message{};
 };

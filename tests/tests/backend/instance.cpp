@@ -30,11 +30,11 @@ TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
     SetupSystem();
     auto result = Instance::Builder().SetHeadless().RequireExtension("VK_KHR_non_existent").Build();
     REQUIRE(!result);
-    REQUIRE(result.GetError().ErrorCode == VK_ERROR_EXTENSION_NOT_PRESENT);
+    REQUIRE(result.GetError() == VK_ERROR_EXTENSION_NOT_PRESENT);
 
     result = Instance::Builder().SetHeadless().RequireLayer("VK_LAYER_non_existent").Build();
     REQUIRE(!result);
-    REQUIRE(result.GetError().ErrorCode == VK_ERROR_LAYER_NOT_PRESENT);
+    REQUIRE(result.GetError() == VK_ERROR_LAYER_NOT_PRESENT);
 }
 
 TEST_CASE("Validation layers", "[instance][validation]")

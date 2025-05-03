@@ -144,7 +144,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
     if (m_Name != nullptr && strcmp(m_Name, name) != 0)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INCOMPATIBLE_DRIVER,
                                                     "The device name ({}) does not match the requested name", name));
 
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumerateDeviceExtensionProperties, JudgeResult);
@@ -324,29 +324,29 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 
     if (!checkFlags(Flag_RequireGraphicsQueue, PhysicalDevice::Flag_HasGraphicsQueue))
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a graphics queue", name));
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a graphics queue", name));
     if (!checkFlags(Flag_RequireComputeQueue, PhysicalDevice::Flag_HasComputeQueue))
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a compute queue", name));
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a compute queue", name));
     if (!checkFlags(Flag_RequireTransferQueue, PhysicalDevice::Flag_HasTransferQueue))
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a transfer queue", name));
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a transfer queue", name));
     if (!checkFlags(Flag_RequirePresentQueue, PhysicalDevice::Flag_HasPresentQueue))
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have a present queue", name));
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a present queue", name));
 
     if (!checkFlags(Flag_RequireDedicatedComputeQueue, PhysicalDevice::Flag_HasDedicatedComputeQueue))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not have a dedicated compute queue", name));
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a dedicated compute queue", name));
     if (!checkFlags(Flag_RequireDedicatedTransferQueue, PhysicalDevice::Flag_HasDedicatedTransferQueue))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not have a dedicated transfer queue", name));
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a dedicated transfer queue", name));
     if (!checkFlags(Flag_RequireSeparateComputeQueue, PhysicalDevice::Flag_HasSeparateComputeQueue))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not have a separate compute queue", name));
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a separate compute queue", name));
     if (!checkFlags(Flag_RequireSeparateTransferQueue, PhysicalDevice::Flag_HasSeparateTransferQueue))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not have a separate transfer queue", name));
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} does not have a separate transfer queue", name));
 
 #ifdef VK_KHR_surface
     if (checkFlag(Flag_RequirePresentQueue))
@@ -478,26 +478,25 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                    "The device {} does not have the required features", name));
+        return JudgeResult::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required features", name));
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
         !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                              "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(
+            VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
     if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have the required Vulkan 1.3 features", name));
+            VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required Vulkan 1.3 features", name));
 #endif
     if (m_PreferredType != Type(properties.Core.deviceType))
     {
         if (!checkFlag(Flag_AnyType))
             return JudgeResult::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} is not of the preferred type", name));
+                VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device {} is not of the preferred type", name));
         fullySuitable = false;
     }
 
@@ -526,9 +525,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     }
     if (!hasDeviceLocalMemory)
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "The device {} does not have device local memory", name));
+            VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY, "The device {} does not have device local memory", name));
     if (!hasRequiredMemory)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY,
                                                     "The device {} does not have the required memory size", name));
 
     fullySuitable &= hasRequestedMemory;

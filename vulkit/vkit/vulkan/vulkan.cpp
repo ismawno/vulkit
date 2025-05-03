@@ -9,6 +9,11 @@ ErrorInfo<MessageType>::ErrorInfo(VkResult p_Error, const MessageType &p_Message
 {
 }
 
+template <String MessageType> ErrorInfo<MessageType>::operator VkResult() const noexcept
+{
+    return ErrorCode;
+}
+
 template class VKIT_API ErrorInfo<const char *>;
 template class VKIT_API ErrorInfo<std::string>;
 
