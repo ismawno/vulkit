@@ -106,23 +106,16 @@ PhysicalDevice::Features::Features() noexcept
 #ifdef VKIT_API_VERSION_1_3
     setFeaturesToFalse(Vulkan13);
 #endif
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
+    DynamicRendering.dynamicRendering = VK_FALSE;
+#endif
 }
 
 PhysicalDevice::Selector::Selector(const Instance *p_Instance) noexcept : m_Instance(p_Instance)
 {
-#ifdef VKIT_API_VERSION_1_2
-    m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    m_RequiredFeatures.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-#endif
-#ifdef VKIT_API_VERSION_1_3
-    m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-#endif
-
-    if (!(p_Instance->GetInfo().Flags & Instance::Flag_Headless))
-        m_Flags |= Flag_RequirePresentQueue;
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const noexcept
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() noexcept
 {
     const auto result = Enumerate();
     if (!result)
@@ -392,8 +385,16 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 #ifdef VKIT_API_VERSION_1_3
     features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    features.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
     properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
+#elif defined(VK_KHR_dynamic_rendering)
+    features.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
 #endif
+
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
+    const bool dynamicRendering = contains(availableExtensions, "VK_KHR_dynamic_rendering");
+#endif
+
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     if (v11 || prop2)
     {
@@ -437,7 +438,20 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
         {
             features.Vulkan12.pNext = &features.Vulkan13;
+            if (dynamicRendering)
+                features.Vulkan13.pNext = &features.DynamicRendering;
+
             properties.Vulkan12.pNext = &properties.Vulkan13;
+        }
+        else if (dynamicRendering)
+            features.Vulkan12.pNext = &features.DynamicRendering;
+#    elif defined(VK_KHR_dynamic_rendering)
+        if (dynamicRendering)
+        {
+            if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+                features.Vulkan12.pNext = &features.DynamicRendering;
+            else
+                featuresChain.pNext = &features.DynamicRendering;
         }
 #    endif
 
@@ -541,9 +555,23 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     return JudgeResult::Ok(p_Device, deviceInfo);
 }
 
-Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const noexcept
+Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() noexcept
 {
     using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
+
+#ifdef VKIT_API_VERSION_1_2
+    m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+    m_RequiredFeatures.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+#elif defined(VK_KHR_dynamic_rendering)
+    m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
+#endif
+
+    if (!(m_Instance->GetInfo().Flags & Instance::Flag_Headless))
+        m_Flags |= Flag_RequirePresentQueue;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)

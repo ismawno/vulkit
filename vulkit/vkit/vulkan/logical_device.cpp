@@ -25,7 +25,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         enabledExtensions.Append(extension.c_str());
 
 #ifdef VKIT_API_VERSION_1_1
-    const bool v11 = instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+    const bool v11 = devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
 #else
     const bool v11 = false;
 #endif
@@ -56,7 +56,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
         featuresChain.features = devInfo.EnabledFeatures.Core;
 
 #    ifdef VKIT_API_VERSION_1_2
-        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+        if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
         {
             featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
             devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
@@ -64,7 +64,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #    endif
 
 #    ifdef VKIT_API_VERSION_1_3
-        if (instanceInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+        if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
             devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
 #    endif
 

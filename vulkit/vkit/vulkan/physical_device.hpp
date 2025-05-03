@@ -37,6 +37,9 @@ class VKIT_API PhysicalDevice
 #endif
 #ifdef VKIT_API_VERSION_1_3
         VkPhysicalDeviceVulkan13Features Vulkan13{};
+        VkPhysicalDeviceDynamicRenderingFeatures DynamicRendering{};
+#elif defined(VK_KHR_dynamic_rendering)
+        VkPhysicalDeviceDynamicRenderingFeaturesKHR DynamicRendering{};
 #endif
     };
 
@@ -103,7 +106,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing the selected PhysicalDevice or an error.
          */
-        FormattedResult<PhysicalDevice> Select() const noexcept;
+        FormattedResult<PhysicalDevice> Select() noexcept;
 
         /**
          * @brief Lists all available physical devices along with their evaluation results.
@@ -113,7 +116,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing an array of formatted results for each physical device.
          */
-        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() const noexcept;
+        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() noexcept;
 
         Selector &SetName(const char *p_Name) noexcept;
         Selector &PreferType(Type p_Type) noexcept;
