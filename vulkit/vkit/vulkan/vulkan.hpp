@@ -122,7 +122,7 @@ template <String MessageType> class ErrorInfo
      *
      * @param p_Error The Vulkan result code indicating the error.
      * @param p_Message A descriptive message providing details about the error.
-     * @return A ErrorInfo instance representing the error.
+     * @return A `ErrorInfo` instance representing the error.
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept;
 
