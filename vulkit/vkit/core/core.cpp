@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/vulkan/system.hpp"
+#include "vkit/core/core.hpp"
 
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 #    include <dlfcn.h>
@@ -17,7 +17,7 @@ static void *s_Library = nullptr;
 static HMODULE s_Library = nullptr;
 #endif
 
-Result<> System::Initialize() noexcept
+Result<> Core::Initialize() noexcept
 {
 #if defined(TKIT_OS_APPLE)
     s_Library = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
@@ -72,7 +72,7 @@ Result<> System::Initialize() noexcept
     return Result<>::Ok();
 }
 
-void System::Terminate() noexcept
+void Core::Terminate() noexcept
 {
     if (!s_Library)
         return;
@@ -84,7 +84,7 @@ void System::Terminate() noexcept
     s_Library = nullptr;
 }
 
-const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept
+const VkExtensionProperties *Core::GetExtension(const char *p_Name) noexcept
 {
     for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
@@ -92,7 +92,7 @@ const VkExtensionProperties *System::GetExtension(const char *p_Name) noexcept
     return nullptr;
 }
 
-const VkLayerProperties *System::GetLayer(const char *p_Name) noexcept
+const VkLayerProperties *Core::GetLayer(const char *p_Name) noexcept
 {
     for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
@@ -100,7 +100,7 @@ const VkLayerProperties *System::GetLayer(const char *p_Name) noexcept
     return nullptr;
 }
 
-bool System::IsExtensionSupported(const char *p_Name) noexcept
+bool Core::IsExtensionSupported(const char *p_Name) noexcept
 {
     for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
@@ -108,23 +108,12 @@ bool System::IsExtensionSupported(const char *p_Name) noexcept
     return false;
 }
 
-bool System::IsLayerSupported(const char *p_Name) noexcept
+bool Core::IsLayerSupported(const char *p_Name) noexcept
 {
     for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
             return true;
     return false;
-}
-
-void DeletionQueue::Push(std::function<void()> &&p_Deleter) noexcept
-{
-    m_Deleters.Append(std::move(p_Deleter));
-}
-void DeletionQueue::Flush() noexcept
-{
-    for (u32 i = m_Deleters.GetSize(); i > 0; --i)
-        m_Deleters[i - 1]();
-    m_Deleters.Clear();
 }
 
 const char *VkResultToString(const VkResult p_Result) noexcept

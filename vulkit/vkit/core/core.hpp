@@ -13,7 +13,7 @@ namespace VKit
  * Includes methods to check for support, retrieve details about layers and extensions,
  * and fetch Vulkan functions at the instance or device level.
  */
-struct VKIT_API System
+struct VKIT_API Core
 {
     /**
      * @brief Initializes the Vulkan system.
@@ -35,28 +35,5 @@ struct VKIT_API System
     static inline TKit::StaticArray64<VkExtensionProperties> AvailableExtensions{};
     static inline TKit::StaticArray16<VkLayerProperties> AvailableLayers{};
 };
-
-/**
- * @brief Manages deferred deletion of Vulkan resources.
- *
- * Allows users to enqueue resource cleanup operations, which can be flushed
- * in bulk to ensure proper resource management.
- */
-class VKIT_API DeletionQueue
-{
-  public:
-    void Push(std::function<void()> &&p_Deleter) noexcept;
-    void Flush() noexcept;
-
-    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object) noexcept
-    {
-        p_Object.SubmitForDeletion(*this);
-    }
-
-  private:
-    TKit::StaticArray1024<std::function<void()>> m_Deleters;
-};
-
-VKIT_API const char *VkResultToString(VkResult p_Result) noexcept;
 
 } // namespace VKit

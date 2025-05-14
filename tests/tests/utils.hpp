@@ -1,11 +1,11 @@
 #pragma once
 
-#include "vkit/vulkan/system.hpp"
+#include "vkit/core/core.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 namespace VKit
 {
-void SetupSystem() noexcept;
+void Setup() noexcept;
 
 template <typename T> void CheckResult(const T &result) noexcept
 {

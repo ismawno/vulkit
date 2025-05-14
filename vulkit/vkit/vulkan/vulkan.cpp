@@ -17,6 +17,17 @@ template <String MessageType> ErrorInfo<MessageType>::operator VkResult() const 
 template class VKIT_API ErrorInfo<const char *>;
 template class VKIT_API ErrorInfo<std::string>;
 
+void DeletionQueue::Push(std::function<void()> &&p_Deleter) noexcept
+{
+    m_Deleters.Append(std::move(p_Deleter));
+}
+void DeletionQueue::Flush() noexcept
+{
+    for (u32 i = m_Deleters.GetSize(); i > 0; --i)
+        m_Deleters[i - 1]();
+    m_Deleters.Clear();
+}
+
 FormattedError ToFormatted(const Error &p_Error) noexcept
 {
     return FormattedError{p_Error.ErrorCode, p_Error.Message};

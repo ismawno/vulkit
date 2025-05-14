@@ -36,7 +36,7 @@ static void CheckDevices(const TKit::Span<const FormattedResult<PhysicalDevice>>
 
 Instance SetupInstance()
 {
-    SetupSystem();
+    Setup();
     const auto result =
         Instance::Builder().RequireValidationLayers().RequestApiVersion(1, 2, 0).SetHeadless(true).Build();
 

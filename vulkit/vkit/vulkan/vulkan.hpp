@@ -3,6 +3,7 @@
 #include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
+#include "tkit/container/static_array.hpp"
 #include <vulkan/vulkan.h>
 
 #ifdef VK_MAKE_API_VERSION
@@ -144,4 +145,28 @@ template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result) 
     return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue())
                     : FormattedResult<T>::Error(p_Result.GetError().Result, p_Result.GetError().Message);
 }
+
+/**
+ * @brief Manages deferred deletion of Vulkan resources.
+ *
+ * Allows users to enqueue resource cleanup operations, which can be flushed
+ * in bulk to ensure proper resource management.
+ */
+class VKIT_API DeletionQueue
+{
+  public:
+    void Push(std::function<void()> &&p_Deleter) noexcept;
+    void Flush() noexcept;
+
+    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object) noexcept
+    {
+        p_Object.SubmitForDeletion(*this);
+    }
+
+  private:
+    TKit::StaticArray1024<std::function<void()>> m_Deleters;
+};
+
+VKIT_API const char *VkResultToString(VkResult p_Result) noexcept;
+
 } // namespace VKit

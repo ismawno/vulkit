@@ -90,12 +90,12 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     const u32 apiVersion = vresult.GetValue();
 
     for (const char *extension : m_RequiredExtensions)
-        if (!System::IsExtensionSupported(extension))
+        if (!Core::IsExtensionSupported(extension))
             return FormattedResult<Instance>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "The extension {} is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
-        if (!System::IsLayerSupported(layer))
+        if (!Core::IsLayerSupported(layer))
             return FormattedResult<Instance>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
 
@@ -106,7 +106,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
 
     for (const char *extension : m_RequestedExtensions)
     {
-        const bool supported = System::IsExtensionSupported(extension);
+        const bool supported = Core::IsExtensionSupported(extension);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The extension {} is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.Append(extension);
@@ -119,7 +119,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
 
     for (const char *layer : m_RequestedLayers)
     {
-        const bool supported = System::IsLayerSupported(layer);
+        const bool supported = Core::IsLayerSupported(layer);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The layer {} is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.Append(layer);
@@ -128,8 +128,8 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     bool validationLayers = false;
     if (m_RequestValidationLayers)
     {
-        validationLayers = System::IsExtensionSupported("VK_EXT_debug_utils") &&
-                           System::IsLayerSupported("VK_LAYER_KHRONOS_validation");
+        validationLayers =
+            Core::IsExtensionSupported("VK_EXT_debug_utils") && Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
             return FormattedResult<Instance>::Error(
@@ -144,13 +144,13 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     }
 
     const bool properties2Support = apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
-                                    System::IsExtensionSupported("VK_KHR_get_physical_device_properties2");
+                                    Core::IsExtensionSupported("VK_KHR_get_physical_device_properties2");
 
     if (properties2Support && !contains(extensions, "VK_KHR_get_physical_device_properties2"))
         extensions.Append("VK_KHR_get_physical_device_properties2");
 
 #ifdef VK_KHR_portability_enumeration
-    const bool portabilitySupport = System::IsExtensionSupported("VK_KHR_portability_enumeration");
+    const bool portabilitySupport = Core::IsExtensionSupported("VK_KHR_portability_enumeration");
     if (portabilitySupport && !contains(extensions, "VK_KHR_portability_enumeration"))
         extensions.Append("VK_KHR_portability_enumeration");
 #endif
@@ -158,7 +158,7 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     if (!m_Headless)
     {
         const auto checkWindowingSupport = [&extensions](const char *p_Extension) -> bool {
-            if (!System::IsExtensionSupported(p_Extension))
+            if (!Core::IsExtensionSupported(p_Extension))
                 return false;
             if (!contains(extensions, p_Extension))
                 extensions.Append(p_Extension);

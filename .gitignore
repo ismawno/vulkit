@@ -4,6 +4,8 @@
 *build*/
 .venv/
 .DS_Store
+.cache/
+.clangd
 docs/html/
 docs/latex/
 __pycache__/

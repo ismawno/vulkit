@@ -2,9 +2,9 @@
 
 namespace VKit
 {
-void SetupSystem() noexcept
+void Setup() noexcept
 {
-    const auto sysres = System::Initialize();
-    REQUIRE(sysres);
+    const auto vkres = Core::Initialize();
+    REQUIRE(vkres);
 }
 } // namespace VKit

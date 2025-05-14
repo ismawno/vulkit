@@ -25,8 +25,8 @@ In Vulkit, Vulkan initialization consists of 4 steps:
 All of these steps are pretty straightforward, especially the first one, consisting of a single function call:
 
 ```cpp
-const auto sysres = VKit::System::Initialize();
-if (!sysres) 
+const auto vkres = VKit::Core::Initialize();
+if (!vkres)
 {
     // Handle error
 }
@@ -39,7 +39,7 @@ Vulkit provides an easy and convenient way of checking these results using the l
 Moving on:
 
 ```cpp
-const auto sysres = VKit::System::Initialize();
+const auto vkres = VKit::Core::Initialize();
 VKIT_ASSERT_VULKAN_RESULT(result);
 ```
 

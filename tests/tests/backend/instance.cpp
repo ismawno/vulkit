@@ -5,7 +5,7 @@ namespace VKit
 {
 TEST_CASE("Minimal headless instance", "[instance][headless]")
 {
-    SetupSystem();
+    Setup();
     auto result = Instance::Builder().SetHeadless().Build();
     CheckResult(result);
 
@@ -27,7 +27,7 @@ TEST_CASE("Minimal headless instance", "[instance][headless]")
 
 TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
 {
-    SetupSystem();
+    Setup();
     auto result = Instance::Builder().SetHeadless().RequireExtension("VK_KHR_non_existent").Build();
     REQUIRE(!result);
     REQUIRE(result.GetError() == VK_ERROR_EXTENSION_NOT_PRESENT);
@@ -39,7 +39,7 @@ TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
 
 TEST_CASE("Validation layers", "[instance][validation]")
 {
-    SetupSystem();
+    Setup();
     auto result = Instance::Builder().SetHeadless().RequestValidationLayers().Build();
     REQUIRE(result);
 

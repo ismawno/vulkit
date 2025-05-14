@@ -3,10 +3,10 @@ project(vulkit)
 
 set(SOURCES
     vkit/core/pch.cpp
+    vkit/core/core.cpp
     vkit/vulkan/logical_device.cpp
     vkit/vulkan/physical_device.cpp
     vkit/vulkan/instance.cpp
-    vkit/vulkan/system.cpp
     vkit/vulkan/loader.cpp
     vkit/vulkan/vulkan.cpp
     vkit/rendering/command_pool.cpp
