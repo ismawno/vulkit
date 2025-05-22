@@ -564,15 +564,19 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #ifdef VKIT_API_VERSION_1_2
     features.Vulkan11.pNext = nullptr;
     features.Vulkan12.pNext = nullptr;
+    properties.Vulkan11.pNext = nullptr;
+    properties.Vulkan12.pNext = nullptr;
 #endif
 #ifdef VKIT_API_VERSION_1_3
     features.Vulkan13.pNext = nullptr;
+    properties.Vulkan13.pNext = nullptr;
 #endif
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
     features.DynamicRendering.pNext = nullptr;
 #endif
 #ifdef VKIT_API_VERSION_1_4
     features.Vulkan14.pNext = nullptr;
+    properties.Vulkan14.pNext = nullptr;
 #endif
 
     PhysicalDevice::Info deviceInfo{};
