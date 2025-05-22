@@ -90,9 +90,7 @@ class GuardGroup:
         for group in self.guards:
             or_guards.append(" || ".join(group))
 
-        return " && ".join(
-            [f"({g})" if "||" in g else g for g in or_guards if g]
-        ).strip()
+        return " && ".join([f"({g})" if "||" in g else g for g in or_guards if g]).strip()
 
 
 broken_functions = {
@@ -145,9 +143,9 @@ class Function:
 
     def parse_guards(self) -> str:
         guards = [g.parse_guards() for g in self.guards]
-        guards = " || ".join(
-            [f"({g})" if "&&" in g else g for g in guards if g]
-        ).replace("VK_VERSION", "VKIT_API_VERSION")
+        guards = " || ".join([f"({g})" if "&&" in g else g for g in guards if g]).replace(
+            "VK_VERSION", "VKIT_API_VERSION"
+        )
 
         if self.name not in broken_functions:
             return guards.strip()
@@ -167,9 +165,9 @@ class Function:
         const: bool = False,
     ) -> str:
         params = ", ".join(p.as_string() for p in self.params)
-        name = self.name if vk_prefix else self.name.removeprefix("vk")
+        fname = self.name if vk_prefix else self.name.removeprefix("vk")
         if namespace is not None:
-            name = f"{namespace}::{name}"
+            fname = f"{namespace}::{fname}"
 
         rtype = self.return_type
         if no_discard and rtype != "void":
@@ -180,15 +178,9 @@ class Function:
         if noexcept:
             modifiers += " noexcept"
 
-        return (
-            f"{rtype} {name}({params}){modifiers};"
-            if semicolon
-            else f"{rtype} {name}({params}){modifiers}"
-        )
+        return f"{rtype} {fname}({params}){modifiers};" if semicolon else f"{rtype} {fname}({params}){modifiers}"
 
-    def as_fn_pointer_declaration(
-        self, *, modifier: str | None = None, null: bool = False
-    ) -> str:
+    def as_fn_pointer_declaration(self, *, modifier: str | None = None, null: bool = False) -> str:
         if modifier is None:
             modifier = ""
         return (
@@ -208,10 +200,7 @@ class Function:
                 "vkCreateInstance",
             ]
             and self.dispatchable
-            and (
-                self.params[0].tp == "VkInstance"
-                or self.params[0].tp == "VkPhysicalDevice"
-            )
+            and (self.params[0].tp == "VkInstance" or self.params[0].tp == "VkPhysicalDevice")
         )
 
     def is_device_function(self) -> bool:
@@ -228,7 +217,7 @@ def download_vk_xml() -> Path:
 
     url = "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/refs/heads/main/xml/vk.xml"
 
-    vendor = root / "vendor"
+    vendor = rpath / "vendor"
     vendor.mkdir(exist_ok=True)
 
     location = vendor / "vk.xml"
@@ -249,7 +238,7 @@ def download_vk_xml() -> Path:
 
 
 Convoy.log_label = "VK-LOADER"
-root = Path(__file__).parent.resolve()
+rpath = Path(__file__).parent.resolve()
 
 args = parse_arguments()
 Convoy.is_verbose = args.verbose
@@ -268,53 +257,58 @@ with open(vkxml_path, "r") as f:
 
 tree = ET.ElementTree(ET.fromstring(vkxml))
 root = tree.getroot()
+if root is None:
+    Convoy.exit_error("Failed to get the root of the vulkan's XML.")
+
+
+def ncheck_text(param: ET.Element | None, /) -> str:
+    if param is None or param.text is None:
+        Convoy.exit_error("Found a None entry when trying to parse the vulkan's XML.")
+    return param.text
+
 
 dispatchables: set[str] = set()
 for h in root.findall("types/type[@category='handle']"):
     text = "".join(h.itertext())
     if "VK_DEFINE_HANDLE" in text:
-        name = h.get("name") or h.find("name").text
-        dispatchables.add(name)
+        hname = h.get("name") or ncheck_text(h.find("name"))
+        dispatchables.add(hname)
 
 functions: dict[str, Function] = {}
 
 
-def parse_commands(*, alias_sweep: bool) -> None:
+def parse_commands(root: ET.Element, /, *, alias_sweep: bool) -> None:
     for command in root.findall("commands/command"):
         alias = command.get("alias")
-        if alias_sweep and alias is None:
-            continue
-
         if alias_sweep:
-            name = command.get("name")
-            if name in functions:
+
+            if alias is None:
+                continue
+
+            fname = Convoy.ncheck(command.get("name"))
+            if fname in functions:
                 continue
 
             fn = copy.deepcopy(functions[alias])
-            fn.name = name
+            fn.name = fname
             for i, param in enumerate(fn.params):
                 fntp = param.tp
-                clean_fntp = (
-                    fntp.replace("const", "")
-                    .replace("*", "")
-                    .replace("struct", "")
-                    .strip()
-                )
+                clean_fntp = fntp.replace("const", "").replace("*", "").replace("struct", "").strip()
                 if clean_fntp not in type_aliases:
                     continue
 
                 tpal = type_aliases[clean_fntp]
-                closest = difflib.get_close_matches(name, tpal, n=1, cutoff=0.0)[0]
+                closest = difflib.get_close_matches(fname, tpal, n=1, cutoff=0.0)[0]
                 fn.params[i].tp = fntp.replace(clean_fntp, closest)
 
-            functions[name] = fn
+            functions[fname] = fn
 
         if alias is not None:
             continue
 
-        proto = command.find("proto")
-        name = proto.find("name").text
-        return_type = proto.find("type").text
+        proto = Convoy.ncheck(command.find("proto"))
+        fname = ncheck_text(proto.find("name"))
+        return_type = ncheck_text(proto.find("type"))
 
         api = command.get("api")
         if api is not None and vulkan_api not in api.split(","):
@@ -326,7 +320,7 @@ def parse_commands(*, alias_sweep: bool) -> None:
             if api is not None and vulkan_api not in api.split(","):
                 continue
 
-            param_name = param.find("name").text
+            param_name = ncheck_text(param.find("name"))
             full = "".join(param.itertext()).strip()
             param_type = full.rsplit(param_name, 1)[0].strip()
 
@@ -341,12 +335,14 @@ def parse_commands(*, alias_sweep: bool) -> None:
             params.append(p)
 
         fn = Function(
-            name,
+            fname,
             return_type,
             params,
-            params and params[0].tp in dispatchables,
+            bool(
+                params and params[0].tp in dispatchables,
+            ),
         )
-        functions[name] = fn
+        functions[fname] = fn
         Convoy.verbose(f"Parsed vulkan function <bold>{fn.as_string()}</bold>.")
 
 
@@ -354,57 +350,53 @@ types: dict[str, Type] = {}
 type_aliases: dict[str, list[str]] = {}
 
 
-def parse_types(lookup: str, /, *, alias_sweep: bool) -> None:
+def parse_types(root: ET.Element, lookup: str, /, *, alias_sweep: bool) -> None:
     for tp in root.findall(lookup):
         alias = tp.get("alias")
-        if alias_sweep and alias is None:
-            continue
 
         if alias_sweep:
-            name = tp.get("name")
-            if name in types:
+            if alias is None:
+                continue
+            tname = Convoy.ncheck(tp.get("name"))
+            if tname in types:
                 continue
 
-            type_aliases.setdefault(alias, []).append(name)
+            type_aliases.setdefault(alias, []).append(tname)
             t = copy.deepcopy(types[alias])
-            t.name = name
-            types[name] = t
-            Convoy.verbose(
-                f"Parsed vulkan type <bold>{name}</bold> as an alias of <bold>{alias}</bold>."
-            )
+            t.name = tname
+            types[tname] = t
+            Convoy.verbose(f"Parsed vulkan type <bold>{tname}</bold> as an alias of <bold>{alias}</bold>.")
             continue
 
         if alias is not None:
             continue
 
-        name = tp.get("name")
-        if name is None:
-            name = tp.find("name").text
+        tname = tp.get("name")
+        if tname is None:
+            tname = ncheck_text(tp.find("name"))
 
-        types[name] = Type(name)
-        Convoy.verbose(f"Parsed vulkan type <bold>{name}</bold>.")
+        types[tname] = Type(tname)
+        Convoy.verbose(f"Parsed vulkan type <bold>{tname}</bold>.")
 
 
-parse_types("types/type", alias_sweep=False)
-parse_types("enums/enum", alias_sweep=False)
-parse_types("types/type", alias_sweep=True)
-parse_types("enums/enum", alias_sweep=True)
+parse_types(root, "types/type", alias_sweep=False)
+parse_types(root, "enums/enum", alias_sweep=False)
+parse_types(root, "types/type", alias_sweep=True)
+parse_types(root, "enums/enum", alias_sweep=True)
 
-parse_commands(alias_sweep=False)
-parse_commands(alias_sweep=True)
+parse_commands(root, alias_sweep=False)
+parse_commands(root, alias_sweep=True)
 
 Convoy.log(f"Found <bold>{len(types)}</bold> types in the vk.xml file.")
-Convoy.log(
-    f"Found <bold>{len(functions)}</bold> {vulkan_api} functions in the vk.xml file."
-)
+Convoy.log(f"Found <bold>{len(functions)}</bold> {vulkan_api} functions in the vk.xml file.")
 
 
 for feature in root.findall("feature"):
-    version = feature.get("name")
+    version = Convoy.ncheck(feature.get("name"))
 
     for require in feature.findall("require"):
         for command in require.findall("command"):
-            fname = command.get("name")
+            fname = Convoy.ncheck(command.get("name"))
             fn = functions[fname]
             if fn.available_since is not None:
                 Convoy.exit_error(
@@ -422,7 +414,7 @@ for feature in root.findall("feature"):
             )
 
         for tp in require.findall("type"):
-            tpname = tp.get("name")
+            tpname = Convoy.ncheck(tp.get("name"))
             t = types[tpname]
             if t.available_since is not None:
                 Convoy.exit_error(
@@ -449,7 +441,7 @@ spec_version_req = {
 }
 
 for extension in root.findall("extensions/extension"):
-    extname = extension.get("name")
+    extname = Convoy.ncheck(extension.get("name"))
     for require in extension.findall("require"):
         guards = GuardGroup()
         if args.guard_extension:
@@ -461,27 +453,23 @@ for extension in root.findall("extensions/extension"):
                 guards.and_guards(group.split(","))
 
         for command in require.findall("command"):
-            fname = command.get("name")
+            fname = Convoy.ncheck(command.get("name"))
             if fname in spec_version_req and args.guard_version:
-                guards.and_guards(
-                    f"{extname.upper()}_SPEC_VERSION >= {spec_version_req[fname]}"
-                )
+                guards.and_guards(f"{extname.upper()}_SPEC_VERSION >= {spec_version_req[fname]}")
             functions[fname].guards.append(copy.deepcopy(guards))
             Convoy.verbose(
-                f"Registered availability of function <bold>{name}</bold> from the <bold>{name}</bold> extension."
+                f"Registered availability of function <bold>{fname}</bold> from the <bold>{fname}</bold> extension."
             )
 
         for tp in require.findall("type"):
-            tpname = tp.get("name")
+            tpname = Convoy.ncheck(tp.get("name"))
             types[tpname].guards.append(copy.deepcopy(guards))
             Convoy.verbose(
                 f"Registered availability of type <bold>{tpname}</bold> from the <bold>{extname}</bold> extension."
             )
 
 
-def guard_if_needed(
-    code: CPPFile, text: str | Callable, guards: str, /, *args, **kwargs
-) -> None:
+def guard_if_needed(code: CPPFile, text: str | Callable, guards: str, /, *args, **kwargs) -> None:
     def put_code() -> None:
         if isinstance(text, str):
             code(text)
@@ -512,27 +500,23 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp("#endif", indent=0)
     hpp.spacing()
 
-    def code(code: CPPFile, fn: Function, /) -> None:
-        code(fn.as_fn_pointer_declaration(modifier="extern"))
-        code(
-            fn.as_string(
-                vk_prefix=False, no_discard=True, api_macro=True, noexcept=True
-            )
-        )
+    def codefn1(ffile: CPPFile, fn: Function, /) -> None:
+        ffile(fn.as_fn_pointer_declaration(modifier="extern"))
+        ffile(fn.as_string(vk_prefix=False, no_discard=True, api_macro=True, noexcept=True))
 
     for fn in functions.values():
         if fn.is_instance_function() or fn.is_device_function():
             continue
         guards = fn.parse_guards()
 
-        guard_if_needed(hpp, code, guards, fn)
+        guard_if_needed(hpp, codefn1, guards, fn)
         hpp.spacing()
 
     hpp.spacing()
 
-    def code(code: CPPFile, fn: Function, /) -> None:
-        code(fn.as_fn_pointer_declaration(null=True))
-        code(fn.as_string(vk_prefix=False, no_discard=True, noexcept=True, const=True))
+    def codefn2(ffile: CPPFile, fn: Function, /) -> None:
+        ffile(fn.as_fn_pointer_declaration(null=True))
+        ffile(fn.as_string(vk_prefix=False, no_discard=True, noexcept=True, const=True))
 
     with hpp.scope("struct VKIT_API InstanceTable", closer="};"):
         hpp("static InstanceTable Create(VkInstance p_Instance);")
@@ -541,7 +525,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
                 continue
 
             guards = fn.parse_guards()
-            guard_if_needed(hpp, code, guards, fn)
+            guard_if_needed(hpp, codefn2, guards, fn)
             hpp.spacing()
 
     with hpp.scope("struct VKIT_API DeviceTable", closer="};"):
@@ -551,7 +535,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
                 continue
 
             guards = fn.parse_guards()
-            guard_if_needed(hpp, code, guards, fn)
+            guard_if_needed(hpp, codefn2, guards, fn)
             hpp.spacing()
 
 
@@ -571,42 +555,36 @@ cpp("#endif", indent=0)
 with cpp.scope("namespace VKit::Vulkan", indent=0):
 
     cpp("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
-    with cpp.scope(
-        "template <typename T> static T validateFunction(const char *p_Name, T &&p_Function)"
-    ):
-        cpp(
-            "TKIT_ASSERT(p_Function, \"The function '{}' is not available for the device being used.\", p_Name);"
-        )
+    with cpp.scope("template <typename T> static T validateFunction(const char *p_Name, T &&p_Function)"):
+        cpp("TKIT_ASSERT(p_Function, \"The function '{}' is not available for the device being used.\", p_Name);")
         cpp("return p_Function;")
     cpp("#endif", indent=0)
 
-    def code(code: CPPFile, fn: Function, /) -> None:
-        code(fn.as_fn_pointer_declaration(null=True))
-        with code.scope(fn.as_string(vk_prefix=False, semicolon=False, noexcept=True)):
+    def codefn3(ffile: CPPFile, fn: Function, /) -> None:
+        ffile(fn.as_fn_pointer_declaration(null=True))
+        with ffile.scope(fn.as_string(vk_prefix=False, semicolon=False, noexcept=True)):
 
             pnames = [p.name for p in fn.params]
 
             def write_fn(name: str, /) -> None:
                 if fn.return_type != "void":
-                    code(f"return {name}({', '.join(pnames)});")
+                    ffile(f"return {name}({', '.join(pnames)});")
                 else:
-                    code(f"{name}({', '.join(pnames)});")
+                    ffile(f"{name}({', '.join(pnames)});")
 
-            code("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
-            code(
-                f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", Vulkan::{fn.name});'
-            )
+            ffile("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
+            ffile(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", Vulkan::{fn.name});')
             write_fn("fn")
-            code("#else", indent=0)
+            ffile("#else", indent=0)
             write_fn(f"Vulkan::{fn.name}")
-            code("#endif", indent=0)
+            ffile("#endif", indent=0)
 
     cpp.spacing()
     for fn in functions.values():
         if fn.is_instance_function() or fn.is_device_function():
             continue
         guards = fn.parse_guards()
-        guard_if_needed(cpp, code, guards, fn)
+        guard_if_needed(cpp, codefn3, guards, fn)
 
     cpp.spacing()
     cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
@@ -628,11 +606,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
 
         cpp.spacing()
         for fn in functions.values():
-            if (
-                fn.name == "vkGetInstanceProcAddr"
-                or fn.is_instance_function()
-                or fn.is_device_function()
-            ):
+            if fn.name == "vkGetInstanceProcAddr" or fn.is_instance_function() or fn.is_device_function():
                 continue
             guards = fn.parse_guards()
             guard_if_needed(
@@ -668,8 +642,8 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             )
         cpp("return table;")
 
-    def code(code: CPPFile, fn: Function, /, *, namespace: str) -> None:
-        with code.scope(
+    def codefn4(ffile: CPPFile, fn: Function, /, *, namespace: str) -> None:
+        with ffile.scope(
             fn.as_string(
                 vk_prefix=False,
                 semicolon=False,
@@ -683,18 +657,16 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
 
             def write_fn(name: str, /) -> None:
                 if fn.return_type != "void":
-                    code(f"return {name}({', '.join(pnames)});")
+                    ffile(f"return {name}({', '.join(pnames)});")
                 else:
-                    code(f"{name}({', '.join(pnames)});")
+                    ffile(f"{name}({', '.join(pnames)});")
 
-            code("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
-            code(
-                f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", this->{fn.name});'
-            )
+            ffile("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
+            ffile(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", this->{fn.name});')
             write_fn("fn")
-            code("#else", indent=0)
+            ffile("#else", indent=0)
             write_fn(f"this->{fn.name}")
-            code("#endif", indent=0)
+            ffile("#endif", indent=0)
 
     cpp.spacing()
     for fn in functions.values():
@@ -703,7 +675,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         guards = fn.parse_guards()
         guard_if_needed(
             cpp,
-            code,
+            codefn4,
             guards,
             fn,
             namespace="InstanceTable",
@@ -716,7 +688,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         guards = fn.parse_guards()
         guard_if_needed(
             cpp,
-            code,
+            codefn4,
             guards,
             fn,
             namespace="DeviceTable",

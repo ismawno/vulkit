@@ -31,8 +31,8 @@ class CPPFile:
         name: str | None = None,
         /,
         *,
-        opener: str | bool = "{",
-        closer: str | bool = "}",
+        opener: str = "{",
+        closer: str = "}",
         delimiters: bool = True,
         indent: int = 4,
     ):

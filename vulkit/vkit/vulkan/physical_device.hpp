@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tkit/container/static_array.hpp"
 #include "vkit/vulkan/instance.hpp"
 
 namespace VKit

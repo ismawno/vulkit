@@ -11,4518 +11,3508 @@ void Load(HMODULE p_Library);
 #endif
 
 extern PFN_vkCreateInstance vkCreateInstance;
-VKIT_API [[nodiscard]] VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
-                                               const VkAllocationCallbacks *pAllocator, VkInstance *pInstance) noexcept;
+VKIT_API [[nodiscard]] VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) noexcept;
 
 extern PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
-VKIT_API [[nodiscard]] PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char *pName) noexcept;
+VKIT_API [[nodiscard]] PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* pName) noexcept;
 
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
-VKIT_API [[nodiscard]] PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName) noexcept;
+VKIT_API [[nodiscard]] PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* pName) noexcept;
 
 #if defined(VKIT_API_VERSION_1_1)
 extern PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion;
-VKIT_API [[nodiscard]] VkResult EnumerateInstanceVersion(uint32_t *pApiVersion) noexcept;
+VKIT_API [[nodiscard]] VkResult EnumerateInstanceVersion(uint32_t* pApiVersion) noexcept;
 #endif
 
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
-VKIT_API [[nodiscard]] VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
-                                                                 VkLayerProperties *pProperties) noexcept;
+VKIT_API [[nodiscard]] VkResult EnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) noexcept;
 
 extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
-VKIT_API [[nodiscard]] VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *pPropertyCount,
-                                                                     VkExtensionProperties *pProperties) noexcept;
+VKIT_API [[nodiscard]] VkResult EnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) noexcept;
+
 
 struct VKIT_API InstanceTable
 {
     static InstanceTable Create(VkInstance p_Instance);
     PFN_vkDestroyInstance vkDestroyInstance = VK_NULL_HANDLE;
-    void DestroyInstance(VkInstance instance, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumeratePhysicalDevices(VkInstance instance, uint32_t *pPhysicalDeviceCount,
-                                                    VkPhysicalDevice *pPhysicalDevices) const noexcept;
-
+    [[nodiscard]] VkResult EnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) const noexcept;
+    
     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice,
-                                     VkPhysicalDeviceProperties *pProperties) const noexcept;
-
+    void GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) const noexcept;
+    
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t *pQueueFamilyPropertyCount,
-                                                VkQueueFamilyProperties *pQueueFamilyProperties) const noexcept;
-
+    void GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) const noexcept;
+    
     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice,
-                                           VkPhysicalDeviceMemoryProperties *pMemoryProperties) const noexcept;
-
+    void GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) const noexcept;
+    
     PFN_vkGetPhysicalDeviceFeatures vkGetPhysicalDeviceFeatures = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures *pFeatures) const noexcept;
-
+    void GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) const noexcept;
+    
     PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
-                                           VkFormatProperties *pFormatProperties) const noexcept;
-
+    void GetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) const noexcept;
+    
     PFN_vkGetPhysicalDeviceImageFormatProperties vkGetPhysicalDeviceImageFormatProperties = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties(
-        VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling,
-        VkImageUsageFlags usage, VkImageCreateFlags flags,
-        VkImageFormatProperties *pImageFormatProperties) const noexcept;
-
+    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) const noexcept;
+    
     PFN_vkCreateDevice vkCreateDevice = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo,
-                                        const VkAllocationCallbacks *pAllocator, VkDevice *pDevice) const noexcept;
-
+    [[nodiscard]] VkResult CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) const noexcept;
+    
     PFN_vkEnumerateDeviceLayerProperties vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-                                                          VkLayerProperties *pProperties) const noexcept;
-
+    [[nodiscard]] VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties* pProperties) const noexcept;
+    
     PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char *pLayerName,
-                                                              uint32_t *pPropertyCount,
-                                                              VkExtensionProperties *pProperties) const noexcept;
-
+    [[nodiscard]] VkResult EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const noexcept;
+    
     PFN_vkGetPhysicalDeviceSparseImageFormatProperties vkGetPhysicalDeviceSparseImageFormatProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
-                                                      VkImageType type, VkSampleCountFlagBits samples,
-                                                      VkImageUsageFlags usage, VkImageTiling tiling,
-                                                      uint32_t *pPropertyCount,
-                                                      VkSparseImageFormatProperties *pProperties) const noexcept;
-
+    void GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) const noexcept;
+    
 #if defined(VK_KHR_android_surface)
     PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateAndroidSurfaceKHR(VkInstance instance,
-                                                   const VkAndroidSurfaceCreateInfoKHR *pCreateInfo,
-                                                   const VkAllocationCallbacks *pAllocator,
-                                                   VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateAndroidSurfaceKHR(VkInstance instance, const VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkGetPhysicalDeviceDisplayPropertiesKHR vkGetPhysicalDeviceDisplayPropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice physicalDevice,
-                                                                 uint32_t *pPropertyCount,
-                                                                 VkDisplayPropertiesKHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR vkGetPhysicalDeviceDisplayPlanePropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPlanePropertiesKHR(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkDisplayPlanePropertiesKHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPlanePropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkGetDisplayPlaneSupportedDisplaysKHR vkGetDisplayPlaneSupportedDisplaysKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice physicalDevice, uint32_t planeIndex,
-                                                               uint32_t *pDisplayCount,
-                                                               VkDisplayKHR *pDisplays) const noexcept;
+    [[nodiscard]] VkResult GetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkGetDisplayModePropertiesKHR vkGetDisplayModePropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDisplayModePropertiesKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display,
-                                                       uint32_t *pPropertyCount,
-                                                       VkDisplayModePropertiesKHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetDisplayModePropertiesKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkCreateDisplayModeKHR vkCreateDisplayModeKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDisplayModeKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display,
-                                                const VkDisplayModeCreateInfoKHR *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkDisplayModeKHR *pMode) const noexcept;
+    [[nodiscard]] VkResult CreateDisplayModeKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkGetDisplayPlaneCapabilitiesKHR vkGetDisplayPlaneCapabilitiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDisplayPlaneCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode,
-                                                          uint32_t planeIndex,
-                                                          VkDisplayPlaneCapabilitiesKHR *pCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetDisplayPlaneCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_display)
     PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDisplayPlaneSurfaceKHR(VkInstance instance,
-                                                        const VkDisplaySurfaceCreateInfoKHR *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateDisplayPlaneSurfaceKHR(VkInstance instance, const VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_surface)
     PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR = VK_NULL_HANDLE;
-    void DestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface,
-                           const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_surface)
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice,
-                                                              uint32_t queueFamilyIndex, VkSurfaceKHR surface,
-                                                              VkBool32 *pSupported) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_surface)
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilitiesKHR(
-        VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
-        VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_surface)
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
-                                                              uint32_t *pSurfaceFormatCount,
-                                                              VkSurfaceFormatKHR *pSurfaceFormats) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_surface)
     PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice,
-                                                                   VkSurfaceKHR surface, uint32_t *pPresentModeCount,
-                                                                   VkPresentModeKHR *pPresentModes) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const noexcept;
 #endif
-
+    
 #if defined(VK_NN_vi_surface)
     PFN_vkCreateViSurfaceNN vkCreateViSurfaceNN = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateViSurfaceNN(VkInstance instance, const VkViSurfaceCreateInfoNN *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateViSurfaceNN(VkInstance instance, const VkViSurfaceCreateInfoNN* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_wayland_surface)
     PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateWaylandSurfaceKHR(VkInstance instance,
-                                                   const VkWaylandSurfaceCreateInfoKHR *pCreateInfo,
-                                                   const VkAllocationCallbacks *pAllocator,
-                                                   VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateWaylandSurfaceKHR(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_wayland_surface)
-    PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR vkGetPhysicalDeviceWaylandPresentationSupportKHR =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceWaylandPresentationSupportKHR(VkPhysicalDevice physicalDevice,
-                                                                          uint32_t queueFamilyIndex,
-                                                                          struct wl_display *display) const noexcept;
+    PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR vkGetPhysicalDeviceWaylandPresentationSupportKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceWaylandPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_win32_surface)
     PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR *pCreateInfo,
-                                                 const VkAllocationCallbacks *pAllocator,
-                                                 VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_win32_surface)
     PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR vkGetPhysicalDeviceWin32PresentationSupportKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceWin32PresentationSupportKHR(VkPhysicalDevice physicalDevice,
-                                                                        uint32_t queueFamilyIndex) const noexcept;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceWin32PresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_xlib_surface)
     PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateXlibSurfaceKHR(VkInstance instance, const VkXlibSurfaceCreateInfoKHR *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateXlibSurfaceKHR(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_xlib_surface)
     PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR vkGetPhysicalDeviceXlibPresentationSupportKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDevice physicalDevice,
-                                                                       uint32_t queueFamilyIndex, Display *dpy,
-                                                                       VisualID visualID) const noexcept;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_xcb_surface)
     PFN_vkCreateXcbSurfaceKHR vkCreateXcbSurfaceKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurfaceCreateInfoKHR *pCreateInfo,
-                                               const VkAllocationCallbacks *pAllocator,
-                                               VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_xcb_surface)
     PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR vkGetPhysicalDeviceXcbPresentationSupportKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice,
-                                                                      uint32_t queueFamilyIndex,
-                                                                      xcb_connection_t *connection,
-                                                                      xcb_visualid_t visual_id) const noexcept;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_directfb_surface)
     PFN_vkCreateDirectFBSurfaceEXT vkCreateDirectFBSurfaceEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDirectFBSurfaceEXT(VkInstance instance,
-                                                    const VkDirectFBSurfaceCreateInfoEXT *pCreateInfo,
-                                                    const VkAllocationCallbacks *pAllocator,
-                                                    VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateDirectFBSurfaceEXT(VkInstance instance, const VkDirectFBSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_directfb_surface)
-    PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT vkGetPhysicalDeviceDirectFBPresentationSupportEXT =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceDirectFBPresentationSupportEXT(VkPhysicalDevice physicalDevice,
-                                                                           uint32_t queueFamilyIndex,
-                                                                           IDirectFB *dfb) const noexcept;
+    PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT vkGetPhysicalDeviceDirectFBPresentationSupportEXT = VK_NULL_HANDLE;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceDirectFBPresentationSupportEXT(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_imagepipe_surface)
     PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateImagePipeSurfaceFUCHSIA(VkInstance instance,
-                                                         const VkImagePipeSurfaceCreateInfoFUCHSIA *pCreateInfo,
-                                                         const VkAllocationCallbacks *pAllocator,
-                                                         VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateImagePipeSurfaceFUCHSIA(VkInstance instance, const VkImagePipeSurfaceCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_GGP_stream_descriptor_surface)
     PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateStreamDescriptorSurfaceGGP(VkInstance instance,
-                                                            const VkStreamDescriptorSurfaceCreateInfoGGP *pCreateInfo,
-                                                            const VkAllocationCallbacks *pAllocator,
-                                                            VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateStreamDescriptorSurfaceGGP(VkInstance instance, const VkStreamDescriptorSurfaceCreateInfoGGP* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_QNX_screen_surface)
     PFN_vkCreateScreenSurfaceQNX vkCreateScreenSurfaceQNX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateScreenSurfaceQNX(VkInstance instance, const VkScreenSurfaceCreateInfoQNX *pCreateInfo,
-                                                  const VkAllocationCallbacks *pAllocator,
-                                                  VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateScreenSurfaceQNX(VkInstance instance, const VkScreenSurfaceCreateInfoQNX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_QNX_screen_surface)
-    PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX vkGetPhysicalDeviceScreenPresentationSupportQNX =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkBool32 GetPhysicalDeviceScreenPresentationSupportQNX(VkPhysicalDevice physicalDevice,
-                                                                         uint32_t queueFamilyIndex,
-                                                                         struct _screen_window *window) const noexcept;
+    PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX vkGetPhysicalDeviceScreenPresentationSupportQNX = VK_NULL_HANDLE;
+    [[nodiscard]] VkBool32 GetPhysicalDeviceScreenPresentationSupportQNX(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct _screen_window* window) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_report)
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDebugReportCallbackEXT(VkInstance instance,
-                                                        const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkDebugReportCallbackEXT *pCallback) const noexcept;
+    [[nodiscard]] VkResult CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_report)
     PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT = VK_NULL_HANDLE;
-    void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
-                                       const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_report)
     PFN_vkDebugReportMessageEXT vkDebugReportMessageEXT = VK_NULL_HANDLE;
-    void DebugReportMessageEXT(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType,
-                               uint64_t object, size_t location, int32_t messageCode, const char *pLayerPrefix,
-                               const char *pMessage) const noexcept;
+    void DebugReportMessageEXT(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_capabilities)
-    PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV vkGetPhysicalDeviceExternalImageFormatPropertiesNV =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceExternalImageFormatPropertiesNV(
-        VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling,
-        VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType,
-        VkExternalImageFormatPropertiesNV *pExternalImageFormatProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV vkGetPhysicalDeviceExternalImageFormatPropertiesNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceExternalImageFormatPropertiesNV(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceFeatures2 vkGetPhysicalDeviceFeatures2 = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice,
-                                    VkPhysicalDeviceFeatures2 *pFeatures) const noexcept;
+    void GetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceProperties2 vkGetPhysicalDeviceProperties2 = VK_NULL_HANDLE;
-    void GetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice,
-                                      VkPhysicalDeviceProperties2 *pProperties) const noexcept;
+    void GetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceFormatProperties2 vkGetPhysicalDeviceFormatProperties2 = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format,
-                                            VkFormatProperties2 *pFormatProperties) const noexcept;
+    void GetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceImageFormatProperties2 vkGetPhysicalDeviceImageFormatProperties2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties2(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2 *pImageFormatInfo,
-        VkImageFormatProperties2 *pImageFormatProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceQueueFamilyProperties2 vkGetPhysicalDeviceQueueFamilyProperties2 = VK_NULL_HANDLE;
-    void GetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t *pQueueFamilyPropertyCount,
-                                                 VkQueueFamilyProperties2 *pQueueFamilyProperties) const noexcept;
+    void GetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceMemoryProperties2 vkGetPhysicalDeviceMemoryProperties2 = VK_NULL_HANDLE;
-    void GetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice,
-                                            VkPhysicalDeviceMemoryProperties2 *pMemoryProperties) const noexcept;
+    void GetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
-    PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 vkGetPhysicalDeviceSparseImageFormatProperties2 =
-        VK_NULL_HANDLE;
-    void GetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice,
-                                                       const VkPhysicalDeviceSparseImageFormatInfo2 *pFormatInfo,
-                                                       uint32_t *pPropertyCount,
-                                                       VkSparseImageFormatProperties2 *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 vkGetPhysicalDeviceSparseImageFormatProperties2 = VK_NULL_HANDLE;
+    void GetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceExternalBufferProperties vkGetPhysicalDeviceExternalBufferProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalBufferProperties(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo *pExternalBufferInfo,
-        VkExternalBufferProperties *pExternalBufferProperties) const noexcept;
+    void GetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_sci_buf)
-    PFN_vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceExternalMemorySciBufPropertiesNV(
-        VkPhysicalDevice physicalDevice, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle,
-        VkMemorySciBufPropertiesNV *pMemorySciBufProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceExternalMemorySciBufPropertiesNV(VkPhysicalDevice physicalDevice, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle, VkMemorySciBufPropertiesNV* pMemorySciBufProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_sci_buf)
     PFN_vkGetPhysicalDeviceSciBufAttributesNV vkGetPhysicalDeviceSciBufAttributesNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSciBufAttributesNV(VkPhysicalDevice physicalDevice,
-                                                               NvSciBufAttrList pAttributes) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSciBufAttributesNV(VkPhysicalDevice physicalDevice, NvSciBufAttrList pAttributes) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceExternalSemaphoreProperties vkGetPhysicalDeviceExternalSemaphoreProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalSemaphoreProperties(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo *pExternalSemaphoreInfo,
-        VkExternalSemaphoreProperties *pExternalSemaphoreProperties) const noexcept;
+    void GetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetPhysicalDeviceExternalFenceProperties vkGetPhysicalDeviceExternalFenceProperties = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevice,
-                                                  const VkPhysicalDeviceExternalFenceInfo *pExternalFenceInfo,
-                                                  VkExternalFenceProperties *pExternalFenceProperties) const noexcept;
+    void GetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     PFN_vkGetPhysicalDeviceSciSyncAttributesNV vkGetPhysicalDeviceSciSyncAttributesNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSciSyncAttributesNV(VkPhysicalDevice physicalDevice,
-                                                                const VkSciSyncAttributesInfoNV *pSciSyncAttributesInfo,
-                                                                NvSciSyncAttrList pAttributes) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSciSyncAttributesNV(VkPhysicalDevice physicalDevice, const VkSciSyncAttributesInfoNV* pSciSyncAttributesInfo, NvSciSyncAttrList pAttributes) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_direct_mode_display)
     PFN_vkReleaseDisplayEXT vkReleaseDisplayEXT = VK_NULL_HANDLE;
     [[nodiscard]] VkResult ReleaseDisplayEXT(VkPhysicalDevice physicalDevice, VkDisplayKHR display) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_acquire_xlib_display)
     PFN_vkAcquireXlibDisplayEXT vkAcquireXlibDisplayEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireXlibDisplayEXT(VkPhysicalDevice physicalDevice, Display *dpy,
-                                                 VkDisplayKHR display) const noexcept;
+    [[nodiscard]] VkResult AcquireXlibDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_acquire_xlib_display)
     PFN_vkGetRandROutputDisplayEXT vkGetRandROutputDisplayEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetRandROutputDisplayEXT(VkPhysicalDevice physicalDevice, Display *dpy, RROutput rrOutput,
-                                                    VkDisplayKHR *pDisplay) const noexcept;
+    [[nodiscard]] VkResult GetRandROutputDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_acquire_winrt_display)
     PFN_vkAcquireWinrtDisplayNV vkAcquireWinrtDisplayNV = VK_NULL_HANDLE;
     [[nodiscard]] VkResult AcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_acquire_winrt_display)
     PFN_vkGetWinrtDisplayNV vkGetWinrtDisplayNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId,
-                                             VkDisplayKHR *pDisplay) const noexcept;
+    [[nodiscard]] VkResult GetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_display_surface_counter)
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilities2EXT(
-        VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
-        VkSurfaceCapabilities2EXT *pSurfaceCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkEnumeratePhysicalDeviceGroups vkEnumeratePhysicalDeviceGroups = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumeratePhysicalDeviceGroups(
-        VkInstance instance, uint32_t *pPhysicalDeviceGroupCount,
-        VkPhysicalDeviceGroupProperties *pPhysicalDeviceGroupProperties) const noexcept;
+    [[nodiscard]] VkResult EnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept;
 #endif
-
-#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
-    (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
+    
+#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     PFN_vkGetPhysicalDevicePresentRectanglesKHR vkGetPhysicalDevicePresentRectanglesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
-                                                                 uint32_t *pRectCount, VkRect2D *pRects) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects) const noexcept;
 #endif
-
+    
 #if defined(VK_MVK_ios_surface)
     PFN_vkCreateIOSSurfaceMVK vkCreateIOSSurfaceMVK = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurfaceCreateInfoMVK *pCreateInfo,
-                                               const VkAllocationCallbacks *pAllocator,
-                                               VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_MVK_macos_surface)
     PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateMacOSSurfaceMVK(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK *pCreateInfo,
-                                                 const VkAllocationCallbacks *pAllocator,
-                                                 VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateMacOSSurfaceMVK(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_metal_surface)
     PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateMetalSurfaceEXT(VkInstance instance, const VkMetalSurfaceCreateInfoEXT *pCreateInfo,
-                                                 const VkAllocationCallbacks *pAllocator,
-                                                 VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateMetalSurfaceEXT(VkInstance instance, const VkMetalSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_sample_locations)
     PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT vkGetPhysicalDeviceMultisamplePropertiesEXT = VK_NULL_HANDLE;
-    void GetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples,
-                                                   VkMultisamplePropertiesEXT *pMultisampleProperties) const noexcept;
+    void GetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_surface_capabilities2)
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilities2KHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR *pSurfaceInfo,
-        VkSurfaceCapabilities2KHR *pSurfaceCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_surface_capabilities2)
     PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice,
-                                                               const VkPhysicalDeviceSurfaceInfo2KHR *pSurfaceInfo,
-                                                               uint32_t *pSurfaceFormatCount,
-                                                               VkSurfaceFormat2KHR *pSurfaceFormats) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_display_properties2)
     PFN_vkGetPhysicalDeviceDisplayProperties2KHR vkGetPhysicalDeviceDisplayProperties2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice physicalDevice,
-                                                                  uint32_t *pPropertyCount,
-                                                                  VkDisplayProperties2KHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_display_properties2)
     PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR vkGetPhysicalDeviceDisplayPlaneProperties2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPlaneProperties2KHR(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkDisplayPlaneProperties2KHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceDisplayPlaneProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_display_properties2)
     PFN_vkGetDisplayModeProperties2KHR vkGetDisplayModeProperties2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDisplayModeProperties2KHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display,
-                                                        uint32_t *pPropertyCount,
-                                                        VkDisplayModeProperties2KHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetDisplayModeProperties2KHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_display_properties2)
     PFN_vkGetDisplayPlaneCapabilities2KHR vkGetDisplayPlaneCapabilities2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDisplayPlaneCapabilities2KHR(
-        VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR *pDisplayPlaneInfo,
-        VkDisplayPlaneCapabilities2KHR *pCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetDisplayPlaneCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, VkDisplayPlaneCapabilities2KHR* pCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_calibrated_timestamps)
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR vkGetPhysicalDeviceCalibrateableTimeDomainsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCalibrateableTimeDomainsKHR(VkPhysicalDevice physicalDevice,
-                                                                        uint32_t *pTimeDomainCount,
-                                                                        VkTimeDomainKHR *pTimeDomains) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceCalibrateableTimeDomainsKHR(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDebugUtilsMessengerEXT(VkInstance instance,
-                                                        const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkDebugUtilsMessengerEXT *pMessenger) const noexcept;
+    [[nodiscard]] VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT = VK_NULL_HANDLE;
-    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
-                                       const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkSubmitDebugUtilsMessageEXT vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
-    void SubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                    VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-                                    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData) const noexcept;
+    void SubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cooperative_matrix)
-    PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV vkGetPhysicalDeviceCooperativeMatrixPropertiesNV =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixPropertiesNV(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkCooperativeMatrixPropertiesNV *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV vkGetPhysicalDeviceCooperativeMatrixPropertiesNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesNV* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_full_screen_exclusive)
     PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT vkGetPhysicalDeviceSurfacePresentModes2EXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSurfacePresentModes2EXT(VkPhysicalDevice physicalDevice,
-                                                                    const VkPhysicalDeviceSurfaceInfo2KHR *pSurfaceInfo,
-                                                                    uint32_t *pPresentModeCount,
-                                                                    VkPresentModeKHR *pPresentModes) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceSurfacePresentModes2EXT(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_performance_query)
-    PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR
-        vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
-        VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pCounterCount,
-        VkPerformanceCounterKHR *pCounters, VkPerformanceCounterDescriptionKHR *pCounterDescriptions) const noexcept;
+    PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_performance_query)
-    PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR
-        vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
-        VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR *pPerformanceQueryCreateInfo,
-        uint32_t *pNumPasses) const noexcept;
+    PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = VK_NULL_HANDLE;
+    void GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_headless_surface)
     PFN_vkCreateHeadlessSurfaceEXT vkCreateHeadlessSurfaceEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateHeadlessSurfaceEXT(VkInstance instance,
-                                                    const VkHeadlessSurfaceCreateInfoEXT *pCreateInfo,
-                                                    const VkAllocationCallbacks *pAllocator,
-                                                    VkSurfaceKHR *pSurface) const noexcept;
+    [[nodiscard]] VkResult CreateHeadlessSurfaceEXT(VkInstance instance, const VkHeadlessSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_coverage_reduction_mode)
-    PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV
-        vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(
-        VkPhysicalDevice physicalDevice, uint32_t *pCombinationCount,
-        VkFramebufferMixedSamplesCombinationNV *pCombinations) const noexcept;
+    PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkPhysicalDevice physicalDevice, uint32_t* pCombinationCount, VkFramebufferMixedSamplesCombinationNV* pCombinations) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkGetPhysicalDeviceToolProperties vkGetPhysicalDeviceToolProperties = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceToolProperties(
-        VkPhysicalDevice physicalDevice, uint32_t *pToolCount,
-        VkPhysicalDeviceToolProperties *pToolProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_object_refresh)
     PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR vkGetPhysicalDeviceRefreshableObjectTypesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceRefreshableObjectTypesKHR(
-        VkPhysicalDevice physicalDevice, uint32_t *pRefreshableObjectTypeCount,
-        VkObjectType *pRefreshableObjectTypes) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceRefreshableObjectTypesKHR(VkPhysicalDevice physicalDevice, uint32_t* pRefreshableObjectTypeCount, VkObjectType* pRefreshableObjectTypes) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_fragment_shading_rate)
     PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceFragmentShadingRatesKHR(
-        VkPhysicalDevice physicalDevice, uint32_t *pFragmentShadingRateCount,
-        VkPhysicalDeviceFragmentShadingRateKHR *pFragmentShadingRates) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceFragmentShadingRatesKHR(VkPhysicalDevice physicalDevice, uint32_t* pFragmentShadingRateCount, VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR vkGetPhysicalDeviceVideoCapabilitiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceVideoCapabilitiesKHR(VkPhysicalDevice physicalDevice,
-                                                                 const VkVideoProfileInfoKHR *pVideoProfile,
-                                                                 VkVideoCapabilitiesKHR *pCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceVideoCapabilitiesKHR(VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, VkVideoCapabilitiesKHR* pCapabilities) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR vkGetPhysicalDeviceVideoFormatPropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceVideoFormatPropertiesKHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoFormatInfoKHR *pVideoFormatInfo,
-        uint32_t *pVideoFormatPropertyCount, VkVideoFormatPropertiesKHR *pVideoFormatProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceVideoFormatPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo, uint32_t* pVideoFormatPropertyCount, VkVideoFormatPropertiesKHR* pVideoFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_encode_queue)
-    PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR
-        vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR *pQualityLevelInfo,
-        VkVideoEncodeQualityLevelPropertiesKHR *pQualityLevelProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo, VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_acquire_drm_display)
     PFN_vkAcquireDrmDisplayEXT vkAcquireDrmDisplayEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd,
-                                                VkDisplayKHR display) const noexcept;
+    [[nodiscard]] VkResult AcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_acquire_drm_display)
     PFN_vkGetDrmDisplayEXT vkGetDrmDisplayEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId,
-                                            VkDisplayKHR *display) const noexcept;
+    [[nodiscard]] VkResult GetDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_optical_flow)
     PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV vkGetPhysicalDeviceOpticalFlowImageFormatsNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceOpticalFlowImageFormatsNV(
-        VkPhysicalDevice physicalDevice, const VkOpticalFlowImageFormatInfoNV *pOpticalFlowImageFormatInfo,
-        uint32_t *pFormatCount, VkOpticalFlowImageFormatPropertiesNV *pImageFormatProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice physicalDevice, const VkOpticalFlowImageFormatInfoNV* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount, VkOpticalFlowImageFormatPropertiesNV* pImageFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_cooperative_matrix)
-    PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkCooperativeMatrixPropertiesKHR *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cooperative_matrix2)
-    PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV
-        vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkCooperativeMatrixFlexibleDimensionsPropertiesNV *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cooperative_vector)
-    PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV vkGetPhysicalDeviceCooperativeVectorPropertiesNV =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeVectorPropertiesNV(
-        VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
-        VkCooperativeVectorPropertiesNV *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV vkGetPhysicalDeviceCooperativeVectorPropertiesNV = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPhysicalDeviceCooperativeVectorPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice,
-                                       VkPhysicalDeviceFeatures2KHR *pFeatures) const noexcept;
+    void GetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2KHR* pFeatures) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceProperties2KHR(VkPhysicalDevice physicalDevice,
-                                         VkPhysicalDeviceProperties2KHR *pProperties) const noexcept;
+    void GetPhysicalDeviceProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2KHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceFormatProperties2KHR vkGetPhysicalDeviceFormatProperties2KHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceFormatProperties2KHR(VkPhysicalDevice physicalDevice, VkFormat format,
-                                               VkFormatProperties2KHR *pFormatProperties) const noexcept;
+    void GetPhysicalDeviceFormatProperties2KHR(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2KHR* pFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceImageFormatProperties2KHR vkGetPhysicalDeviceImageFormatProperties2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties2KHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2KHR *pImageFormatInfo,
-        VkImageFormatProperties2KHR *pImageFormatProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2KHR* pImageFormatInfo, VkImageFormatProperties2KHR* pImageFormatProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR vkGetPhysicalDeviceQueueFamilyProperties2KHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceQueueFamilyProperties2KHR(VkPhysicalDevice physicalDevice,
-                                                    uint32_t *pQueueFamilyPropertyCount,
-                                                    VkQueueFamilyProperties2KHR *pQueueFamilyProperties) const noexcept;
+    void GetPhysicalDeviceQueueFamilyProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2KHR* pQueueFamilyProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceMemoryProperties2KHR vkGetPhysicalDeviceMemoryProperties2KHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceMemoryProperties2KHR(VkPhysicalDevice physicalDevice,
-                                               VkPhysicalDeviceMemoryProperties2KHR *pMemoryProperties) const noexcept;
+    void GetPhysicalDeviceMemoryProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2KHR* pMemoryProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_physical_device_properties2)
-    PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR vkGetPhysicalDeviceSparseImageFormatProperties2KHR =
-        VK_NULL_HANDLE;
-    void GetPhysicalDeviceSparseImageFormatProperties2KHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR *pFormatInfo,
-        uint32_t *pPropertyCount, VkSparseImageFormatProperties2KHR *pProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR vkGetPhysicalDeviceSparseImageFormatProperties2KHR = VK_NULL_HANDLE;
+    void GetPhysicalDeviceSparseImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2KHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_memory_capabilities)
     PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR vkGetPhysicalDeviceExternalBufferPropertiesKHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalBufferPropertiesKHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfoKHR *pExternalBufferInfo,
-        VkExternalBufferPropertiesKHR *pExternalBufferProperties) const noexcept;
+    void GetPhysicalDeviceExternalBufferPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfoKHR* pExternalBufferInfo, VkExternalBufferPropertiesKHR* pExternalBufferProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_semaphore_capabilities)
-    PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR vkGetPhysicalDeviceExternalSemaphorePropertiesKHR =
-        VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalSemaphorePropertiesKHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfoKHR *pExternalSemaphoreInfo,
-        VkExternalSemaphorePropertiesKHR *pExternalSemaphoreProperties) const noexcept;
+    PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = VK_NULL_HANDLE;
+    void GetPhysicalDeviceExternalSemaphorePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfoKHR* pExternalSemaphoreInfo, VkExternalSemaphorePropertiesKHR* pExternalSemaphoreProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_fence_capabilities)
     PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR vkGetPhysicalDeviceExternalFencePropertiesKHR = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalFencePropertiesKHR(
-        VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfoKHR *pExternalFenceInfo,
-        VkExternalFencePropertiesKHR *pExternalFenceProperties) const noexcept;
+    void GetPhysicalDeviceExternalFencePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfoKHR* pExternalFenceInfo, VkExternalFencePropertiesKHR* pExternalFenceProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_device_group_creation)
     PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult EnumeratePhysicalDeviceGroupsKHR(
-        VkInstance instance, uint32_t *pPhysicalDeviceGroupCount,
-        VkPhysicalDeviceGroupPropertiesKHR *pPhysicalDeviceGroupProperties) const noexcept;
+    [[nodiscard]] VkResult EnumeratePhysicalDeviceGroupsKHR(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupPropertiesKHR* pPhysicalDeviceGroupProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_calibrated_timestamps)
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT vkGetPhysicalDeviceCalibrateableTimeDomainsEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalDevice physicalDevice,
-                                                                        uint32_t *pTimeDomainCount,
-                                                                        VkTimeDomainEXT *pTimeDomains) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainEXT* pTimeDomains) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_tooling_info)
     PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPhysicalDeviceToolPropertiesEXT(
-        VkPhysicalDevice physicalDevice, uint32_t *pToolCount,
-        VkPhysicalDeviceToolPropertiesEXT *pToolProperties) const noexcept;
+    [[nodiscard]] VkResult GetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolPropertiesEXT* pToolProperties) const noexcept;
 #endif
+    
 };
 struct VKIT_API DeviceTable
 {
     static DeviceTable Create(VkDevice p_Device);
     PFN_vkDestroyDevice vkDestroyDevice = VK_NULL_HANDLE;
-    void DestroyDevice(VkDevice device, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetDeviceQueue vkGetDeviceQueue = VK_NULL_HANDLE;
-    void GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
-                        VkQueue *pQueue) const noexcept;
-
+    void GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) const noexcept;
+    
     PFN_vkQueueSubmit vkQueueSubmit = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo *pSubmits,
-                                       VkFence fence) const noexcept;
-
+    [[nodiscard]] VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) const noexcept;
+    
     PFN_vkQueueWaitIdle vkQueueWaitIdle = VK_NULL_HANDLE;
     [[nodiscard]] VkResult QueueWaitIdle(VkQueue queue) const noexcept;
-
+    
     PFN_vkDeviceWaitIdle vkDeviceWaitIdle = VK_NULL_HANDLE;
     [[nodiscard]] VkResult DeviceWaitIdle(VkDevice device) const noexcept;
-
+    
     PFN_vkAllocateMemory vkAllocateMemory = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AllocateMemory(VkDevice device, const VkMemoryAllocateInfo *pAllocateInfo,
-                                          const VkAllocationCallbacks *pAllocator,
-                                          VkDeviceMemory *pMemory) const noexcept;
-
+    [[nodiscard]] VkResult AllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) const noexcept;
+    
     PFN_vkFreeMemory vkFreeMemory = VK_NULL_HANDLE;
-    void FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkMapMemory vkMapMemory = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size,
-                                     VkMemoryMapFlags flags, void **ppData) const noexcept;
-
+    [[nodiscard]] VkResult MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) const noexcept;
+    
     PFN_vkUnmapMemory vkUnmapMemory = VK_NULL_HANDLE;
     void UnmapMemory(VkDevice device, VkDeviceMemory memory) const noexcept;
-
+    
     PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
-                                                   const VkMappedMemoryRange *pMemoryRanges) const noexcept;
-
+    [[nodiscard]] VkResult FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) const noexcept;
+    
     PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult InvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
-                                                        const VkMappedMemoryRange *pMemoryRanges) const noexcept;
-
+    [[nodiscard]] VkResult InvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) const noexcept;
+    
     PFN_vkGetDeviceMemoryCommitment vkGetDeviceMemoryCommitment = VK_NULL_HANDLE;
-    void GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory,
-                                   VkDeviceSize *pCommittedMemoryInBytes) const noexcept;
-
+    void GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes) const noexcept;
+    
     PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements = VK_NULL_HANDLE;
-    void GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer,
-                                     VkMemoryRequirements *pMemoryRequirements) const noexcept;
-
+    void GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) const noexcept;
+    
     PFN_vkBindBufferMemory vkBindBufferMemory = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory,
-                                            VkDeviceSize memoryOffset) const noexcept;
-
+    [[nodiscard]] VkResult BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) const noexcept;
+    
     PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements = VK_NULL_HANDLE;
-    void GetImageMemoryRequirements(VkDevice device, VkImage image,
-                                    VkMemoryRequirements *pMemoryRequirements) const noexcept;
-
+    void GetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements) const noexcept;
+    
     PFN_vkBindImageMemory vkBindImageMemory = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory,
-                                           VkDeviceSize memoryOffset) const noexcept;
-
+    [[nodiscard]] VkResult BindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) const noexcept;
+    
     PFN_vkGetImageSparseMemoryRequirements vkGetImageSparseMemoryRequirements = VK_NULL_HANDLE;
-    void GetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t *pSparseMemoryRequirementCount,
-                                          VkSparseImageMemoryRequirements *pSparseMemoryRequirements) const noexcept;
-
+    void GetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements) const noexcept;
+    
     PFN_vkQueueBindSparse vkQueueBindSparse = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo *pBindInfo,
-                                           VkFence fence) const noexcept;
-
+    [[nodiscard]] VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence) const noexcept;
+    
     PFN_vkCreateFence vkCreateFence = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateFence(VkDevice device, const VkFenceCreateInfo *pCreateInfo,
-                                       const VkAllocationCallbacks *pAllocator, VkFence *pFence) const noexcept;
-
+    [[nodiscard]] VkResult CreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) const noexcept;
+    
     PFN_vkDestroyFence vkDestroyFence = VK_NULL_HANDLE;
-    void DestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkResetFences vkResetFences = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ResetFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences) const noexcept;
-
+    [[nodiscard]] VkResult ResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) const noexcept;
+    
     PFN_vkGetFenceStatus vkGetFenceStatus = VK_NULL_HANDLE;
     [[nodiscard]] VkResult GetFenceStatus(VkDevice device, VkFence fence) const noexcept;
-
+    
     PFN_vkWaitForFences vkWaitForFences = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences, VkBool32 waitAll,
-                                         uint64_t timeout) const noexcept;
-
+    [[nodiscard]] VkResult WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout) const noexcept;
+    
     PFN_vkCreateSemaphore vkCreateSemaphore = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo *pCreateInfo,
-                                           const VkAllocationCallbacks *pAllocator,
-                                           VkSemaphore *pSemaphore) const noexcept;
-
+    [[nodiscard]] VkResult CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) const noexcept;
+    
     PFN_vkDestroySemaphore vkDestroySemaphore = VK_NULL_HANDLE;
-    void DestroySemaphore(VkDevice device, VkSemaphore semaphore,
-                          const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateEvent vkCreateEvent = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateEvent(VkDevice device, const VkEventCreateInfo *pCreateInfo,
-                                       const VkAllocationCallbacks *pAllocator, VkEvent *pEvent) const noexcept;
-
+    [[nodiscard]] VkResult CreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent) const noexcept;
+    
     PFN_vkDestroyEvent vkDestroyEvent = VK_NULL_HANDLE;
-    void DestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetEventStatus vkGetEventStatus = VK_NULL_HANDLE;
     [[nodiscard]] VkResult GetEventStatus(VkDevice device, VkEvent event) const noexcept;
-
+    
     PFN_vkSetEvent vkSetEvent = VK_NULL_HANDLE;
     [[nodiscard]] VkResult SetEvent(VkDevice device, VkEvent event) const noexcept;
-
+    
     PFN_vkResetEvent vkResetEvent = VK_NULL_HANDLE;
     [[nodiscard]] VkResult ResetEvent(VkDevice device, VkEvent event) const noexcept;
-
+    
     PFN_vkCreateQueryPool vkCreateQueryPool = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo *pCreateInfo,
-                                           const VkAllocationCallbacks *pAllocator,
-                                           VkQueryPool *pQueryPool) const noexcept;
-
+    [[nodiscard]] VkResult CreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool) const noexcept;
+    
     PFN_vkDestroyQueryPool vkDestroyQueryPool = VK_NULL_HANDLE;
-    void DestroyQueryPool(VkDevice device, VkQueryPool queryPool,
-                          const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetQueryPoolResults vkGetQueryPoolResults = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
-                                               uint32_t queryCount, size_t dataSize, void *pData, VkDeviceSize stride,
-                                               VkQueryResultFlags flags) const noexcept;
-
+    [[nodiscard]] VkResult GetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags) const noexcept;
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkResetQueryPool vkResetQueryPool = VK_NULL_HANDLE;
-    void ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
-                        uint32_t queryCount) const noexcept;
+    void ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const noexcept;
 #endif
-
+    
     PFN_vkCreateBuffer vkCreateBuffer = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateBuffer(VkDevice device, const VkBufferCreateInfo *pCreateInfo,
-                                        const VkAllocationCallbacks *pAllocator, VkBuffer *pBuffer) const noexcept;
-
+    [[nodiscard]] VkResult CreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) const noexcept;
+    
     PFN_vkDestroyBuffer vkDestroyBuffer = VK_NULL_HANDLE;
-    void DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateBufferView vkCreateBufferView = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateBufferView(VkDevice device, const VkBufferViewCreateInfo *pCreateInfo,
-                                            const VkAllocationCallbacks *pAllocator,
-                                            VkBufferView *pView) const noexcept;
-
+    [[nodiscard]] VkResult CreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView) const noexcept;
+    
     PFN_vkDestroyBufferView vkDestroyBufferView = VK_NULL_HANDLE;
-    void DestroyBufferView(VkDevice device, VkBufferView bufferView,
-                           const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateImage vkCreateImage = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateImage(VkDevice device, const VkImageCreateInfo *pCreateInfo,
-                                       const VkAllocationCallbacks *pAllocator, VkImage *pImage) const noexcept;
-
+    [[nodiscard]] VkResult CreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage) const noexcept;
+    
     PFN_vkDestroyImage vkDestroyImage = VK_NULL_HANDLE;
-    void DestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = VK_NULL_HANDLE;
-    void GetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource *pSubresource,
-                                   VkSubresourceLayout *pLayout) const noexcept;
-
+    void GetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout) const noexcept;
+    
     PFN_vkCreateImageView vkCreateImageView = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateImageView(VkDevice device, const VkImageViewCreateInfo *pCreateInfo,
-                                           const VkAllocationCallbacks *pAllocator, VkImageView *pView) const noexcept;
-
+    [[nodiscard]] VkResult CreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView) const noexcept;
+    
     PFN_vkDestroyImageView vkDestroyImageView = VK_NULL_HANDLE;
-    void DestroyImageView(VkDevice device, VkImageView imageView,
-                          const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateShaderModule vkCreateShaderModule = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *pCreateInfo,
-                                              const VkAllocationCallbacks *pAllocator,
-                                              VkShaderModule *pShaderModule) const noexcept;
-
+    [[nodiscard]] VkResult CreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) const noexcept;
+    
     PFN_vkDestroyShaderModule vkDestroyShaderModule = VK_NULL_HANDLE;
-    void DestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                             const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreatePipelineCache vkCreatePipelineCache = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo *pCreateInfo,
-                                               const VkAllocationCallbacks *pAllocator,
-                                               VkPipelineCache *pPipelineCache) const noexcept;
-
+    [[nodiscard]] VkResult CreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache) const noexcept;
+    
     PFN_vkDestroyPipelineCache vkDestroyPipelineCache = VK_NULL_HANDLE;
-    void DestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache,
-                              const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetPipelineCacheData vkGetPipelineCacheData = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t *pDataSize,
-                                                void *pData) const noexcept;
-
+    [[nodiscard]] VkResult GetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData) const noexcept;
+    
     PFN_vkMergePipelineCaches vkMergePipelineCaches = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult MergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount,
-                                               const VkPipelineCache *pSrcCaches) const noexcept;
-
+    [[nodiscard]] VkResult MergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches) const noexcept;
+    
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkCreatePipelineBinariesKHR vkCreatePipelineBinariesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR *pCreateInfo,
-                                                     const VkAllocationCallbacks *pAllocator,
-                                                     VkPipelineBinaryHandlesInfoKHR *pBinaries) const noexcept;
+    [[nodiscard]] VkResult CreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineBinaryHandlesInfoKHR* pBinaries) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkDestroyPipelineBinaryKHR vkDestroyPipelineBinaryKHR = VK_NULL_HANDLE;
-    void DestroyPipelineBinaryKHR(VkDevice device, VkPipelineBinaryKHR pipelineBinary,
-                                  const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyPipelineBinaryKHR(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkGetPipelineKeyKHR vkGetPipelineKeyKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineKeyKHR(VkDevice device, const VkPipelineCreateInfoKHR *pPipelineCreateInfo,
-                                             VkPipelineBinaryKeyKHR *pPipelineKey) const noexcept;
+    [[nodiscard]] VkResult GetPipelineKeyKHR(VkDevice device, const VkPipelineCreateInfoKHR* pPipelineCreateInfo, VkPipelineBinaryKeyKHR* pPipelineKey) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkGetPipelineBinaryDataKHR vkGetPipelineBinaryDataKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineBinaryDataKHR(VkDevice device, const VkPipelineBinaryDataInfoKHR *pInfo,
-                                                    VkPipelineBinaryKeyKHR *pPipelineBinaryKey,
-                                                    size_t *pPipelineBinaryDataSize,
-                                                    void *pPipelineBinaryData) const noexcept;
+    [[nodiscard]] VkResult GetPipelineBinaryDataKHR(VkDevice device, const VkPipelineBinaryDataInfoKHR* pInfo, VkPipelineBinaryKeyKHR* pPipelineBinaryKey, size_t* pPipelineBinaryDataSize, void* pPipelineBinaryData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkReleaseCapturedPipelineDataKHR vkReleaseCapturedPipelineDataKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ReleaseCapturedPipelineDataKHR(VkDevice device,
-                                                          const VkReleaseCapturedPipelineDataInfoKHR *pInfo,
-                                                          const VkAllocationCallbacks *pAllocator) const noexcept;
+    [[nodiscard]] VkResult ReleaseCapturedPipelineDataKHR(VkDevice device, const VkReleaseCapturedPipelineDataInfoKHR* pInfo, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
     PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                   uint32_t createInfoCount,
-                                                   const VkGraphicsPipelineCreateInfo *pCreateInfos,
-                                                   const VkAllocationCallbacks *pAllocator,
-                                                   VkPipeline *pPipelines) const noexcept;
-
+    [[nodiscard]] VkResult CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) const noexcept;
+    
     PFN_vkCreateComputePipelines vkCreateComputePipelines = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                  uint32_t createInfoCount,
-                                                  const VkComputePipelineCreateInfo *pCreateInfos,
-                                                  const VkAllocationCallbacks *pAllocator,
-                                                  VkPipeline *pPipelines) const noexcept;
-
+    [[nodiscard]] VkResult CreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) const noexcept;
+    
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
-    PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass,
-                                                                         VkExtent2D *pMaxWorkgroupSize) const noexcept;
+    PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize) const noexcept;
 #endif
-
+    
     PFN_vkDestroyPipeline vkDestroyPipeline = VK_NULL_HANDLE;
-    void DestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreatePipelineLayout vkCreatePipelineLayout = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkPipelineLayout *pPipelineLayout) const noexcept;
-
+    [[nodiscard]] VkResult CreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout) const noexcept;
+    
     PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = VK_NULL_HANDLE;
-    void DestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout,
-                               const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateSampler vkCreateSampler = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSampler(VkDevice device, const VkSamplerCreateInfo *pCreateInfo,
-                                         const VkAllocationCallbacks *pAllocator, VkSampler *pSampler) const noexcept;
-
+    [[nodiscard]] VkResult CreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler) const noexcept;
+    
     PFN_vkDestroySampler vkDestroySampler = VK_NULL_HANDLE;
-    void DestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDescriptorSetLayout(VkDevice device,
-                                                     const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
-                                                     const VkAllocationCallbacks *pAllocator,
-                                                     VkDescriptorSetLayout *pSetLayout) const noexcept;
-
+    [[nodiscard]] VkResult CreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout) const noexcept;
+    
     PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = VK_NULL_HANDLE;
-    void DestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout,
-                                    const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateDescriptorPool vkCreateDescriptorPool = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkDescriptorPool *pDescriptorPool) const noexcept;
-
+    [[nodiscard]] VkResult CreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool) const noexcept;
+    
     PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool = VK_NULL_HANDLE;
-    void DestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
-                               const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkResetDescriptorPool vkResetDescriptorPool = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
-                                               VkDescriptorPoolResetFlags flags) const noexcept;
-
+    [[nodiscard]] VkResult ResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags) const noexcept;
+    
     PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo *pAllocateInfo,
-                                                  VkDescriptorSet *pDescriptorSets) const noexcept;
-
+    [[nodiscard]] VkResult AllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets) const noexcept;
+    
     PFN_vkFreeDescriptorSets vkFreeDescriptorSets = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult FreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool,
-                                              uint32_t descriptorSetCount,
-                                              const VkDescriptorSet *pDescriptorSets) const noexcept;
-
+    [[nodiscard]] VkResult FreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets) const noexcept;
+    
     PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets = VK_NULL_HANDLE;
-    void UpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount,
-                              const VkWriteDescriptorSet *pDescriptorWrites, uint32_t descriptorCopyCount,
-                              const VkCopyDescriptorSet *pDescriptorCopies) const noexcept;
-
+    void UpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies) const noexcept;
+    
     PFN_vkCreateFramebuffer vkCreateFramebuffer = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkFramebuffer *pFramebuffer) const noexcept;
-
+    [[nodiscard]] VkResult CreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer) const noexcept;
+    
     PFN_vkDestroyFramebuffer vkDestroyFramebuffer = VK_NULL_HANDLE;
-    void DestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer,
-                            const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkCreateRenderPass vkCreateRenderPass = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreateInfo,
-                                            const VkAllocationCallbacks *pAllocator,
-                                            VkRenderPass *pRenderPass) const noexcept;
-
+    [[nodiscard]] VkResult CreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) const noexcept;
+    
     PFN_vkDestroyRenderPass vkDestroyRenderPass = VK_NULL_HANDLE;
-    void DestroyRenderPass(VkDevice device, VkRenderPass renderPass,
-                           const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkGetRenderAreaGranularity vkGetRenderAreaGranularity = VK_NULL_HANDLE;
-    void GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D *pGranularity) const noexcept;
-
+    void GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity) const noexcept;
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkGetRenderingAreaGranularity vkGetRenderingAreaGranularity = VK_NULL_HANDLE;
-    void GetRenderingAreaGranularity(VkDevice device, const VkRenderingAreaInfo *pRenderingAreaInfo,
-                                     VkExtent2D *pGranularity) const noexcept;
+    void GetRenderingAreaGranularity(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity) const noexcept;
 #endif
-
+    
     PFN_vkCreateCommandPool vkCreateCommandPool = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkCommandPool *pCommandPool) const noexcept;
-
+    [[nodiscard]] VkResult CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept;
+    
     PFN_vkDestroyCommandPool vkDestroyCommandPool = VK_NULL_HANDLE;
-    void DestroyCommandPool(VkDevice device, VkCommandPool commandPool,
-                            const VkAllocationCallbacks *pAllocator) const noexcept;
-
+    void DestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) const noexcept;
+    
     PFN_vkResetCommandPool vkResetCommandPool = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ResetCommandPool(VkDevice device, VkCommandPool commandPool,
-                                            VkCommandPoolResetFlags flags) const noexcept;
-
+    [[nodiscard]] VkResult ResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) const noexcept;
+    
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo *pAllocateInfo,
-                                                  VkCommandBuffer *pCommandBuffers) const noexcept;
-
+    [[nodiscard]] VkResult AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) const noexcept;
+    
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers = VK_NULL_HANDLE;
-    void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
-                            const VkCommandBuffer *pCommandBuffers) const noexcept;
-
+    void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
+    
     PFN_vkBeginCommandBuffer vkBeginCommandBuffer = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BeginCommandBuffer(VkCommandBuffer commandBuffer,
-                                              const VkCommandBufferBeginInfo *pBeginInfo) const noexcept;
-
+    [[nodiscard]] VkResult BeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) const noexcept;
+    
     PFN_vkEndCommandBuffer vkEndCommandBuffer = VK_NULL_HANDLE;
     [[nodiscard]] VkResult EndCommandBuffer(VkCommandBuffer commandBuffer) const noexcept;
-
+    
     PFN_vkResetCommandBuffer vkResetCommandBuffer = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ResetCommandBuffer(VkCommandBuffer commandBuffer,
-                                              VkCommandBufferResetFlags flags) const noexcept;
-
+    [[nodiscard]] VkResult ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) const noexcept;
+    
     PFN_vkCmdBindPipeline vkCmdBindPipeline = VK_NULL_HANDLE;
-    void CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                         VkPipeline pipeline) const noexcept;
-
+    void CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) const noexcept;
+    
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
     PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT vkCmdSetAttachmentFeedbackLoopEnableEXT = VK_NULL_HANDLE;
-    void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
-                                               VkImageAspectFlags aspectMask) const noexcept;
+    void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) const noexcept;
 #endif
-
+    
     PFN_vkCmdSetViewport vkCmdSetViewport = VK_NULL_HANDLE;
-    void CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
-                        const VkViewport *pViewports) const noexcept;
-
+    void CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports) const noexcept;
+    
     PFN_vkCmdSetScissor vkCmdSetScissor = VK_NULL_HANDLE;
-    void CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount,
-                       const VkRect2D *pScissors) const noexcept;
-
+    void CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors) const noexcept;
+    
     PFN_vkCmdSetLineWidth vkCmdSetLineWidth = VK_NULL_HANDLE;
     void CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) const noexcept;
-
+    
     PFN_vkCmdSetDepthBias vkCmdSetDepthBias = VK_NULL_HANDLE;
-    void CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp,
-                         float depthBiasSlopeFactor) const noexcept;
-
+    void CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor) const noexcept;
+    
     PFN_vkCmdSetBlendConstants vkCmdSetBlendConstants = VK_NULL_HANDLE;
     void CmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) const noexcept;
-
+    
     PFN_vkCmdSetDepthBounds vkCmdSetDepthBounds = VK_NULL_HANDLE;
     void CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) const noexcept;
-
+    
     PFN_vkCmdSetStencilCompareMask vkCmdSetStencilCompareMask = VK_NULL_HANDLE;
-    void CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                  uint32_t compareMask) const noexcept;
-
+    void CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask) const noexcept;
+    
     PFN_vkCmdSetStencilWriteMask vkCmdSetStencilWriteMask = VK_NULL_HANDLE;
-    void CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                uint32_t writeMask) const noexcept;
-
+    void CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask) const noexcept;
+    
     PFN_vkCmdSetStencilReference vkCmdSetStencilReference = VK_NULL_HANDLE;
-    void CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                uint32_t reference) const noexcept;
-
+    void CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference) const noexcept;
+    
     PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets = VK_NULL_HANDLE;
-    void CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                               VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                               const VkDescriptorSet *pDescriptorSets, uint32_t dynamicOffsetCount,
-                               const uint32_t *pDynamicOffsets) const noexcept;
-
+    void CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets) const noexcept;
+    
     PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer = VK_NULL_HANDLE;
-    void CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                            VkIndexType indexType) const noexcept;
-
+    void CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType) const noexcept;
+    
     PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers = VK_NULL_HANDLE;
-    void CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
-                              const VkBuffer *pBuffers, const VkDeviceSize *pOffsets) const noexcept;
-
+    void CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets) const noexcept;
+    
     PFN_vkCmdDraw vkCmdDraw = VK_NULL_HANDLE;
-    void CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex,
-                 uint32_t firstInstance) const noexcept;
-
+    void CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) const noexcept;
+    
     PFN_vkCmdDrawIndexed vkCmdDrawIndexed = VK_NULL_HANDLE;
-    void CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex,
-                        int32_t vertexOffset, uint32_t firstInstance) const noexcept;
-
+    void CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance) const noexcept;
+    
 #if defined(VK_EXT_multi_draw)
     PFN_vkCmdDrawMultiEXT vkCmdDrawMultiEXT = VK_NULL_HANDLE;
-    void CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT *pVertexInfo,
-                         uint32_t instanceCount, uint32_t firstInstance, uint32_t stride) const noexcept;
+    void CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_multi_draw)
     PFN_vkCmdDrawMultiIndexedEXT vkCmdDrawMultiIndexedEXT = VK_NULL_HANDLE;
-    void CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
-                                const VkMultiDrawIndexedInfoEXT *pIndexInfo, uint32_t instanceCount,
-                                uint32_t firstInstance, uint32_t stride, const int32_t *pVertexOffset) const noexcept;
+    void CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawIndexedInfoEXT* pIndexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride, const int32_t* pVertexOffset) const noexcept;
 #endif
-
+    
     PFN_vkCmdDrawIndirect vkCmdDrawIndirect = VK_NULL_HANDLE;
-    void CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount,
-                         uint32_t stride) const noexcept;
-
+    void CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) const noexcept;
+    
     PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect = VK_NULL_HANDLE;
-    void CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount,
-                                uint32_t stride) const noexcept;
-
+    void CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) const noexcept;
+    
     PFN_vkCmdDispatch vkCmdDispatch = VK_NULL_HANDLE;
-    void CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                     uint32_t groupCountZ) const noexcept;
-
+    void CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
+    
     PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect = VK_NULL_HANDLE;
     void CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) const noexcept;
-
+    
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     PFN_vkCmdSubpassShadingHUAWEI vkCmdSubpassShadingHUAWEI = VK_NULL_HANDLE;
     void CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_HUAWEI_cluster_culling_shader)
     PFN_vkCmdDrawClusterHUAWEI vkCmdDrawClusterHUAWEI = VK_NULL_HANDLE;
-    void CmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                              uint32_t groupCountZ) const noexcept;
+    void CmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
 #endif
-
+    
 #if defined(VK_HUAWEI_cluster_culling_shader)
     PFN_vkCmdDrawClusterIndirectHUAWEI vkCmdDrawClusterIndirectHUAWEI = VK_NULL_HANDLE;
-    void CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                      VkDeviceSize offset) const noexcept;
+    void CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands_compute)
     PFN_vkCmdUpdatePipelineIndirectBufferNV vkCmdUpdatePipelineIndirectBufferNV = VK_NULL_HANDLE;
-    void CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                           VkPipeline pipeline) const noexcept;
+    void CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) const noexcept;
 #endif
-
+    
     PFN_vkCmdCopyBuffer vkCmdCopyBuffer = VK_NULL_HANDLE;
-    void CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount,
-                       const VkBufferCopy *pRegions) const noexcept;
-
+    void CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions) const noexcept;
+    
     PFN_vkCmdCopyImage vkCmdCopyImage = VK_NULL_HANDLE;
-    void CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
-                      VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy *pRegions) const noexcept;
-
+    void CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions) const noexcept;
+    
     PFN_vkCmdBlitImage vkCmdBlitImage = VK_NULL_HANDLE;
-    void CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
-                      VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit *pRegions,
-                      VkFilter filter) const noexcept;
-
+    void CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter) const noexcept;
+    
     PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = VK_NULL_HANDLE;
-    void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                              VkImageLayout dstImageLayout, uint32_t regionCount,
-                              const VkBufferImageCopy *pRegions) const noexcept;
-
+    void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions) const noexcept;
+    
     PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer = VK_NULL_HANDLE;
-    void CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                              VkBuffer dstBuffer, uint32_t regionCount,
-                              const VkBufferImageCopy *pRegions) const noexcept;
-
+    void CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) const noexcept;
+    
 #if defined(VK_NV_copy_memory_indirect)
     PFN_vkCmdCopyMemoryIndirectNV vkCmdCopyMemoryIndirectNV = VK_NULL_HANDLE;
-    void CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount,
-                                 uint32_t stride) const noexcept;
+    void CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_copy_memory_indirect)
     PFN_vkCmdCopyMemoryToImageIndirectNV vkCmdCopyMemoryToImageIndirectNV = VK_NULL_HANDLE;
-    void CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
-                                        uint32_t copyCount, uint32_t stride, VkImage dstImage,
-                                        VkImageLayout dstImageLayout,
-                                        const VkImageSubresourceLayers *pImageSubresources) const noexcept;
+    void CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride, VkImage dstImage, VkImageLayout dstImageLayout, const VkImageSubresourceLayers* pImageSubresources) const noexcept;
 #endif
-
+    
     PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer = VK_NULL_HANDLE;
-    void CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                         VkDeviceSize dataSize, const void *pData) const noexcept;
-
+    void CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) const noexcept;
+    
     PFN_vkCmdFillBuffer vkCmdFillBuffer = VK_NULL_HANDLE;
-    void CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size,
-                       uint32_t data) const noexcept;
-
+    void CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) const noexcept;
+    
     PFN_vkCmdClearColorImage vkCmdClearColorImage = VK_NULL_HANDLE;
-    void CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                            const VkClearColorValue *pColor, uint32_t rangeCount,
-                            const VkImageSubresourceRange *pRanges) const noexcept;
-
+    void CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) const noexcept;
+    
     PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage = VK_NULL_HANDLE;
-    void CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                   const VkClearDepthStencilValue *pDepthStencil, uint32_t rangeCount,
-                                   const VkImageSubresourceRange *pRanges) const noexcept;
-
+    void CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) const noexcept;
+    
     PFN_vkCmdClearAttachments vkCmdClearAttachments = VK_NULL_HANDLE;
-    void CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
-                             const VkClearAttachment *pAttachments, uint32_t rectCount,
-                             const VkClearRect *pRects) const noexcept;
-
+    void CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects) const noexcept;
+    
     PFN_vkCmdResolveImage vkCmdResolveImage = VK_NULL_HANDLE;
-    void CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                         VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                         const VkImageResolve *pRegions) const noexcept;
-
+    void CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions) const noexcept;
+    
     PFN_vkCmdSetEvent vkCmdSetEvent = VK_NULL_HANDLE;
     void CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const noexcept;
-
+    
     PFN_vkCmdResetEvent vkCmdResetEvent = VK_NULL_HANDLE;
     void CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const noexcept;
-
+    
     PFN_vkCmdWaitEvents vkCmdWaitEvents = VK_NULL_HANDLE;
-    void CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
-                       VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                       uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
-                       uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier *pBufferMemoryBarriers,
-                       uint32_t imageMemoryBarrierCount,
-                       const VkImageMemoryBarrier *pImageMemoryBarriers) const noexcept;
-
+    void CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) const noexcept;
+    
     PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier = VK_NULL_HANDLE;
-    void CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                            VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                            uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
-                            uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier *pBufferMemoryBarriers,
-                            uint32_t imageMemoryBarrierCount,
-                            const VkImageMemoryBarrier *pImageMemoryBarriers) const noexcept;
-
+    void CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) const noexcept;
+    
     PFN_vkCmdBeginQuery vkCmdBeginQuery = VK_NULL_HANDLE;
-    void CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                       VkQueryControlFlags flags) const noexcept;
-
+    void CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags) const noexcept;
+    
     PFN_vkCmdEndQuery vkCmdEndQuery = VK_NULL_HANDLE;
     void CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) const noexcept;
-
+    
 #if defined(VK_EXT_conditional_rendering)
     PFN_vkCmdBeginConditionalRenderingEXT vkCmdBeginConditionalRenderingEXT = VK_NULL_HANDLE;
-    void CmdBeginConditionalRenderingEXT(
-        VkCommandBuffer commandBuffer,
-        const VkConditionalRenderingBeginInfoEXT *pConditionalRenderingBegin) const noexcept;
+    void CmdBeginConditionalRenderingEXT(VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_conditional_rendering)
     PFN_vkCmdEndConditionalRenderingEXT vkCmdEndConditionalRenderingEXT = VK_NULL_HANDLE;
     void CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
     PFN_vkCmdResetQueryPool vkCmdResetQueryPool = VK_NULL_HANDLE;
-    void CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                           uint32_t queryCount) const noexcept;
-
+    void CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const noexcept;
+    
     PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp = VK_NULL_HANDLE;
-    void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
-                           uint32_t query) const noexcept;
-
+    void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query) const noexcept;
+    
     PFN_vkCmdCopyQueryPoolResults vkCmdCopyQueryPoolResults = VK_NULL_HANDLE;
-    void CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                 uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride,
-                                 VkQueryResultFlags flags) const noexcept;
-
+    void CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) const noexcept;
+    
     PFN_vkCmdPushConstants vkCmdPushConstants = VK_NULL_HANDLE;
-    void CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
-                          uint32_t offset, uint32_t size, const void *pValues) const noexcept;
-
+    void CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues) const noexcept;
+    
     PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass = VK_NULL_HANDLE;
-    void CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo *pRenderPassBegin,
-                            VkSubpassContents contents) const noexcept;
-
+    void CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents) const noexcept;
+    
     PFN_vkCmdNextSubpass vkCmdNextSubpass = VK_NULL_HANDLE;
     void CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) const noexcept;
-
+    
     PFN_vkCmdEndRenderPass vkCmdEndRenderPass = VK_NULL_HANDLE;
     void CmdEndRenderPass(VkCommandBuffer commandBuffer) const noexcept;
-
+    
     PFN_vkCmdExecuteCommands vkCmdExecuteCommands = VK_NULL_HANDLE;
-    void CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                            const VkCommandBuffer *pCommandBuffers) const noexcept;
-
+    void CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
+    
 #if defined(VK_KHR_display_swapchain)
     PFN_vkCreateSharedSwapchainsKHR vkCreateSharedSwapchainsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSharedSwapchainsKHR(VkDevice device, uint32_t swapchainCount,
-                                                     const VkSwapchainCreateInfoKHR *pCreateInfos,
-                                                     const VkAllocationCallbacks *pAllocator,
-                                                     VkSwapchainKHR *pSwapchains) const noexcept;
+    [[nodiscard]] VkResult CreateSharedSwapchainsKHR(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_swapchain)
     PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR *pCreateInfo,
-                                              const VkAllocationCallbacks *pAllocator,
-                                              VkSwapchainKHR *pSwapchain) const noexcept;
+    [[nodiscard]] VkResult CreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_swapchain)
     PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = VK_NULL_HANDLE;
-    void DestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain,
-                             const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_swapchain)
     PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain,
-                                                 uint32_t *pSwapchainImageCount,
-                                                 VkImage *pSwapchainImages) const noexcept;
+    [[nodiscard]] VkResult GetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_swapchain)
     PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
-                                               VkSemaphore semaphore, VkFence fence,
-                                               uint32_t *pImageIndex) const noexcept;
+    [[nodiscard]] VkResult AcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_swapchain)
     PFN_vkQueuePresentKHR vkQueuePresentKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR *pPresentInfo) const noexcept;
+    [[nodiscard]] VkResult QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_marker)
     PFN_vkDebugMarkerSetObjectNameEXT vkDebugMarkerSetObjectNameEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult DebugMarkerSetObjectNameEXT(VkDevice device,
-                                                       const VkDebugMarkerObjectNameInfoEXT *pNameInfo) const noexcept;
+    [[nodiscard]] VkResult DebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_marker)
     PFN_vkDebugMarkerSetObjectTagEXT vkDebugMarkerSetObjectTagEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult DebugMarkerSetObjectTagEXT(VkDevice device,
-                                                      const VkDebugMarkerObjectTagInfoEXT *pTagInfo) const noexcept;
+    [[nodiscard]] VkResult DebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_marker)
     PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT = VK_NULL_HANDLE;
-    void CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
-                                const VkDebugMarkerMarkerInfoEXT *pMarkerInfo) const noexcept;
+    void CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_marker)
     PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT = VK_NULL_HANDLE;
     void CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_marker)
     PFN_vkCmdDebugMarkerInsertEXT vkCmdDebugMarkerInsertEXT = VK_NULL_HANDLE;
-    void CmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
-                                 const VkDebugMarkerMarkerInfoEXT *pMarkerInfo) const noexcept;
+    void CmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_win32)
     PFN_vkGetMemoryWin32HandleNV vkGetMemoryWin32HandleNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory,
-                                                  VkExternalMemoryHandleTypeFlagsNV handleType,
-                                                  HANDLE *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkCmdExecuteGeneratedCommandsNV vkCmdExecuteGeneratedCommandsNV = VK_NULL_HANDLE;
-    void CmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
-                                       const VkGeneratedCommandsInfoNV *pGeneratedCommandsInfo) const noexcept;
+    void CmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkCmdPreprocessGeneratedCommandsNV vkCmdPreprocessGeneratedCommandsNV = VK_NULL_HANDLE;
-    void CmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuffer,
-                                          const VkGeneratedCommandsInfoNV *pGeneratedCommandsInfo) const noexcept;
+    void CmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkCmdBindPipelineShaderGroupNV vkCmdBindPipelineShaderGroupNV = VK_NULL_HANDLE;
-    void CmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                      VkPipeline pipeline, uint32_t groupIndex) const noexcept;
+    void CmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline, uint32_t groupIndex) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkGetGeneratedCommandsMemoryRequirementsNV vkGetGeneratedCommandsMemoryRequirementsNV = VK_NULL_HANDLE;
-    void GetGeneratedCommandsMemoryRequirementsNV(VkDevice device,
-                                                  const VkGeneratedCommandsMemoryRequirementsInfoNV *pInfo,
-                                                  VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetGeneratedCommandsMemoryRequirementsNV(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkCreateIndirectCommandsLayoutNV vkCreateIndirectCommandsLayoutNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateIndirectCommandsLayoutNV(
-        VkDevice device, const VkIndirectCommandsLayoutCreateInfoNV *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkIndirectCommandsLayoutNV *pIndirectCommandsLayout) const noexcept;
+    [[nodiscard]] VkResult CreateIndirectCommandsLayoutNV(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNV* pIndirectCommandsLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands)
     PFN_vkDestroyIndirectCommandsLayoutNV vkDestroyIndirectCommandsLayoutNV = VK_NULL_HANDLE;
-    void DestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout,
-                                         const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkCmdExecuteGeneratedCommandsEXT vkCmdExecuteGeneratedCommandsEXT = VK_NULL_HANDLE;
-    void CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
-                                        const VkGeneratedCommandsInfoEXT *pGeneratedCommandsInfo) const noexcept;
+    void CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkCmdPreprocessGeneratedCommandsEXT vkCmdPreprocessGeneratedCommandsEXT = VK_NULL_HANDLE;
-    void CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
-                                           const VkGeneratedCommandsInfoEXT *pGeneratedCommandsInfo,
-                                           VkCommandBuffer stateCommandBuffer) const noexcept;
+    void CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo, VkCommandBuffer stateCommandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkGetGeneratedCommandsMemoryRequirementsEXT vkGetGeneratedCommandsMemoryRequirementsEXT = VK_NULL_HANDLE;
-    void GetGeneratedCommandsMemoryRequirementsEXT(VkDevice device,
-                                                   const VkGeneratedCommandsMemoryRequirementsInfoEXT *pInfo,
-                                                   VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetGeneratedCommandsMemoryRequirementsEXT(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkCreateIndirectCommandsLayoutEXT vkCreateIndirectCommandsLayoutEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateIndirectCommandsLayoutEXT(
-        VkDevice device, const VkIndirectCommandsLayoutCreateInfoEXT *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkIndirectCommandsLayoutEXT *pIndirectCommandsLayout) const noexcept;
+    [[nodiscard]] VkResult CreateIndirectCommandsLayoutEXT(VkDevice device, const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkDestroyIndirectCommandsLayoutEXT vkDestroyIndirectCommandsLayoutEXT = VK_NULL_HANDLE;
-    void DestroyIndirectCommandsLayoutEXT(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout,
-                                          const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyIndirectCommandsLayoutEXT(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkCreateIndirectExecutionSetEXT vkCreateIndirectExecutionSetEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateIndirectExecutionSetEXT(
-        VkDevice device, const VkIndirectExecutionSetCreateInfoEXT *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkIndirectExecutionSetEXT *pIndirectExecutionSet) const noexcept;
+    [[nodiscard]] VkResult CreateIndirectExecutionSetEXT(VkDevice device, const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectExecutionSetEXT* pIndirectExecutionSet) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkDestroyIndirectExecutionSetEXT vkDestroyIndirectExecutionSetEXT = VK_NULL_HANDLE;
-    void DestroyIndirectExecutionSetEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet,
-                                        const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyIndirectExecutionSetEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkUpdateIndirectExecutionSetPipelineEXT vkUpdateIndirectExecutionSetPipelineEXT = VK_NULL_HANDLE;
-    void UpdateIndirectExecutionSetPipelineEXT(
-        VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount,
-        const VkWriteIndirectExecutionSetPipelineEXT *pExecutionSetWrites) const noexcept;
+    void UpdateIndirectExecutionSetPipelineEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_generated_commands)
     PFN_vkUpdateIndirectExecutionSetShaderEXT vkUpdateIndirectExecutionSetShaderEXT = VK_NULL_HANDLE;
-    void UpdateIndirectExecutionSetShaderEXT(
-        VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount,
-        const VkWriteIndirectExecutionSetShaderEXT *pExecutionSetWrites) const noexcept;
+    void UpdateIndirectExecutionSetShaderEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdPushDescriptorSet vkCmdPushDescriptorSet = VK_NULL_HANDLE;
-    void CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                              VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
-                              const VkWriteDescriptorSet *pDescriptorWrites) const noexcept;
+    void CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkTrimCommandPool vkTrimCommandPool = VK_NULL_HANDLE;
     void TrimCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_memory_win32)
     PFN_vkGetMemoryWin32HandleKHR vkGetMemoryWin32HandleKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryWin32HandleKHR(VkDevice device,
-                                                   const VkMemoryGetWin32HandleInfoKHR *pGetWin32HandleInfo,
-                                                   HANDLE *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetMemoryWin32HandleKHR(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_memory_win32)
     PFN_vkGetMemoryWin32HandlePropertiesKHR vkGetMemoryWin32HandlePropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryWin32HandlePropertiesKHR(
-        VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle,
-        VkMemoryWin32HandlePropertiesKHR *pMemoryWin32HandleProperties) const noexcept;
+    [[nodiscard]] VkResult GetMemoryWin32HandlePropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_memory_fd)
     PFN_vkGetMemoryFdKHR vkGetMemoryFdKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR *pGetFdInfo,
-                                          int *pFd) const noexcept;
+    [[nodiscard]] VkResult GetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_memory_fd)
     PFN_vkGetMemoryFdPropertiesKHR vkGetMemoryFdPropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryFdPropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType,
-                                                    int fd,
-                                                    VkMemoryFdPropertiesKHR *pMemoryFdProperties) const noexcept;
+    [[nodiscard]] VkResult GetMemoryFdPropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_external_memory)
     PFN_vkGetMemoryZirconHandleFUCHSIA vkGetMemoryZirconHandleFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryZirconHandleFUCHSIA(VkDevice device,
-                                                        const VkMemoryGetZirconHandleInfoFUCHSIA *pGetZirconHandleInfo,
-                                                        zx_handle_t *pZirconHandle) const noexcept;
+    [[nodiscard]] VkResult GetMemoryZirconHandleFUCHSIA(VkDevice device, const VkMemoryGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_external_memory)
     PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA vkGetMemoryZirconHandlePropertiesFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryZirconHandlePropertiesFUCHSIA(
-        VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t zirconHandle,
-        VkMemoryZirconHandlePropertiesFUCHSIA *pMemoryZirconHandleProperties) const noexcept;
+    [[nodiscard]] VkResult GetMemoryZirconHandlePropertiesFUCHSIA(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t zirconHandle, VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_rdma)
     PFN_vkGetMemoryRemoteAddressNV vkGetMemoryRemoteAddressNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryRemoteAddressNV(VkDevice device,
-                                                    const VkMemoryGetRemoteAddressInfoNV *pMemoryGetRemoteAddressInfo,
-                                                    VkRemoteAddressNV *pAddress) const noexcept;
+    [[nodiscard]] VkResult GetMemoryRemoteAddressNV(VkDevice device, const VkMemoryGetRemoteAddressInfoNV* pMemoryGetRemoteAddressInfo, VkRemoteAddressNV* pAddress) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_memory_sci_buf)
     PFN_vkGetMemorySciBufNV vkGetMemorySciBufNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemorySciBufNV(VkDevice device, const VkMemoryGetSciBufInfoNV *pGetSciBufInfo,
-                                             NvSciBufObj *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetMemorySciBufNV(VkDevice device, const VkMemoryGetSciBufInfoNV* pGetSciBufInfo, NvSciBufObj* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_semaphore_win32)
     PFN_vkGetSemaphoreWin32HandleKHR vkGetSemaphoreWin32HandleKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreWin32HandleKHR(VkDevice device,
-                                                      const VkSemaphoreGetWin32HandleInfoKHR *pGetWin32HandleInfo,
-                                                      HANDLE *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreWin32HandleKHR(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_semaphore_win32)
     PFN_vkImportSemaphoreWin32HandleKHR vkImportSemaphoreWin32HandleKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportSemaphoreWin32HandleKHR(
-        VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR *pImportSemaphoreWin32HandleInfo) const noexcept;
+    [[nodiscard]] VkResult ImportSemaphoreWin32HandleKHR(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_semaphore_fd)
     PFN_vkGetSemaphoreFdKHR vkGetSemaphoreFdKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreFdKHR(VkDevice device, const VkSemaphoreGetFdInfoKHR *pGetFdInfo,
-                                             int *pFd) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreFdKHR(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_semaphore_fd)
     PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportSemaphoreFdKHR(
-        VkDevice device, const VkImportSemaphoreFdInfoKHR *pImportSemaphoreFdInfo) const noexcept;
+    [[nodiscard]] VkResult ImportSemaphoreFdKHR(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_external_semaphore)
     PFN_vkGetSemaphoreZirconHandleFUCHSIA vkGetSemaphoreZirconHandleFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreZirconHandleFUCHSIA(
-        VkDevice device, const VkSemaphoreGetZirconHandleInfoFUCHSIA *pGetZirconHandleInfo,
-        zx_handle_t *pZirconHandle) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkSemaphoreGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_external_semaphore)
     PFN_vkImportSemaphoreZirconHandleFUCHSIA vkImportSemaphoreZirconHandleFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportSemaphoreZirconHandleFUCHSIA(
-        VkDevice device,
-        const VkImportSemaphoreZirconHandleInfoFUCHSIA *pImportSemaphoreZirconHandleInfo) const noexcept;
+    [[nodiscard]] VkResult ImportSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkImportSemaphoreZirconHandleInfoFUCHSIA* pImportSemaphoreZirconHandleInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_fence_win32)
     PFN_vkGetFenceWin32HandleKHR vkGetFenceWin32HandleKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFenceWin32HandleKHR(VkDevice device,
-                                                  const VkFenceGetWin32HandleInfoKHR *pGetWin32HandleInfo,
-                                                  HANDLE *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetFenceWin32HandleKHR(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_fence_win32)
     PFN_vkImportFenceWin32HandleKHR vkImportFenceWin32HandleKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportFenceWin32HandleKHR(
-        VkDevice device, const VkImportFenceWin32HandleInfoKHR *pImportFenceWin32HandleInfo) const noexcept;
+    [[nodiscard]] VkResult ImportFenceWin32HandleKHR(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_fence_fd)
     PFN_vkGetFenceFdKHR vkGetFenceFdKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFenceFdKHR(VkDevice device, const VkFenceGetFdInfoKHR *pGetFdInfo,
-                                         int *pFd) const noexcept;
+    [[nodiscard]] VkResult GetFenceFdKHR(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_external_fence_fd)
     PFN_vkImportFenceFdKHR vkImportFenceFdKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportFenceFdKHR(VkDevice device,
-                                            const VkImportFenceFdInfoKHR *pImportFenceFdInfo) const noexcept;
+    [[nodiscard]] VkResult ImportFenceFdKHR(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     PFN_vkGetFenceSciSyncFenceNV vkGetFenceSciSyncFenceNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFenceSciSyncFenceNV(VkDevice device, const VkFenceGetSciSyncInfoNV *pGetSciSyncHandleInfo,
-                                                  void *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetFenceSciSyncFenceNV(VkDevice device, const VkFenceGetSciSyncInfoNV* pGetSciSyncHandleInfo, void* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     PFN_vkGetFenceSciSyncObjNV vkGetFenceSciSyncObjNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFenceSciSyncObjNV(VkDevice device, const VkFenceGetSciSyncInfoNV *pGetSciSyncHandleInfo,
-                                                void *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetFenceSciSyncObjNV(VkDevice device, const VkFenceGetSciSyncInfoNV* pGetSciSyncHandleInfo, void* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     PFN_vkImportFenceSciSyncFenceNV vkImportFenceSciSyncFenceNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportFenceSciSyncFenceNV(
-        VkDevice device, const VkImportFenceSciSyncInfoNV *pImportFenceSciSyncInfo) const noexcept;
+    [[nodiscard]] VkResult ImportFenceSciSyncFenceNV(VkDevice device, const VkImportFenceSciSyncInfoNV* pImportFenceSciSyncInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     PFN_vkImportFenceSciSyncObjNV vkImportFenceSciSyncObjNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportFenceSciSyncObjNV(
-        VkDevice device, const VkImportFenceSciSyncInfoNV *pImportFenceSciSyncInfo) const noexcept;
+    [[nodiscard]] VkResult ImportFenceSciSyncObjNV(VkDevice device, const VkImportFenceSciSyncInfoNV* pImportFenceSciSyncInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync)
     PFN_vkGetSemaphoreSciSyncObjNV vkGetSemaphoreSciSyncObjNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreSciSyncObjNV(VkDevice device, const VkSemaphoreGetSciSyncInfoNV *pGetSciSyncInfo,
-                                                    void *pHandle) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreSciSyncObjNV(VkDevice device, const VkSemaphoreGetSciSyncInfoNV* pGetSciSyncInfo, void* pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync)
     PFN_vkImportSemaphoreSciSyncObjNV vkImportSemaphoreSciSyncObjNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ImportSemaphoreSciSyncObjNV(
-        VkDevice device, const VkImportSemaphoreSciSyncInfoNV *pImportSemaphoreSciSyncInfo) const noexcept;
+    [[nodiscard]] VkResult ImportSemaphoreSciSyncObjNV(VkDevice device, const VkImportSemaphoreSciSyncInfoNV* pImportSemaphoreSciSyncInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync2)
     PFN_vkCreateSemaphoreSciSyncPoolNV vkCreateSemaphoreSciSyncPoolNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSemaphoreSciSyncPoolNV(VkDevice device,
-                                                        const VkSemaphoreSciSyncPoolCreateInfoNV *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkSemaphoreSciSyncPoolNV *pSemaphorePool) const noexcept;
+    [[nodiscard]] VkResult CreateSemaphoreSciSyncPoolNV(VkDevice device, const VkSemaphoreSciSyncPoolCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphoreSciSyncPoolNV* pSemaphorePool) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_sci_sync2)
     PFN_vkDestroySemaphoreSciSyncPoolNV vkDestroySemaphoreSciSyncPoolNV = VK_NULL_HANDLE;
-    void DestroySemaphoreSciSyncPoolNV(VkDevice device, VkSemaphoreSciSyncPoolNV semaphorePool,
-                                       const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroySemaphoreSciSyncPoolNV(VkDevice device, VkSemaphoreSciSyncPoolNV semaphorePool, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_display_control)
     PFN_vkDisplayPowerControlEXT vkDisplayPowerControlEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult DisplayPowerControlEXT(VkDevice device, VkDisplayKHR display,
-                                                  const VkDisplayPowerInfoEXT *pDisplayPowerInfo) const noexcept;
+    [[nodiscard]] VkResult DisplayPowerControlEXT(VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_display_control)
     PFN_vkRegisterDeviceEventEXT vkRegisterDeviceEventEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult RegisterDeviceEventEXT(VkDevice device, const VkDeviceEventInfoEXT *pDeviceEventInfo,
-                                                  const VkAllocationCallbacks *pAllocator,
-                                                  VkFence *pFence) const noexcept;
+    [[nodiscard]] VkResult RegisterDeviceEventEXT(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_display_control)
     PFN_vkRegisterDisplayEventEXT vkRegisterDisplayEventEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult RegisterDisplayEventEXT(VkDevice device, VkDisplayKHR display,
-                                                   const VkDisplayEventInfoEXT *pDisplayEventInfo,
-                                                   const VkAllocationCallbacks *pAllocator,
-                                                   VkFence *pFence) const noexcept;
+    [[nodiscard]] VkResult RegisterDisplayEventEXT(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_display_control)
     PFN_vkGetSwapchainCounterEXT vkGetSwapchainCounterEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSwapchainCounterEXT(VkDevice device, VkSwapchainKHR swapchain,
-                                                  VkSurfaceCounterFlagBitsEXT counter,
-                                                  uint64_t *pCounterValue) const noexcept;
+    [[nodiscard]] VkResult GetSwapchainCounterEXT(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetDeviceGroupPeerMemoryFeatures vkGetDeviceGroupPeerMemoryFeatures = VK_NULL_HANDLE;
-    void GetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex,
-                                          uint32_t remoteDeviceIndex,
-                                          VkPeerMemoryFeatureFlags *pPeerMemoryFeatures) const noexcept;
+    void GetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkBindBufferMemory2 vkBindBufferMemory2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindBufferMemory2(VkDevice device, uint32_t bindInfoCount,
-                                             const VkBindBufferMemoryInfo *pBindInfos) const noexcept;
+    [[nodiscard]] VkResult BindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkBindImageMemory2 vkBindImageMemory2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindImageMemory2(VkDevice device, uint32_t bindInfoCount,
-                                            const VkBindImageMemoryInfo *pBindInfos) const noexcept;
+    [[nodiscard]] VkResult BindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkCmdSetDeviceMask vkCmdSetDeviceMask = VK_NULL_HANDLE;
     void CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) const noexcept;
 #endif
-
-#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
-    (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
+    
+#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeviceGroupPresentCapabilitiesKHR(
-        VkDevice device, VkDeviceGroupPresentCapabilitiesKHR *pDeviceGroupPresentCapabilities) const noexcept;
+    [[nodiscard]] VkResult GetDeviceGroupPresentCapabilitiesKHR(VkDevice device, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities) const noexcept;
 #endif
-
-#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
-    (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
+    
+#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     PFN_vkGetDeviceGroupSurfacePresentModesKHR vkGetDeviceGroupSurfacePresentModesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeviceGroupSurfacePresentModesKHR(
-        VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR *pModes) const noexcept;
+    [[nodiscard]] VkResult GetDeviceGroupSurfacePresentModesKHR(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes) const noexcept;
 #endif
-
-#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
-    (defined(VK_KHR_device_group) && defined(VK_KHR_swapchain))
+    
+#if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_swapchain))
     PFN_vkAcquireNextImage2KHR vkAcquireNextImage2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireNextImage2KHR(VkDevice device, const VkAcquireNextImageInfoKHR *pAcquireInfo,
-                                                uint32_t *pImageIndex) const noexcept;
+    [[nodiscard]] VkResult AcquireNextImage2KHR(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkCmdDispatchBase vkCmdDispatchBase = VK_NULL_HANDLE;
-    void CmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ,
-                         uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
+    void CmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkCreateDescriptorUpdateTemplate vkCreateDescriptorUpdateTemplate = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDescriptorUpdateTemplate(
-        VkDevice device, const VkDescriptorUpdateTemplateCreateInfo *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkDescriptorUpdateTemplate *pDescriptorUpdateTemplate) const noexcept;
+    [[nodiscard]] VkResult CreateDescriptorUpdateTemplate(VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkDestroyDescriptorUpdateTemplate vkDestroyDescriptorUpdateTemplate = VK_NULL_HANDLE;
-    void DestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate,
-                                         const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkUpdateDescriptorSetWithTemplate vkUpdateDescriptorSetWithTemplate = VK_NULL_HANDLE;
-    void UpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet,
-                                         VkDescriptorUpdateTemplate descriptorUpdateTemplate,
-                                         const void *pData) const noexcept;
+    void UpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdPushDescriptorSetWithTemplate vkCmdPushDescriptorSetWithTemplate = VK_NULL_HANDLE;
-    void CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
-                                          VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
-                                          uint32_t set, const void *pData) const noexcept;
+    void CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_hdr_metadata)
     PFN_vkSetHdrMetadataEXT vkSetHdrMetadataEXT = VK_NULL_HANDLE;
-    void SetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR *pSwapchains,
-                           const VkHdrMetadataEXT *pMetadata) const noexcept;
+    void SetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_shared_presentable_image)
     PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR = VK_NULL_HANDLE;
     [[nodiscard]] VkResult GetSwapchainStatusKHR(VkDevice device, VkSwapchainKHR swapchain) const noexcept;
 #endif
-
+    
 #if defined(VK_GOOGLE_display_timing)
     PFN_vkGetRefreshCycleDurationGOOGLE vkGetRefreshCycleDurationGOOGLE = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetRefreshCycleDurationGOOGLE(
-        VkDevice device, VkSwapchainKHR swapchain,
-        VkRefreshCycleDurationGOOGLE *pDisplayTimingProperties) const noexcept;
+    [[nodiscard]] VkResult GetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_GOOGLE_display_timing)
     PFN_vkGetPastPresentationTimingGOOGLE vkGetPastPresentationTimingGOOGLE = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPastPresentationTimingGOOGLE(
-        VkDevice device, VkSwapchainKHR swapchain, uint32_t *pPresentationTimingCount,
-        VkPastPresentationTimingGOOGLE *pPresentationTimings) const noexcept;
+    [[nodiscard]] VkResult GetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_clip_space_w_scaling)
     PFN_vkCmdSetViewportWScalingNV vkCmdSetViewportWScalingNV = VK_NULL_HANDLE;
-    void CmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
-                                  const VkViewportWScalingNV *pViewportWScalings) const noexcept;
+    void CmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_discard_rectangles)
     PFN_vkCmdSetDiscardRectangleEXT vkCmdSetDiscardRectangleEXT = VK_NULL_HANDLE;
-    void CmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle,
-                                   uint32_t discardRectangleCount, const VkRect2D *pDiscardRectangles) const noexcept;
+    void CmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
     PFN_vkCmdSetDiscardRectangleEnableEXT vkCmdSetDiscardRectangleEnableEXT = VK_NULL_HANDLE;
     void CmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable) const noexcept;
 #endif
-
-#if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2 && \
-                                  VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
+    
+#if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2 && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
     PFN_vkCmdSetDiscardRectangleModeEXT vkCmdSetDiscardRectangleModeEXT = VK_NULL_HANDLE;
-    void CmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer,
-                                       VkDiscardRectangleModeEXT discardRectangleMode) const noexcept;
+    void CmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_sample_locations)
     PFN_vkCmdSetSampleLocationsEXT vkCmdSetSampleLocationsEXT = VK_NULL_HANDLE;
-    void CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
-                                  const VkSampleLocationsInfoEXT *pSampleLocationsInfo) const noexcept;
+    void CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetBufferMemoryRequirements2 vkGetBufferMemoryRequirements2 = VK_NULL_HANDLE;
-    void GetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2 *pInfo,
-                                      VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetImageMemoryRequirements2 vkGetImageMemoryRequirements2 = VK_NULL_HANDLE;
-    void GetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2 *pInfo,
-                                     VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetImageSparseMemoryRequirements2 vkGetImageSparseMemoryRequirements2 = VK_NULL_HANDLE;
-    void GetImageSparseMemoryRequirements2(VkDevice device, const VkImageSparseMemoryRequirementsInfo2 *pInfo,
-                                           uint32_t *pSparseMemoryRequirementCount,
-                                           VkSparseImageMemoryRequirements2 *pSparseMemoryRequirements) const noexcept;
+    void GetImageSparseMemoryRequirements2(VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkGetDeviceBufferMemoryRequirements vkGetDeviceBufferMemoryRequirements = VK_NULL_HANDLE;
-    void GetDeviceBufferMemoryRequirements(VkDevice device, const VkDeviceBufferMemoryRequirements *pInfo,
-                                           VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetDeviceBufferMemoryRequirements(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkGetDeviceImageMemoryRequirements vkGetDeviceImageMemoryRequirements = VK_NULL_HANDLE;
-    void GetDeviceImageMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements *pInfo,
-                                          VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetDeviceImageMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkGetDeviceImageSparseMemoryRequirements vkGetDeviceImageSparseMemoryRequirements = VK_NULL_HANDLE;
-    void GetDeviceImageSparseMemoryRequirements(
-        VkDevice device, const VkDeviceImageMemoryRequirements *pInfo, uint32_t *pSparseMemoryRequirementCount,
-        VkSparseImageMemoryRequirements2 *pSparseMemoryRequirements) const noexcept;
+    void GetDeviceImageSparseMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkCreateSamplerYcbcrConversion vkCreateSamplerYcbcrConversion = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSamplerYcbcrConversion(VkDevice device,
-                                                        const VkSamplerYcbcrConversionCreateInfo *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkSamplerYcbcrConversion *pYcbcrConversion) const noexcept;
+    [[nodiscard]] VkResult CreateSamplerYcbcrConversion(VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkDestroySamplerYcbcrConversion vkDestroySamplerYcbcrConversion = VK_NULL_HANDLE;
-    void DestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion,
-                                       const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetDeviceQueue2 vkGetDeviceQueue2 = VK_NULL_HANDLE;
-    void GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2 *pQueueInfo, VkQueue *pQueue) const noexcept;
+    void GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_validation_cache)
     PFN_vkCreateValidationCacheEXT vkCreateValidationCacheEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateValidationCacheEXT(VkDevice device, const VkValidationCacheCreateInfoEXT *pCreateInfo,
-                                                    const VkAllocationCallbacks *pAllocator,
-                                                    VkValidationCacheEXT *pValidationCache) const noexcept;
+    [[nodiscard]] VkResult CreateValidationCacheEXT(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_validation_cache)
     PFN_vkDestroyValidationCacheEXT vkDestroyValidationCacheEXT = VK_NULL_HANDLE;
-    void DestroyValidationCacheEXT(VkDevice device, VkValidationCacheEXT validationCache,
-                                   const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyValidationCacheEXT(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_validation_cache)
     PFN_vkGetValidationCacheDataEXT vkGetValidationCacheDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetValidationCacheDataEXT(VkDevice device, VkValidationCacheEXT validationCache,
-                                                     size_t *pDataSize, void *pData) const noexcept;
+    [[nodiscard]] VkResult GetValidationCacheDataEXT(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_validation_cache)
     PFN_vkMergeValidationCachesEXT vkMergeValidationCachesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult MergeValidationCachesEXT(VkDevice device, VkValidationCacheEXT dstCache,
-                                                    uint32_t srcCacheCount,
-                                                    const VkValidationCacheEXT *pSrcCaches) const noexcept;
+    [[nodiscard]] VkResult MergeValidationCachesEXT(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_1)
     PFN_vkGetDescriptorSetLayoutSupport vkGetDescriptorSetLayoutSupport = VK_NULL_HANDLE;
-    void GetDescriptorSetLayoutSupport(VkDevice device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
-                                       VkDescriptorSetLayoutSupport *pSupport) const noexcept;
+    void GetDescriptorSetLayoutSupport(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_native_buffer)
     PFN_vkGetSwapchainGrallocUsageANDROID vkGetSwapchainGrallocUsageANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSwapchainGrallocUsageANDROID(VkDevice device, VkFormat format,
-                                                           VkImageUsageFlags imageUsage,
-                                                           int *grallocUsage) const noexcept;
+    [[nodiscard]] VkResult GetSwapchainGrallocUsageANDROID(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage, int* grallocUsage) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_native_buffer)
     PFN_vkGetSwapchainGrallocUsage2ANDROID vkGetSwapchainGrallocUsage2ANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSwapchainGrallocUsage2ANDROID(VkDevice device, VkFormat format,
-                                                            VkImageUsageFlags imageUsage,
-                                                            VkSwapchainImageUsageFlagsANDROID swapchainImageUsage,
-                                                            uint64_t *grallocConsumerUsage,
-                                                            uint64_t *grallocProducerUsage) const noexcept;
+    [[nodiscard]] VkResult GetSwapchainGrallocUsage2ANDROID(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage, VkSwapchainImageUsageFlagsANDROID swapchainImageUsage, uint64_t* grallocConsumerUsage, uint64_t* grallocProducerUsage) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_native_buffer)
     PFN_vkAcquireImageANDROID vkAcquireImageANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireImageANDROID(VkDevice device, VkImage image, int nativeFenceFd, VkSemaphore semaphore,
-                                               VkFence fence) const noexcept;
+    [[nodiscard]] VkResult AcquireImageANDROID(VkDevice device, VkImage image, int nativeFenceFd, VkSemaphore semaphore, VkFence fence) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_native_buffer)
     PFN_vkQueueSignalReleaseImageANDROID vkQueueSignalReleaseImageANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueSignalReleaseImageANDROID(VkQueue queue, uint32_t waitSemaphoreCount,
-                                                          const VkSemaphore *pWaitSemaphores, VkImage image,
-                                                          int *pNativeFenceFd) const noexcept;
+    [[nodiscard]] VkResult QueueSignalReleaseImageANDROID(VkQueue queue, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, VkImage image, int* pNativeFenceFd) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_shader_info)
     PFN_vkGetShaderInfoAMD vkGetShaderInfoAMD = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage,
-                                            VkShaderInfoTypeAMD infoType, size_t *pInfoSize,
-                                            void *pInfo) const noexcept;
+    [[nodiscard]] VkResult GetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_display_native_hdr)
     PFN_vkSetLocalDimmingAMD vkSetLocalDimmingAMD = VK_NULL_HANDLE;
     void SetLocalDimmingAMD(VkDevice device, VkSwapchainKHR swapChain, VkBool32 localDimmingEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_calibrated_timestamps)
     PFN_vkGetCalibratedTimestampsKHR vkGetCalibratedTimestampsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetCalibratedTimestampsKHR(VkDevice device, uint32_t timestampCount,
-                                                      const VkCalibratedTimestampInfoKHR *pTimestampInfos,
-                                                      uint64_t *pTimestamps, uint64_t *pMaxDeviation) const noexcept;
+    [[nodiscard]] VkResult GetCalibratedTimestampsKHR(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetDebugUtilsObjectNameEXT(VkDevice device,
-                                                      const VkDebugUtilsObjectNameInfoEXT *pNameInfo) const noexcept;
+    [[nodiscard]] VkResult SetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkSetDebugUtilsObjectTagEXT vkSetDebugUtilsObjectTagEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetDebugUtilsObjectTagEXT(VkDevice device,
-                                                     const VkDebugUtilsObjectTagInfoEXT *pTagInfo) const noexcept;
+    [[nodiscard]] VkResult SetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkQueueBeginDebugUtilsLabelEXT vkQueueBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
-    void QueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT *pLabelInfo) const noexcept;
+    void QueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
     void QueueEndDebugUtilsLabelEXT(VkQueue queue) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkQueueInsertDebugUtilsLabelEXT vkQueueInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
-    void QueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT *pLabelInfo) const noexcept;
+    void QueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
-    void CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                    const VkDebugUtilsLabelEXT *pLabelInfo) const noexcept;
+    void CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
     void CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_debug_utils)
     PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
-    void CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                     const VkDebugUtilsLabelEXT *pLabelInfo) const noexcept;
+    void CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_external_memory_host)
     PFN_vkGetMemoryHostPointerPropertiesEXT vkGetMemoryHostPointerPropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryHostPointerPropertiesEXT(
-        VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void *pHostPointer,
-        VkMemoryHostPointerPropertiesEXT *pMemoryHostPointerProperties) const noexcept;
+    [[nodiscard]] VkResult GetMemoryHostPointerPropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_buffer_marker)
     PFN_vkCmdWriteBufferMarkerAMD vkCmdWriteBufferMarkerAMD = VK_NULL_HANDLE;
-    void CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                 VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) const noexcept;
+    void CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCreateRenderPass2 vkCreateRenderPass2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2 *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkRenderPass *pRenderPass) const noexcept;
+    [[nodiscard]] VkResult CreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCmdBeginRenderPass2 vkCmdBeginRenderPass2 = VK_NULL_HANDLE;
-    void CmdBeginRenderPass2(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo *pRenderPassBegin,
-                             const VkSubpassBeginInfo *pSubpassBeginInfo) const noexcept;
+    void CmdBeginRenderPass2(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCmdNextSubpass2 vkCmdNextSubpass2 = VK_NULL_HANDLE;
-    void CmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo *pSubpassBeginInfo,
-                         const VkSubpassEndInfo *pSubpassEndInfo) const noexcept;
+    void CmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCmdEndRenderPass2 vkCmdEndRenderPass2 = VK_NULL_HANDLE;
-    void CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo *pSubpassEndInfo) const noexcept;
+    void CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkGetSemaphoreCounterValue vkGetSemaphoreCounterValue = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
-                                                    uint64_t *pValue) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkWaitSemaphores vkWaitSemaphores = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo *pWaitInfo,
-                                          uint64_t timeout) const noexcept;
+    [[nodiscard]] VkResult WaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkSignalSemaphore vkSignalSemaphore = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo *pSignalInfo) const noexcept;
+    [[nodiscard]] VkResult SignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
     PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferPropertiesANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetAndroidHardwareBufferPropertiesANDROID(
-        VkDevice device, const struct AHardwareBuffer *buffer,
-        VkAndroidHardwareBufferPropertiesANDROID *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, VkAndroidHardwareBufferPropertiesANDROID* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
     PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryAndroidHardwareBufferANDROID(
-        VkDevice device, const VkMemoryGetAndroidHardwareBufferInfoANDROID *pInfo,
-        struct AHardwareBuffer **pBuffer) const noexcept;
+    [[nodiscard]] VkResult GetMemoryAndroidHardwareBufferANDROID(VkDevice device, const VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo, struct AHardwareBuffer** pBuffer) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount = VK_NULL_HANDLE;
-    void CmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer,
-                              VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
+    void CmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount = VK_NULL_HANDLE;
-    void CmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                     VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                     uint32_t stride) const noexcept;
+    void CmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_diagnostic_checkpoints)
     PFN_vkCmdSetCheckpointNV vkCmdSetCheckpointNV = VK_NULL_HANDLE;
-    void CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void *pCheckpointMarker) const noexcept;
+    void CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_diagnostic_checkpoints)
     PFN_vkGetQueueCheckpointDataNV vkGetQueueCheckpointDataNV = VK_NULL_HANDLE;
-    void GetQueueCheckpointDataNV(VkQueue queue, uint32_t *pCheckpointDataCount,
-                                  VkCheckpointDataNV *pCheckpointData) const noexcept;
+    void GetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointDataNV* pCheckpointData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdBindTransformFeedbackBuffersEXT vkCmdBindTransformFeedbackBuffersEXT = VK_NULL_HANDLE;
-    void CmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
-                                            const VkBuffer *pBuffers, const VkDeviceSize *pOffsets,
-                                            const VkDeviceSize *pSizes) const noexcept;
+    void CmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdBeginTransformFeedbackEXT vkCmdBeginTransformFeedbackEXT = VK_NULL_HANDLE;
-    void CmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer,
-                                      uint32_t counterBufferCount, const VkBuffer *pCounterBuffers,
-                                      const VkDeviceSize *pCounterBufferOffsets) const noexcept;
+    void CmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdEndTransformFeedbackEXT vkCmdEndTransformFeedbackEXT = VK_NULL_HANDLE;
-    void CmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer,
-                                    uint32_t counterBufferCount, const VkBuffer *pCounterBuffers,
-                                    const VkDeviceSize *pCounterBufferOffsets) const noexcept;
+    void CmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdBeginQueryIndexedEXT vkCmdBeginQueryIndexedEXT = VK_NULL_HANDLE;
-    void CmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                 VkQueryControlFlags flags, uint32_t index) const noexcept;
+    void CmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdEndQueryIndexedEXT vkCmdEndQueryIndexedEXT = VK_NULL_HANDLE;
-    void CmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                               uint32_t index) const noexcept;
+    void CmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_transform_feedback)
     PFN_vkCmdDrawIndirectByteCountEXT vkCmdDrawIndirectByteCountEXT = VK_NULL_HANDLE;
-    void CmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance,
-                                     VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset,
-                                     uint32_t vertexStride) const noexcept;
+    void CmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset, uint32_t vertexStride) const noexcept;
 #endif
-
+    
 #if (defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2)
     PFN_vkCmdSetExclusiveScissorNV vkCmdSetExclusiveScissorNV = VK_NULL_HANDLE;
-    void CmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor,
-                                  uint32_t exclusiveScissorCount, const VkRect2D *pExclusiveScissors) const noexcept;
+    void CmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkRect2D* pExclusiveScissors) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2))
     PFN_vkCmdSetExclusiveScissorEnableNV vkCmdSetExclusiveScissorEnableNV = VK_NULL_HANDLE;
-    void CmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor,
-                                        uint32_t exclusiveScissorCount,
-                                        const VkBool32 *pExclusiveScissorEnables) const noexcept;
+    void CmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkBool32* pExclusiveScissorEnables) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_shading_rate_image)
     PFN_vkCmdBindShadingRateImageNV vkCmdBindShadingRateImageNV = VK_NULL_HANDLE;
-    void CmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                   VkImageLayout imageLayout) const noexcept;
+    void CmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_shading_rate_image)
     PFN_vkCmdSetViewportShadingRatePaletteNV vkCmdSetViewportShadingRatePaletteNV = VK_NULL_HANDLE;
-    void CmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport,
-                                            uint32_t viewportCount,
-                                            const VkShadingRatePaletteNV *pShadingRatePalettes) const noexcept;
+    void CmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkShadingRatePaletteNV* pShadingRatePalettes) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_shading_rate_image)
     PFN_vkCmdSetCoarseSampleOrderNV vkCmdSetCoarseSampleOrderNV = VK_NULL_HANDLE;
-    void CmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType,
-                                   uint32_t customSampleOrderCount,
-                                   const VkCoarseSampleOrderCustomNV *pCustomSampleOrders) const noexcept;
+    void CmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType, uint32_t customSampleOrderCount, const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_mesh_shader)
     PFN_vkCmdDrawMeshTasksNV vkCmdDrawMeshTasksNV = VK_NULL_HANDLE;
     void CmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_mesh_shader)
     PFN_vkCmdDrawMeshTasksIndirectNV vkCmdDrawMeshTasksIndirectNV = VK_NULL_HANDLE;
-    void CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                    uint32_t drawCount, uint32_t stride) const noexcept;
+    void CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
     PFN_vkCmdDrawMeshTasksIndirectCountNV vkCmdDrawMeshTasksIndirectCountNV = VK_NULL_HANDLE;
-    void CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                         VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                         uint32_t stride) const noexcept;
+    void CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_mesh_shader)
     PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = VK_NULL_HANDLE;
-    void CmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                             uint32_t groupCountZ) const noexcept;
+    void CmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_mesh_shader)
     PFN_vkCmdDrawMeshTasksIndirectEXT vkCmdDrawMeshTasksIndirectEXT = VK_NULL_HANDLE;
-    void CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                     uint32_t drawCount, uint32_t stride) const noexcept;
+    void CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
     PFN_vkCmdDrawMeshTasksIndirectCountEXT vkCmdDrawMeshTasksIndirectCountEXT = VK_NULL_HANDLE;
-    void CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                          VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                          uint32_t stride) const noexcept;
+    void CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCompileDeferredNV vkCompileDeferredNV = VK_NULL_HANDLE;
     [[nodiscard]] VkResult CompileDeferredNV(VkDevice device, VkPipeline pipeline, uint32_t shader) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCreateAccelerationStructureNV vkCreateAccelerationStructureNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateAccelerationStructureNV(
-        VkDevice device, const VkAccelerationStructureCreateInfoNV *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkAccelerationStructureNV *pAccelerationStructure) const noexcept;
+    [[nodiscard]] VkResult CreateAccelerationStructureNV(VkDevice device, const VkAccelerationStructureCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureNV* pAccelerationStructure) const noexcept;
 #endif
-
+    
 #if defined(VK_HUAWEI_invocation_mask)
     PFN_vkCmdBindInvocationMaskHUAWEI vkCmdBindInvocationMaskHUAWEI = VK_NULL_HANDLE;
-    void CmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                     VkImageLayout imageLayout) const noexcept;
+    void CmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkDestroyAccelerationStructureKHR vkDestroyAccelerationStructureKHR = VK_NULL_HANDLE;
-    void DestroyAccelerationStructureKHR(VkDevice device, VkAccelerationStructureKHR accelerationStructure,
-                                         const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyAccelerationStructureKHR(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkDestroyAccelerationStructureNV vkDestroyAccelerationStructureNV = VK_NULL_HANDLE;
-    void DestroyAccelerationStructureNV(VkDevice device, VkAccelerationStructureNV accelerationStructure,
-                                        const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyAccelerationStructureNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkGetAccelerationStructureMemoryRequirementsNV vkGetAccelerationStructureMemoryRequirementsNV = VK_NULL_HANDLE;
-    void GetAccelerationStructureMemoryRequirementsNV(VkDevice device,
-                                                      const VkAccelerationStructureMemoryRequirementsInfoNV *pInfo,
-                                                      VkMemoryRequirements2KHR *pMemoryRequirements) const noexcept;
+    void GetAccelerationStructureMemoryRequirementsNV(VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkBindAccelerationStructureMemoryNV vkBindAccelerationStructureMemoryNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindAccelerationStructureMemoryNV(
-        VkDevice device, uint32_t bindInfoCount,
-        const VkBindAccelerationStructureMemoryInfoNV *pBindInfos) const noexcept;
+    [[nodiscard]] VkResult BindAccelerationStructureMemoryNV(VkDevice device, uint32_t bindInfoCount, const VkBindAccelerationStructureMemoryInfoNV* pBindInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCmdCopyAccelerationStructureNV vkCmdCopyAccelerationStructureNV = VK_NULL_HANDLE;
-    void CmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst,
-                                        VkAccelerationStructureNV src,
-                                        VkCopyAccelerationStructureModeKHR mode) const noexcept;
+    void CmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdCopyAccelerationStructureKHR vkCmdCopyAccelerationStructureKHR = VK_NULL_HANDLE;
-    void CmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer,
-                                         const VkCopyAccelerationStructureInfoKHR *pInfo) const noexcept;
+    void CmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCopyAccelerationStructureKHR vkCopyAccelerationStructureKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                                        const VkCopyAccelerationStructureInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdCopyAccelerationStructureToMemoryKHR vkCmdCopyAccelerationStructureToMemoryKHR = VK_NULL_HANDLE;
-    void CmdCopyAccelerationStructureToMemoryKHR(
-        VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR *pInfo) const noexcept;
+    void CmdCopyAccelerationStructureToMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCopyAccelerationStructureToMemoryKHR vkCopyAccelerationStructureToMemoryKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyAccelerationStructureToMemoryKHR(
-        VkDevice device, VkDeferredOperationKHR deferredOperation,
-        const VkCopyAccelerationStructureToMemoryInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyAccelerationStructureToMemoryKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdCopyMemoryToAccelerationStructureKHR vkCmdCopyMemoryToAccelerationStructureKHR = VK_NULL_HANDLE;
-    void CmdCopyMemoryToAccelerationStructureKHR(
-        VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR *pInfo) const noexcept;
+    void CmdCopyMemoryToAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCopyMemoryToAccelerationStructureKHR vkCopyMemoryToAccelerationStructureKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMemoryToAccelerationStructureKHR(
-        VkDevice device, VkDeferredOperationKHR deferredOperation,
-        const VkCopyMemoryToAccelerationStructureInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMemoryToAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdWriteAccelerationStructuresPropertiesKHR vkCmdWriteAccelerationStructuresPropertiesKHR = VK_NULL_HANDLE;
-    void CmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
-                                                     const VkAccelerationStructureKHR *pAccelerationStructures,
-                                                     VkQueryType queryType, VkQueryPool queryPool,
-                                                     uint32_t firstQuery) const noexcept;
+    void CmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCmdWriteAccelerationStructuresPropertiesNV vkCmdWriteAccelerationStructuresPropertiesNV = VK_NULL_HANDLE;
-    void CmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
-                                                    const VkAccelerationStructureNV *pAccelerationStructures,
-                                                    VkQueryType queryType, VkQueryPool queryPool,
-                                                    uint32_t firstQuery) const noexcept;
+    void CmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureNV* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCmdBuildAccelerationStructureNV vkCmdBuildAccelerationStructureNV = VK_NULL_HANDLE;
-    void CmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV *pInfo,
-                                         VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update,
-                                         VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch,
-                                         VkDeviceSize scratchOffset) const noexcept;
+    void CmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch, VkDeviceSize scratchOffset) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkWriteAccelerationStructuresPropertiesKHR vkWriteAccelerationStructuresPropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WriteAccelerationStructuresPropertiesKHR(
-        VkDevice device, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR *pAccelerationStructures,
-        VkQueryType queryType, size_t dataSize, void *pData, size_t stride) const noexcept;
+    [[nodiscard]] VkResult WriteAccelerationStructuresPropertiesKHR(VkDevice device, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR = VK_NULL_HANDLE;
-    void CmdTraceRaysKHR(VkCommandBuffer commandBuffer,
-                         const VkStridedDeviceAddressRegionKHR *pRaygenShaderBindingTable,
-                         const VkStridedDeviceAddressRegionKHR *pMissShaderBindingTable,
-                         const VkStridedDeviceAddressRegionKHR *pHitShaderBindingTable,
-                         const VkStridedDeviceAddressRegionKHR *pCallableShaderBindingTable, uint32_t width,
-                         uint32_t height, uint32_t depth) const noexcept;
+    void CmdTraceRaysKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height, uint32_t depth) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCmdTraceRaysNV vkCmdTraceRaysNV = VK_NULL_HANDLE;
-    void CmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer,
-                        VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer,
-                        VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride,
-                        VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset,
-                        VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer,
-                        VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride,
-                        uint32_t width, uint32_t height, uint32_t depth) const noexcept;
+    void CmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride, VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetRayTracingShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup,
-                                                              uint32_t groupCount, size_t dataSize,
-                                                              void *pData) const noexcept;
+    [[nodiscard]] VkResult GetRayTracingShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
-    PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR vkGetRayTracingCaptureReplayShaderGroupHandlesKHR =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetRayTracingCaptureReplayShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline,
-                                                                           uint32_t firstGroup, uint32_t groupCount,
-                                                                           size_t dataSize, void *pData) const noexcept;
+    PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetRayTracingCaptureReplayShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkGetAccelerationStructureHandleNV vkGetAccelerationStructureHandleNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetAccelerationStructureHandleNV(VkDevice device,
-                                                            VkAccelerationStructureNV accelerationStructure,
-                                                            size_t dataSize, void *pData) const noexcept;
+    [[nodiscard]] VkResult GetAccelerationStructureHandleNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkCreateRayTracingPipelinesNV vkCreateRayTracingPipelinesNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateRayTracingPipelinesNV(VkDevice device, VkPipelineCache pipelineCache,
-                                                       uint32_t createInfoCount,
-                                                       const VkRayTracingPipelineCreateInfoNV *pCreateInfos,
-                                                       const VkAllocationCallbacks *pAllocator,
-                                                       VkPipeline *pPipelines) const noexcept;
+    [[nodiscard]] VkResult CreateRayTracingPipelinesNV(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoNV* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                                        VkPipelineCache pipelineCache, uint32_t createInfoCount,
-                                                        const VkRayTracingPipelineCreateInfoKHR *pCreateInfos,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkPipeline *pPipelines) const noexcept;
+    [[nodiscard]] VkResult CreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkCmdTraceRaysIndirectKHR vkCmdTraceRaysIndirectKHR = VK_NULL_HANDLE;
-    void CmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
-                                 const VkStridedDeviceAddressRegionKHR *pRaygenShaderBindingTable,
-                                 const VkStridedDeviceAddressRegionKHR *pMissShaderBindingTable,
-                                 const VkStridedDeviceAddressRegionKHR *pHitShaderBindingTable,
-                                 const VkStridedDeviceAddressRegionKHR *pCallableShaderBindingTable,
-                                 VkDeviceAddress indirectDeviceAddress) const noexcept;
+    void CmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) const noexcept;
 #endif
-
+    
 #if (defined(VK_KHR_ray_tracing_maintenance1) && defined(VK_KHR_ray_tracing_pipeline))
     PFN_vkCmdTraceRaysIndirect2KHR vkCmdTraceRaysIndirect2KHR = VK_NULL_HANDLE;
     void CmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cluster_acceleration_structure)
     PFN_vkGetClusterAccelerationStructureBuildSizesNV vkGetClusterAccelerationStructureBuildSizesNV = VK_NULL_HANDLE;
-    void GetClusterAccelerationStructureBuildSizesNV(
-        VkDevice device, const VkClusterAccelerationStructureInputInfoNV *pInfo,
-        VkAccelerationStructureBuildSizesInfoKHR *pSizeInfo) const noexcept;
+    void GetClusterAccelerationStructureBuildSizesNV(VkDevice device, const VkClusterAccelerationStructureInputInfoNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cluster_acceleration_structure)
-    PFN_vkCmdBuildClusterAccelerationStructureIndirectNV vkCmdBuildClusterAccelerationStructureIndirectNV =
-        VK_NULL_HANDLE;
-    void CmdBuildClusterAccelerationStructureIndirectNV(
-        VkCommandBuffer commandBuffer,
-        const VkClusterAccelerationStructureCommandsInfoNV *pCommandInfos) const noexcept;
+    PFN_vkCmdBuildClusterAccelerationStructureIndirectNV vkCmdBuildClusterAccelerationStructureIndirectNV = VK_NULL_HANDLE;
+    void CmdBuildClusterAccelerationStructureIndirectNV(VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
-    PFN_vkGetDeviceAccelerationStructureCompatibilityKHR vkGetDeviceAccelerationStructureCompatibilityKHR =
-        VK_NULL_HANDLE;
-    void GetDeviceAccelerationStructureCompatibilityKHR(
-        VkDevice device, const VkAccelerationStructureVersionInfoKHR *pVersionInfo,
-        VkAccelerationStructureCompatibilityKHR *pCompatibility) const noexcept;
+    PFN_vkGetDeviceAccelerationStructureCompatibilityKHR vkGetDeviceAccelerationStructureCompatibilityKHR = VK_NULL_HANDLE;
+    void GetDeviceAccelerationStructureCompatibilityKHR(VkDevice device, const VkAccelerationStructureVersionInfoKHR* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkGetRayTracingShaderGroupStackSizeKHR vkGetRayTracingShaderGroupStackSizeKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceSize GetRayTracingShaderGroupStackSizeKHR(VkDevice device, VkPipeline pipeline,
-                                                                    uint32_t group,
-                                                                    VkShaderGroupShaderKHR groupShader) const noexcept;
+    [[nodiscard]] VkDeviceSize GetRayTracingShaderGroupStackSizeKHR(VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_ray_tracing_pipeline)
     PFN_vkCmdSetRayTracingPipelineStackSizeKHR vkCmdSetRayTracingPipelineStackSizeKHR = VK_NULL_HANDLE;
     void CmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer, uint32_t pipelineStackSize) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_image_view_handle)
     PFN_vkGetImageViewHandleNVX vkGetImageViewHandleNVX = VK_NULL_HANDLE;
-    [[nodiscard]] uint32_t GetImageViewHandleNVX(VkDevice device, const VkImageViewHandleInfoNVX *pInfo) const noexcept;
+    [[nodiscard]] uint32_t GetImageViewHandleNVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3)
     PFN_vkGetImageViewHandle64NVX vkGetImageViewHandle64NVX = VK_NULL_HANDLE;
-    [[nodiscard]] uint64_t GetImageViewHandle64NVX(VkDevice device,
-                                                   const VkImageViewHandleInfoNVX *pInfo) const noexcept;
+    [[nodiscard]] uint64_t GetImageViewHandle64NVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) const noexcept;
 #endif
-
-#if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3 &&                                \
-     VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 2)
+    
+#if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3 && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 2)
     PFN_vkGetImageViewAddressNVX vkGetImageViewAddressNVX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetImageViewAddressNVX(VkDevice device, VkImageView imageView,
-                                                  VkImageViewAddressPropertiesNVX *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetImageViewAddressNVX(VkDevice device, VkImageView imageView, VkImageViewAddressPropertiesNVX* pProperties) const noexcept;
 #endif
-
+    
 #if (defined(VK_EXT_full_screen_exclusive) && (defined(VK_KHR_device_group) || defined(VKIT_API_VERSION_1_1)))
     PFN_vkGetDeviceGroupSurfacePresentModes2EXT vkGetDeviceGroupSurfacePresentModes2EXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeviceGroupSurfacePresentModes2EXT(
-        VkDevice device, const VkPhysicalDeviceSurfaceInfo2KHR *pSurfaceInfo,
-        VkDeviceGroupPresentModeFlagsKHR *pModes) const noexcept;
+    [[nodiscard]] VkResult GetDeviceGroupSurfacePresentModes2EXT(VkDevice device, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkDeviceGroupPresentModeFlagsKHR* pModes) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_full_screen_exclusive)
     PFN_vkAcquireFullScreenExclusiveModeEXT vkAcquireFullScreenExclusiveModeEXT = VK_NULL_HANDLE;
     [[nodiscard]] VkResult AcquireFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_full_screen_exclusive)
     PFN_vkReleaseFullScreenExclusiveModeEXT vkReleaseFullScreenExclusiveModeEXT = VK_NULL_HANDLE;
     [[nodiscard]] VkResult ReleaseFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_performance_query)
     PFN_vkAcquireProfilingLockKHR vkAcquireProfilingLockKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquireProfilingLockKHR(VkDevice device,
-                                                   const VkAcquireProfilingLockInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkResult AcquireProfilingLockKHR(VkDevice device, const VkAcquireProfilingLockInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_performance_query)
     PFN_vkReleaseProfilingLockKHR vkReleaseProfilingLockKHR = VK_NULL_HANDLE;
     void ReleaseProfilingLockKHR(VkDevice device) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_image_drm_format_modifier)
     PFN_vkGetImageDrmFormatModifierPropertiesEXT vkGetImageDrmFormatModifierPropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetImageDrmFormatModifierPropertiesEXT(
-        VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetImageDrmFormatModifierPropertiesEXT(VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkGetBufferOpaqueCaptureAddress vkGetBufferOpaqueCaptureAddress = VK_NULL_HANDLE;
-    [[nodiscard]] uint64_t GetBufferOpaqueCaptureAddress(VkDevice device,
-                                                         const VkBufferDeviceAddressInfo *pInfo) const noexcept;
+    [[nodiscard]] uint64_t GetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkGetBufferDeviceAddress vkGetBufferDeviceAddress = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddress(VkDevice device,
-                                                         const VkBufferDeviceAddressInfo *pInfo) const noexcept;
+    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkInitializePerformanceApiINTEL vkInitializePerformanceApiINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult InitializePerformanceApiINTEL(
-        VkDevice device, const VkInitializePerformanceApiInfoINTEL *pInitializeInfo) const noexcept;
+    [[nodiscard]] VkResult InitializePerformanceApiINTEL(VkDevice device, const VkInitializePerformanceApiInfoINTEL* pInitializeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkUninitializePerformanceApiINTEL vkUninitializePerformanceApiINTEL = VK_NULL_HANDLE;
     void UninitializePerformanceApiINTEL(VkDevice device) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkCmdSetPerformanceMarkerINTEL vkCmdSetPerformanceMarkerINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer,
-                                                        const VkPerformanceMarkerInfoINTEL *pMarkerInfo) const noexcept;
+    [[nodiscard]] VkResult CmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceMarkerInfoINTEL* pMarkerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkCmdSetPerformanceStreamMarkerINTEL vkCmdSetPerformanceStreamMarkerINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CmdSetPerformanceStreamMarkerINTEL(
-        VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL *pMarkerInfo) const noexcept;
+    [[nodiscard]] VkResult CmdSetPerformanceStreamMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkCmdSetPerformanceOverrideINTEL vkCmdSetPerformanceOverrideINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CmdSetPerformanceOverrideINTEL(
-        VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL *pOverrideInfo) const noexcept;
+    [[nodiscard]] VkResult CmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL* pOverrideInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkAcquirePerformanceConfigurationINTEL vkAcquirePerformanceConfigurationINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult AcquirePerformanceConfigurationINTEL(
-        VkDevice device, const VkPerformanceConfigurationAcquireInfoINTEL *pAcquireInfo,
-        VkPerformanceConfigurationINTEL *pConfiguration) const noexcept;
+    [[nodiscard]] VkResult AcquirePerformanceConfigurationINTEL(VkDevice device, const VkPerformanceConfigurationAcquireInfoINTEL* pAcquireInfo, VkPerformanceConfigurationINTEL* pConfiguration) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkReleasePerformanceConfigurationINTEL vkReleasePerformanceConfigurationINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ReleasePerformanceConfigurationINTEL(
-        VkDevice device, VkPerformanceConfigurationINTEL configuration) const noexcept;
+    [[nodiscard]] VkResult ReleasePerformanceConfigurationINTEL(VkDevice device, VkPerformanceConfigurationINTEL configuration) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkQueueSetPerformanceConfigurationINTEL vkQueueSetPerformanceConfigurationINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueSetPerformanceConfigurationINTEL(
-        VkQueue queue, VkPerformanceConfigurationINTEL configuration) const noexcept;
+    [[nodiscard]] VkResult QueueSetPerformanceConfigurationINTEL(VkQueue queue, VkPerformanceConfigurationINTEL configuration) const noexcept;
 #endif
-
+    
 #if defined(VK_INTEL_performance_query)
     PFN_vkGetPerformanceParameterINTEL vkGetPerformanceParameterINTEL = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter,
-                                                        VkPerformanceValueINTEL *pValue) const noexcept;
+    [[nodiscard]] VkResult GetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkGetDeviceMemoryOpaqueCaptureAddress vkGetDeviceMemoryOpaqueCaptureAddress = VK_NULL_HANDLE;
-    [[nodiscard]] uint64_t GetDeviceMemoryOpaqueCaptureAddress(
-        VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo *pInfo) const noexcept;
+    [[nodiscard]] uint64_t GetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_executable_properties)
     PFN_vkGetPipelineExecutablePropertiesKHR vkGetPipelineExecutablePropertiesKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineExecutablePropertiesKHR(
-        VkDevice device, const VkPipelineInfoKHR *pPipelineInfo, uint32_t *pExecutableCount,
-        VkPipelineExecutablePropertiesKHR *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetPipelineExecutablePropertiesKHR(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_executable_properties)
     PFN_vkGetPipelineExecutableStatisticsKHR vkGetPipelineExecutableStatisticsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineExecutableStatisticsKHR(
-        VkDevice device, const VkPipelineExecutableInfoKHR *pExecutableInfo, uint32_t *pStatisticCount,
-        VkPipelineExecutableStatisticKHR *pStatistics) const noexcept;
+    [[nodiscard]] VkResult GetPipelineExecutableStatisticsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pStatisticCount, VkPipelineExecutableStatisticKHR* pStatistics) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_pipeline_executable_properties)
-    PFN_vkGetPipelineExecutableInternalRepresentationsKHR vkGetPipelineExecutableInternalRepresentationsKHR =
-        VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelineExecutableInternalRepresentationsKHR(
-        VkDevice device, const VkPipelineExecutableInfoKHR *pExecutableInfo, uint32_t *pInternalRepresentationCount,
-        VkPipelineExecutableInternalRepresentationKHR *pInternalRepresentations) const noexcept;
+    PFN_vkGetPipelineExecutableInternalRepresentationsKHR vkGetPipelineExecutableInternalRepresentationsKHR = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetPipelineExecutableInternalRepresentationsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pInternalRepresentationCount, VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdSetLineStipple vkCmdSetLineStipple = VK_NULL_HANDLE;
-    void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                           uint16_t lineStipplePattern) const noexcept;
+    void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) const noexcept;
 #endif
-
+    
 #if defined(VKSC_VERSION_1_0)
     PFN_vkGetFaultData vkGetFaultData = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior,
-                                        VkBool32 *pUnrecordedFaults, uint32_t *pFaultCount,
-                                        VkFaultData *pFaults) const noexcept;
+    [[nodiscard]] VkResult GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior, VkBool32* pUnrecordedFaults, uint32_t* pFaultCount, VkFaultData* pFaults) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateAccelerationStructureKHR(
-        VkDevice device, const VkAccelerationStructureCreateInfoKHR *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkAccelerationStructureKHR *pAccelerationStructure) const noexcept;
+    [[nodiscard]] VkResult CreateAccelerationStructureKHR(VkDevice device, const VkAccelerationStructureCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdBuildAccelerationStructuresKHR vkCmdBuildAccelerationStructuresKHR = VK_NULL_HANDLE;
-    void CmdBuildAccelerationStructuresKHR(
-        VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR *pInfos,
-        const VkAccelerationStructureBuildRangeInfoKHR *const *ppBuildRangeInfos) const noexcept;
+    void CmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCmdBuildAccelerationStructuresIndirectKHR vkCmdBuildAccelerationStructuresIndirectKHR = VK_NULL_HANDLE;
-    void CmdBuildAccelerationStructuresIndirectKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
-                                                   const VkAccelerationStructureBuildGeometryInfoKHR *pInfos,
-                                                   const VkDeviceAddress *pIndirectDeviceAddresses,
-                                                   const uint32_t *pIndirectStrides,
-                                                   const uint32_t *const *ppMaxPrimitiveCounts) const noexcept;
+    void CmdBuildAccelerationStructuresIndirectKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides, const uint32_t* const* ppMaxPrimitiveCounts) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkBuildAccelerationStructuresKHR vkBuildAccelerationStructuresKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BuildAccelerationStructuresKHR(
-        VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount,
-        const VkAccelerationStructureBuildGeometryInfoKHR *pInfos,
-        const VkAccelerationStructureBuildRangeInfoKHR *const *ppBuildRangeInfos) const noexcept;
+    [[nodiscard]] VkResult BuildAccelerationStructuresKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceAddress GetAccelerationStructureDeviceAddressKHR(
-        VkDevice device, const VkAccelerationStructureDeviceAddressInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkDeviceAddress GetAccelerationStructureDeviceAddressKHR(VkDevice device, const VkAccelerationStructureDeviceAddressInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_deferred_host_operations)
     PFN_vkCreateDeferredOperationKHR vkCreateDeferredOperationKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDeferredOperationKHR(VkDevice device, const VkAllocationCallbacks *pAllocator,
-                                                      VkDeferredOperationKHR *pDeferredOperation) const noexcept;
+    [[nodiscard]] VkResult CreateDeferredOperationKHR(VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_deferred_host_operations)
     PFN_vkDestroyDeferredOperationKHR vkDestroyDeferredOperationKHR = VK_NULL_HANDLE;
-    void DestroyDeferredOperationKHR(VkDevice device, VkDeferredOperationKHR operation,
-                                     const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyDeferredOperationKHR(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_deferred_host_operations)
     PFN_vkGetDeferredOperationMaxConcurrencyKHR vkGetDeferredOperationMaxConcurrencyKHR = VK_NULL_HANDLE;
-    [[nodiscard]] uint32_t GetDeferredOperationMaxConcurrencyKHR(VkDevice device,
-                                                                 VkDeferredOperationKHR operation) const noexcept;
+    [[nodiscard]] uint32_t GetDeferredOperationMaxConcurrencyKHR(VkDevice device, VkDeferredOperationKHR operation) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_deferred_host_operations)
     PFN_vkGetDeferredOperationResultKHR vkGetDeferredOperationResultKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeferredOperationResultKHR(VkDevice device,
-                                                         VkDeferredOperationKHR operation) const noexcept;
+    [[nodiscard]] VkResult GetDeferredOperationResultKHR(VkDevice device, VkDeferredOperationKHR operation) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_deferred_host_operations)
     PFN_vkDeferredOperationJoinKHR vkDeferredOperationJoinKHR = VK_NULL_HANDLE;
     [[nodiscard]] VkResult DeferredOperationJoinKHR(VkDevice device, VkDeferredOperationKHR operation) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands_compute)
     PFN_vkGetPipelineIndirectMemoryRequirementsNV vkGetPipelineIndirectMemoryRequirementsNV = VK_NULL_HANDLE;
-    void GetPipelineIndirectMemoryRequirementsNV(VkDevice device, const VkComputePipelineCreateInfo *pCreateInfo,
-                                                 VkMemoryRequirements2 *pMemoryRequirements) const noexcept;
+    void GetPipelineIndirectMemoryRequirementsNV(VkDevice device, const VkComputePipelineCreateInfo* pCreateInfo, VkMemoryRequirements2* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_device_generated_commands_compute)
     PFN_vkGetPipelineIndirectDeviceAddressNV vkGetPipelineIndirectDeviceAddressNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceAddress GetPipelineIndirectDeviceAddressNV(
-        VkDevice device, const VkPipelineIndirectDeviceAddressInfoNV *pInfo) const noexcept;
+    [[nodiscard]] VkDeviceAddress GetPipelineIndirectDeviceAddressNV(VkDevice device, const VkPipelineIndirectDeviceAddressInfoNV* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_anti_lag)
     PFN_vkAntiLagUpdateAMD vkAntiLagUpdateAMD = VK_NULL_HANDLE;
-    void AntiLagUpdateAMD(VkDevice device, const VkAntiLagDataAMD *pData) const noexcept;
+    void AntiLagUpdateAMD(VkDevice device, const VkAntiLagDataAMD* pData) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetCullMode vkCmdSetCullMode = VK_NULL_HANDLE;
     void CmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetFrontFace vkCmdSetFrontFace = VK_NULL_HANDLE;
     void CmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetPrimitiveTopology vkCmdSetPrimitiveTopology = VK_NULL_HANDLE;
     void CmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetViewportWithCount vkCmdSetViewportWithCount = VK_NULL_HANDLE;
-    void CmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount,
-                                 const VkViewport *pViewports) const noexcept;
+    void CmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetScissorWithCount vkCmdSetScissorWithCount = VK_NULL_HANDLE;
-    void CmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount,
-                                const VkRect2D *pScissors) const noexcept;
+    void CmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdBindIndexBuffer2 vkCmdBindIndexBuffer2 = VK_NULL_HANDLE;
-    void CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
-                             VkIndexType indexType) const noexcept;
+    void CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdBindVertexBuffers2 vkCmdBindVertexBuffers2 = VK_NULL_HANDLE;
-    void CmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
-                               const VkBuffer *pBuffers, const VkDeviceSize *pOffsets, const VkDeviceSize *pSizes,
-                               const VkDeviceSize *pStrides) const noexcept;
+    void CmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetDepthTestEnable vkCmdSetDepthTestEnable = VK_NULL_HANDLE;
     void CmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetDepthWriteEnable vkCmdSetDepthWriteEnable = VK_NULL_HANDLE;
     void CmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetDepthCompareOp vkCmdSetDepthCompareOp = VK_NULL_HANDLE;
     void CmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetDepthBoundsTestEnable vkCmdSetDepthBoundsTestEnable = VK_NULL_HANDLE;
     void CmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetStencilTestEnable vkCmdSetStencilTestEnable = VK_NULL_HANDLE;
     void CmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetStencilOp vkCmdSetStencilOp = VK_NULL_HANDLE;
-    void CmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp,
-                         VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) const noexcept;
+    void CmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetPatchControlPointsEXT vkCmdSetPatchControlPointsEXT = VK_NULL_HANDLE;
     void CmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer, uint32_t patchControlPoints) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetRasterizerDiscardEnable vkCmdSetRasterizerDiscardEnable = VK_NULL_HANDLE;
     void CmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetDepthBiasEnable vkCmdSetDepthBiasEnable = VK_NULL_HANDLE;
     void CmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetLogicOpEXT vkCmdSetLogicOpEXT = VK_NULL_HANDLE;
     void CmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetPrimitiveRestartEnable vkCmdSetPrimitiveRestartEnable = VK_NULL_HANDLE;
     void CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && (defined(VK_KHR_maintenance2) || defined(VKIT_API_VERSION_1_1))) ||    \
-    defined(VK_EXT_shader_object)
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && (defined(VK_KHR_maintenance2) || defined(VKIT_API_VERSION_1_1))) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetTessellationDomainOriginEXT vkCmdSetTessellationDomainOriginEXT = VK_NULL_HANDLE;
-    void CmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer,
-                                           VkTessellationDomainOrigin domainOrigin) const noexcept;
+    void CmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthClampEnableEXT vkCmdSetDepthClampEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClampEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetPolygonModeEXT vkCmdSetPolygonModeEXT = VK_NULL_HANDLE;
     void CmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetRasterizationSamplesEXT vkCmdSetRasterizationSamplesEXT = VK_NULL_HANDLE;
-    void CmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer,
-                                       VkSampleCountFlagBits rasterizationSamples) const noexcept;
+    void CmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits rasterizationSamples) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetSampleMaskEXT vkCmdSetSampleMaskEXT = VK_NULL_HANDLE;
-    void CmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples,
-                             const VkSampleMask *pSampleMask) const noexcept;
+    void CmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetAlphaToCoverageEnableEXT vkCmdSetAlphaToCoverageEnableEXT = VK_NULL_HANDLE;
     void CmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToCoverageEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetAlphaToOneEnableEXT vkCmdSetAlphaToOneEnableEXT = VK_NULL_HANDLE;
     void CmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetLogicOpEnableEXT vkCmdSetLogicOpEnableEXT = VK_NULL_HANDLE;
     void CmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetColorBlendEnableEXT vkCmdSetColorBlendEnableEXT = VK_NULL_HANDLE;
-    void CmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
-                                   const VkBool32 *pColorBlendEnables) const noexcept;
+    void CmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkBool32* pColorBlendEnables) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetColorBlendEquationEXT vkCmdSetColorBlendEquationEXT = VK_NULL_HANDLE;
-    void CmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
-                                     const VkColorBlendEquationEXT *pColorBlendEquations) const noexcept;
+    void CmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendEquationEXT* pColorBlendEquations) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetColorWriteMaskEXT vkCmdSetColorWriteMaskEXT = VK_NULL_HANDLE;
-    void CmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
-                                 const VkColorComponentFlags *pColorWriteMasks) const noexcept;
+    void CmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorComponentFlags* pColorWriteMasks) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_transform_feedback)) ||                                 \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_transform_feedback))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_transform_feedback)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_transform_feedback))
     PFN_vkCmdSetRasterizationStreamEXT vkCmdSetRasterizationStreamEXT = VK_NULL_HANDLE;
     void CmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer, uint32_t rasterizationStream) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) ||                         \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
     PFN_vkCmdSetConservativeRasterizationModeEXT vkCmdSetConservativeRasterizationModeEXT = VK_NULL_HANDLE;
-    void CmdSetConservativeRasterizationModeEXT(
-        VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) const noexcept;
+    void CmdSetConservativeRasterizationModeEXT(VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) ||                         \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
     PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT vkCmdSetExtraPrimitiveOverestimationSizeEXT = VK_NULL_HANDLE;
-    void CmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer,
-                                                   float extraPrimitiveOverestimationSize) const noexcept;
+    void CmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_enable)) ||                                  \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_enable))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_enable)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_enable))
     PFN_vkCmdSetDepthClipEnableEXT vkCmdSetDepthClipEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_sample_locations)) ||                                   \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_sample_locations))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_sample_locations)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_sample_locations))
     PFN_vkCmdSetSampleLocationsEnableEXT vkCmdSetSampleLocationsEnableEXT = VK_NULL_HANDLE;
     void CmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_blend_operation_advanced)) ||                           \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_blend_operation_advanced))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_blend_operation_advanced)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_blend_operation_advanced))
     PFN_vkCmdSetColorBlendAdvancedEXT vkCmdSetColorBlendAdvancedEXT = VK_NULL_HANDLE;
-    void CmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
-                                     const VkColorBlendAdvancedEXT *pColorBlendAdvanced) const noexcept;
+    void CmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendAdvancedEXT* pColorBlendAdvanced) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_provoking_vertex)) ||                                   \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_provoking_vertex))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_provoking_vertex)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_provoking_vertex))
     PFN_vkCmdSetProvokingVertexModeEXT vkCmdSetProvokingVertexModeEXT = VK_NULL_HANDLE;
-    void CmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
-                                      VkProvokingVertexModeEXT provokingVertexMode) const noexcept;
+    void CmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer, VkProvokingVertexModeEXT provokingVertexMode) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) ||                                 \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
     PFN_vkCmdSetLineRasterizationModeEXT vkCmdSetLineRasterizationModeEXT = VK_NULL_HANDLE;
-    void CmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer,
-                                        VkLineRasterizationModeEXT lineRasterizationMode) const noexcept;
+    void CmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) ||                                 \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
     PFN_vkCmdSetLineStippleEnableEXT vkCmdSetLineStippleEnableEXT = VK_NULL_HANDLE;
     void CmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stippledLineEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_control)) ||                                 \
-    (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_control))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_control)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_control))
     PFN_vkCmdSetDepthClipNegativeOneToOneEXT vkCmdSetDepthClipNegativeOneToOneEXT = VK_NULL_HANDLE;
     void CmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer, VkBool32 negativeOneToOne) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_clip_space_w_scaling)) ||                                \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_clip_space_w_scaling))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_clip_space_w_scaling)) || (defined(VK_EXT_shader_object) && defined(VK_NV_clip_space_w_scaling))
     PFN_vkCmdSetViewportWScalingEnableNV vkCmdSetViewportWScalingEnableNV = VK_NULL_HANDLE;
     void CmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_viewport_swizzle)) ||                                    \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_viewport_swizzle))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_viewport_swizzle)) || (defined(VK_EXT_shader_object) && defined(VK_NV_viewport_swizzle))
     PFN_vkCmdSetViewportSwizzleNV vkCmdSetViewportSwizzleNV = VK_NULL_HANDLE;
-    void CmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
-                                 const VkViewportSwizzleNV *pViewportSwizzles) const noexcept;
+    void CmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) ||                          \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) || (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
     PFN_vkCmdSetCoverageToColorEnableNV vkCmdSetCoverageToColorEnableNV = VK_NULL_HANDLE;
     void CmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageToColorEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) ||                          \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) || (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
     PFN_vkCmdSetCoverageToColorLocationNV vkCmdSetCoverageToColorLocationNV = VK_NULL_HANDLE;
-    void CmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer,
-                                         uint32_t coverageToColorLocation) const noexcept;
+    void CmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer, uint32_t coverageToColorLocation) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     PFN_vkCmdSetCoverageModulationModeNV vkCmdSetCoverageModulationModeNV = VK_NULL_HANDLE;
-    void CmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer,
-                                        VkCoverageModulationModeNV coverageModulationMode) const noexcept;
+    void CmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     PFN_vkCmdSetCoverageModulationTableEnableNV vkCmdSetCoverageModulationTableEnableNV = VK_NULL_HANDLE;
-    void CmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer,
-                                               VkBool32 coverageModulationTableEnable) const noexcept;
+    void CmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     PFN_vkCmdSetCoverageModulationTableNV vkCmdSetCoverageModulationTableNV = VK_NULL_HANDLE;
-    void CmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount,
-                                         const float *pCoverageModulationTable) const noexcept;
+    void CmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount, const float* pCoverageModulationTable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_shading_rate_image)) ||                                  \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_shading_rate_image))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_shading_rate_image)) || (defined(VK_EXT_shader_object) && defined(VK_NV_shading_rate_image))
     PFN_vkCmdSetShadingRateImageEnableNV vkCmdSetShadingRateImageEnableNV = VK_NULL_HANDLE;
     void CmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_coverage_reduction_mode)) ||                             \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_coverage_reduction_mode))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_coverage_reduction_mode)) || (defined(VK_EXT_shader_object) && defined(VK_NV_coverage_reduction_mode))
     PFN_vkCmdSetCoverageReductionModeNV vkCmdSetCoverageReductionModeNV = VK_NULL_HANDLE;
-    void CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
-                                       VkCoverageReductionModeNV coverageReductionMode) const noexcept;
+    void CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode) const noexcept;
 #endif
-
-#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_representative_fragment_test)) ||                        \
-    (defined(VK_EXT_shader_object) && defined(VK_NV_representative_fragment_test))
+    
+#if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_representative_fragment_test)) || (defined(VK_EXT_shader_object) && defined(VK_NV_representative_fragment_test))
     PFN_vkCmdSetRepresentativeFragmentTestEnableNV vkCmdSetRepresentativeFragmentTestEnableNV = VK_NULL_HANDLE;
-    void CmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer,
-                                                  VkBool32 representativeFragmentTestEnable) const noexcept;
+    void CmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCreatePrivateDataSlot vkCreatePrivateDataSlot = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreatePrivateDataSlot(VkDevice device, const VkPrivateDataSlotCreateInfo *pCreateInfo,
-                                                 const VkAllocationCallbacks *pAllocator,
-                                                 VkPrivateDataSlot *pPrivateDataSlot) const noexcept;
+    [[nodiscard]] VkResult CreatePrivateDataSlot(VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkDestroyPrivateDataSlot vkDestroyPrivateDataSlot = VK_NULL_HANDLE;
-    void DestroyPrivateDataSlot(VkDevice device, VkPrivateDataSlot privateDataSlot,
-                                const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyPrivateDataSlot(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkSetPrivateData vkSetPrivateData = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle,
-                                          VkPrivateDataSlot privateDataSlot, uint64_t data) const noexcept;
+    [[nodiscard]] VkResult SetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkGetPrivateData vkGetPrivateData = VK_NULL_HANDLE;
-    void GetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle,
-                        VkPrivateDataSlot privateDataSlot, uint64_t *pData) const noexcept;
+    void GetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdCopyBuffer2 vkCmdCopyBuffer2 = VK_NULL_HANDLE;
-    void CmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2 *pCopyBufferInfo) const noexcept;
+    void CmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdCopyImage2 vkCmdCopyImage2 = VK_NULL_HANDLE;
-    void CmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImageInfo2 *pCopyImageInfo) const noexcept;
+    void CmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdBlitImage2 vkCmdBlitImage2 = VK_NULL_HANDLE;
-    void CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2 *pBlitImageInfo) const noexcept;
+    void CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdCopyBufferToImage2 vkCmdCopyBufferToImage2 = VK_NULL_HANDLE;
-    void CmdCopyBufferToImage2(VkCommandBuffer commandBuffer,
-                               const VkCopyBufferToImageInfo2 *pCopyBufferToImageInfo) const noexcept;
+    void CmdCopyBufferToImage2(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdCopyImageToBuffer2 vkCmdCopyImageToBuffer2 = VK_NULL_HANDLE;
-    void CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
-                               const VkCopyImageToBufferInfo2 *pCopyImageToBufferInfo) const noexcept;
+    void CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdResolveImage2 vkCmdResolveImage2 = VK_NULL_HANDLE;
-    void CmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2 *pResolveImageInfo) const noexcept;
+    void CmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_object_refresh)
     PFN_vkCmdRefreshObjectsKHR vkCmdRefreshObjectsKHR = VK_NULL_HANDLE;
-    void CmdRefreshObjectsKHR(VkCommandBuffer commandBuffer,
-                              const VkRefreshObjectListKHR *pRefreshObjects) const noexcept;
+    void CmdRefreshObjectsKHR(VkCommandBuffer commandBuffer, const VkRefreshObjectListKHR* pRefreshObjects) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_fragment_shading_rate)
     PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR = VK_NULL_HANDLE;
-    void CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D *pFragmentSize,
-                                      const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) const noexcept;
+    void CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_fragment_shading_rate_enums)
     PFN_vkCmdSetFragmentShadingRateEnumNV vkCmdSetFragmentShadingRateEnumNV = VK_NULL_HANDLE;
-    void CmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate,
-                                         const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) const noexcept;
+    void CmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkGetAccelerationStructureBuildSizesKHR vkGetAccelerationStructureBuildSizesKHR = VK_NULL_HANDLE;
-    void GetAccelerationStructureBuildSizesKHR(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType,
-                                               const VkAccelerationStructureBuildGeometryInfoKHR *pBuildInfo,
-                                               const uint32_t *pMaxPrimitiveCounts,
-                                               VkAccelerationStructureBuildSizesInfoKHR *pSizeInfo) const noexcept;
+    void GetAccelerationStructureBuildSizesKHR(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, const uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_vertex_input_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = VK_NULL_HANDLE;
-    void CmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount,
-                              const VkVertexInputBindingDescription2EXT *pVertexBindingDescriptions,
-                              uint32_t vertexAttributeDescriptionCount,
-                              const VkVertexInputAttributeDescription2EXT *pVertexAttributeDescriptions) const noexcept;
+    void CmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_color_write_enable)
     PFN_vkCmdSetColorWriteEnableEXT vkCmdSetColorWriteEnableEXT = VK_NULL_HANDLE;
-    void CmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
-                                   const VkBool32 *pColorWriteEnables) const noexcept;
+    void CmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdSetEvent2 vkCmdSetEvent2 = VK_NULL_HANDLE;
-    void CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                      const VkDependencyInfo *pDependencyInfo) const noexcept;
+    void CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdResetEvent2 vkCmdResetEvent2 = VK_NULL_HANDLE;
     void CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdWaitEvents2 vkCmdWaitEvents2 = VK_NULL_HANDLE;
-    void CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
-                        const VkDependencyInfo *pDependencyInfos) const noexcept;
+    void CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdPipelineBarrier2 vkCmdPipelineBarrier2 = VK_NULL_HANDLE;
-    void CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo *pDependencyInfo) const noexcept;
+    void CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkQueueSubmit2 vkQueueSubmit2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2 *pSubmits,
-                                        VkFence fence) const noexcept;
+    [[nodiscard]] VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdWriteTimestamp2 vkCmdWriteTimestamp2 = VK_NULL_HANDLE;
-    void CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool,
-                            uint32_t query) const noexcept;
+    void CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) const noexcept;
 #endif
-
+    
 #if (defined(VK_AMD_buffer_marker) && (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
     PFN_vkCmdWriteBufferMarker2AMD vkCmdWriteBufferMarker2AMD = VK_NULL_HANDLE;
-    void CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
-                                  VkDeviceSize dstOffset, uint32_t marker) const noexcept;
+    void CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) const noexcept;
 #endif
-
-#if (defined(VK_NV_device_diagnostic_checkpoints) &&                                                                   \
-     (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
+    
+#if (defined(VK_NV_device_diagnostic_checkpoints) && (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
     PFN_vkGetQueueCheckpointData2NV vkGetQueueCheckpointData2NV = VK_NULL_HANDLE;
-    void GetQueueCheckpointData2NV(VkQueue queue, uint32_t *pCheckpointDataCount,
-                                   VkCheckpointData2NV *pCheckpointData) const noexcept;
+    void GetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointData2NV* pCheckpointData) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCopyMemoryToImage vkCopyMemoryToImage = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMemoryToImage(VkDevice device,
-                                             const VkCopyMemoryToImageInfo *pCopyMemoryToImageInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMemoryToImage(VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCopyImageToMemory vkCopyImageToMemory = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyImageToMemory(VkDevice device,
-                                             const VkCopyImageToMemoryInfo *pCopyImageToMemoryInfo) const noexcept;
+    [[nodiscard]] VkResult CopyImageToMemory(VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCopyImageToImage vkCopyImageToImage = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyImageToImage(VkDevice device,
-                                            const VkCopyImageToImageInfo *pCopyImageToImageInfo) const noexcept;
+    [[nodiscard]] VkResult CopyImageToImage(VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkTransitionImageLayout vkTransitionImageLayout = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult TransitionImageLayout(VkDevice device, uint32_t transitionCount,
-                                                 const VkHostImageLayoutTransitionInfo *pTransitions) const noexcept;
+    [[nodiscard]] VkResult TransitionImageLayout(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions) const noexcept;
 #endif
-
+    
 #if defined(VKSC_VERSION_1_0)
     PFN_vkGetCommandPoolMemoryConsumption vkGetCommandPoolMemoryConsumption = VK_NULL_HANDLE;
-    void GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer,
-                                         VkCommandPoolMemoryConsumption *pConsumption) const noexcept;
+    void GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkCommandPoolMemoryConsumption* pConsumption) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkCreateVideoSessionKHR vkCreateVideoSessionKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR *pCreateInfo,
-                                                 const VkAllocationCallbacks *pAllocator,
-                                                 VkVideoSessionKHR *pVideoSession) const noexcept;
+    [[nodiscard]] VkResult CreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionKHR* pVideoSession) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkDestroyVideoSessionKHR vkDestroyVideoSessionKHR = VK_NULL_HANDLE;
-    void DestroyVideoSessionKHR(VkDevice device, VkVideoSessionKHR videoSession,
-                                const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyVideoSessionKHR(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkCreateVideoSessionParametersKHR vkCreateVideoSessionParametersKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateVideoSessionParametersKHR(
-        VkDevice device, const VkVideoSessionParametersCreateInfoKHR *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkVideoSessionParametersKHR *pVideoSessionParameters) const noexcept;
+    [[nodiscard]] VkResult CreateVideoSessionParametersKHR(VkDevice device, const VkVideoSessionParametersCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionParametersKHR* pVideoSessionParameters) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkUpdateVideoSessionParametersKHR vkUpdateVideoSessionParametersKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult UpdateVideoSessionParametersKHR(
-        VkDevice device, VkVideoSessionParametersKHR videoSessionParameters,
-        const VkVideoSessionParametersUpdateInfoKHR *pUpdateInfo) const noexcept;
+    [[nodiscard]] VkResult UpdateVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkVideoSessionParametersUpdateInfoKHR* pUpdateInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_encode_queue)
     PFN_vkGetEncodedVideoSessionParametersKHR vkGetEncodedVideoSessionParametersKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetEncodedVideoSessionParametersKHR(
-        VkDevice device, const VkVideoEncodeSessionParametersGetInfoKHR *pVideoSessionParametersInfo,
-        VkVideoEncodeSessionParametersFeedbackInfoKHR *pFeedbackInfo, size_t *pDataSize, void *pData) const noexcept;
+    [[nodiscard]] VkResult GetEncodedVideoSessionParametersKHR(VkDevice device, const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo, VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo, size_t* pDataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkDestroyVideoSessionParametersKHR vkDestroyVideoSessionParametersKHR = VK_NULL_HANDLE;
-    void DestroyVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters,
-                                          const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkGetVideoSessionMemoryRequirementsKHR vkGetVideoSessionMemoryRequirementsKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetVideoSessionMemoryRequirementsKHR(
-        VkDevice device, VkVideoSessionKHR videoSession, uint32_t *pMemoryRequirementsCount,
-        VkVideoSessionMemoryRequirementsKHR *pMemoryRequirements) const noexcept;
+    [[nodiscard]] VkResult GetVideoSessionMemoryRequirementsKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t* pMemoryRequirementsCount, VkVideoSessionMemoryRequirementsKHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkBindVideoSessionMemoryKHR vkBindVideoSessionMemoryKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindVideoSessionMemoryKHR(
-        VkDevice device, VkVideoSessionKHR videoSession, uint32_t bindSessionMemoryInfoCount,
-        const VkBindVideoSessionMemoryInfoKHR *pBindSessionMemoryInfos) const noexcept;
+    [[nodiscard]] VkResult BindVideoSessionMemoryKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t bindSessionMemoryInfoCount, const VkBindVideoSessionMemoryInfoKHR* pBindSessionMemoryInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_decode_queue)
     PFN_vkCmdDecodeVideoKHR vkCmdDecodeVideoKHR = VK_NULL_HANDLE;
-    void CmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR *pDecodeInfo) const noexcept;
+    void CmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR* pDecodeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkCmdBeginVideoCodingKHR vkCmdBeginVideoCodingKHR = VK_NULL_HANDLE;
-    void CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                const VkVideoBeginCodingInfoKHR *pBeginInfo) const noexcept;
+    void CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkCmdControlVideoCodingKHR vkCmdControlVideoCodingKHR = VK_NULL_HANDLE;
-    void CmdControlVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                  const VkVideoCodingControlInfoKHR *pCodingControlInfo) const noexcept;
+    void CmdControlVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoCodingControlInfoKHR* pCodingControlInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_queue)
     PFN_vkCmdEndVideoCodingKHR vkCmdEndVideoCodingKHR = VK_NULL_HANDLE;
-    void CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
-                              const VkVideoEndCodingInfoKHR *pEndCodingInfo) const noexcept;
+    void CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoEndCodingInfoKHR* pEndCodingInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_video_encode_queue)
     PFN_vkCmdEncodeVideoKHR vkCmdEncodeVideoKHR = VK_NULL_HANDLE;
-    void CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR *pEncodeInfo) const noexcept;
+    void CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_memory_decompression)
     PFN_vkCmdDecompressMemoryNV vkCmdDecompressMemoryNV = VK_NULL_HANDLE;
-    void CmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount,
-                               const VkDecompressMemoryRegionNV *pDecompressMemoryRegions) const noexcept;
+    void CmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount, const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_memory_decompression)
     PFN_vkCmdDecompressMemoryIndirectCountNV vkCmdDecompressMemoryIndirectCountNV = VK_NULL_HANDLE;
-    void CmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress,
-                                            VkDeviceAddress indirectCommandsCountAddress,
-                                            uint32_t stride) const noexcept;
+    void CmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_partitioned_acceleration_structure)
-    PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV vkGetPartitionedAccelerationStructuresBuildSizesNV =
-        VK_NULL_HANDLE;
-    void GetPartitionedAccelerationStructuresBuildSizesNV(
-        VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV *pInfo,
-        VkAccelerationStructureBuildSizesInfoKHR *pSizeInfo) const noexcept;
+    PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV vkGetPartitionedAccelerationStructuresBuildSizesNV = VK_NULL_HANDLE;
+    void GetPartitionedAccelerationStructuresBuildSizesNV(VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_partitioned_acceleration_structure)
     PFN_vkCmdBuildPartitionedAccelerationStructuresNV vkCmdBuildPartitionedAccelerationStructuresNV = VK_NULL_HANDLE;
-    void CmdBuildPartitionedAccelerationStructuresNV(
-        VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV *pBuildInfo) const noexcept;
+    void CmdBuildPartitionedAccelerationStructuresNV(VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_binary_import)
     PFN_vkCreateCuModuleNVX vkCreateCuModuleNVX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkCuModuleNVX *pModule) const noexcept;
+    [[nodiscard]] VkResult CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuModuleNVX* pModule) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_binary_import)
     PFN_vkCreateCuFunctionNVX vkCreateCuFunctionNVX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateCuFunctionNVX(VkDevice device, const VkCuFunctionCreateInfoNVX *pCreateInfo,
-                                               const VkAllocationCallbacks *pAllocator,
-                                               VkCuFunctionNVX *pFunction) const noexcept;
+    [[nodiscard]] VkResult CreateCuFunctionNVX(VkDevice device, const VkCuFunctionCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_binary_import)
     PFN_vkDestroyCuModuleNVX vkDestroyCuModuleNVX = VK_NULL_HANDLE;
-    void DestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module,
-                            const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_binary_import)
     PFN_vkDestroyCuFunctionNVX vkDestroyCuFunctionNVX = VK_NULL_HANDLE;
-    void DestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function,
-                              const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NVX_binary_import)
     PFN_vkCmdCuLaunchKernelNVX vkCmdCuLaunchKernelNVX = VK_NULL_HANDLE;
-    void CmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const VkCuLaunchInfoNVX *pLaunchInfo) const noexcept;
+    void CmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const VkCuLaunchInfoNVX* pLaunchInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetDescriptorSetLayoutSizeEXT vkGetDescriptorSetLayoutSizeEXT = VK_NULL_HANDLE;
-    void GetDescriptorSetLayoutSizeEXT(VkDevice device, VkDescriptorSetLayout layout,
-                                       VkDeviceSize *pLayoutSizeInBytes) const noexcept;
+    void GetDescriptorSetLayoutSizeEXT(VkDevice device, VkDescriptorSetLayout layout, VkDeviceSize* pLayoutSizeInBytes) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetDescriptorSetLayoutBindingOffsetEXT vkGetDescriptorSetLayoutBindingOffsetEXT = VK_NULL_HANDLE;
-    void GetDescriptorSetLayoutBindingOffsetEXT(VkDevice device, VkDescriptorSetLayout layout, uint32_t binding,
-                                                VkDeviceSize *pOffset) const noexcept;
+    void GetDescriptorSetLayoutBindingOffsetEXT(VkDevice device, VkDescriptorSetLayout layout, uint32_t binding, VkDeviceSize* pOffset) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetDescriptorEXT vkGetDescriptorEXT = VK_NULL_HANDLE;
-    void GetDescriptorEXT(VkDevice device, const VkDescriptorGetInfoEXT *pDescriptorInfo, size_t dataSize,
-                          void *pDescriptor) const noexcept;
+    void GetDescriptorEXT(VkDevice device, const VkDescriptorGetInfoEXT* pDescriptorInfo, size_t dataSize, void* pDescriptor) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkCmdBindDescriptorBuffersEXT vkCmdBindDescriptorBuffersEXT = VK_NULL_HANDLE;
-    void CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
-                                     const VkDescriptorBufferBindingInfoEXT *pBindingInfos) const noexcept;
+    void CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkCmdSetDescriptorBufferOffsetsEXT vkCmdSetDescriptorBufferOffsetsEXT = VK_NULL_HANDLE;
-    void CmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                          VkPipelineLayout layout, uint32_t firstSet, uint32_t setCount,
-                                          const uint32_t *pBufferIndices, const VkDeviceSize *pOffsets) const noexcept;
+    void CmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t setCount, const uint32_t* pBufferIndices, const VkDeviceSize* pOffsets) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT vkCmdBindDescriptorBufferEmbeddedSamplersEXT = VK_NULL_HANDLE;
-    void CmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer,
-                                                    VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
-                                                    uint32_t set) const noexcept;
+    void CmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT vkGetBufferOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetBufferOpaqueCaptureDescriptorDataEXT(VkDevice device,
-                                                                   const VkBufferCaptureDescriptorDataInfoEXT *pInfo,
-                                                                   void *pData) const noexcept;
+    [[nodiscard]] VkResult GetBufferOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkBufferCaptureDescriptorDataInfoEXT* pInfo, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetImageOpaqueCaptureDescriptorDataEXT vkGetImageOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetImageOpaqueCaptureDescriptorDataEXT(VkDevice device,
-                                                                  const VkImageCaptureDescriptorDataInfoEXT *pInfo,
-                                                                  void *pData) const noexcept;
+    [[nodiscard]] VkResult GetImageOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageCaptureDescriptorDataInfoEXT* pInfo, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT vkGetImageViewOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetImageViewOpaqueCaptureDescriptorDataEXT(
-        VkDevice device, const VkImageViewCaptureDescriptorDataInfoEXT *pInfo, void *pData) const noexcept;
+    [[nodiscard]] VkResult GetImageViewOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageViewCaptureDescriptorDataInfoEXT* pInfo, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_descriptor_buffer)
     PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT vkGetSamplerOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSamplerOpaqueCaptureDescriptorDataEXT(VkDevice device,
-                                                                    const VkSamplerCaptureDescriptorDataInfoEXT *pInfo,
-                                                                    void *pData) const noexcept;
+    [[nodiscard]] VkResult GetSamplerOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkSamplerCaptureDescriptorDataInfoEXT* pInfo, void* pData) const noexcept;
 #endif
-
+    
 #if (defined(VK_EXT_descriptor_buffer) && (defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)))
-    PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT
-        vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetAccelerationStructureOpaqueCaptureDescriptorDataEXT(
-        VkDevice device, const VkAccelerationStructureCaptureDescriptorDataInfoEXT *pInfo, void *pData) const noexcept;
+    PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = VK_NULL_HANDLE;
+    [[nodiscard]] VkResult GetAccelerationStructureOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_pageable_device_local_memory)
     PFN_vkSetDeviceMemoryPriorityEXT vkSetDeviceMemoryPriorityEXT = VK_NULL_HANDLE;
     void SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_present_wait)
     PFN_vkWaitForPresentKHR vkWaitForPresentKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId,
-                                             uint64_t timeout) const noexcept;
+    [[nodiscard]] VkResult WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_buffer_collection)
     PFN_vkCreateBufferCollectionFUCHSIA vkCreateBufferCollectionFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateBufferCollectionFUCHSIA(VkDevice device,
-                                                         const VkBufferCollectionCreateInfoFUCHSIA *pCreateInfo,
-                                                         const VkAllocationCallbacks *pAllocator,
-                                                         VkBufferCollectionFUCHSIA *pCollection) const noexcept;
+    [[nodiscard]] VkResult CreateBufferCollectionFUCHSIA(VkDevice device, const VkBufferCollectionCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferCollectionFUCHSIA* pCollection) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_buffer_collection)
     PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA vkSetBufferCollectionBufferConstraintsFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetBufferCollectionBufferConstraintsFUCHSIA(
-        VkDevice device, VkBufferCollectionFUCHSIA collection,
-        const VkBufferConstraintsInfoFUCHSIA *pBufferConstraintsInfo) const noexcept;
+    [[nodiscard]] VkResult SetBufferCollectionBufferConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkBufferConstraintsInfoFUCHSIA* pBufferConstraintsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_buffer_collection)
     PFN_vkSetBufferCollectionImageConstraintsFUCHSIA vkSetBufferCollectionImageConstraintsFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetBufferCollectionImageConstraintsFUCHSIA(
-        VkDevice device, VkBufferCollectionFUCHSIA collection,
-        const VkImageConstraintsInfoFUCHSIA *pImageConstraintsInfo) const noexcept;
+    [[nodiscard]] VkResult SetBufferCollectionImageConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkImageConstraintsInfoFUCHSIA* pImageConstraintsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_buffer_collection)
     PFN_vkDestroyBufferCollectionFUCHSIA vkDestroyBufferCollectionFUCHSIA = VK_NULL_HANDLE;
-    void DestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection,
-                                        const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_FUCHSIA_buffer_collection)
     PFN_vkGetBufferCollectionPropertiesFUCHSIA vkGetBufferCollectionPropertiesFUCHSIA = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetBufferCollectionPropertiesFUCHSIA(
-        VkDevice device, VkBufferCollectionFUCHSIA collection,
-        VkBufferCollectionPropertiesFUCHSIA *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, VkBufferCollectionPropertiesFUCHSIA* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkCreateCudaModuleNV vkCreateCudaModuleNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateCudaModuleNV(VkDevice device, const VkCudaModuleCreateInfoNV *pCreateInfo,
-                                              const VkAllocationCallbacks *pAllocator,
-                                              VkCudaModuleNV *pModule) const noexcept;
+    [[nodiscard]] VkResult CreateCudaModuleNV(VkDevice device, const VkCudaModuleCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaModuleNV* pModule) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkGetCudaModuleCacheNV vkGetCudaModuleCacheNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t *pCacheSize,
-                                                void *pCacheData) const noexcept;
+    [[nodiscard]] VkResult GetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t* pCacheSize, void* pCacheData) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkCreateCudaFunctionNV vkCreateCudaFunctionNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateCudaFunctionNV(VkDevice device, const VkCudaFunctionCreateInfoNV *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkCudaFunctionNV *pFunction) const noexcept;
+    [[nodiscard]] VkResult CreateCudaFunctionNV(VkDevice device, const VkCudaFunctionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaFunctionNV* pFunction) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkDestroyCudaModuleNV vkDestroyCudaModuleNV = VK_NULL_HANDLE;
-    void DestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module,
-                             const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkDestroyCudaFunctionNV vkDestroyCudaFunctionNV = VK_NULL_HANDLE;
-    void DestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV function,
-                               const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cuda_kernel_launch)
     PFN_vkCmdCudaLaunchKernelNV vkCmdCudaLaunchKernelNV = VK_NULL_HANDLE;
-    void CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV *pLaunchInfo) const noexcept;
+    void CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdBeginRendering vkCmdBeginRendering = VK_NULL_HANDLE;
-    void CmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo *pRenderingInfo) const noexcept;
+    void CmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_3)
     PFN_vkCmdEndRendering vkCmdEndRendering = VK_NULL_HANDLE;
     void CmdEndRendering(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_fragment_density_map_offset)
     PFN_vkCmdEndRendering2EXT vkCmdEndRendering2EXT = VK_NULL_HANDLE;
-    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                             const VkRenderingEndInfoEXT *pRenderingEndInfo) const noexcept;
+    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT* pRenderingEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE vkGetDescriptorSetLayoutHostMappingInfoVALVE = VK_NULL_HANDLE;
-    void GetDescriptorSetLayoutHostMappingInfoVALVE(
-        VkDevice device, const VkDescriptorSetBindingReferenceVALVE *pBindingReference,
-        VkDescriptorSetLayoutHostMappingInfoVALVE *pHostMapping) const noexcept;
+    void GetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice device, const VkDescriptorSetBindingReferenceVALVE* pBindingReference, VkDescriptorSetLayoutHostMappingInfoVALVE* pHostMapping) const noexcept;
 #endif
-
+    
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     PFN_vkGetDescriptorSetHostMappingVALVE vkGetDescriptorSetHostMappingVALVE = VK_NULL_HANDLE;
-    void GetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptorSet descriptorSet, void **ppData) const noexcept;
+    void GetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptorSet descriptorSet, void** ppData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCreateMicromapEXT vkCreateMicromapEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateMicromapEXT(VkDevice device, const VkMicromapCreateInfoEXT *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkMicromapEXT *pMicromap) const noexcept;
+    [[nodiscard]] VkResult CreateMicromapEXT(VkDevice device, const VkMicromapCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkMicromapEXT* pMicromap) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCmdBuildMicromapsEXT vkCmdBuildMicromapsEXT = VK_NULL_HANDLE;
-    void CmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount,
-                              const VkMicromapBuildInfoEXT *pInfos) const noexcept;
+    void CmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkBuildMicromapsEXT vkBuildMicromapsEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                             uint32_t infoCount, const VkMicromapBuildInfoEXT *pInfos) const noexcept;
+    [[nodiscard]] VkResult BuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkDestroyMicromapEXT vkDestroyMicromapEXT = VK_NULL_HANDLE;
-    void DestroyMicromapEXT(VkDevice device, VkMicromapEXT micromap,
-                            const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyMicromapEXT(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCmdCopyMicromapEXT vkCmdCopyMicromapEXT = VK_NULL_HANDLE;
-    void CmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapInfoEXT *pInfo) const noexcept;
+    void CmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCopyMicromapEXT vkCopyMicromapEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                           const VkCopyMicromapInfoEXT *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCmdCopyMicromapToMemoryEXT vkCmdCopyMicromapToMemoryEXT = VK_NULL_HANDLE;
-    void CmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
-                                    const VkCopyMicromapToMemoryInfoEXT *pInfo) const noexcept;
+    void CmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapToMemoryInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCopyMicromapToMemoryEXT vkCopyMicromapToMemoryEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMicromapToMemoryEXT(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                                   const VkCopyMicromapToMemoryInfoEXT *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMicromapToMemoryEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapToMemoryInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCmdCopyMemoryToMicromapEXT vkCmdCopyMemoryToMicromapEXT = VK_NULL_HANDLE;
-    void CmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
-                                    const VkCopyMemoryToMicromapInfoEXT *pInfo) const noexcept;
+    void CmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMemoryToMicromapInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCopyMemoryToMicromapEXT vkCopyMemoryToMicromapEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMemoryToMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                                   const VkCopyMemoryToMicromapInfoEXT *pInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMemoryToMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToMicromapInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkCmdWriteMicromapsPropertiesEXT vkCmdWriteMicromapsPropertiesEXT = VK_NULL_HANDLE;
-    void CmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, uint32_t micromapCount,
-                                        const VkMicromapEXT *pMicromaps, VkQueryType queryType, VkQueryPool queryPool,
-                                        uint32_t firstQuery) const noexcept;
+    void CmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkWriteMicromapsPropertiesEXT vkWriteMicromapsPropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WriteMicromapsPropertiesEXT(VkDevice device, uint32_t micromapCount,
-                                                       const VkMicromapEXT *pMicromaps, VkQueryType queryType,
-                                                       size_t dataSize, void *pData, size_t stride) const noexcept;
+    [[nodiscard]] VkResult WriteMicromapsPropertiesEXT(VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkGetDeviceMicromapCompatibilityEXT vkGetDeviceMicromapCompatibilityEXT = VK_NULL_HANDLE;
-    void GetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMicromapVersionInfoEXT *pVersionInfo,
-                                           VkAccelerationStructureCompatibilityKHR *pCompatibility) const noexcept;
+    void GetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMicromapVersionInfoEXT* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_opacity_micromap)
     PFN_vkGetMicromapBuildSizesEXT vkGetMicromapBuildSizesEXT = VK_NULL_HANDLE;
-    void GetMicromapBuildSizesEXT(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType,
-                                  const VkMicromapBuildInfoEXT *pBuildInfo,
-                                  VkMicromapBuildSizesInfoEXT *pSizeInfo) const noexcept;
+    void GetMicromapBuildSizesEXT(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkMicromapBuildInfoEXT* pBuildInfo, VkMicromapBuildSizesInfoEXT* pSizeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_module_identifier)
     PFN_vkGetShaderModuleIdentifierEXT vkGetShaderModuleIdentifierEXT = VK_NULL_HANDLE;
-    void GetShaderModuleIdentifierEXT(VkDevice device, VkShaderModule shaderModule,
-                                      VkShaderModuleIdentifierEXT *pIdentifier) const noexcept;
+    void GetShaderModuleIdentifierEXT(VkDevice device, VkShaderModule shaderModule, VkShaderModuleIdentifierEXT* pIdentifier) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_module_identifier)
     PFN_vkGetShaderModuleCreateInfoIdentifierEXT vkGetShaderModuleCreateInfoIdentifierEXT = VK_NULL_HANDLE;
-    void GetShaderModuleCreateInfoIdentifierEXT(VkDevice device, const VkShaderModuleCreateInfo *pCreateInfo,
-                                                VkShaderModuleIdentifierEXT *pIdentifier) const noexcept;
+    void GetShaderModuleCreateInfoIdentifierEXT(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModuleIdentifierEXT* pIdentifier) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkGetImageSubresourceLayout2 vkGetImageSubresourceLayout2 = VK_NULL_HANDLE;
-    void GetImageSubresourceLayout2(VkDevice device, VkImage image, const VkImageSubresource2 *pSubresource,
-                                    VkSubresourceLayout2 *pLayout) const noexcept;
+    void GetImageSubresourceLayout2(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_pipeline_properties)
     PFN_vkGetPipelinePropertiesEXT vkGetPipelinePropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoEXT *pPipelineInfo,
-                                                    VkBaseOutStructure *pPipelineProperties) const noexcept;
+    [[nodiscard]] VkResult GetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoEXT* pPipelineInfo, VkBaseOutStructure* pPipelineProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_metal_objects)
     PFN_vkExportMetalObjectsEXT vkExportMetalObjectsEXT = VK_NULL_HANDLE;
-    void ExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInfoEXT *pMetalObjectsInfo) const noexcept;
+    void ExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_memory_heap)
     PFN_vkCmdBindTileMemoryQCOM vkCmdBindTileMemoryQCOM = VK_NULL_HANDLE;
-    void CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
-                               const VkTileMemoryBindInfoQCOM *pTileMemoryBindInfo) const noexcept;
+    void CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer, const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_properties)
     PFN_vkGetFramebufferTilePropertiesQCOM vkGetFramebufferTilePropertiesQCOM = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer,
-                                                            uint32_t *pPropertiesCount,
-                                                            VkTilePropertiesQCOM *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, uint32_t* pPropertiesCount, VkTilePropertiesQCOM* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_properties)
     PFN_vkGetDynamicRenderingTilePropertiesQCOM vkGetDynamicRenderingTilePropertiesQCOM = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDynamicRenderingTilePropertiesQCOM(VkDevice device, const VkRenderingInfo *pRenderingInfo,
-                                                                 VkTilePropertiesQCOM *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetDynamicRenderingTilePropertiesQCOM(VkDevice device, const VkRenderingInfo* pRenderingInfo, VkTilePropertiesQCOM* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_optical_flow)
     PFN_vkCreateOpticalFlowSessionNV vkCreateOpticalFlowSessionNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateOpticalFlowSessionNV(VkDevice device,
-                                                      const VkOpticalFlowSessionCreateInfoNV *pCreateInfo,
-                                                      const VkAllocationCallbacks *pAllocator,
-                                                      VkOpticalFlowSessionNV *pSession) const noexcept;
+    [[nodiscard]] VkResult CreateOpticalFlowSessionNV(VkDevice device, const VkOpticalFlowSessionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkOpticalFlowSessionNV* pSession) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_optical_flow)
     PFN_vkDestroyOpticalFlowSessionNV vkDestroyOpticalFlowSessionNV = VK_NULL_HANDLE;
-    void DestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSessionNV session,
-                                     const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_optical_flow)
     PFN_vkBindOpticalFlowSessionImageNV vkBindOpticalFlowSessionImageNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFlowSessionNV session,
-                                                         VkOpticalFlowSessionBindingPointNV bindingPoint,
-                                                         VkImageView view, VkImageLayout layout) const noexcept;
+    [[nodiscard]] VkResult BindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFlowSessionNV session, VkOpticalFlowSessionBindingPointNV bindingPoint, VkImageView view, VkImageLayout layout) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_optical_flow)
     PFN_vkCmdOpticalFlowExecuteNV vkCmdOpticalFlowExecuteNV = VK_NULL_HANDLE;
-    void CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
-                                 const VkOpticalFlowExecuteInfoNV *pExecuteInfo) const noexcept;
+    void CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session, const VkOpticalFlowExecuteInfoNV* pExecuteInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_device_fault)
     PFN_vkGetDeviceFaultInfoEXT vkGetDeviceFaultInfoEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT *pFaultCounts,
-                                                 VkDeviceFaultInfoEXT *pFaultInfo) const noexcept;
+    [[nodiscard]] VkResult GetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_depth_bias_control)
     PFN_vkCmdSetDepthBias2EXT vkCmdSetDepthBias2EXT = VK_NULL_HANDLE;
-    void CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT *pDepthBiasInfo) const noexcept;
+    void CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_swapchain_maintenance1)
     PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ReleaseSwapchainImagesEXT(
-        VkDevice device, const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const noexcept;
+    [[nodiscard]] VkResult ReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkGetDeviceImageSubresourceLayout vkGetDeviceImageSubresourceLayout = VK_NULL_HANDLE;
-    void GetDeviceImageSubresourceLayout(VkDevice device, const VkDeviceImageSubresourceInfo *pInfo,
-                                         VkSubresourceLayout2 *pLayout) const noexcept;
+    void GetDeviceImageSubresourceLayout(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkMapMemory2 vkMapMemory2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult MapMemory2(VkDevice device, const VkMemoryMapInfo *pMemoryMapInfo,
-                                      void **ppData) const noexcept;
+    [[nodiscard]] VkResult MapMemory2(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkUnmapMemory2 vkUnmapMemory2 = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult UnmapMemory2(VkDevice device, const VkMemoryUnmapInfo *pMemoryUnmapInfo) const noexcept;
+    [[nodiscard]] VkResult UnmapMemory2(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_object)
     PFN_vkCreateShadersEXT vkCreateShadersEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateShadersEXT(VkDevice device, uint32_t createInfoCount,
-                                            const VkShaderCreateInfoEXT *pCreateInfos,
-                                            const VkAllocationCallbacks *pAllocator,
-                                            VkShaderEXT *pShaders) const noexcept;
+    [[nodiscard]] VkResult CreateShadersEXT(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_object)
     PFN_vkDestroyShaderEXT vkDestroyShaderEXT = VK_NULL_HANDLE;
-    void DestroyShaderEXT(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyShaderEXT(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_object)
     PFN_vkGetShaderBinaryDataEXT vkGetShaderBinaryDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t *pDataSize,
-                                                  void *pData) const noexcept;
+    [[nodiscard]] VkResult GetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_shader_object)
     PFN_vkCmdBindShadersEXT vkCmdBindShadersEXT = VK_NULL_HANDLE;
-    void CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits *pStages,
-                           const VkShaderEXT *pShaders) const noexcept;
+    void CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders) const noexcept;
 #endif
-
+    
 #if defined(VK_QNX_external_memory_screen_buffer)
     PFN_vkGetScreenBufferPropertiesQNX vkGetScreenBufferPropertiesQNX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer *buffer,
-                                                        VkScreenBufferPropertiesQNX *pProperties) const noexcept;
+    [[nodiscard]] VkResult GetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer, VkScreenBufferPropertiesQNX* pProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_AMDX_shader_enqueue)
     PFN_vkGetExecutionGraphPipelineScratchSizeAMDX vkGetExecutionGraphPipelineScratchSizeAMDX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetExecutionGraphPipelineScratchSizeAMDX(
-        VkDevice device, VkPipeline executionGraph, VkExecutionGraphPipelineScratchSizeAMDX *pSizeInfo) const noexcept;
+    [[nodiscard]] VkResult GetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline executionGraph, VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_AMDX_shader_enqueue)
     PFN_vkGetExecutionGraphPipelineNodeIndexAMDX vkGetExecutionGraphPipelineNodeIndexAMDX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetExecutionGraphPipelineNodeIndexAMDX(
-        VkDevice device, VkPipeline executionGraph, const VkPipelineShaderStageNodeCreateInfoAMDX *pNodeInfo,
-        uint32_t *pNodeIndex) const noexcept;
+    [[nodiscard]] VkResult GetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGraph, const VkPipelineShaderStageNodeCreateInfoAMDX* pNodeInfo, uint32_t* pNodeIndex) const noexcept;
 #endif
-
+    
 #if defined(VK_AMDX_shader_enqueue)
     PFN_vkCreateExecutionGraphPipelinesAMDX vkCreateExecutionGraphPipelinesAMDX = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache pipelineCache,
-                                                             uint32_t createInfoCount,
-                                                             const VkExecutionGraphPipelineCreateInfoAMDX *pCreateInfos,
-                                                             const VkAllocationCallbacks *pAllocator,
-                                                             VkPipeline *pPipelines) const noexcept;
+    [[nodiscard]] VkResult CreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     PFN_vkCmdInitializeGraphScratchMemoryAMDX vkCmdInitializeGraphScratchMemoryAMDX = VK_NULL_HANDLE;
-    void CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
-                                             VkDeviceAddress scratch, VkDeviceSize scratchSize) const noexcept;
+    void CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph, VkDeviceAddress scratch, VkDeviceSize scratchSize) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     PFN_vkCmdDispatchGraphAMDX vkCmdDispatchGraphAMDX = VK_NULL_HANDLE;
-    void CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
-                              const VkDispatchGraphCountInfoAMDX *pCountInfo) const noexcept;
+    void CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     PFN_vkCmdDispatchGraphIndirectAMDX vkCmdDispatchGraphIndirectAMDX = VK_NULL_HANDLE;
-    void CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
-                                      const VkDispatchGraphCountInfoAMDX *pCountInfo) const noexcept;
+    void CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     PFN_vkCmdDispatchGraphIndirectCountAMDX vkCmdDispatchGraphIndirectCountAMDX = VK_NULL_HANDLE;
-    void CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                           VkDeviceSize scratchSize, VkDeviceAddress countInfo) const noexcept;
+    void CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, VkDeviceAddress countInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdBindDescriptorSets2 vkCmdBindDescriptorSets2 = VK_NULL_HANDLE;
-    void CmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
-                                const VkBindDescriptorSetsInfo *pBindDescriptorSetsInfo) const noexcept;
+    void CmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdPushConstants2 vkCmdPushConstants2 = VK_NULL_HANDLE;
-    void CmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo *pPushConstantsInfo) const noexcept;
+    void CmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdPushDescriptorSet2 vkCmdPushDescriptorSet2 = VK_NULL_HANDLE;
-    void CmdPushDescriptorSet2(VkCommandBuffer commandBuffer,
-                               const VkPushDescriptorSetInfo *pPushDescriptorSetInfo) const noexcept;
+    void CmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdPushDescriptorSetWithTemplate2 vkCmdPushDescriptorSetWithTemplate2 = VK_NULL_HANDLE;
-    void CmdPushDescriptorSetWithTemplate2(
-        VkCommandBuffer commandBuffer,
-        const VkPushDescriptorSetWithTemplateInfo *pPushDescriptorSetWithTemplateInfo) const noexcept;
+    void CmdPushDescriptorSetWithTemplate2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
     PFN_vkCmdSetDescriptorBufferOffsets2EXT vkCmdSetDescriptorBufferOffsets2EXT = VK_NULL_HANDLE;
-    void CmdSetDescriptorBufferOffsets2EXT(
-        VkCommandBuffer commandBuffer,
-        const VkSetDescriptorBufferOffsetsInfoEXT *pSetDescriptorBufferOffsetsInfo) const noexcept;
+    void CmdSetDescriptorBufferOffsets2EXT(VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT vkCmdBindDescriptorBufferEmbeddedSamplers2EXT = VK_NULL_HANDLE;
-    void CmdBindDescriptorBufferEmbeddedSamplers2EXT(
-        VkCommandBuffer commandBuffer,
-        const VkBindDescriptorBufferEmbeddedSamplersInfoEXT *pBindDescriptorBufferEmbeddedSamplersInfo) const noexcept;
+    void CmdBindDescriptorBufferEmbeddedSamplers2EXT(VkCommandBuffer commandBuffer, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_low_latency2)
     PFN_vkSetLatencySleepModeNV vkSetLatencySleepModeNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain,
-                                                 const VkLatencySleepModeInfoNV *pSleepModeInfo) const noexcept;
+    [[nodiscard]] VkResult SetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepModeInfoNV* pSleepModeInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_low_latency2)
     PFN_vkLatencySleepNV vkLatencySleepNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult LatencySleepNV(VkDevice device, VkSwapchainKHR swapchain,
-                                          const VkLatencySleepInfoNV *pSleepInfo) const noexcept;
+    [[nodiscard]] VkResult LatencySleepNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepInfoNV* pSleepInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_low_latency2)
     PFN_vkSetLatencyMarkerNV vkSetLatencyMarkerNV = VK_NULL_HANDLE;
-    void SetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain,
-                            const VkSetLatencyMarkerInfoNV *pLatencyMarkerInfo) const noexcept;
+    void SetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain, const VkSetLatencyMarkerInfoNV* pLatencyMarkerInfo) const noexcept;
 #endif
-
+    
 #if VK_HEADER_VERSION >= 271 && (defined(VK_NV_low_latency2))
     PFN_vkGetLatencyTimingsNV vkGetLatencyTimingsNV = VK_NULL_HANDLE;
-    void GetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain,
-                             VkGetLatencyMarkerInfoNV *pLatencyMarkerInfo) const noexcept;
+    void GetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain, VkGetLatencyMarkerInfoNV* pLatencyMarkerInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_low_latency2)
     PFN_vkQueueNotifyOutOfBandNV vkQueueNotifyOutOfBandNV = VK_NULL_HANDLE;
-    void QueueNotifyOutOfBandNV(VkQueue queue, const VkOutOfBandQueueTypeInfoNV *pQueueTypeInfo) const noexcept;
+    void QueueNotifyOutOfBandNV(VkQueue queue, const VkOutOfBandQueueTypeInfoNV* pQueueTypeInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdSetRenderingAttachmentLocations vkCmdSetRenderingAttachmentLocations = VK_NULL_HANDLE;
-    void CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                            const VkRenderingAttachmentLocationInfo *pLocationInfo) const noexcept;
+    void CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) const noexcept;
 #endif
-
+    
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkCmdSetRenderingInputAttachmentIndices vkCmdSetRenderingInputAttachmentIndices = VK_NULL_HANDLE;
-    void CmdSetRenderingInputAttachmentIndices(
-        VkCommandBuffer commandBuffer,
-        const VkRenderingInputAttachmentIndexInfo *pInputAttachmentIndexInfo) const noexcept;
+    void CmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clamp_control)) || defined(VK_EXT_depth_clamp_control)
     PFN_vkCmdSetDepthClampRangeEXT vkCmdSetDepthClampRangeEXT = VK_NULL_HANDLE;
-    void CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
-                                  const VkDepthClampRangeEXT *pDepthClampRange) const noexcept;
+    void CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_external_memory_metal)
     PFN_vkGetMemoryMetalHandleEXT vkGetMemoryMetalHandleEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryMetalHandleEXT(VkDevice device,
-                                                   const VkMemoryGetMetalHandleInfoEXT *pGetMetalHandleInfo,
-                                                   void **pHandle) const noexcept;
+    [[nodiscard]] VkResult GetMemoryMetalHandleEXT(VkDevice device, const VkMemoryGetMetalHandleInfoEXT* pGetMetalHandleInfo, void** pHandle) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_external_memory_metal)
     PFN_vkGetMemoryMetalHandlePropertiesEXT vkGetMemoryMetalHandlePropertiesEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetMemoryMetalHandlePropertiesEXT(
-        VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void *pHandle,
-        VkMemoryMetalHandlePropertiesEXT *pMemoryMetalHandleProperties) const noexcept;
+    [[nodiscard]] VkResult GetMemoryMetalHandlePropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHandle, VkMemoryMetalHandlePropertiesEXT* pMemoryMetalHandleProperties) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cooperative_vector)
     PFN_vkConvertCooperativeVectorMatrixNV vkConvertCooperativeVectorMatrixNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult ConvertCooperativeVectorMatrixNV(
-        VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV *pInfo) const noexcept;
+    [[nodiscard]] VkResult ConvertCooperativeVectorMatrixNV(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_cooperative_vector)
     PFN_vkCmdConvertCooperativeVectorMatrixNV vkCmdConvertCooperativeVectorMatrixNV = VK_NULL_HANDLE;
-    void CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
-                                             const VkConvertCooperativeVectorMatrixInfoNV *pInfos) const noexcept;
+    void CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_shading)
     PFN_vkCmdDispatchTileQCOM vkCmdDispatchTileQCOM = VK_NULL_HANDLE;
     void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_shading)
     PFN_vkCmdBeginPerTileExecutionQCOM vkCmdBeginPerTileExecutionQCOM = VK_NULL_HANDLE;
-    void CmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
-                                      const VkPerTileBeginInfoQCOM *pPerTileBeginInfo) const noexcept;
+    void CmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_QCOM_tile_shading)
     PFN_vkCmdEndPerTileExecutionQCOM vkCmdEndPerTileExecutionQCOM = VK_NULL_HANDLE;
-    void CmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
-                                    const VkPerTileEndInfoQCOM *pPerTileEndInfo) const noexcept;
+    void CmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileEndInfoQCOM* pPerTileEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_compute_queue)
     PFN_vkCreateExternalComputeQueueNV vkCreateExternalComputeQueueNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateExternalComputeQueueNV(VkDevice device,
-                                                        const VkExternalComputeQueueCreateInfoNV *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkExternalComputeQueueNV *pExternalQueue) const noexcept;
+    [[nodiscard]] VkResult CreateExternalComputeQueueNV(VkDevice device, const VkExternalComputeQueueCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkExternalComputeQueueNV* pExternalQueue) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_compute_queue)
     PFN_vkDestroyExternalComputeQueueNV vkDestroyExternalComputeQueueNV = VK_NULL_HANDLE;
-    void DestroyExternalComputeQueueNV(VkDevice device, VkExternalComputeQueueNV externalQueue,
-                                       const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyExternalComputeQueueNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_external_compute_queue)
     PFN_vkGetExternalComputeQueueDataNV vkGetExternalComputeQueueDataNV = VK_NULL_HANDLE;
-    void GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue,
-                                       VkExternalComputeQueueDataParamsNV *params, void *pData) const noexcept;
+    void GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue, VkExternalComputeQueueDataParamsNV* params, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_query_reset)
     PFN_vkResetQueryPoolEXT vkResetQueryPoolEXT = VK_NULL_HANDLE;
-    void ResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
-                           uint32_t queryCount) const noexcept;
+    void ResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance5)
     PFN_vkGetRenderingAreaGranularityKHR vkGetRenderingAreaGranularityKHR = VK_NULL_HANDLE;
-    void GetRenderingAreaGranularityKHR(VkDevice device, const VkRenderingAreaInfoKHR *pRenderingAreaInfo,
-                                        VkExtent2D *pGranularity) const noexcept;
+    void GetRenderingAreaGranularityKHR(VkDevice device, const VkRenderingAreaInfoKHR* pRenderingAreaInfo, VkExtent2D* pGranularity) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_push_descriptor)
     PFN_vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR = VK_NULL_HANDLE;
-    void CmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                 VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
-                                 const VkWriteDescriptorSet *pDescriptorWrites) const noexcept;
+    void CmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance1)
     PFN_vkTrimCommandPoolKHR vkTrimCommandPoolKHR = VK_NULL_HANDLE;
     void TrimCommandPoolKHR(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_device_group)
     PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR vkGetDeviceGroupPeerMemoryFeaturesKHR = VK_NULL_HANDLE;
-    void GetDeviceGroupPeerMemoryFeaturesKHR(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex,
-                                             uint32_t remoteDeviceIndex,
-                                             VkPeerMemoryFeatureFlagsKHR *pPeerMemoryFeatures) const noexcept;
+    void GetDeviceGroupPeerMemoryFeaturesKHR(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlagsKHR* pPeerMemoryFeatures) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_bind_memory2)
     PFN_vkBindBufferMemory2KHR vkBindBufferMemory2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount,
-                                                const VkBindBufferMemoryInfoKHR *pBindInfos) const noexcept;
+    [[nodiscard]] VkResult BindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfoKHR* pBindInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_bind_memory2)
     PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult BindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount,
-                                               const VkBindImageMemoryInfoKHR *pBindInfos) const noexcept;
+    [[nodiscard]] VkResult BindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfoKHR* pBindInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_device_group)
     PFN_vkCmdSetDeviceMaskKHR vkCmdSetDeviceMaskKHR = VK_NULL_HANDLE;
     void CmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_device_group)
     PFN_vkCmdDispatchBaseKHR vkCmdDispatchBaseKHR = VK_NULL_HANDLE;
-    void CmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY,
-                            uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY,
-                            uint32_t groupCountZ) const noexcept;
+    void CmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_descriptor_update_template)
     PFN_vkCreateDescriptorUpdateTemplateKHR vkCreateDescriptorUpdateTemplateKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateDescriptorUpdateTemplateKHR(
-        VkDevice device, const VkDescriptorUpdateTemplateCreateInfoKHR *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator,
-        VkDescriptorUpdateTemplateKHR *pDescriptorUpdateTemplate) const noexcept;
+    [[nodiscard]] VkResult CreateDescriptorUpdateTemplateKHR(VkDevice device, const VkDescriptorUpdateTemplateCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplateKHR* pDescriptorUpdateTemplate) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_descriptor_update_template)
     PFN_vkDestroyDescriptorUpdateTemplateKHR vkDestroyDescriptorUpdateTemplateKHR = VK_NULL_HANDLE;
-    void DestroyDescriptorUpdateTemplateKHR(VkDevice device, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate,
-                                            const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyDescriptorUpdateTemplateKHR(VkDevice device, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_descriptor_update_template)
     PFN_vkUpdateDescriptorSetWithTemplateKHR vkUpdateDescriptorSetWithTemplateKHR = VK_NULL_HANDLE;
-    void UpdateDescriptorSetWithTemplateKHR(VkDevice device, VkDescriptorSet descriptorSet,
-                                            VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate,
-                                            const void *pData) const noexcept;
+    void UpdateDescriptorSetWithTemplateKHR(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData) const noexcept;
 #endif
-
-#if (defined(VK_KHR_push_descriptor) &&                                                                                \
-     (defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_descriptor_update_template))) ||                                 \
-    (defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor))
+    
+#if (defined(VK_KHR_push_descriptor) && (defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_descriptor_update_template))) || (defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor))
     PFN_vkCmdPushDescriptorSetWithTemplateKHR vkCmdPushDescriptorSetWithTemplateKHR = VK_NULL_HANDLE;
-    void CmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuffer,
-                                             VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate,
-                                             VkPipelineLayout layout, uint32_t set, const void *pData) const noexcept;
+    void CmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_memory_requirements2)
     PFN_vkGetBufferMemoryRequirements2KHR vkGetBufferMemoryRequirements2KHR = VK_NULL_HANDLE;
-    void GetBufferMemoryRequirements2KHR(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR *pInfo,
-                                         VkMemoryRequirements2KHR *pMemoryRequirements) const noexcept;
+    void GetBufferMemoryRequirements2KHR(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_memory_requirements2)
     PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR = VK_NULL_HANDLE;
-    void GetImageMemoryRequirements2KHR(VkDevice device, const VkImageMemoryRequirementsInfo2KHR *pInfo,
-                                        VkMemoryRequirements2KHR *pMemoryRequirements) const noexcept;
+    void GetImageMemoryRequirements2KHR(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_get_memory_requirements2)
     PFN_vkGetImageSparseMemoryRequirements2KHR vkGetImageSparseMemoryRequirements2KHR = VK_NULL_HANDLE;
-    void GetImageSparseMemoryRequirements2KHR(
-        VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR *pInfo, uint32_t *pSparseMemoryRequirementCount,
-        VkSparseImageMemoryRequirements2KHR *pSparseMemoryRequirements) const noexcept;
+    void GetImageSparseMemoryRequirements2KHR(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance4)
     PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR = VK_NULL_HANDLE;
-    void GetDeviceBufferMemoryRequirementsKHR(VkDevice device, const VkDeviceBufferMemoryRequirementsKHR *pInfo,
-                                              VkMemoryRequirements2KHR *pMemoryRequirements) const noexcept;
+    void GetDeviceBufferMemoryRequirementsKHR(VkDevice device, const VkDeviceBufferMemoryRequirementsKHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance4)
     PFN_vkGetDeviceImageMemoryRequirementsKHR vkGetDeviceImageMemoryRequirementsKHR = VK_NULL_HANDLE;
-    void GetDeviceImageMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirementsKHR *pInfo,
-                                             VkMemoryRequirements2KHR *pMemoryRequirements) const noexcept;
+    void GetDeviceImageMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirementsKHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance4)
     PFN_vkGetDeviceImageSparseMemoryRequirementsKHR vkGetDeviceImageSparseMemoryRequirementsKHR = VK_NULL_HANDLE;
-    void GetDeviceImageSparseMemoryRequirementsKHR(
-        VkDevice device, const VkDeviceImageMemoryRequirementsKHR *pInfo, uint32_t *pSparseMemoryRequirementCount,
-        VkSparseImageMemoryRequirements2KHR *pSparseMemoryRequirements) const noexcept;
+    void GetDeviceImageSparseMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirementsKHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_sampler_ycbcr_conversion)
     PFN_vkCreateSamplerYcbcrConversionKHR vkCreateSamplerYcbcrConversionKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateSamplerYcbcrConversionKHR(
-        VkDevice device, const VkSamplerYcbcrConversionCreateInfoKHR *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkSamplerYcbcrConversionKHR *pYcbcrConversion) const noexcept;
+    [[nodiscard]] VkResult CreateSamplerYcbcrConversionKHR(VkDevice device, const VkSamplerYcbcrConversionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversionKHR* pYcbcrConversion) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_sampler_ycbcr_conversion)
     PFN_vkDestroySamplerYcbcrConversionKHR vkDestroySamplerYcbcrConversionKHR = VK_NULL_HANDLE;
-    void DestroySamplerYcbcrConversionKHR(VkDevice device, VkSamplerYcbcrConversionKHR ycbcrConversion,
-                                          const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroySamplerYcbcrConversionKHR(VkDevice device, VkSamplerYcbcrConversionKHR ycbcrConversion, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance3)
     PFN_vkGetDescriptorSetLayoutSupportKHR vkGetDescriptorSetLayoutSupportKHR = VK_NULL_HANDLE;
-    void GetDescriptorSetLayoutSupportKHR(VkDevice device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
-                                          VkDescriptorSetLayoutSupportKHR *pSupport) const noexcept;
+    void GetDescriptorSetLayoutSupportKHR(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupportKHR* pSupport) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_calibrated_timestamps)
     PFN_vkGetCalibratedTimestampsEXT vkGetCalibratedTimestampsEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetCalibratedTimestampsEXT(VkDevice device, uint32_t timestampCount,
-                                                      const VkCalibratedTimestampInfoEXT *pTimestampInfos,
-                                                      uint64_t *pTimestamps, uint64_t *pMaxDeviation) const noexcept;
+    [[nodiscard]] VkResult GetCalibratedTimestampsEXT(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoEXT* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_create_renderpass2)
     PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreateRenderPass2KHR(VkDevice device, const VkRenderPassCreateInfo2KHR *pCreateInfo,
-                                                const VkAllocationCallbacks *pAllocator,
-                                                VkRenderPass *pRenderPass) const noexcept;
+    [[nodiscard]] VkResult CreateRenderPass2KHR(VkDevice device, const VkRenderPassCreateInfo2KHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_create_renderpass2)
     PFN_vkCmdBeginRenderPass2KHR vkCmdBeginRenderPass2KHR = VK_NULL_HANDLE;
-    void CmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo *pRenderPassBegin,
-                                const VkSubpassBeginInfoKHR *pSubpassBeginInfo) const noexcept;
+    void CmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfoKHR* pSubpassBeginInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_create_renderpass2)
     PFN_vkCmdNextSubpass2KHR vkCmdNextSubpass2KHR = VK_NULL_HANDLE;
-    void CmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkSubpassBeginInfoKHR *pSubpassBeginInfo,
-                            const VkSubpassEndInfoKHR *pSubpassEndInfo) const noexcept;
+    void CmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkSubpassBeginInfoKHR* pSubpassBeginInfo, const VkSubpassEndInfoKHR* pSubpassEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_create_renderpass2)
     PFN_vkCmdEndRenderPass2KHR vkCmdEndRenderPass2KHR = VK_NULL_HANDLE;
-    void CmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const VkSubpassEndInfoKHR *pSubpassEndInfo) const noexcept;
+    void CmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const VkSubpassEndInfoKHR* pSubpassEndInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_timeline_semaphore)
     PFN_vkGetSemaphoreCounterValueKHR vkGetSemaphoreCounterValueKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore,
-                                                       uint64_t *pValue) const noexcept;
+    [[nodiscard]] VkResult GetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_timeline_semaphore)
     PFN_vkWaitSemaphoresKHR vkWaitSemaphoresKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult WaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR *pWaitInfo,
-                                             uint64_t timeout) const noexcept;
+    [[nodiscard]] VkResult WaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_timeline_semaphore)
     PFN_vkSignalSemaphoreKHR vkSignalSemaphoreKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SignalSemaphoreKHR(VkDevice device,
-                                              const VkSemaphoreSignalInfoKHR *pSignalInfo) const noexcept;
+    [[nodiscard]] VkResult SignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_draw_indirect_count)
     PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR = VK_NULL_HANDLE;
-    void CmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                 VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                 uint32_t stride) const noexcept;
+    void CmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_draw_indirect_count)
     PFN_vkCmdDrawIndirectCountAMD vkCmdDrawIndirectCountAMD = VK_NULL_HANDLE;
-    void CmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                 VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                 uint32_t stride) const noexcept;
+    void CmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_draw_indirect_count)
     PFN_vkCmdDrawIndexedIndirectCountKHR vkCmdDrawIndexedIndirectCountKHR = VK_NULL_HANDLE;
-    void CmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                        VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                        uint32_t stride) const noexcept;
+    void CmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_AMD_draw_indirect_count)
     PFN_vkCmdDrawIndexedIndirectCountAMD vkCmdDrawIndexedIndirectCountAMD = VK_NULL_HANDLE;
-    void CmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                        VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                        uint32_t stride) const noexcept;
+    void CmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) const noexcept;
 #endif
-
+    
 #if defined(VK_NV_ray_tracing)
     PFN_vkGetRayTracingShaderGroupHandlesNV vkGetRayTracingShaderGroupHandlesNV = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult GetRayTracingShaderGroupHandlesNV(VkDevice device, VkPipeline pipeline, uint32_t firstGroup,
-                                                             uint32_t groupCount, size_t dataSize,
-                                                             void *pData) const noexcept;
+    [[nodiscard]] VkResult GetRayTracingShaderGroupHandlesNV(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_buffer_device_address)
     PFN_vkGetBufferOpaqueCaptureAddressKHR vkGetBufferOpaqueCaptureAddressKHR = VK_NULL_HANDLE;
-    [[nodiscard]] uint64_t GetBufferOpaqueCaptureAddressKHR(VkDevice device,
-                                                            const VkBufferDeviceAddressInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] uint64_t GetBufferOpaqueCaptureAddressKHR(VkDevice device, const VkBufferDeviceAddressInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_buffer_device_address)
     PFN_vkGetBufferDeviceAddressKHR vkGetBufferDeviceAddressKHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddressKHR(VkDevice device,
-                                                            const VkBufferDeviceAddressInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddressKHR(VkDevice device, const VkBufferDeviceAddressInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_buffer_device_address)
     PFN_vkGetBufferDeviceAddressEXT vkGetBufferDeviceAddressEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddressEXT(VkDevice device,
-                                                            const VkBufferDeviceAddressInfoEXT *pInfo) const noexcept;
+    [[nodiscard]] VkDeviceAddress GetBufferDeviceAddressEXT(VkDevice device, const VkBufferDeviceAddressInfoEXT* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_buffer_device_address)
     PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR vkGetDeviceMemoryOpaqueCaptureAddressKHR = VK_NULL_HANDLE;
-    [[nodiscard]] uint64_t GetDeviceMemoryOpaqueCaptureAddressKHR(
-        VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfoKHR *pInfo) const noexcept;
+    [[nodiscard]] uint64_t GetDeviceMemoryOpaqueCaptureAddressKHR(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfoKHR* pInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_line_rasterization)
     PFN_vkCmdSetLineStippleKHR vkCmdSetLineStippleKHR = VK_NULL_HANDLE;
-    void CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                              uint16_t lineStipplePattern) const noexcept;
+    void CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_line_rasterization)
     PFN_vkCmdSetLineStippleEXT vkCmdSetLineStippleEXT = VK_NULL_HANDLE;
-    void CmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                              uint16_t lineStipplePattern) const noexcept;
+    void CmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetCullModeEXT vkCmdSetCullModeEXT = VK_NULL_HANDLE;
     void CmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetFrontFaceEXT vkCmdSetFrontFaceEXT = VK_NULL_HANDLE;
     void CmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace frontFace) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetPrimitiveTopologyEXT vkCmdSetPrimitiveTopologyEXT = VK_NULL_HANDLE;
-    void CmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer,
-                                    VkPrimitiveTopology primitiveTopology) const noexcept;
+    void CmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetViewportWithCountEXT vkCmdSetViewportWithCountEXT = VK_NULL_HANDLE;
-    void CmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint32_t viewportCount,
-                                    const VkViewport *pViewports) const noexcept;
+    void CmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetScissorWithCountEXT vkCmdSetScissorWithCountEXT = VK_NULL_HANDLE;
-    void CmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint32_t scissorCount,
-                                   const VkRect2D *pScissors) const noexcept;
+    void CmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance5)
     PFN_vkCmdBindIndexBuffer2KHR vkCmdBindIndexBuffer2KHR = VK_NULL_HANDLE;
-    void CmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
-                                VkIndexType indexType) const noexcept;
+    void CmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdBindVertexBuffers2EXT vkCmdBindVertexBuffers2EXT = VK_NULL_HANDLE;
-    void CmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
-                                  const VkBuffer *pBuffers, const VkDeviceSize *pOffsets, const VkDeviceSize *pSizes,
-                                  const VkDeviceSize *pStrides) const noexcept;
+    void CmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthTestEnableEXT vkCmdSetDepthTestEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthWriteEnableEXT vkCmdSetDepthWriteEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthCompareOpEXT vkCmdSetDepthCompareOpEXT = VK_NULL_HANDLE;
     void CmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthBoundsTestEnableEXT vkCmdSetDepthBoundsTestEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetStencilTestEnableEXT vkCmdSetStencilTestEnableEXT = VK_NULL_HANDLE;
     void CmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetStencilOpEXT vkCmdSetStencilOpEXT = VK_NULL_HANDLE;
-    void CmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp,
-                            VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) const noexcept;
+    void CmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = VK_NULL_HANDLE;
-    void CmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer,
-                                          VkBool32 rasterizerDiscardEnable) const noexcept;
+    void CmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetDepthBiasEnableEXT vkCmdSetDepthBiasEnableEXT = VK_NULL_HANDLE;
     void CmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     PFN_vkCmdSetPrimitiveRestartEnableEXT vkCmdSetPrimitiveRestartEnableEXT = VK_NULL_HANDLE;
     void CmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_private_data)
     PFN_vkCreatePrivateDataSlotEXT vkCreatePrivateDataSlotEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CreatePrivateDataSlotEXT(VkDevice device, const VkPrivateDataSlotCreateInfoEXT *pCreateInfo,
-                                                    const VkAllocationCallbacks *pAllocator,
-                                                    VkPrivateDataSlotEXT *pPrivateDataSlot) const noexcept;
+    [[nodiscard]] VkResult CreatePrivateDataSlotEXT(VkDevice device, const VkPrivateDataSlotCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlotEXT* pPrivateDataSlot) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_private_data)
     PFN_vkDestroyPrivateDataSlotEXT vkDestroyPrivateDataSlotEXT = VK_NULL_HANDLE;
-    void DestroyPrivateDataSlotEXT(VkDevice device, VkPrivateDataSlotEXT privateDataSlot,
-                                   const VkAllocationCallbacks *pAllocator) const noexcept;
+    void DestroyPrivateDataSlotEXT(VkDevice device, VkPrivateDataSlotEXT privateDataSlot, const VkAllocationCallbacks* pAllocator) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_private_data)
     PFN_vkSetPrivateDataEXT vkSetPrivateDataEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult SetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle,
-                                             VkPrivateDataSlotEXT privateDataSlot, uint64_t data) const noexcept;
+    [[nodiscard]] VkResult SetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlotEXT privateDataSlot, uint64_t data) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_private_data)
     PFN_vkGetPrivateDataEXT vkGetPrivateDataEXT = VK_NULL_HANDLE;
-    void GetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle,
-                           VkPrivateDataSlotEXT privateDataSlot, uint64_t *pData) const noexcept;
+    void GetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlotEXT privateDataSlot, uint64_t* pData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdCopyBuffer2KHR vkCmdCopyBuffer2KHR = VK_NULL_HANDLE;
-    void CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2KHR *pCopyBufferInfo) const noexcept;
+    void CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2KHR* pCopyBufferInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdCopyImage2KHR vkCmdCopyImage2KHR = VK_NULL_HANDLE;
-    void CmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCopyImageInfo2KHR *pCopyImageInfo) const noexcept;
+    void CmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCopyImageInfo2KHR* pCopyImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdBlitImage2KHR vkCmdBlitImage2KHR = VK_NULL_HANDLE;
-    void CmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBlitImageInfo2KHR *pBlitImageInfo) const noexcept;
+    void CmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBlitImageInfo2KHR* pBlitImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdCopyBufferToImage2KHR vkCmdCopyBufferToImage2KHR = VK_NULL_HANDLE;
-    void CmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer,
-                                  const VkCopyBufferToImageInfo2KHR *pCopyBufferToImageInfo) const noexcept;
+    void CmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2KHR* pCopyBufferToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdCopyImageToBuffer2KHR vkCmdCopyImageToBuffer2KHR = VK_NULL_HANDLE;
-    void CmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer,
-                                  const VkCopyImageToBufferInfo2KHR *pCopyImageToBufferInfo) const noexcept;
+    void CmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2KHR* pCopyImageToBufferInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_copy_commands2)
     PFN_vkCmdResolveImage2KHR vkCmdResolveImage2KHR = VK_NULL_HANDLE;
-    void CmdResolveImage2KHR(VkCommandBuffer commandBuffer,
-                             const VkResolveImageInfo2KHR *pResolveImageInfo) const noexcept;
+    void CmdResolveImage2KHR(VkCommandBuffer commandBuffer, const VkResolveImageInfo2KHR* pResolveImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkCmdSetEvent2KHR vkCmdSetEvent2KHR = VK_NULL_HANDLE;
-    void CmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
-                         const VkDependencyInfoKHR *pDependencyInfo) const noexcept;
+    void CmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfoKHR* pDependencyInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkCmdResetEvent2KHR vkCmdResetEvent2KHR = VK_NULL_HANDLE;
-    void CmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
-                           VkPipelineStageFlags2KHR stageMask) const noexcept;
+    void CmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2KHR stageMask) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkCmdWaitEvents2KHR vkCmdWaitEvents2KHR = VK_NULL_HANDLE;
-    void CmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
-                           const VkDependencyInfoKHR *pDependencyInfos) const noexcept;
+    void CmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfoKHR* pDependencyInfos) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkCmdPipelineBarrier2KHR vkCmdPipelineBarrier2KHR = VK_NULL_HANDLE;
-    void CmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer,
-                                const VkDependencyInfoKHR *pDependencyInfo) const noexcept;
+    void CmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer, const VkDependencyInfoKHR* pDependencyInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkQueueSubmit2KHR vkQueueSubmit2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2KHR *pSubmits,
-                                           VkFence fence) const noexcept;
+    [[nodiscard]] VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2KHR* pSubmits, VkFence fence) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_synchronization2)
     PFN_vkCmdWriteTimestamp2KHR vkCmdWriteTimestamp2KHR = VK_NULL_HANDLE;
-    void CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2KHR stage, VkQueryPool queryPool,
-                               uint32_t query) const noexcept;
+    void CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2KHR stage, VkQueryPool queryPool, uint32_t query) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_image_copy)
     PFN_vkCopyMemoryToImageEXT vkCopyMemoryToImageEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyMemoryToImageEXT(
-        VkDevice device, const VkCopyMemoryToImageInfoEXT *pCopyMemoryToImageInfo) const noexcept;
+    [[nodiscard]] VkResult CopyMemoryToImageEXT(VkDevice device, const VkCopyMemoryToImageInfoEXT* pCopyMemoryToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_image_copy)
     PFN_vkCopyImageToMemoryEXT vkCopyImageToMemoryEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyImageToMemoryEXT(
-        VkDevice device, const VkCopyImageToMemoryInfoEXT *pCopyImageToMemoryInfo) const noexcept;
+    [[nodiscard]] VkResult CopyImageToMemoryEXT(VkDevice device, const VkCopyImageToMemoryInfoEXT* pCopyImageToMemoryInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_image_copy)
     PFN_vkCopyImageToImageEXT vkCopyImageToImageEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult CopyImageToImageEXT(VkDevice device,
-                                               const VkCopyImageToImageInfoEXT *pCopyImageToImageInfo) const noexcept;
+    [[nodiscard]] VkResult CopyImageToImageEXT(VkDevice device, const VkCopyImageToImageInfoEXT* pCopyImageToImageInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_image_copy)
     PFN_vkTransitionImageLayoutEXT vkTransitionImageLayoutEXT = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult TransitionImageLayoutEXT(
-        VkDevice device, uint32_t transitionCount,
-        const VkHostImageLayoutTransitionInfoEXT *pTransitions) const noexcept;
+    [[nodiscard]] VkResult TransitionImageLayoutEXT(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfoEXT* pTransitions) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_dynamic_rendering)
     PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR = VK_NULL_HANDLE;
-    void CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfoKHR *pRenderingInfo) const noexcept;
+    void CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfoKHR* pRenderingInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_dynamic_rendering)
     PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR = VK_NULL_HANDLE;
     void CmdEndRenderingKHR(VkCommandBuffer commandBuffer) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance5)
     PFN_vkGetImageSubresourceLayout2KHR vkGetImageSubresourceLayout2KHR = VK_NULL_HANDLE;
-    void GetImageSubresourceLayout2KHR(VkDevice device, VkImage image, const VkImageSubresource2KHR *pSubresource,
-                                       VkSubresourceLayout2KHR *pLayout) const noexcept;
+    void GetImageSubresourceLayout2KHR(VkDevice device, VkImage image, const VkImageSubresource2KHR* pSubresource, VkSubresourceLayout2KHR* pLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_EXT_host_image_copy) || defined(VK_EXT_image_compression_control)
     PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT = VK_NULL_HANDLE;
-    void GetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2EXT *pSubresource,
-                                       VkSubresourceLayout2EXT *pLayout) const noexcept;
+    void GetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2EXT* pSubresource, VkSubresourceLayout2EXT* pLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance5)
     PFN_vkGetDeviceImageSubresourceLayoutKHR vkGetDeviceImageSubresourceLayoutKHR = VK_NULL_HANDLE;
-    void GetDeviceImageSubresourceLayoutKHR(VkDevice device, const VkDeviceImageSubresourceInfoKHR *pInfo,
-                                            VkSubresourceLayout2KHR *pLayout) const noexcept;
+    void GetDeviceImageSubresourceLayoutKHR(VkDevice device, const VkDeviceImageSubresourceInfoKHR* pInfo, VkSubresourceLayout2KHR* pLayout) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_map_memory2)
     PFN_vkMapMemory2KHR vkMapMemory2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult MapMemory2KHR(VkDevice device, const VkMemoryMapInfoKHR *pMemoryMapInfo,
-                                         void **ppData) const noexcept;
+    [[nodiscard]] VkResult MapMemory2KHR(VkDevice device, const VkMemoryMapInfoKHR* pMemoryMapInfo, void** ppData) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_map_memory2)
     PFN_vkUnmapMemory2KHR vkUnmapMemory2KHR = VK_NULL_HANDLE;
-    [[nodiscard]] VkResult UnmapMemory2KHR(VkDevice device,
-                                           const VkMemoryUnmapInfoKHR *pMemoryUnmapInfo) const noexcept;
+    [[nodiscard]] VkResult UnmapMemory2KHR(VkDevice device, const VkMemoryUnmapInfoKHR* pMemoryUnmapInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance6)
     PFN_vkCmdBindDescriptorSets2KHR vkCmdBindDescriptorSets2KHR = VK_NULL_HANDLE;
-    void CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                   const VkBindDescriptorSetsInfoKHR *pBindDescriptorSetsInfo) const noexcept;
+    void CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_maintenance6)
     PFN_vkCmdPushConstants2KHR vkCmdPushConstants2KHR = VK_NULL_HANDLE;
-    void CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
-                              const VkPushConstantsInfoKHR *pPushConstantsInfo) const noexcept;
+    void CmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
     PFN_vkCmdPushDescriptorSet2KHR vkCmdPushDescriptorSet2KHR = VK_NULL_HANDLE;
-    void CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                  const VkPushDescriptorSetInfoKHR *pPushDescriptorSetInfo) const noexcept;
+    void CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) const noexcept;
 #endif
-
+    
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
     PFN_vkCmdPushDescriptorSetWithTemplate2KHR vkCmdPushDescriptorSetWithTemplate2KHR = VK_NULL_HANDLE;
-    void CmdPushDescriptorSetWithTemplate2KHR(
-        VkCommandBuffer commandBuffer,
-        const VkPushDescriptorSetWithTemplateInfoKHR *pPushDescriptorSetWithTemplateInfo) const noexcept;
+    void CmdPushDescriptorSetWithTemplate2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_dynamic_rendering_local_read)
     PFN_vkCmdSetRenderingAttachmentLocationsKHR vkCmdSetRenderingAttachmentLocationsKHR = VK_NULL_HANDLE;
-    void CmdSetRenderingAttachmentLocationsKHR(
-        VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR *pLocationInfo) const noexcept;
+    void CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) const noexcept;
 #endif
-
+    
 #if defined(VK_KHR_dynamic_rendering_local_read)
     PFN_vkCmdSetRenderingInputAttachmentIndicesKHR vkCmdSetRenderingInputAttachmentIndicesKHR = VK_NULL_HANDLE;
-    void CmdSetRenderingInputAttachmentIndicesKHR(
-        VkCommandBuffer commandBuffer,
-        const VkRenderingInputAttachmentIndexInfoKHR *pInputAttachmentIndexInfo) const noexcept;
+    void CmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) const noexcept;
 #endif
+    
 };
-} // namespace VKit::Vulkan
+}
