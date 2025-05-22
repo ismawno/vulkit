@@ -42,6 +42,9 @@ class VKIT_API PhysicalDevice
 #elif defined(VK_KHR_dynamic_rendering)
         VkPhysicalDeviceDynamicRenderingFeaturesKHR DynamicRendering{};
 #endif
+#ifdef VKIT_API_VERSION_1_4
+        VkPhysicalDeviceVulkan14Features Vulkan14{};
+#endif
     };
 
     struct Properties
