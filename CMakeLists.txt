@@ -19,15 +19,9 @@ function(define_option varname default)
 endfunction()
 
 define_option(CMAKE_BUILD_TYPE "Debug")
-define_option(VULKIT_BUILD_TESTS OFF)
 
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-message(STATUS "VULKIT: Build tests: ${VULKIT_BUILD_TESTS}")
 
 # Compiler flags, linker flags etcetera, those should all be handled when making available the toolkit library through the global CMAKE flag variables
 add_subdirectory(vulkit)
 
-if (VULKIT_BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
