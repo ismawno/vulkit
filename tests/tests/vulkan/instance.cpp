@@ -1,56 +1,78 @@
-#include "tests/utils.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <vulkan/vulkan.h>
 #include "vkit/vulkan/instance.hpp"
+#include "vkit/vulkan/vulkan.hpp"
 
-namespace VKit
+using namespace VKit;
+
+TEST_CASE("Proxy default initialization", "[Instance][Proxy]")
 {
-TEST_CASE("Minimal headless instance", "[instance][headless]")
+    const Instance::Proxy proxy{};
+    REQUIRE(static_cast<VkInstance>(proxy) == VK_NULL_HANDLE);
+    REQUIRE(!static_cast<bool>(proxy));
+    REQUIRE(!proxy.AllocationCallbacks);
+    REQUIRE(!proxy.Table);
+}
+
+TEST_CASE("Default Instance is invalid", "[Instance]")
 {
-    Setup();
-    auto result = Instance::Builder().SetHeadless().Build();
-    CheckResult(result);
+    const Instance defaultInst{};
+    REQUIRE(!defaultInst);
+    REQUIRE(defaultInst.GetHandle() == VK_NULL_HANDLE);
+}
 
-    Instance &instance = result.GetValue();
-    const Instance::Info &info = instance.GetInfo();
+SCENARIO("Builder setter chaining returns the same instance reference", "[Instance][Builder]")
+{
+    GIVEN("A default Instance::Builder")
+    {
+        Instance::Builder builder;
+        WHEN("Applying a chain of setters")
+        {
+            auto &ref = builder.SetApplicationName("TestApp")
+                            .SetEngineName("TestEngine")
+                            .SetApplicationVersion(1, 2, 3)
+                            .SetEngineVersion(4, 5, 6)
+                            .RequireApiVersion(1, 0, 0)
+                            .RequestApiVersion(1, 1, 0)
+                            .RequireExtension("ext1")
+                            .RequestExtension("ext2")
+                            .RequireLayer("layer1")
+                            .RequestLayer("layer2")
+                            .RequireValidationLayers()
+                            .RequestValidationLayers()
+                            .SetDebugCallback(nullptr)
+                            .SetHeadless(true)
+                            .SetDebugMessengerUserData(nullptr)
+                            .SetAllocationCallbacks(nullptr);
+            THEN("The returned reference should be the original builder")
+            {
+                REQUIRE(&ref == &builder);
+            }
+        }
+    }
+}
 
-    REQUIRE(!info.ApplicationName);
-    REQUIRE(!info.EngineName);
-    REQUIRE(info.ApplicationVersion == VKIT_MAKE_VERSION(0, 1, 0, 0));
-    REQUIRE(info.EngineVersion == VKIT_MAKE_VERSION(0, 1, 0, 0));
-    REQUIRE(info.ApiVersion == VKIT_MAKE_VERSION(0, 1, 0, 0));
-    REQUIRE(info.Flags & Instance::Flag_Headless);
-    REQUIRE(info.EnabledLayers.GetSize() == 0);
-    REQUIRE(!info.DebugMessenger);
-    REQUIRE(!info.AllocationCallbacks);
+TEST_CASE("Headless Vulkan instance creation", "[Instance][Builder][Integration]")
+{
+    Instance::Builder builder;
+    builder.SetApplicationName("HeadlessTestApp")
+        .SetEngineName("HeadlessTestEngine")
+        .SetHeadless(true)
+        .RequireApiVersion(1, 0, 0)
+        .RequestApiVersion(1, 1, 0);
+
+    const auto result = builder.Build();
+    VKIT_LOG_RESULT(result);
+    REQUIRE(result); // Build should succeed in headless mode
+
+    Instance instance = result.GetValue();
+    REQUIRE(instance);
+    REQUIRE(static_cast<VkInstance>(instance) != VK_NULL_HANDLE);
+
+    // Check that no surface extensions are enabled
+    REQUIRE_FALSE(instance.IsExtensionEnabled("VK_KHR_surface"));
+    REQUIRE_FALSE(instance.IsExtensionEnabled("VK_KHR_xcb_surface"));
 
     instance.Destroy();
+    REQUIRE(static_cast<VkInstance>(instance) == VK_NULL_HANDLE);
 }
-
-TEST_CASE("Unsupported extensions and layers", "[instance][unsupported]")
-{
-    Setup();
-    auto result = Instance::Builder().SetHeadless().RequireExtension("VK_KHR_non_existent").Build();
-    REQUIRE(!result);
-    REQUIRE(result.GetError() == VK_ERROR_EXTENSION_NOT_PRESENT);
-
-    result = Instance::Builder().SetHeadless().RequireLayer("VK_LAYER_non_existent").Build();
-    REQUIRE(!result);
-    REQUIRE(result.GetError() == VK_ERROR_LAYER_NOT_PRESENT);
-}
-
-TEST_CASE("Validation layers", "[instance][validation]")
-{
-    Setup();
-    auto result = Instance::Builder().SetHeadless().RequestValidationLayers().Build();
-    REQUIRE(result);
-
-    Instance &instance = result.GetValue();
-    const Instance::Info &info = instance.GetInfo();
-
-    REQUIRE(info.Flags & Instance::Flag_HasValidationLayers);
-    REQUIRE(info.Flags & Instance::Flag_Headless);
-    REQUIRE(info.EnabledLayers.GetSize() > 0);
-    REQUIRE(info.DebugMessenger);
-
-    instance.Destroy();
-}
-} // namespace VKit

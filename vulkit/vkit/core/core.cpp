@@ -19,6 +19,9 @@ static HMODULE s_Library = nullptr;
 
 Result<> Core::Initialize() noexcept
 {
+    if (s_Library)
+        return Result<>::Ok();
+
 #if defined(TKIT_OS_APPLE)
     s_Library = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
     if (!s_Library)

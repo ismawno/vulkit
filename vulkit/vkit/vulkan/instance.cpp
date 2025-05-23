@@ -56,6 +56,15 @@ static bool contains(const TKit::Span<const char *const> p_Extensions, const cha
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
+Instance::Proxy::operator bool() const noexcept
+{
+    return Instance != VK_NULL_HANDLE;
+}
+Instance::Proxy::operator VkInstance() const noexcept
+{
+    return Instance;
+}
+
 FormattedResult<Instance> Instance::Builder::Build() const noexcept
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
@@ -352,6 +361,10 @@ Instance::Proxy Instance::CreateProxy() const noexcept
 Instance::operator VkInstance() const noexcept
 {
     return m_Instance;
+}
+Instance::operator Proxy() const noexcept
+{
+    return CreateProxy();
 }
 Instance::operator bool() const noexcept
 {
