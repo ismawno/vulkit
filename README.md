@@ -17,7 +17,7 @@ Vulkit focuses on Vulkan API abstractions, which can be summed up as follows:
 
 In Vulkit, Vulkan initialization consists of 4 steps:
 
-1. Instance extensions and layers support querying
+1. Vulkan function loader, instance extensions and layers support querying
 2. Instance creation
 3. Physical device selection
 4. Logical device creation
@@ -32,15 +32,15 @@ if (!vkres)
 }
 ```
 
-Almost all Vulkit API calls will return a result object. In the case of otherwise `void` functions, an informative result object will be returned containing no return value, of type `VulkanResult`, which may or may not contain an error. It supports a trivial `bool` implicit conversion. When the function is expected to return a value, a `Result` object will be provided, allowing you to access the underlying value with the `GetValue()` method, assuming no error occurred.
+Almost all Vulkit API calls will return a result object. It supports a trivial `bool` implicit conversion. When the function is expected to return a value, a `Result` object will be provided, allowing you to access the underlying value with the `GetValue()` method, assuming no error occurred.
 
-Vulkit provides an easy and convenient way of checking these results using the logging capabilities of the [Toolkit](https://github.com/ismawno/toolkit) through the following macros: `VKIT_ASSERT_VULKAN_RESULT(result)` for `VulkanResult` and `VKIT_ASSERT_RESULT(result)` for `Result`.
+Vulkit provides an easy and convenient way of checking these results using the logging capabilities of the [Toolkit](https://github.com/ismawno/toolkit) through the following macros: `VKIT_[ASSERT|LOG|WARN]_VULKAN_RESULT(result)`
 
 Moving on:
 
 ```cpp
 const auto vkres = VKit::Core::Initialize();
-VKIT_ASSERT_VULKAN_RESULT(result);
+VKIT_ASSERT_RESULT(result);
 ```
 
 Creating an instance is straightforward as well with the `VKit::Instance::Builder` object:
@@ -190,7 +190,3 @@ Specifically, the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/b
 If you prefer using `CMake` directly, that's perfectly fine as well. Create a `build` folder, navigate into it, and run `cmake ..`. All available Vulkit options will be displayed.
 
 Compile the project with your preferred editor or IDE, and run the tests to ensure everything works as expected. If the tests pass, you're good to go!
-
-## Additional Notes
-
-Tests are pretty mediocre, there are almost none.
