@@ -1,7 +1,6 @@
 #pragma once
 
 #include "vkit/core/api.hpp"
-#include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
 #include "tkit/container/static_array.hpp"
 #include <vulkan/vulkan.h>

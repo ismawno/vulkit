@@ -2,8 +2,6 @@
 #include "vkit/pipeline/graphics_pipeline.hpp"
 #include "tkit/utils/logging.hpp"
 
-#include <filesystem>
-
 namespace VKit
 {
 GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,

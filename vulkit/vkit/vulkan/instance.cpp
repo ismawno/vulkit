@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
+#include "vkit/core/core.hpp"
 #include "vkit/vulkan/instance.hpp"
-#include "vkit/core/alias.hpp"
 #include "tkit/utils/logging.hpp"
 
 namespace VKit

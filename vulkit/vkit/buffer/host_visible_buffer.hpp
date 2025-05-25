@@ -31,10 +31,12 @@ class HostVisibleBuffer
      *
      * Allocates and maps a Vulkan buffer in host-visible memory based on the provided specifications.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> Create(const Specs &p_Specs, const VkBufferUsageFlags p_Usage) noexcept
+    static Result<HostVisibleBuffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs,
+                                            const VkBufferUsageFlags p_Usage) noexcept
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -47,7 +49,7 @@ class HostVisibleBuffer
         specs.AllocationInfo.flags = p_Specs.AllocationFlags | VMA_ALLOCATION_CREATE_MAPPED_BIT;
         specs.PerInstanceMinimumAlignment = p_Specs.PerInstanceMinimumAlignment;
 
-        const auto result = Buffer::Create(specs);
+        const auto result = Buffer::Create(p_Device, specs);
         if (!result)
             return Result<HostVisibleBuffer>::Error(result.GetError());
 
@@ -59,12 +61,14 @@ class HostVisibleBuffer
      *
      * Configures the buffer for vertex data and allocates memory in host-visible space.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the vertex buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateVertexBuffer(const Specs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device,
+                                                        const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
     /**
@@ -72,12 +76,14 @@ class HostVisibleBuffer
      *
      * Configures the buffer for index data and allocates memory in host-visible space.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the index buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateIndexBuffer(const Specs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device,
+                                                       const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
 
     /**
@@ -85,12 +91,14 @@ class HostVisibleBuffer
      *
      * Configures the buffer for uniform data and allocates memory with the required alignment.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the uniform buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateUniformBuffer(const Specs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device,
+                                                         const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
 
     /**
@@ -98,12 +106,14 @@ class HostVisibleBuffer
      *
      * Configures the buffer for storage data and allocates memory with the required alignment.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the storage buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateStorageBuffer(const Specs &p_Specs) noexcept
+    static Result<HostVisibleBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device,
+                                                         const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
     HostVisibleBuffer() noexcept = default;

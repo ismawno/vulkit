@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkit/pipeline/shader.hpp"
+#include "vkit/vulkan/logical_device.hpp"
 
 namespace VKit
 {

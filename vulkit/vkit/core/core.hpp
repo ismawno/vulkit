@@ -1,9 +1,7 @@
 #pragma once
 
 #include "vkit/vulkan/vulkan.hpp"
-#include "vkit/vulkan/loader.hpp"
 #include "tkit/container/static_array.hpp"
-#include <functional>
 
 namespace VKit
 {

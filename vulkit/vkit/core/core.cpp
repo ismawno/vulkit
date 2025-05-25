@@ -1,5 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/core/core.hpp"
+#include "vkit/vulkan/loader.hpp"
+#include "vkit/core/alias.hpp"
 
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 #    include <dlfcn.h>

@@ -38,10 +38,12 @@ class DeviceLocalBuffer
      * Uses a staging buffer to upload data to the GPU. The data is stored
      * in device-local memory for optimal GPU access.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `DeviceLocalBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> Create(const Specs &p_Specs, const VkBufferUsageFlags p_Usage) noexcept
+    static Result<DeviceLocalBuffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs,
+                                            const VkBufferUsageFlags p_Usage) noexcept
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -54,9 +56,10 @@ class DeviceLocalBuffer
         specs.AllocationInfo.flags = p_Specs.AllocationFlags;
         specs.PerInstanceMinimumAlignment = p_Specs.PerInstanceMinimumAlignment;
 
-        auto result1 = Buffer::Create(specs);
+        auto result1 = Buffer::Create(p_Device, specs);
         if (!result1)
-            return Result<DeviceLocalBuffer>::Error(result1.GetError().Result, "Failed to create main device buffer");
+            return Result<DeviceLocalBuffer>::Error(result1.GetError().ErrorCode,
+                                                    "Failed to create main device buffer");
 
         Buffer &buffer = result1.GetValue();
 
@@ -66,9 +69,9 @@ class DeviceLocalBuffer
         stagingSpecs.AllocationInfo.flags =
             VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
-        auto result2 = Buffer::Create(stagingSpecs);
+        auto result2 = Buffer::Create(p_Device, stagingSpecs);
         if (!result2)
-            return Result<DeviceLocalBuffer>::Error(result2.GetError().Result, "Failed to create staging buffer");
+            return Result<DeviceLocalBuffer>::Error(result2.GetError().ErrorCode, "Failed to create staging buffer");
 
         Buffer &stagingBuffer = result2.GetValue();
         stagingBuffer.Write(p_Specs.Data.GetData());
@@ -87,12 +90,14 @@ class DeviceLocalBuffer
      * Configures the buffer for vertex data and uploads the provided data
      * to device-local memory.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the vertex buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateVertexBuffer(const Specs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device,
+                                                        const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
     /**
@@ -101,12 +106,14 @@ class DeviceLocalBuffer
      * Configures the buffer for index data and uploads the provided data
      * to device-local memory.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the index buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateIndexBuffer(const Specs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device,
+                                                       const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
 
     /**
@@ -115,12 +122,14 @@ class DeviceLocalBuffer
      * Configures the buffer for uniform data and uploads the provided data
      * to device-local memory.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the uniform buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateUniformBuffer(const Specs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device,
+                                                         const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
 
     /**
@@ -129,12 +138,14 @@ class DeviceLocalBuffer
      * Configures the buffer for storage data and uploads the provided data
      * to device-local memory.
      *
+     * @param p_Device The device to be used.
      * @param p_Specs The specifications for the storage buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<DeviceLocalBuffer> CreateStorageBuffer(const Specs &p_Specs) noexcept
+    static Result<DeviceLocalBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device,
+                                                         const Specs &p_Specs) noexcept
     {
-        return Create(p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+        return Create(p_Device, p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
     DeviceLocalBuffer() noexcept = default;

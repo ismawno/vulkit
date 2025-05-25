@@ -1,10 +1,8 @@
 #pragma once
 
 #include "vkit/core/api.hpp"
+#include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
-#include "vkit/core/core.hpp"
-#include "tkit/memory/ptr.hpp"
-#include "tkit/utils/result.hpp"
 #include "tkit/container/span.hpp"
 #include <vulkan/vulkan.h>
 

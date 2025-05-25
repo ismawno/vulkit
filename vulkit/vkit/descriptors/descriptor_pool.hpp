@@ -1,12 +1,10 @@
 #pragma once
 
 #include "vkit/core/api.hpp"
-#include "vkit/core/alias.hpp"
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/descriptors/descriptor_set.hpp"
 
 #include <vulkan/vulkan.h>
-#include <span>
 
 namespace VKit
 {

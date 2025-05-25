@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/vulkan/vulkan.hpp"
+#include "vkit/core/alias.hpp"
 
 namespace VKit
 {
