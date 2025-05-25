@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_PHYSICAL_DEVICE
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PHYSICAL_DEVICE"
+#endif
+
 #include "tkit/container/static_array.hpp"
 #include "vkit/vulkan/instance.hpp"
 

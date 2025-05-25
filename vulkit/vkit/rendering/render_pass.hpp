@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_RENDER_PASS
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_RENDER_PASS"
+#endif
+
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/vulkan/allocator.hpp"
 #include "tkit/container/static_array.hpp"

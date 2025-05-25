@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_PIPELINE_JOB
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PIPELINE_JOB"
+#endif
+
 #include "vkit/pipeline/pipeline_layout.hpp"
 #include "vkit/pipeline/graphics_pipeline.hpp"
 #include "vkit/pipeline/compute_pipeline.hpp"

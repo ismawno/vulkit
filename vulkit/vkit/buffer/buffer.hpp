@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_BUFFER
+#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_BUFFER"
+#endif
+
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/vulkan/allocator.hpp"
 #include "tkit/container/span.hpp"

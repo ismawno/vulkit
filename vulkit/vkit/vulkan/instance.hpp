@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_INSTANCE
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_INSTANCE"
+#endif
+
 #include "vkit/core/api.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"

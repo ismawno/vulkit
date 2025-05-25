@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef VKIT_ENABLE_LOGICAL_DEVICE
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_LOGICAL_DEVICE"
+#endif
+
 #include "vkit/vulkan/physical_device.hpp"
 
 #ifndef VKIT_MAX_QUEUES_PER_FAMILY
