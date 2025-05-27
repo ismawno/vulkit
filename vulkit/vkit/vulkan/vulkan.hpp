@@ -142,7 +142,7 @@ VKIT_API FormattedError ToFormatted(const Error &p_Result) noexcept;
 template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result) noexcept
 {
     return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue())
-                    : FormattedResult<T>::Error(p_Result.GetError().Result, p_Result.GetError().Message);
+                    : FormattedResult<T>::Error(p_Result.GetError().ErrorCode, p_Result.GetError().Message);
 }
 
 /**

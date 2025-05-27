@@ -79,7 +79,7 @@ class DeviceLocalBuffer
         const auto result3 = buffer.DeviceCopy(stagingBuffer, *p_Specs.CommandPool, p_Specs.Queue);
         stagingBuffer.Destroy();
         if (!result3)
-            return Result<DeviceLocalBuffer>::Error(result3.Result, "Failed to copy data to main buffer");
+            return Result<DeviceLocalBuffer>::Error(result3.GetError(), "Failed to copy data to main buffer");
 
         return Result<DeviceLocalBuffer>::Ok(buffer);
     }
