@@ -43,23 +43,23 @@ if(VULKIT_ENABLE_PIPELINE_JOB)
 endif()
 
 if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
-  list(APPEND SOURCES vkit/pipeline/compute_pipeline.cpp)
+  list(APPEND SOURCES vkit/pipeline/graphics_pipeline.cpp)
 endif()
 
 if(VULKIT_ENABLE_COMPUTE_PIPELINE)
-  list(APPEND SOURCES)
+  list(APPEND SOURCES vkit/pipeline/compute_pipeline.cpp)
 endif()
 
 if(VULKIT_ENABLE_COMMAND_POOL)
-  list(APPEND SOURCES)
+  list(APPEND SOURCES vkit/rendering/command_pool.cpp)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)
-  list(APPEND SOURCES)
+  list(APPEND SOURCES vkit/rendering/render_pass.cpp)
 endif()
 
 if(VULKIT_ENABLE_SWAP_CHAIN)
-  list(APPEND SOURCES)
+  list(APPEND SOURCES vkit/rendering/swap_chain.cpp)
 endif()
 
 add_library(vulkit STATIC ${SOURCES})
