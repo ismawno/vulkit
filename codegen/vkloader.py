@@ -611,7 +611,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(vkGetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
+                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
                 guards,
             )
     cpp.spacing()
@@ -623,7 +623,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(vkGetInstanceProcAddr(p_Instance, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetInstanceProcAddr(p_Instance, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")
@@ -637,7 +637,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(vkGetDeviceProcAddr(p_Device, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetDeviceProcAddr(p_Device, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")
