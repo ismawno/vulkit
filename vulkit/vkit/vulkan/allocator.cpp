@@ -1,3 +1,5 @@
+#define VMA_IMPLEMENTATION
+
 #include "vkit/core/pch.hpp"
 #include "vkit/vulkan/allocator.hpp"
 
