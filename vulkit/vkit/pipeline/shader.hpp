@@ -1,7 +1,8 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_SHADER
-#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_SHADER"
+#ifndef VKIT_ENABLE_SHADERS
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_SHADERS"
 #endif
 
 #include "vkit/vulkan/logical_device.hpp"
