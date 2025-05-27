@@ -9,7 +9,7 @@ if(VULKIT_ENABLE_INSTANCE)
 endif()
 
 if(VULKIT_ENABLE_PHYSICAL_DEVICE)
-  list(APPEND SOURCES vkit/vulkan/instance.cpp)
+  list(APPEND SOURCES vkit/vulkan/physical_device.cpp)
 endif()
 
 if(VULKIT_ENABLE_LOGICAL_DEVICE)
