@@ -1,4 +1,5 @@
 #include "vkit/core/pch.hpp"
+#include "vkit/descriptors/descriptor_set.hpp"
 #include "vkit/descriptors/descriptor_pool.hpp"
 
 namespace VKit
@@ -72,7 +73,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     if (result != VK_SUCCESS)
         return Result<DescriptorSet>::Error(result, "Failed to allocate descriptor set");
 
-    return Result<DescriptorSet>::Ok(m_Device, set);
+    return DescriptorSet::Create(m_Device, set);
 }
 
 Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
