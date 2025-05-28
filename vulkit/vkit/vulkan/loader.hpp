@@ -13,9 +13,6 @@ void Load(HMODULE p_Library);
 extern PFN_vkCreateInstance vkCreateInstance;
 VKIT_API [[nodiscard]] VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) noexcept;
 
-extern PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
-VKIT_API [[nodiscard]] PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* pName) noexcept;
-
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 VKIT_API [[nodiscard]] PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* pName) noexcept;
 
@@ -39,6 +36,9 @@ struct VKIT_API InstanceTable
     
     PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices = VK_NULL_HANDLE;
     [[nodiscard]] VkResult EnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) const noexcept;
+    
+    PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr = VK_NULL_HANDLE;
+    [[nodiscard]] PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* pName) const noexcept;
     
     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) const noexcept;
@@ -563,7 +563,7 @@ struct VKIT_API InstanceTable
 };
 struct VKIT_API DeviceTable
 {
-    static DeviceTable Create(VkDevice p_Device);
+    static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);
     PFN_vkDestroyDevice vkDestroyDevice = VK_NULL_HANDLE;
     void DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) const noexcept;
     

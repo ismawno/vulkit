@@ -15,7 +15,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 
     VmaVulkanFunctions functions{};
     functions.vkGetInstanceProcAddr = Vulkan::vkGetInstanceProcAddr;
-    functions.vkGetDeviceProcAddr = Vulkan::vkGetDeviceProcAddr;
+    functions.vkGetDeviceProcAddr = instance.GetInfo().Table.vkGetDeviceProcAddr;
     functions.vkGetPhysicalDeviceProperties = itable.vkGetPhysicalDeviceProperties;
     functions.vkGetPhysicalDeviceMemoryProperties = itable.vkGetPhysicalDeviceMemoryProperties;
     functions.vkAllocateMemory = dtable.vkAllocateMemory;

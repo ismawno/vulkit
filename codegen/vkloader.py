@@ -200,7 +200,11 @@ class Function:
                 "vkCreateInstance",
             ]
             and self.dispatchable
-            and (self.params[0].tp == "VkInstance" or self.params[0].tp == "VkPhysicalDevice")
+            and (
+                self.params[0].tp == "VkInstance"
+                or self.params[0].tp == "VkPhysicalDevice"
+                or fn.name == "vkGetDeviceProcAddr"
+            )
         )
 
     def is_device_function(self) -> bool:
@@ -529,7 +533,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
             hpp.spacing()
 
     with hpp.scope("struct VKIT_API DeviceTable", closer="};"):
-        hpp("static DeviceTable Create(VkDevice p_Device);")
+        hpp("static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);")
         for fn in functions.values():
             if not fn.is_device_function():
                 continue
@@ -611,7 +615,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
+                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
                 guards,
             )
     cpp.spacing()
@@ -623,13 +627,13 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetInstanceProcAddr(p_Instance, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(p_Instance, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")
 
     cpp.spacing()
-    with cpp.scope("DeviceTable DeviceTable::Create(const VkDevice p_Device)"):
+    with cpp.scope("DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_InstanceFuncs)"):
         cpp("DeviceTable table{};")
         for fn in functions.values():
             if not fn.is_device_function():
@@ -637,7 +641,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(Vulkan::vkGetDeviceProcAddr(p_Device, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")

@@ -94,7 +94,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
-    const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device);
+    const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, p_Instance.GetInfo().Table);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, Result<LogicalDevice>);
 
     if (!table.vkGetDeviceQueue)

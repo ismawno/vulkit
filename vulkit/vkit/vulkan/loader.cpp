@@ -29,16 +29,6 @@ VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocat
     return Vulkan::vkCreateInstance(pCreateInfo, pAllocator, pInstance);
 #endif
 }
-PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr = VK_NULL_HANDLE;
-PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* pName) noexcept
-{
-#ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDeviceProcAddr fn = validateFunction("vkGetDeviceProcAddr", Vulkan::vkGetDeviceProcAddr);
-    return fn(device, pName);
-#else
-    return Vulkan::vkGetDeviceProcAddr(device, pName);
-#endif
-}
 PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = VK_NULL_HANDLE;
 PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* pName) noexcept
 {
@@ -94,2003 +84,2003 @@ void Load(HMODULE p_Library)
     Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));
 #endif
     
-    Vulkan::vkCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance"));
-    Vulkan::vkGetDeviceProcAddr = reinterpret_cast<PFN_vkGetDeviceProcAddr>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkGetDeviceProcAddr"));
+    Vulkan::vkCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance"));
 #if defined(VKIT_API_VERSION_1_1)
-    Vulkan::vkEnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"));
+    Vulkan::vkEnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"));
 #endif
-    Vulkan::vkEnumerateInstanceLayerProperties = reinterpret_cast<PFN_vkEnumerateInstanceLayerProperties>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceLayerProperties"));
-    Vulkan::vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(Vulkan::vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties"));
+    Vulkan::vkEnumerateInstanceLayerProperties = reinterpret_cast<PFN_vkEnumerateInstanceLayerProperties>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceLayerProperties"));
+    Vulkan::vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties"));
 }
 
 InstanceTable InstanceTable::Create(const VkInstance p_Instance)
 {
     InstanceTable table{};
-    table.vkDestroyInstance = reinterpret_cast<PFN_vkDestroyInstance>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkDestroyInstance"));
-    table.vkEnumeratePhysicalDevices = reinterpret_cast<PFN_vkEnumeratePhysicalDevices>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDevices"));
-    table.vkGetPhysicalDeviceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties"));
-    table.vkGetPhysicalDeviceQueueFamilyProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties"));
-    table.vkGetPhysicalDeviceMemoryProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties"));
-    table.vkGetPhysicalDeviceFeatures = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures"));
-    table.vkGetPhysicalDeviceFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties"));
-    table.vkGetPhysicalDeviceImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties"));
-    table.vkCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDevice"));
-    table.vkEnumerateDeviceLayerProperties = reinterpret_cast<PFN_vkEnumerateDeviceLayerProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumerateDeviceLayerProperties"));
-    table.vkEnumerateDeviceExtensionProperties = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumerateDeviceExtensionProperties"));
-    table.vkGetPhysicalDeviceSparseImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties"));
+    table.vkDestroyInstance = reinterpret_cast<PFN_vkDestroyInstance>(GetInstanceProcAddr(p_Instance, "vkDestroyInstance"));
+    table.vkEnumeratePhysicalDevices = reinterpret_cast<PFN_vkEnumeratePhysicalDevices>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDevices"));
+    table.vkGetDeviceProcAddr = reinterpret_cast<PFN_vkGetDeviceProcAddr>(GetInstanceProcAddr(p_Instance, "vkGetDeviceProcAddr"));
+    table.vkGetPhysicalDeviceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties"));
+    table.vkGetPhysicalDeviceQueueFamilyProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties"));
+    table.vkGetPhysicalDeviceMemoryProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties"));
+    table.vkGetPhysicalDeviceFeatures = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures"));
+    table.vkGetPhysicalDeviceFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties"));
+    table.vkGetPhysicalDeviceImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties"));
+    table.vkCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(GetInstanceProcAddr(p_Instance, "vkCreateDevice"));
+    table.vkEnumerateDeviceLayerProperties = reinterpret_cast<PFN_vkEnumerateDeviceLayerProperties>(GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceLayerProperties"));
+    table.vkEnumerateDeviceExtensionProperties = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceExtensionProperties"));
+    table.vkGetPhysicalDeviceSparseImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties"));
 #if defined(VK_KHR_android_surface)
-    table.vkCreateAndroidSurfaceKHR = reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateAndroidSurfaceKHR"));
+    table.vkCreateAndroidSurfaceKHR = reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateAndroidSurfaceKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkGetPhysicalDeviceDisplayPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"));
+    table.vkGetPhysicalDeviceDisplayPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkGetPhysicalDeviceDisplayPlanePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"));
+    table.vkGetPhysicalDeviceDisplayPlanePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkGetDisplayPlaneSupportedDisplaysKHR = reinterpret_cast<PFN_vkGetDisplayPlaneSupportedDisplaysKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneSupportedDisplaysKHR"));
+    table.vkGetDisplayPlaneSupportedDisplaysKHR = reinterpret_cast<PFN_vkGetDisplayPlaneSupportedDisplaysKHR>(GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneSupportedDisplaysKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkGetDisplayModePropertiesKHR = reinterpret_cast<PFN_vkGetDisplayModePropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDisplayModePropertiesKHR"));
+    table.vkGetDisplayModePropertiesKHR = reinterpret_cast<PFN_vkGetDisplayModePropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetDisplayModePropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkCreateDisplayModeKHR = reinterpret_cast<PFN_vkCreateDisplayModeKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDisplayModeKHR"));
+    table.vkCreateDisplayModeKHR = reinterpret_cast<PFN_vkCreateDisplayModeKHR>(GetInstanceProcAddr(p_Instance, "vkCreateDisplayModeKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkGetDisplayPlaneCapabilitiesKHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilitiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilitiesKHR"));
+    table.vkGetDisplayPlaneCapabilitiesKHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilitiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_display)
-    table.vkCreateDisplayPlaneSurfaceKHR = reinterpret_cast<PFN_vkCreateDisplayPlaneSurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDisplayPlaneSurfaceKHR"));
+    table.vkCreateDisplayPlaneSurfaceKHR = reinterpret_cast<PFN_vkCreateDisplayPlaneSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateDisplayPlaneSurfaceKHR"));
 #endif
 #if defined(VK_KHR_surface)
-    table.vkDestroySurfaceKHR = reinterpret_cast<PFN_vkDestroySurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkDestroySurfaceKHR"));
+    table.vkDestroySurfaceKHR = reinterpret_cast<PFN_vkDestroySurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkDestroySurfaceKHR"));
 #endif
 #if defined(VK_KHR_surface)
-    table.vkGetPhysicalDeviceSurfaceSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceSupportKHR"));
+    table.vkGetPhysicalDeviceSurfaceSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceSupportKHR"));
 #endif
 #if defined(VK_KHR_surface)
-    table.vkGetPhysicalDeviceSurfaceCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"));
+    table.vkGetPhysicalDeviceSurfaceCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_surface)
-    table.vkGetPhysicalDeviceSurfaceFormatsKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormatsKHR"));
+    table.vkGetPhysicalDeviceSurfaceFormatsKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormatsKHR"));
 #endif
 #if defined(VK_KHR_surface)
-    table.vkGetPhysicalDeviceSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModesKHR"));
+    table.vkGetPhysicalDeviceSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModesKHR"));
 #endif
 #if defined(VK_NN_vi_surface)
-    table.vkCreateViSurfaceNN = reinterpret_cast<PFN_vkCreateViSurfaceNN>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateViSurfaceNN"));
+    table.vkCreateViSurfaceNN = reinterpret_cast<PFN_vkCreateViSurfaceNN>(GetInstanceProcAddr(p_Instance, "vkCreateViSurfaceNN"));
 #endif
 #if defined(VK_KHR_wayland_surface)
-    table.vkCreateWaylandSurfaceKHR = reinterpret_cast<PFN_vkCreateWaylandSurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateWaylandSurfaceKHR"));
+    table.vkCreateWaylandSurfaceKHR = reinterpret_cast<PFN_vkCreateWaylandSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateWaylandSurfaceKHR"));
 #endif
 #if defined(VK_KHR_wayland_surface)
-    table.vkGetPhysicalDeviceWaylandPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWaylandPresentationSupportKHR"));
+    table.vkGetPhysicalDeviceWaylandPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWaylandPresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_win32_surface)
-    table.vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateWin32SurfaceKHR"));
+    table.vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateWin32SurfaceKHR"));
 #endif
 #if defined(VK_KHR_win32_surface)
-    table.vkGetPhysicalDeviceWin32PresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWin32PresentationSupportKHR"));
+    table.vkGetPhysicalDeviceWin32PresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWin32PresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_xlib_surface)
-    table.vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateXlibSurfaceKHR"));
+    table.vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateXlibSurfaceKHR"));
 #endif
 #if defined(VK_KHR_xlib_surface)
-    table.vkGetPhysicalDeviceXlibPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXlibPresentationSupportKHR"));
+    table.vkGetPhysicalDeviceXlibPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXlibPresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_xcb_surface)
-    table.vkCreateXcbSurfaceKHR = reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateXcbSurfaceKHR"));
+    table.vkCreateXcbSurfaceKHR = reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateXcbSurfaceKHR"));
 #endif
 #if defined(VK_KHR_xcb_surface)
-    table.vkGetPhysicalDeviceXcbPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXcbPresentationSupportKHR"));
+    table.vkGetPhysicalDeviceXcbPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXcbPresentationSupportKHR"));
 #endif
 #if defined(VK_EXT_directfb_surface)
-    table.vkCreateDirectFBSurfaceEXT = reinterpret_cast<PFN_vkCreateDirectFBSurfaceEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDirectFBSurfaceEXT"));
+    table.vkCreateDirectFBSurfaceEXT = reinterpret_cast<PFN_vkCreateDirectFBSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateDirectFBSurfaceEXT"));
 #endif
 #if defined(VK_EXT_directfb_surface)
-    table.vkGetPhysicalDeviceDirectFBPresentationSupportEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT"));
+    table.vkGetPhysicalDeviceDirectFBPresentationSupportEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT"));
 #endif
 #if defined(VK_FUCHSIA_imagepipe_surface)
-    table.vkCreateImagePipeSurfaceFUCHSIA = reinterpret_cast<PFN_vkCreateImagePipeSurfaceFUCHSIA>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateImagePipeSurfaceFUCHSIA"));
+    table.vkCreateImagePipeSurfaceFUCHSIA = reinterpret_cast<PFN_vkCreateImagePipeSurfaceFUCHSIA>(GetInstanceProcAddr(p_Instance, "vkCreateImagePipeSurfaceFUCHSIA"));
 #endif
 #if defined(VK_GGP_stream_descriptor_surface)
-    table.vkCreateStreamDescriptorSurfaceGGP = reinterpret_cast<PFN_vkCreateStreamDescriptorSurfaceGGP>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateStreamDescriptorSurfaceGGP"));
+    table.vkCreateStreamDescriptorSurfaceGGP = reinterpret_cast<PFN_vkCreateStreamDescriptorSurfaceGGP>(GetInstanceProcAddr(p_Instance, "vkCreateStreamDescriptorSurfaceGGP"));
 #endif
 #if defined(VK_QNX_screen_surface)
-    table.vkCreateScreenSurfaceQNX = reinterpret_cast<PFN_vkCreateScreenSurfaceQNX>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateScreenSurfaceQNX"));
+    table.vkCreateScreenSurfaceQNX = reinterpret_cast<PFN_vkCreateScreenSurfaceQNX>(GetInstanceProcAddr(p_Instance, "vkCreateScreenSurfaceQNX"));
 #endif
 #if defined(VK_QNX_screen_surface)
-    table.vkGetPhysicalDeviceScreenPresentationSupportQNX = reinterpret_cast<PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceScreenPresentationSupportQNX"));
+    table.vkGetPhysicalDeviceScreenPresentationSupportQNX = reinterpret_cast<PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceScreenPresentationSupportQNX"));
 #endif
 #if defined(VK_EXT_debug_report)
-    table.vkCreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDebugReportCallbackEXT"));
+    table.vkCreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(GetInstanceProcAddr(p_Instance, "vkCreateDebugReportCallbackEXT"));
 #endif
 #if defined(VK_EXT_debug_report)
-    table.vkDestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkDestroyDebugReportCallbackEXT"));
+    table.vkDestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(GetInstanceProcAddr(p_Instance, "vkDestroyDebugReportCallbackEXT"));
 #endif
 #if defined(VK_EXT_debug_report)
-    table.vkDebugReportMessageEXT = reinterpret_cast<PFN_vkDebugReportMessageEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkDebugReportMessageEXT"));
+    table.vkDebugReportMessageEXT = reinterpret_cast<PFN_vkDebugReportMessageEXT>(GetInstanceProcAddr(p_Instance, "vkDebugReportMessageEXT"));
 #endif
 #if defined(VK_NV_external_memory_capabilities)
-    table.vkGetPhysicalDeviceExternalImageFormatPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV"));
+    table.vkGetPhysicalDeviceExternalImageFormatPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceFeatures2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2"));
+    table.vkGetPhysicalDeviceFeatures2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2"));
+    table.vkGetPhysicalDeviceProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2"));
+    table.vkGetPhysicalDeviceFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceImageFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2"));
+    table.vkGetPhysicalDeviceImageFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceQueueFamilyProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2"));
+    table.vkGetPhysicalDeviceQueueFamilyProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceMemoryProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2"));
+    table.vkGetPhysicalDeviceMemoryProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceSparseImageFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2"));
+    table.vkGetPhysicalDeviceSparseImageFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceExternalBufferProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferProperties"));
+    table.vkGetPhysicalDeviceExternalBufferProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferProperties"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
-    table.vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV"));
+    table.vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
-    table.vkGetPhysicalDeviceSciBufAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciBufAttributesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciBufAttributesNV"));
+    table.vkGetPhysicalDeviceSciBufAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciBufAttributesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciBufAttributesNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceExternalSemaphoreProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphoreProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphoreProperties"));
+    table.vkGetPhysicalDeviceExternalSemaphoreProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphoreProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphoreProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetPhysicalDeviceExternalFenceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFenceProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFenceProperties"));
+    table.vkGetPhysicalDeviceExternalFenceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFenceProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFenceProperties"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkGetPhysicalDeviceSciSyncAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciSyncAttributesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciSyncAttributesNV"));
+    table.vkGetPhysicalDeviceSciSyncAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciSyncAttributesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciSyncAttributesNV"));
 #endif
 #if defined(VK_EXT_direct_mode_display)
-    table.vkReleaseDisplayEXT = reinterpret_cast<PFN_vkReleaseDisplayEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkReleaseDisplayEXT"));
+    table.vkReleaseDisplayEXT = reinterpret_cast<PFN_vkReleaseDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkReleaseDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_xlib_display)
-    table.vkAcquireXlibDisplayEXT = reinterpret_cast<PFN_vkAcquireXlibDisplayEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkAcquireXlibDisplayEXT"));
+    table.vkAcquireXlibDisplayEXT = reinterpret_cast<PFN_vkAcquireXlibDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkAcquireXlibDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_xlib_display)
-    table.vkGetRandROutputDisplayEXT = reinterpret_cast<PFN_vkGetRandROutputDisplayEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetRandROutputDisplayEXT"));
+    table.vkGetRandROutputDisplayEXT = reinterpret_cast<PFN_vkGetRandROutputDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkGetRandROutputDisplayEXT"));
 #endif
 #if defined(VK_NV_acquire_winrt_display)
-    table.vkAcquireWinrtDisplayNV = reinterpret_cast<PFN_vkAcquireWinrtDisplayNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkAcquireWinrtDisplayNV"));
+    table.vkAcquireWinrtDisplayNV = reinterpret_cast<PFN_vkAcquireWinrtDisplayNV>(GetInstanceProcAddr(p_Instance, "vkAcquireWinrtDisplayNV"));
 #endif
 #if defined(VK_NV_acquire_winrt_display)
-    table.vkGetWinrtDisplayNV = reinterpret_cast<PFN_vkGetWinrtDisplayNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetWinrtDisplayNV"));
+    table.vkGetWinrtDisplayNV = reinterpret_cast<PFN_vkGetWinrtDisplayNV>(GetInstanceProcAddr(p_Instance, "vkGetWinrtDisplayNV"));
 #endif
 #if defined(VK_EXT_display_surface_counter)
-    table.vkGetPhysicalDeviceSurfaceCapabilities2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT"));
+    table.vkGetPhysicalDeviceSurfaceCapabilities2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkEnumeratePhysicalDeviceGroups = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroups>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroups"));
+    table.vkEnumeratePhysicalDeviceGroups = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroups>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroups"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
-    table.vkGetPhysicalDevicePresentRectanglesKHR = reinterpret_cast<PFN_vkGetPhysicalDevicePresentRectanglesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDevicePresentRectanglesKHR"));
+    table.vkGetPhysicalDevicePresentRectanglesKHR = reinterpret_cast<PFN_vkGetPhysicalDevicePresentRectanglesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDevicePresentRectanglesKHR"));
 #endif
 #if defined(VK_MVK_ios_surface)
-    table.vkCreateIOSSurfaceMVK = reinterpret_cast<PFN_vkCreateIOSSurfaceMVK>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateIOSSurfaceMVK"));
+    table.vkCreateIOSSurfaceMVK = reinterpret_cast<PFN_vkCreateIOSSurfaceMVK>(GetInstanceProcAddr(p_Instance, "vkCreateIOSSurfaceMVK"));
 #endif
 #if defined(VK_MVK_macos_surface)
-    table.vkCreateMacOSSurfaceMVK = reinterpret_cast<PFN_vkCreateMacOSSurfaceMVK>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateMacOSSurfaceMVK"));
+    table.vkCreateMacOSSurfaceMVK = reinterpret_cast<PFN_vkCreateMacOSSurfaceMVK>(GetInstanceProcAddr(p_Instance, "vkCreateMacOSSurfaceMVK"));
 #endif
 #if defined(VK_EXT_metal_surface)
-    table.vkCreateMetalSurfaceEXT = reinterpret_cast<PFN_vkCreateMetalSurfaceEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateMetalSurfaceEXT"));
+    table.vkCreateMetalSurfaceEXT = reinterpret_cast<PFN_vkCreateMetalSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateMetalSurfaceEXT"));
 #endif
 #if defined(VK_EXT_sample_locations)
-    table.vkGetPhysicalDeviceMultisamplePropertiesEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT"));
+    table.vkGetPhysicalDeviceMultisamplePropertiesEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT"));
 #endif
 #if defined(VK_KHR_get_surface_capabilities2)
-    table.vkGetPhysicalDeviceSurfaceCapabilities2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
+    table.vkGetPhysicalDeviceSurfaceCapabilities2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
 #endif
 #if defined(VK_KHR_get_surface_capabilities2)
-    table.vkGetPhysicalDeviceSurfaceFormats2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormats2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormats2KHR"));
+    table.vkGetPhysicalDeviceSurfaceFormats2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormats2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormats2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
-    table.vkGetPhysicalDeviceDisplayProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayProperties2KHR"));
+    table.vkGetPhysicalDeviceDisplayProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
-    table.vkGetPhysicalDeviceDisplayPlaneProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));
+    table.vkGetPhysicalDeviceDisplayPlaneProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
-    table.vkGetDisplayModeProperties2KHR = reinterpret_cast<PFN_vkGetDisplayModeProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDisplayModeProperties2KHR"));
+    table.vkGetDisplayModeProperties2KHR = reinterpret_cast<PFN_vkGetDisplayModeProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetDisplayModeProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
-    table.vkGetDisplayPlaneCapabilities2KHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilities2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilities2KHR"));
+    table.vkGetDisplayPlaneCapabilities2KHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilities2KHR>(GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilities2KHR"));
 #endif
 #if defined(VK_KHR_calibrated_timestamps)
-    table.vkGetPhysicalDeviceCalibrateableTimeDomainsKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR"));
+    table.vkGetPhysicalDeviceCalibrateableTimeDomainsKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateDebugUtilsMessengerEXT"));
+    table.vkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(GetInstanceProcAddr(p_Instance, "vkCreateDebugUtilsMessengerEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkDestroyDebugUtilsMessengerEXT"));
+    table.vkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(GetInstanceProcAddr(p_Instance, "vkDestroyDebugUtilsMessengerEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkSubmitDebugUtilsMessageEXT = reinterpret_cast<PFN_vkSubmitDebugUtilsMessageEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkSubmitDebugUtilsMessageEXT"));
+    table.vkSubmitDebugUtilsMessageEXT = reinterpret_cast<PFN_vkSubmitDebugUtilsMessageEXT>(GetInstanceProcAddr(p_Instance, "vkSubmitDebugUtilsMessageEXT"));
 #endif
 #if defined(VK_NV_cooperative_matrix)
-    table.vkGetPhysicalDeviceCooperativeMatrixPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"));
+    table.vkGetPhysicalDeviceCooperativeMatrixPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
-    table.vkGetPhysicalDeviceSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT"));
+    table.vkGetPhysicalDeviceSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT"));
 #endif
 #if defined(VK_KHR_performance_query)
-    table.vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));
+    table.vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));
 #endif
 #if defined(VK_KHR_performance_query)
-    table.vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));
+    table.vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));
 #endif
 #if defined(VK_EXT_headless_surface)
-    table.vkCreateHeadlessSurfaceEXT = reinterpret_cast<PFN_vkCreateHeadlessSurfaceEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkCreateHeadlessSurfaceEXT"));
+    table.vkCreateHeadlessSurfaceEXT = reinterpret_cast<PFN_vkCreateHeadlessSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateHeadlessSurfaceEXT"));
 #endif
 #if defined(VK_NV_coverage_reduction_mode)
-    table.vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"));
+    table.vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkGetPhysicalDeviceToolProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceToolProperties>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolProperties"));
+    table.vkGetPhysicalDeviceToolProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceToolProperties>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolProperties"));
 #endif
 #if defined(VK_KHR_object_refresh)
-    table.vkGetPhysicalDeviceRefreshableObjectTypesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceRefreshableObjectTypesKHR"));
+    table.vkGetPhysicalDeviceRefreshableObjectTypesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceRefreshableObjectTypesKHR"));
 #endif
 #if defined(VK_KHR_fragment_shading_rate)
-    table.vkGetPhysicalDeviceFragmentShadingRatesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR"));
+    table.vkGetPhysicalDeviceFragmentShadingRatesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkGetPhysicalDeviceVideoCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR"));
+    table.vkGetPhysicalDeviceVideoCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkGetPhysicalDeviceVideoFormatPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR"));
+    table.vkGetPhysicalDeviceVideoFormatPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
-    table.vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR"));
+    table.vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR"));
 #endif
 #if defined(VK_EXT_acquire_drm_display)
-    table.vkAcquireDrmDisplayEXT = reinterpret_cast<PFN_vkAcquireDrmDisplayEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkAcquireDrmDisplayEXT"));
+    table.vkAcquireDrmDisplayEXT = reinterpret_cast<PFN_vkAcquireDrmDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkAcquireDrmDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_drm_display)
-    table.vkGetDrmDisplayEXT = reinterpret_cast<PFN_vkGetDrmDisplayEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetDrmDisplayEXT"));
+    table.vkGetDrmDisplayEXT = reinterpret_cast<PFN_vkGetDrmDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkGetDrmDisplayEXT"));
 #endif
 #if defined(VK_NV_optical_flow)
-    table.vkGetPhysicalDeviceOpticalFlowImageFormatsNV = reinterpret_cast<PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV"));
+    table.vkGetPhysicalDeviceOpticalFlowImageFormatsNV = reinterpret_cast<PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV"));
 #endif
 #if defined(VK_KHR_cooperative_matrix)
-    table.vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR"));
+    table.vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR"));
 #endif
 #if defined(VK_NV_cooperative_matrix2)
-    table.vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV"));
+    table.vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV"));
 #endif
 #if defined(VK_NV_cooperative_vector)
-    table.vkGetPhysicalDeviceCooperativeVectorPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
+    table.vkGetPhysicalDeviceCooperativeVectorPropertiesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2KHR"));
+    table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2KHR"));
+    table.vkGetPhysicalDeviceProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2KHR"));
+    table.vkGetPhysicalDeviceFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceImageFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2KHR"));
+    table.vkGetPhysicalDeviceImageFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceQueueFamilyProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR"));
+    table.vkGetPhysicalDeviceQueueFamilyProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceMemoryProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2KHR"));
+    table.vkGetPhysicalDeviceMemoryProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
-    table.vkGetPhysicalDeviceSparseImageFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"));
+    table.vkGetPhysicalDeviceSparseImageFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_external_memory_capabilities)
-    table.vkGetPhysicalDeviceExternalBufferPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferPropertiesKHR"));
+    table.vkGetPhysicalDeviceExternalBufferPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferPropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_capabilities)
-    table.vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));
+    table.vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_fence_capabilities)
-    table.vkGetPhysicalDeviceExternalFencePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
+    table.vkGetPhysicalDeviceExternalFencePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
 #endif
 #if defined(VK_KHR_device_group_creation)
-    table.vkEnumeratePhysicalDeviceGroupsKHR = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroupsKHR>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
+    table.vkEnumeratePhysicalDeviceGroupsKHR = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroupsKHR>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
 #endif
 #if defined(VK_EXT_calibrated_timestamps)
-    table.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"));
+    table.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"));
 #endif
 #if defined(VK_EXT_tooling_info)
-    table.vkGetPhysicalDeviceToolPropertiesEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceToolPropertiesEXT>(Vulkan::vkGetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolPropertiesEXT"));
+    table.vkGetPhysicalDeviceToolPropertiesEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceToolPropertiesEXT>(GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolPropertiesEXT"));
 #endif
     return table;
 }
 
-DeviceTable DeviceTable::Create(const VkDevice p_Device)
+DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_InstanceFuncs)
 {
     DeviceTable table{};
-    table.vkDestroyDevice = reinterpret_cast<PFN_vkDestroyDevice>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDevice"));
-    table.vkGetDeviceQueue = reinterpret_cast<PFN_vkGetDeviceQueue>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceQueue"));
-    table.vkQueueSubmit = reinterpret_cast<PFN_vkQueueSubmit>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueSubmit"));
-    table.vkQueueWaitIdle = reinterpret_cast<PFN_vkQueueWaitIdle>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueWaitIdle"));
-    table.vkDeviceWaitIdle = reinterpret_cast<PFN_vkDeviceWaitIdle>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDeviceWaitIdle"));
-    table.vkAllocateMemory = reinterpret_cast<PFN_vkAllocateMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAllocateMemory"));
-    table.vkFreeMemory = reinterpret_cast<PFN_vkFreeMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkFreeMemory"));
-    table.vkMapMemory = reinterpret_cast<PFN_vkMapMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkMapMemory"));
-    table.vkUnmapMemory = reinterpret_cast<PFN_vkUnmapMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUnmapMemory"));
-    table.vkFlushMappedMemoryRanges = reinterpret_cast<PFN_vkFlushMappedMemoryRanges>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkFlushMappedMemoryRanges"));
-    table.vkInvalidateMappedMemoryRanges = reinterpret_cast<PFN_vkInvalidateMappedMemoryRanges>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkInvalidateMappedMemoryRanges"));
-    table.vkGetDeviceMemoryCommitment = reinterpret_cast<PFN_vkGetDeviceMemoryCommitment>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceMemoryCommitment"));
-    table.vkGetBufferMemoryRequirements = reinterpret_cast<PFN_vkGetBufferMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements"));
-    table.vkBindBufferMemory = reinterpret_cast<PFN_vkBindBufferMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindBufferMemory"));
-    table.vkGetImageMemoryRequirements = reinterpret_cast<PFN_vkGetImageMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements"));
-    table.vkBindImageMemory = reinterpret_cast<PFN_vkBindImageMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindImageMemory"));
-    table.vkGetImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements"));
-    table.vkQueueBindSparse = reinterpret_cast<PFN_vkQueueBindSparse>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueBindSparse"));
-    table.vkCreateFence = reinterpret_cast<PFN_vkCreateFence>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateFence"));
-    table.vkDestroyFence = reinterpret_cast<PFN_vkDestroyFence>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyFence"));
-    table.vkResetFences = reinterpret_cast<PFN_vkResetFences>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetFences"));
-    table.vkGetFenceStatus = reinterpret_cast<PFN_vkGetFenceStatus>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFenceStatus"));
-    table.vkWaitForFences = reinterpret_cast<PFN_vkWaitForFences>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWaitForFences"));
-    table.vkCreateSemaphore = reinterpret_cast<PFN_vkCreateSemaphore>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSemaphore"));
-    table.vkDestroySemaphore = reinterpret_cast<PFN_vkDestroySemaphore>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySemaphore"));
-    table.vkCreateEvent = reinterpret_cast<PFN_vkCreateEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateEvent"));
-    table.vkDestroyEvent = reinterpret_cast<PFN_vkDestroyEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyEvent"));
-    table.vkGetEventStatus = reinterpret_cast<PFN_vkGetEventStatus>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetEventStatus"));
-    table.vkSetEvent = reinterpret_cast<PFN_vkSetEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetEvent"));
-    table.vkResetEvent = reinterpret_cast<PFN_vkResetEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetEvent"));
-    table.vkCreateQueryPool = reinterpret_cast<PFN_vkCreateQueryPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateQueryPool"));
-    table.vkDestroyQueryPool = reinterpret_cast<PFN_vkDestroyQueryPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyQueryPool"));
-    table.vkGetQueryPoolResults = reinterpret_cast<PFN_vkGetQueryPoolResults>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetQueryPoolResults"));
+    table.vkDestroyDevice = reinterpret_cast<PFN_vkDestroyDevice>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDevice"));
+    table.vkGetDeviceQueue = reinterpret_cast<PFN_vkGetDeviceQueue>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceQueue"));
+    table.vkQueueSubmit = reinterpret_cast<PFN_vkQueueSubmit>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit"));
+    table.vkQueueWaitIdle = reinterpret_cast<PFN_vkQueueWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueWaitIdle"));
+    table.vkDeviceWaitIdle = reinterpret_cast<PFN_vkDeviceWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDeviceWaitIdle"));
+    table.vkAllocateMemory = reinterpret_cast<PFN_vkAllocateMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateMemory"));
+    table.vkFreeMemory = reinterpret_cast<PFN_vkFreeMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeMemory"));
+    table.vkMapMemory = reinterpret_cast<PFN_vkMapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory"));
+    table.vkUnmapMemory = reinterpret_cast<PFN_vkUnmapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory"));
+    table.vkFlushMappedMemoryRanges = reinterpret_cast<PFN_vkFlushMappedMemoryRanges>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFlushMappedMemoryRanges"));
+    table.vkInvalidateMappedMemoryRanges = reinterpret_cast<PFN_vkInvalidateMappedMemoryRanges>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkInvalidateMappedMemoryRanges"));
+    table.vkGetDeviceMemoryCommitment = reinterpret_cast<PFN_vkGetDeviceMemoryCommitment>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryCommitment"));
+    table.vkGetBufferMemoryRequirements = reinterpret_cast<PFN_vkGetBufferMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements"));
+    table.vkBindBufferMemory = reinterpret_cast<PFN_vkBindBufferMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory"));
+    table.vkGetImageMemoryRequirements = reinterpret_cast<PFN_vkGetImageMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements"));
+    table.vkBindImageMemory = reinterpret_cast<PFN_vkBindImageMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory"));
+    table.vkGetImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements"));
+    table.vkQueueBindSparse = reinterpret_cast<PFN_vkQueueBindSparse>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueBindSparse"));
+    table.vkCreateFence = reinterpret_cast<PFN_vkCreateFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFence"));
+    table.vkDestroyFence = reinterpret_cast<PFN_vkDestroyFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFence"));
+    table.vkResetFences = reinterpret_cast<PFN_vkResetFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetFences"));
+    table.vkGetFenceStatus = reinterpret_cast<PFN_vkGetFenceStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceStatus"));
+    table.vkWaitForFences = reinterpret_cast<PFN_vkWaitForFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForFences"));
+    table.vkCreateSemaphore = reinterpret_cast<PFN_vkCreateSemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSemaphore"));
+    table.vkDestroySemaphore = reinterpret_cast<PFN_vkDestroySemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySemaphore"));
+    table.vkCreateEvent = reinterpret_cast<PFN_vkCreateEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateEvent"));
+    table.vkDestroyEvent = reinterpret_cast<PFN_vkDestroyEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyEvent"));
+    table.vkGetEventStatus = reinterpret_cast<PFN_vkGetEventStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetEventStatus"));
+    table.vkSetEvent = reinterpret_cast<PFN_vkSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetEvent"));
+    table.vkResetEvent = reinterpret_cast<PFN_vkResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetEvent"));
+    table.vkCreateQueryPool = reinterpret_cast<PFN_vkCreateQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateQueryPool"));
+    table.vkDestroyQueryPool = reinterpret_cast<PFN_vkDestroyQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyQueryPool"));
+    table.vkGetQueryPoolResults = reinterpret_cast<PFN_vkGetQueryPoolResults>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueryPoolResults"));
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkResetQueryPool = reinterpret_cast<PFN_vkResetQueryPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetQueryPool"));
+    table.vkResetQueryPool = reinterpret_cast<PFN_vkResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPool"));
 #endif
-    table.vkCreateBuffer = reinterpret_cast<PFN_vkCreateBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateBuffer"));
-    table.vkDestroyBuffer = reinterpret_cast<PFN_vkDestroyBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyBuffer"));
-    table.vkCreateBufferView = reinterpret_cast<PFN_vkCreateBufferView>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateBufferView"));
-    table.vkDestroyBufferView = reinterpret_cast<PFN_vkDestroyBufferView>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyBufferView"));
-    table.vkCreateImage = reinterpret_cast<PFN_vkCreateImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateImage"));
-    table.vkDestroyImage = reinterpret_cast<PFN_vkDestroyImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyImage"));
-    table.vkGetImageSubresourceLayout = reinterpret_cast<PFN_vkGetImageSubresourceLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout"));
-    table.vkCreateImageView = reinterpret_cast<PFN_vkCreateImageView>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateImageView"));
-    table.vkDestroyImageView = reinterpret_cast<PFN_vkDestroyImageView>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyImageView"));
-    table.vkCreateShaderModule = reinterpret_cast<PFN_vkCreateShaderModule>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateShaderModule"));
-    table.vkDestroyShaderModule = reinterpret_cast<PFN_vkDestroyShaderModule>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyShaderModule"));
-    table.vkCreatePipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreatePipelineCache"));
-    table.vkDestroyPipelineCache = reinterpret_cast<PFN_vkDestroyPipelineCache>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPipelineCache"));
-    table.vkGetPipelineCacheData = reinterpret_cast<PFN_vkGetPipelineCacheData>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineCacheData"));
-    table.vkMergePipelineCaches = reinterpret_cast<PFN_vkMergePipelineCaches>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkMergePipelineCaches"));
+    table.vkCreateBuffer = reinterpret_cast<PFN_vkCreateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBuffer"));
+    table.vkDestroyBuffer = reinterpret_cast<PFN_vkDestroyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBuffer"));
+    table.vkCreateBufferView = reinterpret_cast<PFN_vkCreateBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBufferView"));
+    table.vkDestroyBufferView = reinterpret_cast<PFN_vkDestroyBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBufferView"));
+    table.vkCreateImage = reinterpret_cast<PFN_vkCreateImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImage"));
+    table.vkDestroyImage = reinterpret_cast<PFN_vkDestroyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImage"));
+    table.vkGetImageSubresourceLayout = reinterpret_cast<PFN_vkGetImageSubresourceLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout"));
+    table.vkCreateImageView = reinterpret_cast<PFN_vkCreateImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImageView"));
+    table.vkDestroyImageView = reinterpret_cast<PFN_vkDestroyImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImageView"));
+    table.vkCreateShaderModule = reinterpret_cast<PFN_vkCreateShaderModule>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateShaderModule"));
+    table.vkDestroyShaderModule = reinterpret_cast<PFN_vkDestroyShaderModule>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyShaderModule"));
+    table.vkCreatePipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineCache"));
+    table.vkDestroyPipelineCache = reinterpret_cast<PFN_vkDestroyPipelineCache>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineCache"));
+    table.vkGetPipelineCacheData = reinterpret_cast<PFN_vkGetPipelineCacheData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineCacheData"));
+    table.vkMergePipelineCaches = reinterpret_cast<PFN_vkMergePipelineCaches>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMergePipelineCaches"));
 #if defined(VK_KHR_pipeline_binary)
-    table.vkCreatePipelineBinariesKHR = reinterpret_cast<PFN_vkCreatePipelineBinariesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreatePipelineBinariesKHR"));
-#endif
-#if defined(VK_KHR_pipeline_binary)
-    table.vkDestroyPipelineBinaryKHR = reinterpret_cast<PFN_vkDestroyPipelineBinaryKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPipelineBinaryKHR"));
+    table.vkCreatePipelineBinariesKHR = reinterpret_cast<PFN_vkCreatePipelineBinariesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineBinariesKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
-    table.vkGetPipelineKeyKHR = reinterpret_cast<PFN_vkGetPipelineKeyKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineKeyKHR"));
+    table.vkDestroyPipelineBinaryKHR = reinterpret_cast<PFN_vkDestroyPipelineBinaryKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineBinaryKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
-    table.vkGetPipelineBinaryDataKHR = reinterpret_cast<PFN_vkGetPipelineBinaryDataKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineBinaryDataKHR"));
+    table.vkGetPipelineKeyKHR = reinterpret_cast<PFN_vkGetPipelineKeyKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineKeyKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
-    table.vkReleaseCapturedPipelineDataKHR = reinterpret_cast<PFN_vkReleaseCapturedPipelineDataKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkReleaseCapturedPipelineDataKHR"));
+    table.vkGetPipelineBinaryDataKHR = reinterpret_cast<PFN_vkGetPipelineBinaryDataKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineBinaryDataKHR"));
 #endif
-    table.vkCreateGraphicsPipelines = reinterpret_cast<PFN_vkCreateGraphicsPipelines>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateGraphicsPipelines"));
-    table.vkCreateComputePipelines = reinterpret_cast<PFN_vkCreateComputePipelines>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateComputePipelines"));
+#if defined(VK_KHR_pipeline_binary)
+    table.vkReleaseCapturedPipelineDataKHR = reinterpret_cast<PFN_vkReleaseCapturedPipelineDataKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseCapturedPipelineDataKHR"));
+#endif
+    table.vkCreateGraphicsPipelines = reinterpret_cast<PFN_vkCreateGraphicsPipelines>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateGraphicsPipelines"));
+    table.vkCreateComputePipelines = reinterpret_cast<PFN_vkCreateComputePipelines>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateComputePipelines"));
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
-    table.vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = reinterpret_cast<PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));
+    table.vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = reinterpret_cast<PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));
 #endif
-    table.vkDestroyPipeline = reinterpret_cast<PFN_vkDestroyPipeline>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPipeline"));
-    table.vkCreatePipelineLayout = reinterpret_cast<PFN_vkCreatePipelineLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreatePipelineLayout"));
-    table.vkDestroyPipelineLayout = reinterpret_cast<PFN_vkDestroyPipelineLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPipelineLayout"));
-    table.vkCreateSampler = reinterpret_cast<PFN_vkCreateSampler>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSampler"));
-    table.vkDestroySampler = reinterpret_cast<PFN_vkDestroySampler>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySampler"));
-    table.vkCreateDescriptorSetLayout = reinterpret_cast<PFN_vkCreateDescriptorSetLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateDescriptorSetLayout"));
-    table.vkDestroyDescriptorSetLayout = reinterpret_cast<PFN_vkDestroyDescriptorSetLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDescriptorSetLayout"));
-    table.vkCreateDescriptorPool = reinterpret_cast<PFN_vkCreateDescriptorPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateDescriptorPool"));
-    table.vkDestroyDescriptorPool = reinterpret_cast<PFN_vkDestroyDescriptorPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDescriptorPool"));
-    table.vkResetDescriptorPool = reinterpret_cast<PFN_vkResetDescriptorPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetDescriptorPool"));
-    table.vkAllocateDescriptorSets = reinterpret_cast<PFN_vkAllocateDescriptorSets>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAllocateDescriptorSets"));
-    table.vkFreeDescriptorSets = reinterpret_cast<PFN_vkFreeDescriptorSets>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkFreeDescriptorSets"));
-    table.vkUpdateDescriptorSets = reinterpret_cast<PFN_vkUpdateDescriptorSets>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateDescriptorSets"));
-    table.vkCreateFramebuffer = reinterpret_cast<PFN_vkCreateFramebuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateFramebuffer"));
-    table.vkDestroyFramebuffer = reinterpret_cast<PFN_vkDestroyFramebuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyFramebuffer"));
-    table.vkCreateRenderPass = reinterpret_cast<PFN_vkCreateRenderPass>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateRenderPass"));
-    table.vkDestroyRenderPass = reinterpret_cast<PFN_vkDestroyRenderPass>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyRenderPass"));
-    table.vkGetRenderAreaGranularity = reinterpret_cast<PFN_vkGetRenderAreaGranularity>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRenderAreaGranularity"));
+    table.vkDestroyPipeline = reinterpret_cast<PFN_vkDestroyPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipeline"));
+    table.vkCreatePipelineLayout = reinterpret_cast<PFN_vkCreatePipelineLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineLayout"));
+    table.vkDestroyPipelineLayout = reinterpret_cast<PFN_vkDestroyPipelineLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineLayout"));
+    table.vkCreateSampler = reinterpret_cast<PFN_vkCreateSampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSampler"));
+    table.vkDestroySampler = reinterpret_cast<PFN_vkDestroySampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySampler"));
+    table.vkCreateDescriptorSetLayout = reinterpret_cast<PFN_vkCreateDescriptorSetLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorSetLayout"));
+    table.vkDestroyDescriptorSetLayout = reinterpret_cast<PFN_vkDestroyDescriptorSetLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorSetLayout"));
+    table.vkCreateDescriptorPool = reinterpret_cast<PFN_vkCreateDescriptorPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorPool"));
+    table.vkDestroyDescriptorPool = reinterpret_cast<PFN_vkDestroyDescriptorPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorPool"));
+    table.vkResetDescriptorPool = reinterpret_cast<PFN_vkResetDescriptorPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetDescriptorPool"));
+    table.vkAllocateDescriptorSets = reinterpret_cast<PFN_vkAllocateDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateDescriptorSets"));
+    table.vkFreeDescriptorSets = reinterpret_cast<PFN_vkFreeDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeDescriptorSets"));
+    table.vkUpdateDescriptorSets = reinterpret_cast<PFN_vkUpdateDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSets"));
+    table.vkCreateFramebuffer = reinterpret_cast<PFN_vkCreateFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFramebuffer"));
+    table.vkDestroyFramebuffer = reinterpret_cast<PFN_vkDestroyFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFramebuffer"));
+    table.vkCreateRenderPass = reinterpret_cast<PFN_vkCreateRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass"));
+    table.vkDestroyRenderPass = reinterpret_cast<PFN_vkDestroyRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyRenderPass"));
+    table.vkGetRenderAreaGranularity = reinterpret_cast<PFN_vkGetRenderAreaGranularity>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderAreaGranularity"));
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkGetRenderingAreaGranularity = reinterpret_cast<PFN_vkGetRenderingAreaGranularity>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularity"));
+    table.vkGetRenderingAreaGranularity = reinterpret_cast<PFN_vkGetRenderingAreaGranularity>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularity"));
 #endif
-    table.vkCreateCommandPool = reinterpret_cast<PFN_vkCreateCommandPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateCommandPool"));
-    table.vkDestroyCommandPool = reinterpret_cast<PFN_vkDestroyCommandPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyCommandPool"));
-    table.vkResetCommandPool = reinterpret_cast<PFN_vkResetCommandPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetCommandPool"));
-    table.vkAllocateCommandBuffers = reinterpret_cast<PFN_vkAllocateCommandBuffers>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAllocateCommandBuffers"));
-    table.vkFreeCommandBuffers = reinterpret_cast<PFN_vkFreeCommandBuffers>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkFreeCommandBuffers"));
-    table.vkBeginCommandBuffer = reinterpret_cast<PFN_vkBeginCommandBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBeginCommandBuffer"));
-    table.vkEndCommandBuffer = reinterpret_cast<PFN_vkEndCommandBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkEndCommandBuffer"));
-    table.vkResetCommandBuffer = reinterpret_cast<PFN_vkResetCommandBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetCommandBuffer"));
-    table.vkCmdBindPipeline = reinterpret_cast<PFN_vkCmdBindPipeline>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindPipeline"));
+    table.vkCreateCommandPool = reinterpret_cast<PFN_vkCreateCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCommandPool"));
+    table.vkDestroyCommandPool = reinterpret_cast<PFN_vkDestroyCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCommandPool"));
+    table.vkResetCommandPool = reinterpret_cast<PFN_vkResetCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandPool"));
+    table.vkAllocateCommandBuffers = reinterpret_cast<PFN_vkAllocateCommandBuffers>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateCommandBuffers"));
+    table.vkFreeCommandBuffers = reinterpret_cast<PFN_vkFreeCommandBuffers>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeCommandBuffers"));
+    table.vkBeginCommandBuffer = reinterpret_cast<PFN_vkBeginCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBeginCommandBuffer"));
+    table.vkEndCommandBuffer = reinterpret_cast<PFN_vkEndCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkEndCommandBuffer"));
+    table.vkResetCommandBuffer = reinterpret_cast<PFN_vkResetCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandBuffer"));
+    table.vkCmdBindPipeline = reinterpret_cast<PFN_vkCmdBindPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindPipeline"));
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
-    table.vkCmdSetAttachmentFeedbackLoopEnableEXT = reinterpret_cast<PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetAttachmentFeedbackLoopEnableEXT"));
+    table.vkCmdSetAttachmentFeedbackLoopEnableEXT = reinterpret_cast<PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAttachmentFeedbackLoopEnableEXT"));
 #endif
-    table.vkCmdSetViewport = reinterpret_cast<PFN_vkCmdSetViewport>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewport"));
-    table.vkCmdSetScissor = reinterpret_cast<PFN_vkCmdSetScissor>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetScissor"));
-    table.vkCmdSetLineWidth = reinterpret_cast<PFN_vkCmdSetLineWidth>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineWidth"));
-    table.vkCmdSetDepthBias = reinterpret_cast<PFN_vkCmdSetDepthBias>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBias"));
-    table.vkCmdSetBlendConstants = reinterpret_cast<PFN_vkCmdSetBlendConstants>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetBlendConstants"));
-    table.vkCmdSetDepthBounds = reinterpret_cast<PFN_vkCmdSetDepthBounds>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBounds"));
-    table.vkCmdSetStencilCompareMask = reinterpret_cast<PFN_vkCmdSetStencilCompareMask>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilCompareMask"));
-    table.vkCmdSetStencilWriteMask = reinterpret_cast<PFN_vkCmdSetStencilWriteMask>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilWriteMask"));
-    table.vkCmdSetStencilReference = reinterpret_cast<PFN_vkCmdSetStencilReference>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilReference"));
-    table.vkCmdBindDescriptorSets = reinterpret_cast<PFN_vkCmdBindDescriptorSets>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets"));
-    table.vkCmdBindIndexBuffer = reinterpret_cast<PFN_vkCmdBindIndexBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer"));
-    table.vkCmdBindVertexBuffers = reinterpret_cast<PFN_vkCmdBindVertexBuffers>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers"));
-    table.vkCmdDraw = reinterpret_cast<PFN_vkCmdDraw>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDraw"));
-    table.vkCmdDrawIndexed = reinterpret_cast<PFN_vkCmdDrawIndexed>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndexed"));
+    table.vkCmdSetViewport = reinterpret_cast<PFN_vkCmdSetViewport>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewport"));
+    table.vkCmdSetScissor = reinterpret_cast<PFN_vkCmdSetScissor>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissor"));
+    table.vkCmdSetLineWidth = reinterpret_cast<PFN_vkCmdSetLineWidth>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineWidth"));
+    table.vkCmdSetDepthBias = reinterpret_cast<PFN_vkCmdSetDepthBias>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias"));
+    table.vkCmdSetBlendConstants = reinterpret_cast<PFN_vkCmdSetBlendConstants>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetBlendConstants"));
+    table.vkCmdSetDepthBounds = reinterpret_cast<PFN_vkCmdSetDepthBounds>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBounds"));
+    table.vkCmdSetStencilCompareMask = reinterpret_cast<PFN_vkCmdSetStencilCompareMask>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilCompareMask"));
+    table.vkCmdSetStencilWriteMask = reinterpret_cast<PFN_vkCmdSetStencilWriteMask>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilWriteMask"));
+    table.vkCmdSetStencilReference = reinterpret_cast<PFN_vkCmdSetStencilReference>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilReference"));
+    table.vkCmdBindDescriptorSets = reinterpret_cast<PFN_vkCmdBindDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets"));
+    table.vkCmdBindIndexBuffer = reinterpret_cast<PFN_vkCmdBindIndexBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer"));
+    table.vkCmdBindVertexBuffers = reinterpret_cast<PFN_vkCmdBindVertexBuffers>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers"));
+    table.vkCmdDraw = reinterpret_cast<PFN_vkCmdDraw>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDraw"));
+    table.vkCmdDrawIndexed = reinterpret_cast<PFN_vkCmdDrawIndexed>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexed"));
 #if defined(VK_EXT_multi_draw)
-    table.vkCmdDrawMultiEXT = reinterpret_cast<PFN_vkCmdDrawMultiEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMultiEXT"));
+    table.vkCmdDrawMultiEXT = reinterpret_cast<PFN_vkCmdDrawMultiEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiEXT"));
 #endif
 #if defined(VK_EXT_multi_draw)
-    table.vkCmdDrawMultiIndexedEXT = reinterpret_cast<PFN_vkCmdDrawMultiIndexedEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMultiIndexedEXT"));
+    table.vkCmdDrawMultiIndexedEXT = reinterpret_cast<PFN_vkCmdDrawMultiIndexedEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiIndexedEXT"));
 #endif
-    table.vkCmdDrawIndirect = reinterpret_cast<PFN_vkCmdDrawIndirect>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndirect"));
-    table.vkCmdDrawIndexedIndirect = reinterpret_cast<PFN_vkCmdDrawIndexedIndirect>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirect"));
-    table.vkCmdDispatch = reinterpret_cast<PFN_vkCmdDispatch>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatch"));
-    table.vkCmdDispatchIndirect = reinterpret_cast<PFN_vkCmdDispatchIndirect>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchIndirect"));
+    table.vkCmdDrawIndirect = reinterpret_cast<PFN_vkCmdDrawIndirect>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirect"));
+    table.vkCmdDrawIndexedIndirect = reinterpret_cast<PFN_vkCmdDrawIndexedIndirect>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirect"));
+    table.vkCmdDispatch = reinterpret_cast<PFN_vkCmdDispatch>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatch"));
+    table.vkCmdDispatchIndirect = reinterpret_cast<PFN_vkCmdDispatchIndirect>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchIndirect"));
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
-    table.vkCmdSubpassShadingHUAWEI = reinterpret_cast<PFN_vkCmdSubpassShadingHUAWEI>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSubpassShadingHUAWEI"));
+    table.vkCmdSubpassShadingHUAWEI = reinterpret_cast<PFN_vkCmdSubpassShadingHUAWEI>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSubpassShadingHUAWEI"));
 #endif
 #if defined(VK_HUAWEI_cluster_culling_shader)
-    table.vkCmdDrawClusterHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterHUAWEI>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawClusterHUAWEI"));
+    table.vkCmdDrawClusterHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterHUAWEI>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawClusterHUAWEI"));
 #endif
 #if defined(VK_HUAWEI_cluster_culling_shader)
-    table.vkCmdDrawClusterIndirectHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterIndirectHUAWEI>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawClusterIndirectHUAWEI"));
+    table.vkCmdDrawClusterIndirectHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterIndirectHUAWEI>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawClusterIndirectHUAWEI"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
-    table.vkCmdUpdatePipelineIndirectBufferNV = reinterpret_cast<PFN_vkCmdUpdatePipelineIndirectBufferNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdUpdatePipelineIndirectBufferNV"));
+    table.vkCmdUpdatePipelineIndirectBufferNV = reinterpret_cast<PFN_vkCmdUpdatePipelineIndirectBufferNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdatePipelineIndirectBufferNV"));
 #endif
-    table.vkCmdCopyBuffer = reinterpret_cast<PFN_vkCmdCopyBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBuffer"));
-    table.vkCmdCopyImage = reinterpret_cast<PFN_vkCmdCopyImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImage"));
-    table.vkCmdBlitImage = reinterpret_cast<PFN_vkCmdBlitImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBlitImage"));
-    table.vkCmdCopyBufferToImage = reinterpret_cast<PFN_vkCmdCopyBufferToImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage"));
-    table.vkCmdCopyImageToBuffer = reinterpret_cast<PFN_vkCmdCopyImageToBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer"));
+    table.vkCmdCopyBuffer = reinterpret_cast<PFN_vkCmdCopyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer"));
+    table.vkCmdCopyImage = reinterpret_cast<PFN_vkCmdCopyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage"));
+    table.vkCmdBlitImage = reinterpret_cast<PFN_vkCmdBlitImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage"));
+    table.vkCmdCopyBufferToImage = reinterpret_cast<PFN_vkCmdCopyBufferToImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage"));
+    table.vkCmdCopyImageToBuffer = reinterpret_cast<PFN_vkCmdCopyImageToBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer"));
 #if defined(VK_NV_copy_memory_indirect)
-    table.vkCmdCopyMemoryIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectNV"));
+    table.vkCmdCopyMemoryIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectNV"));
 #endif
 #if defined(VK_NV_copy_memory_indirect)
-    table.vkCmdCopyMemoryToImageIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectNV"));
+    table.vkCmdCopyMemoryToImageIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectNV"));
 #endif
-    table.vkCmdUpdateBuffer = reinterpret_cast<PFN_vkCmdUpdateBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdUpdateBuffer"));
-    table.vkCmdFillBuffer = reinterpret_cast<PFN_vkCmdFillBuffer>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdFillBuffer"));
-    table.vkCmdClearColorImage = reinterpret_cast<PFN_vkCmdClearColorImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdClearColorImage"));
-    table.vkCmdClearDepthStencilImage = reinterpret_cast<PFN_vkCmdClearDepthStencilImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdClearDepthStencilImage"));
-    table.vkCmdClearAttachments = reinterpret_cast<PFN_vkCmdClearAttachments>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdClearAttachments"));
-    table.vkCmdResolveImage = reinterpret_cast<PFN_vkCmdResolveImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResolveImage"));
-    table.vkCmdSetEvent = reinterpret_cast<PFN_vkCmdSetEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetEvent"));
-    table.vkCmdResetEvent = reinterpret_cast<PFN_vkCmdResetEvent>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResetEvent"));
-    table.vkCmdWaitEvents = reinterpret_cast<PFN_vkCmdWaitEvents>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWaitEvents"));
-    table.vkCmdPipelineBarrier = reinterpret_cast<PFN_vkCmdPipelineBarrier>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier"));
-    table.vkCmdBeginQuery = reinterpret_cast<PFN_vkCmdBeginQuery>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginQuery"));
-    table.vkCmdEndQuery = reinterpret_cast<PFN_vkCmdEndQuery>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndQuery"));
+    table.vkCmdUpdateBuffer = reinterpret_cast<PFN_vkCmdUpdateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdateBuffer"));
+    table.vkCmdFillBuffer = reinterpret_cast<PFN_vkCmdFillBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdFillBuffer"));
+    table.vkCmdClearColorImage = reinterpret_cast<PFN_vkCmdClearColorImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearColorImage"));
+    table.vkCmdClearDepthStencilImage = reinterpret_cast<PFN_vkCmdClearDepthStencilImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearDepthStencilImage"));
+    table.vkCmdClearAttachments = reinterpret_cast<PFN_vkCmdClearAttachments>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearAttachments"));
+    table.vkCmdResolveImage = reinterpret_cast<PFN_vkCmdResolveImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage"));
+    table.vkCmdSetEvent = reinterpret_cast<PFN_vkCmdSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent"));
+    table.vkCmdResetEvent = reinterpret_cast<PFN_vkCmdResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent"));
+    table.vkCmdWaitEvents = reinterpret_cast<PFN_vkCmdWaitEvents>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents"));
+    table.vkCmdPipelineBarrier = reinterpret_cast<PFN_vkCmdPipelineBarrier>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier"));
+    table.vkCmdBeginQuery = reinterpret_cast<PFN_vkCmdBeginQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginQuery"));
+    table.vkCmdEndQuery = reinterpret_cast<PFN_vkCmdEndQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndQuery"));
 #if defined(VK_EXT_conditional_rendering)
-    table.vkCmdBeginConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdBeginConditionalRenderingEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginConditionalRenderingEXT"));
+    table.vkCmdBeginConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdBeginConditionalRenderingEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginConditionalRenderingEXT"));
 #endif
 #if defined(VK_EXT_conditional_rendering)
-    table.vkCmdEndConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdEndConditionalRenderingEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndConditionalRenderingEXT"));
+    table.vkCmdEndConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdEndConditionalRenderingEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndConditionalRenderingEXT"));
 #endif
-    table.vkCmdResetQueryPool = reinterpret_cast<PFN_vkCmdResetQueryPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResetQueryPool"));
-    table.vkCmdWriteTimestamp = reinterpret_cast<PFN_vkCmdWriteTimestamp>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp"));
-    table.vkCmdCopyQueryPoolResults = reinterpret_cast<PFN_vkCmdCopyQueryPoolResults>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyQueryPoolResults"));
-    table.vkCmdPushConstants = reinterpret_cast<PFN_vkCmdPushConstants>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushConstants"));
-    table.vkCmdBeginRenderPass = reinterpret_cast<PFN_vkCmdBeginRenderPass>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass"));
-    table.vkCmdNextSubpass = reinterpret_cast<PFN_vkCmdNextSubpass>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdNextSubpass"));
-    table.vkCmdEndRenderPass = reinterpret_cast<PFN_vkCmdEndRenderPass>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRenderPass"));
-    table.vkCmdExecuteCommands = reinterpret_cast<PFN_vkCmdExecuteCommands>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdExecuteCommands"));
+    table.vkCmdResetQueryPool = reinterpret_cast<PFN_vkCmdResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetQueryPool"));
+    table.vkCmdWriteTimestamp = reinterpret_cast<PFN_vkCmdWriteTimestamp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp"));
+    table.vkCmdCopyQueryPoolResults = reinterpret_cast<PFN_vkCmdCopyQueryPoolResults>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyQueryPoolResults"));
+    table.vkCmdPushConstants = reinterpret_cast<PFN_vkCmdPushConstants>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants"));
+    table.vkCmdBeginRenderPass = reinterpret_cast<PFN_vkCmdBeginRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass"));
+    table.vkCmdNextSubpass = reinterpret_cast<PFN_vkCmdNextSubpass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass"));
+    table.vkCmdEndRenderPass = reinterpret_cast<PFN_vkCmdEndRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass"));
+    table.vkCmdExecuteCommands = reinterpret_cast<PFN_vkCmdExecuteCommands>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteCommands"));
 #if defined(VK_KHR_display_swapchain)
-    table.vkCreateSharedSwapchainsKHR = reinterpret_cast<PFN_vkCreateSharedSwapchainsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSharedSwapchainsKHR"));
+    table.vkCreateSharedSwapchainsKHR = reinterpret_cast<PFN_vkCreateSharedSwapchainsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSharedSwapchainsKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkCreateSwapchainKHR = reinterpret_cast<PFN_vkCreateSwapchainKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSwapchainKHR"));
+    table.vkCreateSwapchainKHR = reinterpret_cast<PFN_vkCreateSwapchainKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSwapchainKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySwapchainKHR"));
+    table.vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySwapchainKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkGetSwapchainImagesKHR = reinterpret_cast<PFN_vkGetSwapchainImagesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSwapchainImagesKHR"));
+    table.vkGetSwapchainImagesKHR = reinterpret_cast<PFN_vkGetSwapchainImagesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainImagesKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkAcquireNextImageKHR = reinterpret_cast<PFN_vkAcquireNextImageKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquireNextImageKHR"));
+    table.vkAcquireNextImageKHR = reinterpret_cast<PFN_vkAcquireNextImageKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireNextImageKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkQueuePresentKHR = reinterpret_cast<PFN_vkQueuePresentKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueuePresentKHR"));
+    table.vkQueuePresentKHR = reinterpret_cast<PFN_vkQueuePresentKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueuePresentKHR"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkDebugMarkerSetObjectNameEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectNameEXT"));
+    table.vkDebugMarkerSetObjectNameEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectNameEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkDebugMarkerSetObjectTagEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectTagEXT"));
+    table.vkDebugMarkerSetObjectTagEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectTagEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkCmdDebugMarkerBeginEXT = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDebugMarkerBeginEXT"));
+    table.vkCmdDebugMarkerBeginEXT = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerBeginEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkCmdDebugMarkerEndEXT = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDebugMarkerEndEXT"));
+    table.vkCmdDebugMarkerEndEXT = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerEndEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkCmdDebugMarkerInsertEXT = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDebugMarkerInsertEXT"));
+    table.vkCmdDebugMarkerInsertEXT = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerInsertEXT"));
 #endif
 #if defined(VK_NV_external_memory_win32)
-    table.vkGetMemoryWin32HandleNV = reinterpret_cast<PFN_vkGetMemoryWin32HandleNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleNV"));
+    table.vkGetMemoryWin32HandleNV = reinterpret_cast<PFN_vkGetMemoryWin32HandleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkCmdExecuteGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsNV"));
+    table.vkCmdExecuteGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkCmdPreprocessGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsNV"));
+    table.vkCmdPreprocessGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkCmdBindPipelineShaderGroupNV = reinterpret_cast<PFN_vkCmdBindPipelineShaderGroupNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindPipelineShaderGroupNV"));
+    table.vkCmdBindPipelineShaderGroupNV = reinterpret_cast<PFN_vkCmdBindPipelineShaderGroupNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindPipelineShaderGroupNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkGetGeneratedCommandsMemoryRequirementsNV = reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsNV"));
+    table.vkGetGeneratedCommandsMemoryRequirementsNV = reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkCreateIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutNV"));
+    table.vkCreateIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
-    table.vkDestroyIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutNV"));
+    table.vkDestroyIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutNV"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkCmdExecuteGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsEXT"));
+    table.vkCmdExecuteGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkCmdPreprocessGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsEXT"));
+    table.vkCmdPreprocessGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkGetGeneratedCommandsMemoryRequirementsEXT = reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsEXT"));
+    table.vkGetGeneratedCommandsMemoryRequirementsEXT = reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkCreateIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutEXT"));
+    table.vkCreateIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkDestroyIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutEXT"));
+    table.vkDestroyIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkCreateIndirectExecutionSetEXT = reinterpret_cast<PFN_vkCreateIndirectExecutionSetEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateIndirectExecutionSetEXT"));
+    table.vkCreateIndirectExecutionSetEXT = reinterpret_cast<PFN_vkCreateIndirectExecutionSetEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectExecutionSetEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkDestroyIndirectExecutionSetEXT = reinterpret_cast<PFN_vkDestroyIndirectExecutionSetEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyIndirectExecutionSetEXT"));
+    table.vkDestroyIndirectExecutionSetEXT = reinterpret_cast<PFN_vkDestroyIndirectExecutionSetEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectExecutionSetEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkUpdateIndirectExecutionSetPipelineEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetPipelineEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetPipelineEXT"));
+    table.vkUpdateIndirectExecutionSetPipelineEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetPipelineEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetPipelineEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
-    table.vkUpdateIndirectExecutionSetShaderEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetShaderEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetShaderEXT"));
+    table.vkUpdateIndirectExecutionSetShaderEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetShaderEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetShaderEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushDescriptorSet = reinterpret_cast<PFN_vkCmdPushDescriptorSet>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet"));
+    table.vkCmdPushDescriptorSet = reinterpret_cast<PFN_vkCmdPushDescriptorSet>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkTrimCommandPool = reinterpret_cast<PFN_vkTrimCommandPool>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkTrimCommandPool"));
+    table.vkTrimCommandPool = reinterpret_cast<PFN_vkTrimCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTrimCommandPool"));
 #endif
 #if defined(VK_KHR_external_memory_win32)
-    table.vkGetMemoryWin32HandleKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleKHR"));
+    table.vkGetMemoryWin32HandleKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_memory_win32)
-    table.vkGetMemoryWin32HandlePropertiesKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandlePropertiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandlePropertiesKHR"));
+    table.vkGetMemoryWin32HandlePropertiesKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandlePropertiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandlePropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_memory_fd)
-    table.vkGetMemoryFdKHR = reinterpret_cast<PFN_vkGetMemoryFdKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryFdKHR"));
+    table.vkGetMemoryFdKHR = reinterpret_cast<PFN_vkGetMemoryFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryFdKHR"));
 #endif
 #if defined(VK_KHR_external_memory_fd)
-    table.vkGetMemoryFdPropertiesKHR = reinterpret_cast<PFN_vkGetMemoryFdPropertiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryFdPropertiesKHR"));
+    table.vkGetMemoryFdPropertiesKHR = reinterpret_cast<PFN_vkGetMemoryFdPropertiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryFdPropertiesKHR"));
 #endif
 #if defined(VK_FUCHSIA_external_memory)
-    table.vkGetMemoryZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandleFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandleFUCHSIA"));
+    table.vkGetMemoryZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandleFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_external_memory)
-    table.vkGetMemoryZirconHandlePropertiesFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandlePropertiesFUCHSIA"));
+    table.vkGetMemoryZirconHandlePropertiesFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandlePropertiesFUCHSIA"));
 #endif
 #if defined(VK_NV_external_memory_rdma)
-    table.vkGetMemoryRemoteAddressNV = reinterpret_cast<PFN_vkGetMemoryRemoteAddressNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryRemoteAddressNV"));
+    table.vkGetMemoryRemoteAddressNV = reinterpret_cast<PFN_vkGetMemoryRemoteAddressNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryRemoteAddressNV"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
-    table.vkGetMemorySciBufNV = reinterpret_cast<PFN_vkGetMemorySciBufNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemorySciBufNV"));
+    table.vkGetMemorySciBufNV = reinterpret_cast<PFN_vkGetMemorySciBufNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemorySciBufNV"));
 #endif
 #if defined(VK_KHR_external_semaphore_win32)
-    table.vkGetSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkGetSemaphoreWin32HandleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreWin32HandleKHR"));
+    table.vkGetSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkGetSemaphoreWin32HandleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_win32)
-    table.vkImportSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkImportSemaphoreWin32HandleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportSemaphoreWin32HandleKHR"));
+    table.vkImportSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkImportSemaphoreWin32HandleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_fd)
-    table.vkGetSemaphoreFdKHR = reinterpret_cast<PFN_vkGetSemaphoreFdKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreFdKHR"));
+    table.vkGetSemaphoreFdKHR = reinterpret_cast<PFN_vkGetSemaphoreFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreFdKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_fd)
-    table.vkImportSemaphoreFdKHR = reinterpret_cast<PFN_vkImportSemaphoreFdKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportSemaphoreFdKHR"));
+    table.vkImportSemaphoreFdKHR = reinterpret_cast<PFN_vkImportSemaphoreFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreFdKHR"));
 #endif
 #if defined(VK_FUCHSIA_external_semaphore)
-    table.vkGetSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetSemaphoreZirconHandleFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreZirconHandleFUCHSIA"));
+    table.vkGetSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetSemaphoreZirconHandleFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_external_semaphore)
-    table.vkImportSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkImportSemaphoreZirconHandleFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportSemaphoreZirconHandleFUCHSIA"));
+    table.vkImportSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkImportSemaphoreZirconHandleFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_KHR_external_fence_win32)
-    table.vkGetFenceWin32HandleKHR = reinterpret_cast<PFN_vkGetFenceWin32HandleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFenceWin32HandleKHR"));
+    table.vkGetFenceWin32HandleKHR = reinterpret_cast<PFN_vkGetFenceWin32HandleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_fence_win32)
-    table.vkImportFenceWin32HandleKHR = reinterpret_cast<PFN_vkImportFenceWin32HandleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportFenceWin32HandleKHR"));
+    table.vkImportFenceWin32HandleKHR = reinterpret_cast<PFN_vkImportFenceWin32HandleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_fence_fd)
-    table.vkGetFenceFdKHR = reinterpret_cast<PFN_vkGetFenceFdKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFenceFdKHR"));
+    table.vkGetFenceFdKHR = reinterpret_cast<PFN_vkGetFenceFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceFdKHR"));
 #endif
 #if defined(VK_KHR_external_fence_fd)
-    table.vkImportFenceFdKHR = reinterpret_cast<PFN_vkImportFenceFdKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportFenceFdKHR"));
+    table.vkImportFenceFdKHR = reinterpret_cast<PFN_vkImportFenceFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceFdKHR"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkGetFenceSciSyncFenceNV = reinterpret_cast<PFN_vkGetFenceSciSyncFenceNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFenceSciSyncFenceNV"));
+    table.vkGetFenceSciSyncFenceNV = reinterpret_cast<PFN_vkGetFenceSciSyncFenceNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceSciSyncFenceNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkGetFenceSciSyncObjNV = reinterpret_cast<PFN_vkGetFenceSciSyncObjNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFenceSciSyncObjNV"));
+    table.vkGetFenceSciSyncObjNV = reinterpret_cast<PFN_vkGetFenceSciSyncObjNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkImportFenceSciSyncFenceNV = reinterpret_cast<PFN_vkImportFenceSciSyncFenceNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportFenceSciSyncFenceNV"));
+    table.vkImportFenceSciSyncFenceNV = reinterpret_cast<PFN_vkImportFenceSciSyncFenceNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceSciSyncFenceNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkImportFenceSciSyncObjNV = reinterpret_cast<PFN_vkImportFenceSciSyncObjNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportFenceSciSyncObjNV"));
+    table.vkImportFenceSciSyncObjNV = reinterpret_cast<PFN_vkImportFenceSciSyncObjNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync)
-    table.vkGetSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkGetSemaphoreSciSyncObjNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreSciSyncObjNV"));
+    table.vkGetSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkGetSemaphoreSciSyncObjNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync)
-    table.vkImportSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkImportSemaphoreSciSyncObjNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkImportSemaphoreSciSyncObjNV"));
+    table.vkImportSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkImportSemaphoreSciSyncObjNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync2)
-    table.vkCreateSemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkCreateSemaphoreSciSyncPoolNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSemaphoreSciSyncPoolNV"));
+    table.vkCreateSemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkCreateSemaphoreSciSyncPoolNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSemaphoreSciSyncPoolNV"));
 #endif
 #if defined(VK_NV_external_sci_sync2)
-    table.vkDestroySemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkDestroySemaphoreSciSyncPoolNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySemaphoreSciSyncPoolNV"));
+    table.vkDestroySemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkDestroySemaphoreSciSyncPoolNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySemaphoreSciSyncPoolNV"));
 #endif
 #if defined(VK_EXT_display_control)
-    table.vkDisplayPowerControlEXT = reinterpret_cast<PFN_vkDisplayPowerControlEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDisplayPowerControlEXT"));
+    table.vkDisplayPowerControlEXT = reinterpret_cast<PFN_vkDisplayPowerControlEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDisplayPowerControlEXT"));
 #endif
 #if defined(VK_EXT_display_control)
-    table.vkRegisterDeviceEventEXT = reinterpret_cast<PFN_vkRegisterDeviceEventEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkRegisterDeviceEventEXT"));
+    table.vkRegisterDeviceEventEXT = reinterpret_cast<PFN_vkRegisterDeviceEventEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkRegisterDeviceEventEXT"));
 #endif
 #if defined(VK_EXT_display_control)
-    table.vkRegisterDisplayEventEXT = reinterpret_cast<PFN_vkRegisterDisplayEventEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkRegisterDisplayEventEXT"));
+    table.vkRegisterDisplayEventEXT = reinterpret_cast<PFN_vkRegisterDisplayEventEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkRegisterDisplayEventEXT"));
 #endif
 #if defined(VK_EXT_display_control)
-    table.vkGetSwapchainCounterEXT = reinterpret_cast<PFN_vkGetSwapchainCounterEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSwapchainCounterEXT"));
+    table.vkGetSwapchainCounterEXT = reinterpret_cast<PFN_vkGetSwapchainCounterEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainCounterEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetDeviceGroupPeerMemoryFeatures = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeatures>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeatures"));
+    table.vkGetDeviceGroupPeerMemoryFeatures = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeatures>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeatures"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkBindBufferMemory2 = reinterpret_cast<PFN_vkBindBufferMemory2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindBufferMemory2"));
+    table.vkBindBufferMemory2 = reinterpret_cast<PFN_vkBindBufferMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkBindImageMemory2 = reinterpret_cast<PFN_vkBindImageMemory2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindImageMemory2"));
+    table.vkBindImageMemory2 = reinterpret_cast<PFN_vkBindImageMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkCmdSetDeviceMask = reinterpret_cast<PFN_vkCmdSetDeviceMask>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDeviceMask"));
+    table.vkCmdSetDeviceMask = reinterpret_cast<PFN_vkCmdSetDeviceMask>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDeviceMask"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
-    table.vkGetDeviceGroupPresentCapabilitiesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPresentCapabilitiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceGroupPresentCapabilitiesKHR"));
+    table.vkGetDeviceGroupPresentCapabilitiesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPresentCapabilitiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPresentCapabilitiesKHR"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
-    table.vkGetDeviceGroupSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModesKHR"));
+    table.vkGetDeviceGroupSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModesKHR"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) || (defined(VK_KHR_device_group) && defined(VK_KHR_swapchain))
-    table.vkAcquireNextImage2KHR = reinterpret_cast<PFN_vkAcquireNextImage2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquireNextImage2KHR"));
+    table.vkAcquireNextImage2KHR = reinterpret_cast<PFN_vkAcquireNextImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireNextImage2KHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkCmdDispatchBase = reinterpret_cast<PFN_vkCmdDispatchBase>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchBase"));
+    table.vkCmdDispatchBase = reinterpret_cast<PFN_vkCmdDispatchBase>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchBase"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkCreateDescriptorUpdateTemplate = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplate>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplate"));
+    table.vkCreateDescriptorUpdateTemplate = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplate>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkDestroyDescriptorUpdateTemplate = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplate>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplate"));
+    table.vkDestroyDescriptorUpdateTemplate = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplate>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkUpdateDescriptorSetWithTemplate = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplate>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplate"));
+    table.vkUpdateDescriptorSetWithTemplate = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplate>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushDescriptorSetWithTemplate = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate"));
+    table.vkCmdPushDescriptorSetWithTemplate = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate"));
 #endif
 #if defined(VK_EXT_hdr_metadata)
-    table.vkSetHdrMetadataEXT = reinterpret_cast<PFN_vkSetHdrMetadataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetHdrMetadataEXT"));
+    table.vkSetHdrMetadataEXT = reinterpret_cast<PFN_vkSetHdrMetadataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetHdrMetadataEXT"));
 #endif
 #if defined(VK_KHR_shared_presentable_image)
-    table.vkGetSwapchainStatusKHR = reinterpret_cast<PFN_vkGetSwapchainStatusKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSwapchainStatusKHR"));
+    table.vkGetSwapchainStatusKHR = reinterpret_cast<PFN_vkGetSwapchainStatusKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainStatusKHR"));
 #endif
 #if defined(VK_GOOGLE_display_timing)
-    table.vkGetRefreshCycleDurationGOOGLE = reinterpret_cast<PFN_vkGetRefreshCycleDurationGOOGLE>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRefreshCycleDurationGOOGLE"));
+    table.vkGetRefreshCycleDurationGOOGLE = reinterpret_cast<PFN_vkGetRefreshCycleDurationGOOGLE>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRefreshCycleDurationGOOGLE"));
 #endif
 #if defined(VK_GOOGLE_display_timing)
-    table.vkGetPastPresentationTimingGOOGLE = reinterpret_cast<PFN_vkGetPastPresentationTimingGOOGLE>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPastPresentationTimingGOOGLE"));
+    table.vkGetPastPresentationTimingGOOGLE = reinterpret_cast<PFN_vkGetPastPresentationTimingGOOGLE>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPastPresentationTimingGOOGLE"));
 #endif
 #if defined(VK_NV_clip_space_w_scaling)
-    table.vkCmdSetViewportWScalingNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingNV"));
+    table.vkCmdSetViewportWScalingNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingNV"));
 #endif
 #if defined(VK_EXT_discard_rectangles)
-    table.vkCmdSetDiscardRectangleEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEXT"));
+    table.vkCmdSetDiscardRectangleEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEXT"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
-    table.vkCmdSetDiscardRectangleEnableEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEnableEXT"));
+    table.vkCmdSetDiscardRectangleEnableEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEnableEXT"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2 && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
-    table.vkCmdSetDiscardRectangleModeEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleModeEXT"));
+    table.vkCmdSetDiscardRectangleModeEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleModeEXT"));
 #endif
 #if defined(VK_EXT_sample_locations)
-    table.vkCmdSetSampleLocationsEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEXT"));
+    table.vkCmdSetSampleLocationsEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetBufferMemoryRequirements2 = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2"));
+    table.vkGetBufferMemoryRequirements2 = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetImageMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageMemoryRequirements2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2"));
+    table.vkGetImageMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageMemoryRequirements2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetImageSparseMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2"));
+    table.vkGetImageSparseMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkGetDeviceBufferMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirements"));
+    table.vkGetDeviceBufferMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkGetDeviceImageMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirements"));
+    table.vkGetDeviceImageMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkGetDeviceImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirements>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirements"));
+    table.vkGetDeviceImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirements>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkCreateSamplerYcbcrConversion = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversion>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversion"));
+    table.vkCreateSamplerYcbcrConversion = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversion>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversion"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkDestroySamplerYcbcrConversion = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversion>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversion"));
+    table.vkDestroySamplerYcbcrConversion = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversion>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversion"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetDeviceQueue2 = reinterpret_cast<PFN_vkGetDeviceQueue2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceQueue2"));
+    table.vkGetDeviceQueue2 = reinterpret_cast<PFN_vkGetDeviceQueue2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceQueue2"));
 #endif
 #if defined(VK_EXT_validation_cache)
-    table.vkCreateValidationCacheEXT = reinterpret_cast<PFN_vkCreateValidationCacheEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateValidationCacheEXT"));
+    table.vkCreateValidationCacheEXT = reinterpret_cast<PFN_vkCreateValidationCacheEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateValidationCacheEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
-    table.vkDestroyValidationCacheEXT = reinterpret_cast<PFN_vkDestroyValidationCacheEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyValidationCacheEXT"));
+    table.vkDestroyValidationCacheEXT = reinterpret_cast<PFN_vkDestroyValidationCacheEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyValidationCacheEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
-    table.vkGetValidationCacheDataEXT = reinterpret_cast<PFN_vkGetValidationCacheDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetValidationCacheDataEXT"));
+    table.vkGetValidationCacheDataEXT = reinterpret_cast<PFN_vkGetValidationCacheDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetValidationCacheDataEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
-    table.vkMergeValidationCachesEXT = reinterpret_cast<PFN_vkMergeValidationCachesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkMergeValidationCachesEXT"));
+    table.vkMergeValidationCachesEXT = reinterpret_cast<PFN_vkMergeValidationCachesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMergeValidationCachesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
-    table.vkGetDescriptorSetLayoutSupport = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupport>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupport"));
+    table.vkGetDescriptorSetLayoutSupport = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupport>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupport"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
-    table.vkGetSwapchainGrallocUsageANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsageANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsageANDROID"));
+    table.vkGetSwapchainGrallocUsageANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsageANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsageANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
-    table.vkGetSwapchainGrallocUsage2ANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsage2ANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsage2ANDROID"));
+    table.vkGetSwapchainGrallocUsage2ANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsage2ANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsage2ANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
-    table.vkAcquireImageANDROID = reinterpret_cast<PFN_vkAcquireImageANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquireImageANDROID"));
+    table.vkAcquireImageANDROID = reinterpret_cast<PFN_vkAcquireImageANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireImageANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
-    table.vkQueueSignalReleaseImageANDROID = reinterpret_cast<PFN_vkQueueSignalReleaseImageANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueSignalReleaseImageANDROID"));
+    table.vkQueueSignalReleaseImageANDROID = reinterpret_cast<PFN_vkQueueSignalReleaseImageANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSignalReleaseImageANDROID"));
 #endif
 #if defined(VK_AMD_shader_info)
-    table.vkGetShaderInfoAMD = reinterpret_cast<PFN_vkGetShaderInfoAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetShaderInfoAMD"));
+    table.vkGetShaderInfoAMD = reinterpret_cast<PFN_vkGetShaderInfoAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderInfoAMD"));
 #endif
 #if defined(VK_AMD_display_native_hdr)
-    table.vkSetLocalDimmingAMD = reinterpret_cast<PFN_vkSetLocalDimmingAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetLocalDimmingAMD"));
+    table.vkSetLocalDimmingAMD = reinterpret_cast<PFN_vkSetLocalDimmingAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLocalDimmingAMD"));
 #endif
 #if defined(VK_KHR_calibrated_timestamps)
-    table.vkGetCalibratedTimestampsKHR = reinterpret_cast<PFN_vkGetCalibratedTimestampsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsKHR"));
+    table.vkGetCalibratedTimestampsKHR = reinterpret_cast<PFN_vkGetCalibratedTimestampsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsKHR"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkSetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectNameEXT"));
+    table.vkSetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectNameEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkSetDebugUtilsObjectTagEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectTagEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectTagEXT"));
+    table.vkSetDebugUtilsObjectTagEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectTagEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectTagEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkQueueBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueBeginDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueBeginDebugUtilsLabelEXT"));
+    table.vkQueueBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueBeginDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueBeginDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkQueueEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueEndDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueEndDebugUtilsLabelEXT"));
+    table.vkQueueEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueEndDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueEndDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkQueueInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueInsertDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueInsertDebugUtilsLabelEXT"));
+    table.vkQueueInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueInsertDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueInsertDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkCmdBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdBeginDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginDebugUtilsLabelEXT"));
+    table.vkCmdBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdBeginDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkCmdEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdEndDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndDebugUtilsLabelEXT"));
+    table.vkCmdEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdEndDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
-    table.vkCmdInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdInsertDebugUtilsLabelEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdInsertDebugUtilsLabelEXT"));
+    table.vkCmdInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdInsertDebugUtilsLabelEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdInsertDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_external_memory_host)
-    table.vkGetMemoryHostPointerPropertiesEXT = reinterpret_cast<PFN_vkGetMemoryHostPointerPropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryHostPointerPropertiesEXT"));
+    table.vkGetMemoryHostPointerPropertiesEXT = reinterpret_cast<PFN_vkGetMemoryHostPointerPropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryHostPointerPropertiesEXT"));
 #endif
 #if defined(VK_AMD_buffer_marker)
-    table.vkCmdWriteBufferMarkerAMD = reinterpret_cast<PFN_vkCmdWriteBufferMarkerAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarkerAMD"));
+    table.vkCmdWriteBufferMarkerAMD = reinterpret_cast<PFN_vkCmdWriteBufferMarkerAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarkerAMD"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCreateRenderPass2 = reinterpret_cast<PFN_vkCreateRenderPass2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateRenderPass2"));
+    table.vkCreateRenderPass2 = reinterpret_cast<PFN_vkCreateRenderPass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdBeginRenderPass2 = reinterpret_cast<PFN_vkCmdBeginRenderPass2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2"));
+    table.vkCmdBeginRenderPass2 = reinterpret_cast<PFN_vkCmdBeginRenderPass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdNextSubpass2 = reinterpret_cast<PFN_vkCmdNextSubpass2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdNextSubpass2"));
+    table.vkCmdNextSubpass2 = reinterpret_cast<PFN_vkCmdNextSubpass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdEndRenderPass2 = reinterpret_cast<PFN_vkCmdEndRenderPass2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2"));
+    table.vkCmdEndRenderPass2 = reinterpret_cast<PFN_vkCmdEndRenderPass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkGetSemaphoreCounterValue = reinterpret_cast<PFN_vkGetSemaphoreCounterValue>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValue"));
+    table.vkGetSemaphoreCounterValue = reinterpret_cast<PFN_vkGetSemaphoreCounterValue>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValue"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkWaitSemaphores = reinterpret_cast<PFN_vkWaitSemaphores>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWaitSemaphores"));
+    table.vkWaitSemaphores = reinterpret_cast<PFN_vkWaitSemaphores>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitSemaphores"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkSignalSemaphore = reinterpret_cast<PFN_vkSignalSemaphore>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSignalSemaphore"));
+    table.vkSignalSemaphore = reinterpret_cast<PFN_vkSignalSemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSignalSemaphore"));
 #endif
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
-    table.vkGetAndroidHardwareBufferPropertiesANDROID = reinterpret_cast<PFN_vkGetAndroidHardwareBufferPropertiesANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAndroidHardwareBufferPropertiesANDROID"));
+    table.vkGetAndroidHardwareBufferPropertiesANDROID = reinterpret_cast<PFN_vkGetAndroidHardwareBufferPropertiesANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAndroidHardwareBufferPropertiesANDROID"));
 #endif
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
-    table.vkGetMemoryAndroidHardwareBufferANDROID = reinterpret_cast<PFN_vkGetMemoryAndroidHardwareBufferANDROID>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryAndroidHardwareBufferANDROID"));
+    table.vkGetMemoryAndroidHardwareBufferANDROID = reinterpret_cast<PFN_vkGetMemoryAndroidHardwareBufferANDROID>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryAndroidHardwareBufferANDROID"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdDrawIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndirectCount>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCount"));
+    table.vkCmdDrawIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndirectCount>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdDrawIndexedIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCount>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCount"));
+    table.vkCmdDrawIndexedIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCount>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCount"));
 #endif
 #if defined(VK_NV_device_diagnostic_checkpoints)
-    table.vkCmdSetCheckpointNV = reinterpret_cast<PFN_vkCmdSetCheckpointNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCheckpointNV"));
+    table.vkCmdSetCheckpointNV = reinterpret_cast<PFN_vkCmdSetCheckpointNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCheckpointNV"));
 #endif
 #if defined(VK_NV_device_diagnostic_checkpoints)
-    table.vkGetQueueCheckpointDataNV = reinterpret_cast<PFN_vkGetQueueCheckpointDataNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetQueueCheckpointDataNV"));
+    table.vkGetQueueCheckpointDataNV = reinterpret_cast<PFN_vkGetQueueCheckpointDataNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueueCheckpointDataNV"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdBindTransformFeedbackBuffersEXT = reinterpret_cast<PFN_vkCmdBindTransformFeedbackBuffersEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindTransformFeedbackBuffersEXT"));
+    table.vkCmdBindTransformFeedbackBuffersEXT = reinterpret_cast<PFN_vkCmdBindTransformFeedbackBuffersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindTransformFeedbackBuffersEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdBeginTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdBeginTransformFeedbackEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginTransformFeedbackEXT"));
+    table.vkCmdBeginTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdBeginTransformFeedbackEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginTransformFeedbackEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdEndTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdEndTransformFeedbackEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndTransformFeedbackEXT"));
+    table.vkCmdEndTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdEndTransformFeedbackEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndTransformFeedbackEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdBeginQueryIndexedEXT = reinterpret_cast<PFN_vkCmdBeginQueryIndexedEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginQueryIndexedEXT"));
+    table.vkCmdBeginQueryIndexedEXT = reinterpret_cast<PFN_vkCmdBeginQueryIndexedEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginQueryIndexedEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdEndQueryIndexedEXT = reinterpret_cast<PFN_vkCmdEndQueryIndexedEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndQueryIndexedEXT"));
+    table.vkCmdEndQueryIndexedEXT = reinterpret_cast<PFN_vkCmdEndQueryIndexedEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndQueryIndexedEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
-    table.vkCmdDrawIndirectByteCountEXT = reinterpret_cast<PFN_vkCmdDrawIndirectByteCountEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndirectByteCountEXT"));
+    table.vkCmdDrawIndirectByteCountEXT = reinterpret_cast<PFN_vkCmdDrawIndirectByteCountEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectByteCountEXT"));
 #endif
 #if (defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2)
-    table.vkCmdSetExclusiveScissorNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorNV"));
+    table.vkCmdSetExclusiveScissorNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorNV"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2))
-    table.vkCmdSetExclusiveScissorEnableNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorEnableNV"));
+    table.vkCmdSetExclusiveScissorEnableNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorEnableNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
-    table.vkCmdBindShadingRateImageNV = reinterpret_cast<PFN_vkCmdBindShadingRateImageNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindShadingRateImageNV"));
+    table.vkCmdBindShadingRateImageNV = reinterpret_cast<PFN_vkCmdBindShadingRateImageNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindShadingRateImageNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
-    table.vkCmdSetViewportShadingRatePaletteNV = reinterpret_cast<PFN_vkCmdSetViewportShadingRatePaletteNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportShadingRatePaletteNV"));
+    table.vkCmdSetViewportShadingRatePaletteNV = reinterpret_cast<PFN_vkCmdSetViewportShadingRatePaletteNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportShadingRatePaletteNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
-    table.vkCmdSetCoarseSampleOrderNV = reinterpret_cast<PFN_vkCmdSetCoarseSampleOrderNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoarseSampleOrderNV"));
+    table.vkCmdSetCoarseSampleOrderNV = reinterpret_cast<PFN_vkCmdSetCoarseSampleOrderNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoarseSampleOrderNV"));
 #endif
 #if defined(VK_NV_mesh_shader)
-    table.vkCmdDrawMeshTasksNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksNV"));
+    table.vkCmdDrawMeshTasksNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksNV"));
 #endif
 #if defined(VK_NV_mesh_shader)
-    table.vkCmdDrawMeshTasksIndirectNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectNV"));
+    table.vkCmdDrawMeshTasksIndirectNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectNV"));
 #endif
 #if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
-    table.vkCmdDrawMeshTasksIndirectCountNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountNV"));
+    table.vkCmdDrawMeshTasksIndirectCountNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountNV"));
 #endif
 #if defined(VK_EXT_mesh_shader)
-    table.vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksEXT"));
+    table.vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksEXT"));
 #endif
 #if defined(VK_EXT_mesh_shader)
-    table.vkCmdDrawMeshTasksIndirectEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectEXT"));
+    table.vkCmdDrawMeshTasksIndirectEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectEXT"));
 #endif
 #if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
-    table.vkCmdDrawMeshTasksIndirectCountEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountEXT"));
+    table.vkCmdDrawMeshTasksIndirectCountEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountEXT"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCompileDeferredNV = reinterpret_cast<PFN_vkCompileDeferredNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCompileDeferredNV"));
+    table.vkCompileDeferredNV = reinterpret_cast<PFN_vkCompileDeferredNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCompileDeferredNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCreateAccelerationStructureNV = reinterpret_cast<PFN_vkCreateAccelerationStructureNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureNV"));
+    table.vkCreateAccelerationStructureNV = reinterpret_cast<PFN_vkCreateAccelerationStructureNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureNV"));
 #endif
 #if defined(VK_HUAWEI_invocation_mask)
-    table.vkCmdBindInvocationMaskHUAWEI = reinterpret_cast<PFN_vkCmdBindInvocationMaskHUAWEI>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindInvocationMaskHUAWEI"));
+    table.vkCmdBindInvocationMaskHUAWEI = reinterpret_cast<PFN_vkCmdBindInvocationMaskHUAWEI>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindInvocationMaskHUAWEI"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkDestroyAccelerationStructureKHR = reinterpret_cast<PFN_vkDestroyAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureKHR"));
+    table.vkDestroyAccelerationStructureKHR = reinterpret_cast<PFN_vkDestroyAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkDestroyAccelerationStructureNV = reinterpret_cast<PFN_vkDestroyAccelerationStructureNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureNV"));
+    table.vkDestroyAccelerationStructureNV = reinterpret_cast<PFN_vkDestroyAccelerationStructureNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkGetAccelerationStructureMemoryRequirementsNV = reinterpret_cast<PFN_vkGetAccelerationStructureMemoryRequirementsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAccelerationStructureMemoryRequirementsNV"));
+    table.vkGetAccelerationStructureMemoryRequirementsNV = reinterpret_cast<PFN_vkGetAccelerationStructureMemoryRequirementsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkBindAccelerationStructureMemoryNV = reinterpret_cast<PFN_vkBindAccelerationStructureMemoryNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindAccelerationStructureMemoryNV"));
+    table.vkBindAccelerationStructureMemoryNV = reinterpret_cast<PFN_vkBindAccelerationStructureMemoryNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindAccelerationStructureMemoryNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCmdCopyAccelerationStructureNV = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureNV"));
+    table.vkCmdCopyAccelerationStructureNV = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureKHR"));
+    table.vkCmdCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureKHR"));
+    table.vkCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureToMemoryKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureToMemoryKHR"));
+    table.vkCmdCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureToMemoryKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureToMemoryKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureToMemoryKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureToMemoryKHR"));
+    table.vkCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureToMemoryKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureToMemoryKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToAccelerationStructureKHR"));
+    table.vkCmdCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyMemoryToAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMemoryToAccelerationStructureKHR"));
+    table.vkCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyMemoryToAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
+    table.vkCmdWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCmdWriteAccelerationStructuresPropertiesNV = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesNV"));
+    table.vkCmdWriteAccelerationStructuresPropertiesNV = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCmdBuildAccelerationStructureNV = reinterpret_cast<PFN_vkCmdBuildAccelerationStructureNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructureNV"));
+    table.vkCmdBuildAccelerationStructureNV = reinterpret_cast<PFN_vkCmdBuildAccelerationStructureNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructureNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkWriteAccelerationStructuresPropertiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWriteAccelerationStructuresPropertiesKHR"));
+    table.vkWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkWriteAccelerationStructuresPropertiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWriteAccelerationStructuresPropertiesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdTraceRaysKHR"));
+    table.vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCmdTraceRaysNV = reinterpret_cast<PFN_vkCmdTraceRaysNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdTraceRaysNV"));
+    table.vkCmdTraceRaysNV = reinterpret_cast<PFN_vkCmdTraceRaysNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysNV"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkGetRayTracingShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesKHR"));
+    table.vkGetRayTracingShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));
+    table.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkGetAccelerationStructureHandleNV = reinterpret_cast<PFN_vkGetAccelerationStructureHandleNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAccelerationStructureHandleNV"));
+    table.vkGetAccelerationStructureHandleNV = reinterpret_cast<PFN_vkGetAccelerationStructureHandleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureHandleNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkCreateRayTracingPipelinesNV = reinterpret_cast<PFN_vkCreateRayTracingPipelinesNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesNV"));
+    table.vkCreateRayTracingPipelinesNV = reinterpret_cast<PFN_vkCreateRayTracingPipelinesNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesNV"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesKHR"));
+    table.vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkCmdTraceRaysIndirectKHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirectKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirectKHR"));
+    table.vkCmdTraceRaysIndirectKHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirectKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirectKHR"));
 #endif
 #if (defined(VK_KHR_ray_tracing_maintenance1) && defined(VK_KHR_ray_tracing_pipeline))
-    table.vkCmdTraceRaysIndirect2KHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirect2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirect2KHR"));
+    table.vkCmdTraceRaysIndirect2KHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirect2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirect2KHR"));
 #endif
 #if defined(VK_NV_cluster_acceleration_structure)
-    table.vkGetClusterAccelerationStructureBuildSizesNV = reinterpret_cast<PFN_vkGetClusterAccelerationStructureBuildSizesNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetClusterAccelerationStructureBuildSizesNV"));
+    table.vkGetClusterAccelerationStructureBuildSizesNV = reinterpret_cast<PFN_vkGetClusterAccelerationStructureBuildSizesNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetClusterAccelerationStructureBuildSizesNV"));
 #endif
 #if defined(VK_NV_cluster_acceleration_structure)
-    table.vkCmdBuildClusterAccelerationStructureIndirectNV = reinterpret_cast<PFN_vkCmdBuildClusterAccelerationStructureIndirectNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildClusterAccelerationStructureIndirectNV"));
+    table.vkCmdBuildClusterAccelerationStructureIndirectNV = reinterpret_cast<PFN_vkCmdBuildClusterAccelerationStructureIndirectNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildClusterAccelerationStructureIndirectNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkGetDeviceAccelerationStructureCompatibilityKHR = reinterpret_cast<PFN_vkGetDeviceAccelerationStructureCompatibilityKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceAccelerationStructureCompatibilityKHR"));
+    table.vkGetDeviceAccelerationStructureCompatibilityKHR = reinterpret_cast<PFN_vkGetDeviceAccelerationStructureCompatibilityKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceAccelerationStructureCompatibilityKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkGetRayTracingShaderGroupStackSizeKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupStackSizeKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupStackSizeKHR"));
+    table.vkGetRayTracingShaderGroupStackSizeKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupStackSizeKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupStackSizeKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
-    table.vkCmdSetRayTracingPipelineStackSizeKHR = reinterpret_cast<PFN_vkCmdSetRayTracingPipelineStackSizeKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRayTracingPipelineStackSizeKHR"));
+    table.vkCmdSetRayTracingPipelineStackSizeKHR = reinterpret_cast<PFN_vkCmdSetRayTracingPipelineStackSizeKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRayTracingPipelineStackSizeKHR"));
 #endif
 #if defined(VK_NVX_image_view_handle)
-    table.vkGetImageViewHandleNVX = reinterpret_cast<PFN_vkGetImageViewHandleNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageViewHandleNVX"));
+    table.vkGetImageViewHandleNVX = reinterpret_cast<PFN_vkGetImageViewHandleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewHandleNVX"));
 #endif
 #if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3)
-    table.vkGetImageViewHandle64NVX = reinterpret_cast<PFN_vkGetImageViewHandle64NVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageViewHandle64NVX"));
+    table.vkGetImageViewHandle64NVX = reinterpret_cast<PFN_vkGetImageViewHandle64NVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewHandle64NVX"));
 #endif
 #if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3 && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 2)
-    table.vkGetImageViewAddressNVX = reinterpret_cast<PFN_vkGetImageViewAddressNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageViewAddressNVX"));
+    table.vkGetImageViewAddressNVX = reinterpret_cast<PFN_vkGetImageViewAddressNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewAddressNVX"));
 #endif
 #if (defined(VK_EXT_full_screen_exclusive) && (defined(VK_KHR_device_group) || defined(VKIT_API_VERSION_1_1)))
-    table.vkGetDeviceGroupSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModes2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModes2EXT"));
+    table.vkGetDeviceGroupSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModes2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModes2EXT"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
-    table.vkAcquireFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkAcquireFullScreenExclusiveModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquireFullScreenExclusiveModeEXT"));
+    table.vkAcquireFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkAcquireFullScreenExclusiveModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireFullScreenExclusiveModeEXT"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
-    table.vkReleaseFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkReleaseFullScreenExclusiveModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkReleaseFullScreenExclusiveModeEXT"));
+    table.vkReleaseFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkReleaseFullScreenExclusiveModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseFullScreenExclusiveModeEXT"));
 #endif
 #if defined(VK_KHR_performance_query)
-    table.vkAcquireProfilingLockKHR = reinterpret_cast<PFN_vkAcquireProfilingLockKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquireProfilingLockKHR"));
+    table.vkAcquireProfilingLockKHR = reinterpret_cast<PFN_vkAcquireProfilingLockKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireProfilingLockKHR"));
 #endif
 #if defined(VK_KHR_performance_query)
-    table.vkReleaseProfilingLockKHR = reinterpret_cast<PFN_vkReleaseProfilingLockKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkReleaseProfilingLockKHR"));
+    table.vkReleaseProfilingLockKHR = reinterpret_cast<PFN_vkReleaseProfilingLockKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseProfilingLockKHR"));
 #endif
 #if defined(VK_EXT_image_drm_format_modifier)
-    table.vkGetImageDrmFormatModifierPropertiesEXT = reinterpret_cast<PFN_vkGetImageDrmFormatModifierPropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageDrmFormatModifierPropertiesEXT"));
+    table.vkGetImageDrmFormatModifierPropertiesEXT = reinterpret_cast<PFN_vkGetImageDrmFormatModifierPropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageDrmFormatModifierPropertiesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkGetBufferOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddress>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddress"));
+    table.vkGetBufferOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddress>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddress"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkGetBufferDeviceAddress = reinterpret_cast<PFN_vkGetBufferDeviceAddress>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddress"));
+    table.vkGetBufferDeviceAddress = reinterpret_cast<PFN_vkGetBufferDeviceAddress>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddress"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkInitializePerformanceApiINTEL = reinterpret_cast<PFN_vkInitializePerformanceApiINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkInitializePerformanceApiINTEL"));
+    table.vkInitializePerformanceApiINTEL = reinterpret_cast<PFN_vkInitializePerformanceApiINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkInitializePerformanceApiINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkUninitializePerformanceApiINTEL = reinterpret_cast<PFN_vkUninitializePerformanceApiINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUninitializePerformanceApiINTEL"));
+    table.vkUninitializePerformanceApiINTEL = reinterpret_cast<PFN_vkUninitializePerformanceApiINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUninitializePerformanceApiINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkCmdSetPerformanceMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceMarkerINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPerformanceMarkerINTEL"));
+    table.vkCmdSetPerformanceMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceMarkerINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceMarkerINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkCmdSetPerformanceStreamMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceStreamMarkerINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPerformanceStreamMarkerINTEL"));
+    table.vkCmdSetPerformanceStreamMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceStreamMarkerINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceStreamMarkerINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkCmdSetPerformanceOverrideINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceOverrideINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPerformanceOverrideINTEL"));
+    table.vkCmdSetPerformanceOverrideINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceOverrideINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceOverrideINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkAcquirePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkAcquirePerformanceConfigurationINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAcquirePerformanceConfigurationINTEL"));
+    table.vkAcquirePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkAcquirePerformanceConfigurationINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquirePerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkReleasePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkReleasePerformanceConfigurationINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkReleasePerformanceConfigurationINTEL"));
+    table.vkReleasePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkReleasePerformanceConfigurationINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleasePerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkQueueSetPerformanceConfigurationINTEL = reinterpret_cast<PFN_vkQueueSetPerformanceConfigurationINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueSetPerformanceConfigurationINTEL"));
+    table.vkQueueSetPerformanceConfigurationINTEL = reinterpret_cast<PFN_vkQueueSetPerformanceConfigurationINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSetPerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
-    table.vkGetPerformanceParameterINTEL = reinterpret_cast<PFN_vkGetPerformanceParameterINTEL>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPerformanceParameterINTEL"));
+    table.vkGetPerformanceParameterINTEL = reinterpret_cast<PFN_vkGetPerformanceParameterINTEL>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPerformanceParameterINTEL"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkGetDeviceMemoryOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddress>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddress"));
+    table.vkGetDeviceMemoryOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddress>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddress"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
-    table.vkGetPipelineExecutablePropertiesKHR = reinterpret_cast<PFN_vkGetPipelineExecutablePropertiesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineExecutablePropertiesKHR"));
+    table.vkGetPipelineExecutablePropertiesKHR = reinterpret_cast<PFN_vkGetPipelineExecutablePropertiesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutablePropertiesKHR"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
-    table.vkGetPipelineExecutableStatisticsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableStatisticsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineExecutableStatisticsKHR"));
+    table.vkGetPipelineExecutableStatisticsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableStatisticsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutableStatisticsKHR"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
-    table.vkGetPipelineExecutableInternalRepresentationsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableInternalRepresentationsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineExecutableInternalRepresentationsKHR"));
+    table.vkGetPipelineExecutableInternalRepresentationsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableInternalRepresentationsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutableInternalRepresentationsKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdSetLineStipple = reinterpret_cast<PFN_vkCmdSetLineStipple>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineStipple"));
+    table.vkCmdSetLineStipple = reinterpret_cast<PFN_vkCmdSetLineStipple>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStipple"));
 #endif
 #if defined(VKSC_VERSION_1_0)
-    table.vkGetFaultData = reinterpret_cast<PFN_vkGetFaultData>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFaultData"));
+    table.vkGetFaultData = reinterpret_cast<PFN_vkGetFaultData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFaultData"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCreateAccelerationStructureKHR = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureKHR"));
+    table.vkCreateAccelerationStructureKHR = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresKHR"));
+    table.vkCmdBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkCmdBuildAccelerationStructuresIndirectKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresIndirectKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresIndirectKHR"));
+    table.vkCmdBuildAccelerationStructuresIndirectKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresIndirectKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresIndirectKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkBuildAccelerationStructuresKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBuildAccelerationStructuresKHR"));
+    table.vkBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkBuildAccelerationStructuresKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBuildAccelerationStructuresKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkGetAccelerationStructureDeviceAddressKHR = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAccelerationStructureDeviceAddressKHR"));
+    table.vkGetAccelerationStructureDeviceAddressKHR = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureDeviceAddressKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
-    table.vkCreateDeferredOperationKHR = reinterpret_cast<PFN_vkCreateDeferredOperationKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateDeferredOperationKHR"));
+    table.vkCreateDeferredOperationKHR = reinterpret_cast<PFN_vkCreateDeferredOperationKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDeferredOperationKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
-    table.vkDestroyDeferredOperationKHR = reinterpret_cast<PFN_vkDestroyDeferredOperationKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDeferredOperationKHR"));
+    table.vkDestroyDeferredOperationKHR = reinterpret_cast<PFN_vkDestroyDeferredOperationKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDeferredOperationKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
-    table.vkGetDeferredOperationMaxConcurrencyKHR = reinterpret_cast<PFN_vkGetDeferredOperationMaxConcurrencyKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeferredOperationMaxConcurrencyKHR"));
+    table.vkGetDeferredOperationMaxConcurrencyKHR = reinterpret_cast<PFN_vkGetDeferredOperationMaxConcurrencyKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeferredOperationMaxConcurrencyKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
-    table.vkGetDeferredOperationResultKHR = reinterpret_cast<PFN_vkGetDeferredOperationResultKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeferredOperationResultKHR"));
+    table.vkGetDeferredOperationResultKHR = reinterpret_cast<PFN_vkGetDeferredOperationResultKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeferredOperationResultKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
-    table.vkDeferredOperationJoinKHR = reinterpret_cast<PFN_vkDeferredOperationJoinKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDeferredOperationJoinKHR"));
+    table.vkDeferredOperationJoinKHR = reinterpret_cast<PFN_vkDeferredOperationJoinKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDeferredOperationJoinKHR"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
-    table.vkGetPipelineIndirectMemoryRequirementsNV = reinterpret_cast<PFN_vkGetPipelineIndirectMemoryRequirementsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineIndirectMemoryRequirementsNV"));
+    table.vkGetPipelineIndirectMemoryRequirementsNV = reinterpret_cast<PFN_vkGetPipelineIndirectMemoryRequirementsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineIndirectMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
-    table.vkGetPipelineIndirectDeviceAddressNV = reinterpret_cast<PFN_vkGetPipelineIndirectDeviceAddressNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelineIndirectDeviceAddressNV"));
+    table.vkGetPipelineIndirectDeviceAddressNV = reinterpret_cast<PFN_vkGetPipelineIndirectDeviceAddressNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineIndirectDeviceAddressNV"));
 #endif
 #if defined(VK_AMD_anti_lag)
-    table.vkAntiLagUpdateAMD = reinterpret_cast<PFN_vkAntiLagUpdateAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkAntiLagUpdateAMD"));
+    table.vkAntiLagUpdateAMD = reinterpret_cast<PFN_vkAntiLagUpdateAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAntiLagUpdateAMD"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetCullMode = reinterpret_cast<PFN_vkCmdSetCullMode>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCullMode"));
+    table.vkCmdSetCullMode = reinterpret_cast<PFN_vkCmdSetCullMode>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCullMode"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetFrontFace = reinterpret_cast<PFN_vkCmdSetFrontFace>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetFrontFace"));
+    table.vkCmdSetFrontFace = reinterpret_cast<PFN_vkCmdSetFrontFace>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFrontFace"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetPrimitiveTopology = reinterpret_cast<PFN_vkCmdSetPrimitiveTopology>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopology"));
+    table.vkCmdSetPrimitiveTopology = reinterpret_cast<PFN_vkCmdSetPrimitiveTopology>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopology"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetViewportWithCount = reinterpret_cast<PFN_vkCmdSetViewportWithCount>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCount"));
+    table.vkCmdSetViewportWithCount = reinterpret_cast<PFN_vkCmdSetViewportWithCount>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetScissorWithCount = reinterpret_cast<PFN_vkCmdSetScissorWithCount>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCount"));
+    table.vkCmdSetScissorWithCount = reinterpret_cast<PFN_vkCmdSetScissorWithCount>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdBindIndexBuffer2 = reinterpret_cast<PFN_vkCmdBindIndexBuffer2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2"));
+    table.vkCmdBindIndexBuffer2 = reinterpret_cast<PFN_vkCmdBindIndexBuffer2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdBindVertexBuffers2 = reinterpret_cast<PFN_vkCmdBindVertexBuffers2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2"));
+    table.vkCmdBindVertexBuffers2 = reinterpret_cast<PFN_vkCmdBindVertexBuffers2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthTestEnable = reinterpret_cast<PFN_vkCmdSetDepthTestEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnable"));
+    table.vkCmdSetDepthTestEnable = reinterpret_cast<PFN_vkCmdSetDepthTestEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthWriteEnable = reinterpret_cast<PFN_vkCmdSetDepthWriteEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnable"));
+    table.vkCmdSetDepthWriteEnable = reinterpret_cast<PFN_vkCmdSetDepthWriteEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthCompareOp = reinterpret_cast<PFN_vkCmdSetDepthCompareOp>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOp"));
+    table.vkCmdSetDepthCompareOp = reinterpret_cast<PFN_vkCmdSetDepthCompareOp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOp"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthBoundsTestEnable = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnable"));
+    table.vkCmdSetDepthBoundsTestEnable = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetStencilTestEnable = reinterpret_cast<PFN_vkCmdSetStencilTestEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnable"));
+    table.vkCmdSetStencilTestEnable = reinterpret_cast<PFN_vkCmdSetStencilTestEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetStencilOp = reinterpret_cast<PFN_vkCmdSetStencilOp>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilOp"));
+    table.vkCmdSetStencilOp = reinterpret_cast<PFN_vkCmdSetStencilOp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilOp"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
-    table.vkCmdSetPatchControlPointsEXT = reinterpret_cast<PFN_vkCmdSetPatchControlPointsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPatchControlPointsEXT"));
+    table.vkCmdSetPatchControlPointsEXT = reinterpret_cast<PFN_vkCmdSetPatchControlPointsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPatchControlPointsEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetRasterizerDiscardEnable = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnable"));
+    table.vkCmdSetRasterizerDiscardEnable = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthBiasEnable = reinterpret_cast<PFN_vkCmdSetDepthBiasEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnable"));
+    table.vkCmdSetDepthBiasEnable = reinterpret_cast<PFN_vkCmdSetDepthBiasEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnable"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
-    table.vkCmdSetLogicOpEXT = reinterpret_cast<PFN_vkCmdSetLogicOpEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEXT"));
+    table.vkCmdSetLogicOpEXT = reinterpret_cast<PFN_vkCmdSetLogicOpEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetPrimitiveRestartEnable = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnable>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnable"));
+    table.vkCmdSetPrimitiveRestartEnable = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnable>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnable"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && (defined(VK_KHR_maintenance2) || defined(VKIT_API_VERSION_1_1))) || defined(VK_EXT_shader_object)
-    table.vkCmdSetTessellationDomainOriginEXT = reinterpret_cast<PFN_vkCmdSetTessellationDomainOriginEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetTessellationDomainOriginEXT"));
+    table.vkCmdSetTessellationDomainOriginEXT = reinterpret_cast<PFN_vkCmdSetTessellationDomainOriginEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetTessellationDomainOriginEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthClampEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClampEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthClampEnableEXT"));
+    table.vkCmdSetDepthClampEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClampEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClampEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetPolygonModeEXT = reinterpret_cast<PFN_vkCmdSetPolygonModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPolygonModeEXT"));
+    table.vkCmdSetPolygonModeEXT = reinterpret_cast<PFN_vkCmdSetPolygonModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPolygonModeEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetRasterizationSamplesEXT = reinterpret_cast<PFN_vkCmdSetRasterizationSamplesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRasterizationSamplesEXT"));
+    table.vkCmdSetRasterizationSamplesEXT = reinterpret_cast<PFN_vkCmdSetRasterizationSamplesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizationSamplesEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetSampleMaskEXT = reinterpret_cast<PFN_vkCmdSetSampleMaskEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetSampleMaskEXT"));
+    table.vkCmdSetSampleMaskEXT = reinterpret_cast<PFN_vkCmdSetSampleMaskEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleMaskEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetAlphaToCoverageEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToCoverageEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetAlphaToCoverageEnableEXT"));
+    table.vkCmdSetAlphaToCoverageEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToCoverageEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAlphaToCoverageEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetAlphaToOneEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToOneEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetAlphaToOneEnableEXT"));
+    table.vkCmdSetAlphaToOneEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToOneEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAlphaToOneEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetLogicOpEnableEXT = reinterpret_cast<PFN_vkCmdSetLogicOpEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEnableEXT"));
+    table.vkCmdSetLogicOpEnableEXT = reinterpret_cast<PFN_vkCmdSetLogicOpEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetColorBlendEnableEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEnableEXT"));
+    table.vkCmdSetColorBlendEnableEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetColorBlendEquationEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEquationEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEquationEXT"));
+    table.vkCmdSetColorBlendEquationEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEquationEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEquationEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetColorWriteMaskEXT = reinterpret_cast<PFN_vkCmdSetColorWriteMaskEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetColorWriteMaskEXT"));
+    table.vkCmdSetColorWriteMaskEXT = reinterpret_cast<PFN_vkCmdSetColorWriteMaskEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorWriteMaskEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_transform_feedback)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_transform_feedback))
-    table.vkCmdSetRasterizationStreamEXT = reinterpret_cast<PFN_vkCmdSetRasterizationStreamEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRasterizationStreamEXT"));
+    table.vkCmdSetRasterizationStreamEXT = reinterpret_cast<PFN_vkCmdSetRasterizationStreamEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizationStreamEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
-    table.vkCmdSetConservativeRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetConservativeRasterizationModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetConservativeRasterizationModeEXT"));
+    table.vkCmdSetConservativeRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetConservativeRasterizationModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetConservativeRasterizationModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
-    table.vkCmdSetExtraPrimitiveOverestimationSizeEXT = reinterpret_cast<PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"));
+    table.vkCmdSetExtraPrimitiveOverestimationSizeEXT = reinterpret_cast<PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_enable)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_enable))
-    table.vkCmdSetDepthClipEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClipEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthClipEnableEXT"));
+    table.vkCmdSetDepthClipEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClipEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClipEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_sample_locations)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_sample_locations))
-    table.vkCmdSetSampleLocationsEnableEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEnableEXT"));
+    table.vkCmdSetSampleLocationsEnableEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_blend_operation_advanced)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_blend_operation_advanced))
-    table.vkCmdSetColorBlendAdvancedEXT = reinterpret_cast<PFN_vkCmdSetColorBlendAdvancedEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetColorBlendAdvancedEXT"));
+    table.vkCmdSetColorBlendAdvancedEXT = reinterpret_cast<PFN_vkCmdSetColorBlendAdvancedEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendAdvancedEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_provoking_vertex)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_provoking_vertex))
-    table.vkCmdSetProvokingVertexModeEXT = reinterpret_cast<PFN_vkCmdSetProvokingVertexModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetProvokingVertexModeEXT"));
+    table.vkCmdSetProvokingVertexModeEXT = reinterpret_cast<PFN_vkCmdSetProvokingVertexModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetProvokingVertexModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
-    table.vkCmdSetLineRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetLineRasterizationModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineRasterizationModeEXT"));
+    table.vkCmdSetLineRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetLineRasterizationModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineRasterizationModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
-    table.vkCmdSetLineStippleEnableEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEnableEXT"));
+    table.vkCmdSetLineStippleEnableEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_control)) || (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_control))
-    table.vkCmdSetDepthClipNegativeOneToOneEXT = reinterpret_cast<PFN_vkCmdSetDepthClipNegativeOneToOneEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthClipNegativeOneToOneEXT"));
+    table.vkCmdSetDepthClipNegativeOneToOneEXT = reinterpret_cast<PFN_vkCmdSetDepthClipNegativeOneToOneEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClipNegativeOneToOneEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_clip_space_w_scaling)) || (defined(VK_EXT_shader_object) && defined(VK_NV_clip_space_w_scaling))
-    table.vkCmdSetViewportWScalingEnableNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingEnableNV"));
+    table.vkCmdSetViewportWScalingEnableNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_viewport_swizzle)) || (defined(VK_EXT_shader_object) && defined(VK_NV_viewport_swizzle))
-    table.vkCmdSetViewportSwizzleNV = reinterpret_cast<PFN_vkCmdSetViewportSwizzleNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportSwizzleNV"));
+    table.vkCmdSetViewportSwizzleNV = reinterpret_cast<PFN_vkCmdSetViewportSwizzleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportSwizzleNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) || (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
-    table.vkCmdSetCoverageToColorEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorEnableNV"));
+    table.vkCmdSetCoverageToColorEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) || (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
-    table.vkCmdSetCoverageToColorLocationNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorLocationNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorLocationNV"));
+    table.vkCmdSetCoverageToColorLocationNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorLocationNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorLocationNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
-    table.vkCmdSetCoverageModulationModeNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationModeNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationModeNV"));
+    table.vkCmdSetCoverageModulationModeNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationModeNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationModeNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
-    table.vkCmdSetCoverageModulationTableEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableEnableNV"));
+    table.vkCmdSetCoverageModulationTableEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) || (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
-    table.vkCmdSetCoverageModulationTableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableNV"));
+    table.vkCmdSetCoverageModulationTableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_shading_rate_image)) || (defined(VK_EXT_shader_object) && defined(VK_NV_shading_rate_image))
-    table.vkCmdSetShadingRateImageEnableNV = reinterpret_cast<PFN_vkCmdSetShadingRateImageEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetShadingRateImageEnableNV"));
+    table.vkCmdSetShadingRateImageEnableNV = reinterpret_cast<PFN_vkCmdSetShadingRateImageEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetShadingRateImageEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_coverage_reduction_mode)) || (defined(VK_EXT_shader_object) && defined(VK_NV_coverage_reduction_mode))
-    table.vkCmdSetCoverageReductionModeNV = reinterpret_cast<PFN_vkCmdSetCoverageReductionModeNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCoverageReductionModeNV"));
+    table.vkCmdSetCoverageReductionModeNV = reinterpret_cast<PFN_vkCmdSetCoverageReductionModeNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageReductionModeNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_representative_fragment_test)) || (defined(VK_EXT_shader_object) && defined(VK_NV_representative_fragment_test))
-    table.vkCmdSetRepresentativeFragmentTestEnableNV = reinterpret_cast<PFN_vkCmdSetRepresentativeFragmentTestEnableNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRepresentativeFragmentTestEnableNV"));
+    table.vkCmdSetRepresentativeFragmentTestEnableNV = reinterpret_cast<PFN_vkCmdSetRepresentativeFragmentTestEnableNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRepresentativeFragmentTestEnableNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCreatePrivateDataSlot = reinterpret_cast<PFN_vkCreatePrivateDataSlot>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlot"));
+    table.vkCreatePrivateDataSlot = reinterpret_cast<PFN_vkCreatePrivateDataSlot>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlot"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkDestroyPrivateDataSlot = reinterpret_cast<PFN_vkDestroyPrivateDataSlot>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlot"));
+    table.vkDestroyPrivateDataSlot = reinterpret_cast<PFN_vkDestroyPrivateDataSlot>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlot"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkSetPrivateData = reinterpret_cast<PFN_vkSetPrivateData>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetPrivateData"));
+    table.vkSetPrivateData = reinterpret_cast<PFN_vkSetPrivateData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetPrivateData"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkGetPrivateData = reinterpret_cast<PFN_vkGetPrivateData>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPrivateData"));
+    table.vkGetPrivateData = reinterpret_cast<PFN_vkGetPrivateData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPrivateData"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdCopyBuffer2 = reinterpret_cast<PFN_vkCmdCopyBuffer2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2"));
+    table.vkCmdCopyBuffer2 = reinterpret_cast<PFN_vkCmdCopyBuffer2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdCopyImage2 = reinterpret_cast<PFN_vkCmdCopyImage2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImage2"));
+    table.vkCmdCopyImage2 = reinterpret_cast<PFN_vkCmdCopyImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdBlitImage2 = reinterpret_cast<PFN_vkCmdBlitImage2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBlitImage2"));
+    table.vkCmdBlitImage2 = reinterpret_cast<PFN_vkCmdBlitImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdCopyBufferToImage2 = reinterpret_cast<PFN_vkCmdCopyBufferToImage2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2"));
+    table.vkCmdCopyBufferToImage2 = reinterpret_cast<PFN_vkCmdCopyBufferToImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdCopyImageToBuffer2 = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2"));
+    table.vkCmdCopyImageToBuffer2 = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdResolveImage2 = reinterpret_cast<PFN_vkCmdResolveImage2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResolveImage2"));
+    table.vkCmdResolveImage2 = reinterpret_cast<PFN_vkCmdResolveImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage2"));
 #endif
 #if defined(VK_KHR_object_refresh)
-    table.vkCmdRefreshObjectsKHR = reinterpret_cast<PFN_vkCmdRefreshObjectsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdRefreshObjectsKHR"));
+    table.vkCmdRefreshObjectsKHR = reinterpret_cast<PFN_vkCmdRefreshObjectsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdRefreshObjectsKHR"));
 #endif
 #if defined(VK_KHR_fragment_shading_rate)
-    table.vkCmdSetFragmentShadingRateKHR = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateKHR"));
+    table.vkCmdSetFragmentShadingRateKHR = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateKHR"));
 #endif
 #if defined(VK_NV_fragment_shading_rate_enums)
-    table.vkCmdSetFragmentShadingRateEnumNV = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateEnumNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateEnumNV"));
+    table.vkCmdSetFragmentShadingRateEnumNV = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateEnumNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateEnumNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
-    table.vkGetAccelerationStructureBuildSizesKHR = reinterpret_cast<PFN_vkGetAccelerationStructureBuildSizesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAccelerationStructureBuildSizesKHR"));
+    table.vkGetAccelerationStructureBuildSizesKHR = reinterpret_cast<PFN_vkGetAccelerationStructureBuildSizesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureBuildSizesKHR"));
 #endif
 #if defined(VK_EXT_vertex_input_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetVertexInputEXT = reinterpret_cast<PFN_vkCmdSetVertexInputEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetVertexInputEXT"));
+    table.vkCmdSetVertexInputEXT = reinterpret_cast<PFN_vkCmdSetVertexInputEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetVertexInputEXT"));
 #endif
 #if defined(VK_EXT_color_write_enable)
-    table.vkCmdSetColorWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetColorWriteEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetColorWriteEnableEXT"));
+    table.vkCmdSetColorWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetColorWriteEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorWriteEnableEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetEvent2 = reinterpret_cast<PFN_vkCmdSetEvent2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetEvent2"));
+    table.vkCmdSetEvent2 = reinterpret_cast<PFN_vkCmdSetEvent2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdResetEvent2 = reinterpret_cast<PFN_vkCmdResetEvent2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResetEvent2"));
+    table.vkCmdResetEvent2 = reinterpret_cast<PFN_vkCmdResetEvent2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdWaitEvents2 = reinterpret_cast<PFN_vkCmdWaitEvents2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWaitEvents2"));
+    table.vkCmdWaitEvents2 = reinterpret_cast<PFN_vkCmdWaitEvents2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdPipelineBarrier2 = reinterpret_cast<PFN_vkCmdPipelineBarrier2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2"));
+    table.vkCmdPipelineBarrier2 = reinterpret_cast<PFN_vkCmdPipelineBarrier2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkQueueSubmit2 = reinterpret_cast<PFN_vkQueueSubmit2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueSubmit2"));
+    table.vkQueueSubmit2 = reinterpret_cast<PFN_vkQueueSubmit2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdWriteTimestamp2 = reinterpret_cast<PFN_vkCmdWriteTimestamp2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2"));
+    table.vkCmdWriteTimestamp2 = reinterpret_cast<PFN_vkCmdWriteTimestamp2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2"));
 #endif
 #if (defined(VK_AMD_buffer_marker) && (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
-    table.vkCmdWriteBufferMarker2AMD = reinterpret_cast<PFN_vkCmdWriteBufferMarker2AMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarker2AMD"));
+    table.vkCmdWriteBufferMarker2AMD = reinterpret_cast<PFN_vkCmdWriteBufferMarker2AMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarker2AMD"));
 #endif
 #if (defined(VK_NV_device_diagnostic_checkpoints) && (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
-    table.vkGetQueueCheckpointData2NV = reinterpret_cast<PFN_vkGetQueueCheckpointData2NV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetQueueCheckpointData2NV"));
+    table.vkGetQueueCheckpointData2NV = reinterpret_cast<PFN_vkGetQueueCheckpointData2NV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueueCheckpointData2NV"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCopyMemoryToImage = reinterpret_cast<PFN_vkCopyMemoryToImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMemoryToImage"));
+    table.vkCopyMemoryToImage = reinterpret_cast<PFN_vkCopyMemoryToImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCopyImageToMemory = reinterpret_cast<PFN_vkCopyImageToMemory>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyImageToMemory"));
+    table.vkCopyImageToMemory = reinterpret_cast<PFN_vkCopyImageToMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCopyImageToImage = reinterpret_cast<PFN_vkCopyImageToImage>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyImageToImage"));
+    table.vkCopyImageToImage = reinterpret_cast<PFN_vkCopyImageToImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkTransitionImageLayout = reinterpret_cast<PFN_vkTransitionImageLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkTransitionImageLayout"));
+    table.vkTransitionImageLayout = reinterpret_cast<PFN_vkTransitionImageLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayout"));
 #endif
 #if defined(VKSC_VERSION_1_0)
-    table.vkGetCommandPoolMemoryConsumption = reinterpret_cast<PFN_vkGetCommandPoolMemoryConsumption>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetCommandPoolMemoryConsumption"));
+    table.vkGetCommandPoolMemoryConsumption = reinterpret_cast<PFN_vkGetCommandPoolMemoryConsumption>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCommandPoolMemoryConsumption"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCreateVideoSessionKHR = reinterpret_cast<PFN_vkCreateVideoSessionKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateVideoSessionKHR"));
+    table.vkCreateVideoSessionKHR = reinterpret_cast<PFN_vkCreateVideoSessionKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkDestroyVideoSessionKHR = reinterpret_cast<PFN_vkDestroyVideoSessionKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyVideoSessionKHR"));
+    table.vkDestroyVideoSessionKHR = reinterpret_cast<PFN_vkDestroyVideoSessionKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyVideoSessionKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCreateVideoSessionParametersKHR = reinterpret_cast<PFN_vkCreateVideoSessionParametersKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateVideoSessionParametersKHR"));
+    table.vkCreateVideoSessionParametersKHR = reinterpret_cast<PFN_vkCreateVideoSessionParametersKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkUpdateVideoSessionParametersKHR = reinterpret_cast<PFN_vkUpdateVideoSessionParametersKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateVideoSessionParametersKHR"));
+    table.vkUpdateVideoSessionParametersKHR = reinterpret_cast<PFN_vkUpdateVideoSessionParametersKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
-    table.vkGetEncodedVideoSessionParametersKHR = reinterpret_cast<PFN_vkGetEncodedVideoSessionParametersKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetEncodedVideoSessionParametersKHR"));
+    table.vkGetEncodedVideoSessionParametersKHR = reinterpret_cast<PFN_vkGetEncodedVideoSessionParametersKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetEncodedVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkDestroyVideoSessionParametersKHR = reinterpret_cast<PFN_vkDestroyVideoSessionParametersKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyVideoSessionParametersKHR"));
+    table.vkDestroyVideoSessionParametersKHR = reinterpret_cast<PFN_vkDestroyVideoSessionParametersKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkGetVideoSessionMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetVideoSessionMemoryRequirementsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetVideoSessionMemoryRequirementsKHR"));
+    table.vkGetVideoSessionMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetVideoSessionMemoryRequirementsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetVideoSessionMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkBindVideoSessionMemoryKHR = reinterpret_cast<PFN_vkBindVideoSessionMemoryKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindVideoSessionMemoryKHR"));
+    table.vkBindVideoSessionMemoryKHR = reinterpret_cast<PFN_vkBindVideoSessionMemoryKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindVideoSessionMemoryKHR"));
 #endif
 #if defined(VK_KHR_video_decode_queue)
-    table.vkCmdDecodeVideoKHR = reinterpret_cast<PFN_vkCmdDecodeVideoKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDecodeVideoKHR"));
+    table.vkCmdDecodeVideoKHR = reinterpret_cast<PFN_vkCmdDecodeVideoKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecodeVideoKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCmdBeginVideoCodingKHR = reinterpret_cast<PFN_vkCmdBeginVideoCodingKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginVideoCodingKHR"));
+    table.vkCmdBeginVideoCodingKHR = reinterpret_cast<PFN_vkCmdBeginVideoCodingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCmdControlVideoCodingKHR = reinterpret_cast<PFN_vkCmdControlVideoCodingKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdControlVideoCodingKHR"));
+    table.vkCmdControlVideoCodingKHR = reinterpret_cast<PFN_vkCmdControlVideoCodingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdControlVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCmdEndVideoCodingKHR = reinterpret_cast<PFN_vkCmdEndVideoCodingKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndVideoCodingKHR"));
+    table.vkCmdEndVideoCodingKHR = reinterpret_cast<PFN_vkCmdEndVideoCodingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
-    table.vkCmdEncodeVideoKHR = reinterpret_cast<PFN_vkCmdEncodeVideoKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEncodeVideoKHR"));
+    table.vkCmdEncodeVideoKHR = reinterpret_cast<PFN_vkCmdEncodeVideoKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEncodeVideoKHR"));
 #endif
 #if defined(VK_NV_memory_decompression)
-    table.vkCmdDecompressMemoryNV = reinterpret_cast<PFN_vkCmdDecompressMemoryNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryNV"));
+    table.vkCmdDecompressMemoryNV = reinterpret_cast<PFN_vkCmdDecompressMemoryNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryNV"));
 #endif
 #if defined(VK_NV_memory_decompression)
-    table.vkCmdDecompressMemoryIndirectCountNV = reinterpret_cast<PFN_vkCmdDecompressMemoryIndirectCountNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryIndirectCountNV"));
+    table.vkCmdDecompressMemoryIndirectCountNV = reinterpret_cast<PFN_vkCmdDecompressMemoryIndirectCountNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryIndirectCountNV"));
 #endif
 #if defined(VK_NV_partitioned_acceleration_structure)
-    table.vkGetPartitionedAccelerationStructuresBuildSizesNV = reinterpret_cast<PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPartitionedAccelerationStructuresBuildSizesNV"));
+    table.vkGetPartitionedAccelerationStructuresBuildSizesNV = reinterpret_cast<PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPartitionedAccelerationStructuresBuildSizesNV"));
 #endif
 #if defined(VK_NV_partitioned_acceleration_structure)
-    table.vkCmdBuildPartitionedAccelerationStructuresNV = reinterpret_cast<PFN_vkCmdBuildPartitionedAccelerationStructuresNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
+    table.vkCmdBuildPartitionedAccelerationStructuresNV = reinterpret_cast<PFN_vkCmdBuildPartitionedAccelerationStructuresNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkCreateCuModuleNVX = reinterpret_cast<PFN_vkCreateCuModuleNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateCuModuleNVX"));
+    table.vkCreateCuModuleNVX = reinterpret_cast<PFN_vkCreateCuModuleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCuModuleNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkCreateCuFunctionNVX = reinterpret_cast<PFN_vkCreateCuFunctionNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateCuFunctionNVX"));
+    table.vkCreateCuFunctionNVX = reinterpret_cast<PFN_vkCreateCuFunctionNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCuFunctionNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkDestroyCuModuleNVX = reinterpret_cast<PFN_vkDestroyCuModuleNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyCuModuleNVX"));
+    table.vkDestroyCuModuleNVX = reinterpret_cast<PFN_vkDestroyCuModuleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCuModuleNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkDestroyCuFunctionNVX = reinterpret_cast<PFN_vkDestroyCuFunctionNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyCuFunctionNVX"));
+    table.vkDestroyCuFunctionNVX = reinterpret_cast<PFN_vkDestroyCuFunctionNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCuFunctionNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkCmdCuLaunchKernelNVX = reinterpret_cast<PFN_vkCmdCuLaunchKernelNVX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCuLaunchKernelNVX"));
+    table.vkCmdCuLaunchKernelNVX = reinterpret_cast<PFN_vkCmdCuLaunchKernelNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCuLaunchKernelNVX"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetDescriptorSetLayoutSizeEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSizeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSizeEXT"));
+    table.vkGetDescriptorSetLayoutSizeEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSizeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSizeEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetDescriptorSetLayoutBindingOffsetEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutBindingOffsetEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutBindingOffsetEXT"));
+    table.vkGetDescriptorSetLayoutBindingOffsetEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutBindingOffsetEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutBindingOffsetEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetDescriptorEXT = reinterpret_cast<PFN_vkGetDescriptorEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorEXT"));
+    table.vkGetDescriptorEXT = reinterpret_cast<PFN_vkGetDescriptorEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkCmdBindDescriptorBuffersEXT = reinterpret_cast<PFN_vkCmdBindDescriptorBuffersEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBuffersEXT"));
+    table.vkCmdBindDescriptorBuffersEXT = reinterpret_cast<PFN_vkCmdBindDescriptorBuffersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBuffersEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkCmdSetDescriptorBufferOffsetsEXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsetsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsetsEXT"));
+    table.vkCmdSetDescriptorBufferOffsetsEXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsetsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsetsEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkCmdBindDescriptorBufferEmbeddedSamplersEXT = reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"));
+    table.vkCmdBindDescriptorBufferEmbeddedSamplersEXT = reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetBufferOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureDescriptorDataEXT"));
+    table.vkGetBufferOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetImageOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetImageOpaqueCaptureDescriptorDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageOpaqueCaptureDescriptorDataEXT"));
+    table.vkGetImageOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetImageOpaqueCaptureDescriptorDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetImageViewOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageViewOpaqueCaptureDescriptorDataEXT"));
+    table.vkGetImageViewOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
-    table.vkGetSamplerOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSamplerOpaqueCaptureDescriptorDataEXT"));
+    table.vkGetSamplerOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSamplerOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if (defined(VK_EXT_descriptor_buffer) && (defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)))
-    table.vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT"));
+    table.vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_pageable_device_local_memory)
-    table.vkSetDeviceMemoryPriorityEXT = reinterpret_cast<PFN_vkSetDeviceMemoryPriorityEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetDeviceMemoryPriorityEXT"));
+    table.vkSetDeviceMemoryPriorityEXT = reinterpret_cast<PFN_vkSetDeviceMemoryPriorityEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDeviceMemoryPriorityEXT"));
 #endif
 #if defined(VK_KHR_present_wait)
-    table.vkWaitForPresentKHR = reinterpret_cast<PFN_vkWaitForPresentKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWaitForPresentKHR"));
+    table.vkWaitForPresentKHR = reinterpret_cast<PFN_vkWaitForPresentKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresentKHR"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
-    table.vkCreateBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkCreateBufferCollectionFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateBufferCollectionFUCHSIA"));
+    table.vkCreateBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkCreateBufferCollectionFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBufferCollectionFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
-    table.vkSetBufferCollectionBufferConstraintsFUCHSIA = reinterpret_cast<PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetBufferCollectionBufferConstraintsFUCHSIA"));
+    table.vkSetBufferCollectionBufferConstraintsFUCHSIA = reinterpret_cast<PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetBufferCollectionBufferConstraintsFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
-    table.vkSetBufferCollectionImageConstraintsFUCHSIA = reinterpret_cast<PFN_vkSetBufferCollectionImageConstraintsFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetBufferCollectionImageConstraintsFUCHSIA"));
+    table.vkSetBufferCollectionImageConstraintsFUCHSIA = reinterpret_cast<PFN_vkSetBufferCollectionImageConstraintsFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetBufferCollectionImageConstraintsFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
-    table.vkDestroyBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkDestroyBufferCollectionFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyBufferCollectionFUCHSIA"));
+    table.vkDestroyBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkDestroyBufferCollectionFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBufferCollectionFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
-    table.vkGetBufferCollectionPropertiesFUCHSIA = reinterpret_cast<PFN_vkGetBufferCollectionPropertiesFUCHSIA>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferCollectionPropertiesFUCHSIA"));
+    table.vkGetBufferCollectionPropertiesFUCHSIA = reinterpret_cast<PFN_vkGetBufferCollectionPropertiesFUCHSIA>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferCollectionPropertiesFUCHSIA"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkCreateCudaModuleNV = reinterpret_cast<PFN_vkCreateCudaModuleNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateCudaModuleNV"));
+    table.vkCreateCudaModuleNV = reinterpret_cast<PFN_vkCreateCudaModuleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCudaModuleNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkGetCudaModuleCacheNV = reinterpret_cast<PFN_vkGetCudaModuleCacheNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetCudaModuleCacheNV"));
+    table.vkGetCudaModuleCacheNV = reinterpret_cast<PFN_vkGetCudaModuleCacheNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCudaModuleCacheNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkCreateCudaFunctionNV = reinterpret_cast<PFN_vkCreateCudaFunctionNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateCudaFunctionNV"));
+    table.vkCreateCudaFunctionNV = reinterpret_cast<PFN_vkCreateCudaFunctionNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCudaFunctionNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkDestroyCudaModuleNV = reinterpret_cast<PFN_vkDestroyCudaModuleNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyCudaModuleNV"));
+    table.vkDestroyCudaModuleNV = reinterpret_cast<PFN_vkDestroyCudaModuleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCudaModuleNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkDestroyCudaFunctionNV = reinterpret_cast<PFN_vkDestroyCudaFunctionNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyCudaFunctionNV"));
+    table.vkDestroyCudaFunctionNV = reinterpret_cast<PFN_vkDestroyCudaFunctionNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCudaFunctionNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkCmdCudaLaunchKernelNV = reinterpret_cast<PFN_vkCmdCudaLaunchKernelNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCudaLaunchKernelNV"));
+    table.vkCmdCudaLaunchKernelNV = reinterpret_cast<PFN_vkCmdCudaLaunchKernelNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCudaLaunchKernelNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdBeginRendering = reinterpret_cast<PFN_vkCmdBeginRendering>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginRendering"));
+    table.vkCmdBeginRendering = reinterpret_cast<PFN_vkCmdBeginRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRendering"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdEndRendering = reinterpret_cast<PFN_vkCmdEndRendering>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRendering"));
+    table.vkCmdEndRendering = reinterpret_cast<PFN_vkCmdEndRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering"));
 #endif
 #if defined(VK_EXT_fragment_density_map_offset)
-    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
+    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
-    table.vkGetDescriptorSetLayoutHostMappingInfoVALVE = reinterpret_cast<PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE"));
+    table.vkGetDescriptorSetLayoutHostMappingInfoVALVE = reinterpret_cast<PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
-    table.vkGetDescriptorSetHostMappingVALVE = reinterpret_cast<PFN_vkGetDescriptorSetHostMappingVALVE>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetHostMappingVALVE"));
+    table.vkGetDescriptorSetHostMappingVALVE = reinterpret_cast<PFN_vkGetDescriptorSetHostMappingVALVE>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetHostMappingVALVE"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCreateMicromapEXT = reinterpret_cast<PFN_vkCreateMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateMicromapEXT"));
+    table.vkCreateMicromapEXT = reinterpret_cast<PFN_vkCreateMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdBuildMicromapsEXT = reinterpret_cast<PFN_vkCmdBuildMicromapsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBuildMicromapsEXT"));
+    table.vkCmdBuildMicromapsEXT = reinterpret_cast<PFN_vkCmdBuildMicromapsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildMicromapsEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkBuildMicromapsEXT = reinterpret_cast<PFN_vkBuildMicromapsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBuildMicromapsEXT"));
+    table.vkBuildMicromapsEXT = reinterpret_cast<PFN_vkBuildMicromapsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBuildMicromapsEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkDestroyMicromapEXT = reinterpret_cast<PFN_vkDestroyMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyMicromapEXT"));
+    table.vkDestroyMicromapEXT = reinterpret_cast<PFN_vkDestroyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdCopyMicromapEXT = reinterpret_cast<PFN_vkCmdCopyMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMicromapEXT"));
+    table.vkCmdCopyMicromapEXT = reinterpret_cast<PFN_vkCmdCopyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCopyMicromapEXT = reinterpret_cast<PFN_vkCopyMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMicromapEXT"));
+    table.vkCopyMicromapEXT = reinterpret_cast<PFN_vkCopyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCmdCopyMicromapToMemoryEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMicromapToMemoryEXT"));
+    table.vkCmdCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCmdCopyMicromapToMemoryEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMicromapToMemoryEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCopyMicromapToMemoryEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMicromapToMemoryEXT"));
+    table.vkCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCopyMicromapToMemoryEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMicromapToMemoryEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCmdCopyMemoryToMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToMicromapEXT"));
+    table.vkCmdCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCmdCopyMemoryToMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCopyMemoryToMicromapEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMemoryToMicromapEXT"));
+    table.vkCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCopyMemoryToMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkCmdWriteMicromapsPropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteMicromapsPropertiesEXT"));
+    table.vkCmdWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkCmdWriteMicromapsPropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteMicromapsPropertiesEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkWriteMicromapsPropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWriteMicromapsPropertiesEXT"));
+    table.vkWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkWriteMicromapsPropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWriteMicromapsPropertiesEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkGetDeviceMicromapCompatibilityEXT = reinterpret_cast<PFN_vkGetDeviceMicromapCompatibilityEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceMicromapCompatibilityEXT"));
+    table.vkGetDeviceMicromapCompatibilityEXT = reinterpret_cast<PFN_vkGetDeviceMicromapCompatibilityEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMicromapCompatibilityEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkGetMicromapBuildSizesEXT = reinterpret_cast<PFN_vkGetMicromapBuildSizesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMicromapBuildSizesEXT"));
+    table.vkGetMicromapBuildSizesEXT = reinterpret_cast<PFN_vkGetMicromapBuildSizesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMicromapBuildSizesEXT"));
 #endif
 #if defined(VK_EXT_shader_module_identifier)
-    table.vkGetShaderModuleIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleIdentifierEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetShaderModuleIdentifierEXT"));
+    table.vkGetShaderModuleIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleIdentifierEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderModuleIdentifierEXT"));
 #endif
 #if defined(VK_EXT_shader_module_identifier)
-    table.vkGetShaderModuleCreateInfoIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleCreateInfoIdentifierEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetShaderModuleCreateInfoIdentifierEXT"));
+    table.vkGetShaderModuleCreateInfoIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleCreateInfoIdentifierEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderModuleCreateInfoIdentifierEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkGetImageSubresourceLayout2 = reinterpret_cast<PFN_vkGetImageSubresourceLayout2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2"));
+    table.vkGetImageSubresourceLayout2 = reinterpret_cast<PFN_vkGetImageSubresourceLayout2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2"));
 #endif
 #if defined(VK_EXT_pipeline_properties)
-    table.vkGetPipelinePropertiesEXT = reinterpret_cast<PFN_vkGetPipelinePropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPipelinePropertiesEXT"));
+    table.vkGetPipelinePropertiesEXT = reinterpret_cast<PFN_vkGetPipelinePropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelinePropertiesEXT"));
 #endif
 #if defined(VK_EXT_metal_objects)
-    table.vkExportMetalObjectsEXT = reinterpret_cast<PFN_vkExportMetalObjectsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkExportMetalObjectsEXT"));
+    table.vkExportMetalObjectsEXT = reinterpret_cast<PFN_vkExportMetalObjectsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkExportMetalObjectsEXT"));
 #endif
 #if defined(VK_QCOM_tile_memory_heap)
-    table.vkCmdBindTileMemoryQCOM = reinterpret_cast<PFN_vkCmdBindTileMemoryQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindTileMemoryQCOM"));
+    table.vkCmdBindTileMemoryQCOM = reinterpret_cast<PFN_vkCmdBindTileMemoryQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindTileMemoryQCOM"));
 #endif
 #if defined(VK_QCOM_tile_properties)
-    table.vkGetFramebufferTilePropertiesQCOM = reinterpret_cast<PFN_vkGetFramebufferTilePropertiesQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetFramebufferTilePropertiesQCOM"));
+    table.vkGetFramebufferTilePropertiesQCOM = reinterpret_cast<PFN_vkGetFramebufferTilePropertiesQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFramebufferTilePropertiesQCOM"));
 #endif
 #if defined(VK_QCOM_tile_properties)
-    table.vkGetDynamicRenderingTilePropertiesQCOM = reinterpret_cast<PFN_vkGetDynamicRenderingTilePropertiesQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDynamicRenderingTilePropertiesQCOM"));
+    table.vkGetDynamicRenderingTilePropertiesQCOM = reinterpret_cast<PFN_vkGetDynamicRenderingTilePropertiesQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDynamicRenderingTilePropertiesQCOM"));
 #endif
 #if defined(VK_NV_optical_flow)
-    table.vkCreateOpticalFlowSessionNV = reinterpret_cast<PFN_vkCreateOpticalFlowSessionNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateOpticalFlowSessionNV"));
+    table.vkCreateOpticalFlowSessionNV = reinterpret_cast<PFN_vkCreateOpticalFlowSessionNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateOpticalFlowSessionNV"));
 #endif
 #if defined(VK_NV_optical_flow)
-    table.vkDestroyOpticalFlowSessionNV = reinterpret_cast<PFN_vkDestroyOpticalFlowSessionNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyOpticalFlowSessionNV"));
+    table.vkDestroyOpticalFlowSessionNV = reinterpret_cast<PFN_vkDestroyOpticalFlowSessionNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyOpticalFlowSessionNV"));
 #endif
 #if defined(VK_NV_optical_flow)
-    table.vkBindOpticalFlowSessionImageNV = reinterpret_cast<PFN_vkBindOpticalFlowSessionImageNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindOpticalFlowSessionImageNV"));
+    table.vkBindOpticalFlowSessionImageNV = reinterpret_cast<PFN_vkBindOpticalFlowSessionImageNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindOpticalFlowSessionImageNV"));
 #endif
 #if defined(VK_NV_optical_flow)
-    table.vkCmdOpticalFlowExecuteNV = reinterpret_cast<PFN_vkCmdOpticalFlowExecuteNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdOpticalFlowExecuteNV"));
+    table.vkCmdOpticalFlowExecuteNV = reinterpret_cast<PFN_vkCmdOpticalFlowExecuteNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdOpticalFlowExecuteNV"));
 #endif
 #if defined(VK_EXT_device_fault)
-    table.vkGetDeviceFaultInfoEXT = reinterpret_cast<PFN_vkGetDeviceFaultInfoEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceFaultInfoEXT"));
+    table.vkGetDeviceFaultInfoEXT = reinterpret_cast<PFN_vkGetDeviceFaultInfoEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceFaultInfoEXT"));
 #endif
 #if defined(VK_EXT_depth_bias_control)
-    table.vkCmdSetDepthBias2EXT = reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBias2EXT"));
+    table.vkCmdSetDepthBias2EXT = reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias2EXT"));
 #endif
 #if defined(VK_EXT_swapchain_maintenance1)
-    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
+    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkGetDeviceImageSubresourceLayout = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayout>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayout"));
+    table.vkGetDeviceImageSubresourceLayout = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayout>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkMapMemory2 = reinterpret_cast<PFN_vkMapMemory2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkMapMemory2"));
+    table.vkMapMemory2 = reinterpret_cast<PFN_vkMapMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkUnmapMemory2 = reinterpret_cast<PFN_vkUnmapMemory2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUnmapMemory2"));
+    table.vkUnmapMemory2 = reinterpret_cast<PFN_vkUnmapMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory2"));
 #endif
 #if defined(VK_EXT_shader_object)
-    table.vkCreateShadersEXT = reinterpret_cast<PFN_vkCreateShadersEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateShadersEXT"));
+    table.vkCreateShadersEXT = reinterpret_cast<PFN_vkCreateShadersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateShadersEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
-    table.vkDestroyShaderEXT = reinterpret_cast<PFN_vkDestroyShaderEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyShaderEXT"));
+    table.vkDestroyShaderEXT = reinterpret_cast<PFN_vkDestroyShaderEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyShaderEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
-    table.vkGetShaderBinaryDataEXT = reinterpret_cast<PFN_vkGetShaderBinaryDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetShaderBinaryDataEXT"));
+    table.vkGetShaderBinaryDataEXT = reinterpret_cast<PFN_vkGetShaderBinaryDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderBinaryDataEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
-    table.vkCmdBindShadersEXT = reinterpret_cast<PFN_vkCmdBindShadersEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindShadersEXT"));
+    table.vkCmdBindShadersEXT = reinterpret_cast<PFN_vkCmdBindShadersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindShadersEXT"));
 #endif
 #if defined(VK_QNX_external_memory_screen_buffer)
-    table.vkGetScreenBufferPropertiesQNX = reinterpret_cast<PFN_vkGetScreenBufferPropertiesQNX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetScreenBufferPropertiesQNX"));
+    table.vkGetScreenBufferPropertiesQNX = reinterpret_cast<PFN_vkGetScreenBufferPropertiesQNX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetScreenBufferPropertiesQNX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
-    table.vkGetExecutionGraphPipelineScratchSizeAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineScratchSizeAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineScratchSizeAMDX"));
+    table.vkGetExecutionGraphPipelineScratchSizeAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineScratchSizeAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineScratchSizeAMDX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
-    table.vkGetExecutionGraphPipelineNodeIndexAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineNodeIndexAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineNodeIndexAMDX"));
+    table.vkGetExecutionGraphPipelineNodeIndexAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineNodeIndexAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineNodeIndexAMDX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
-    table.vkCreateExecutionGraphPipelinesAMDX = reinterpret_cast<PFN_vkCreateExecutionGraphPipelinesAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateExecutionGraphPipelinesAMDX"));
+    table.vkCreateExecutionGraphPipelinesAMDX = reinterpret_cast<PFN_vkCreateExecutionGraphPipelinesAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateExecutionGraphPipelinesAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
-    table.vkCmdInitializeGraphScratchMemoryAMDX = reinterpret_cast<PFN_vkCmdInitializeGraphScratchMemoryAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdInitializeGraphScratchMemoryAMDX"));
+    table.vkCmdInitializeGraphScratchMemoryAMDX = reinterpret_cast<PFN_vkCmdInitializeGraphScratchMemoryAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdInitializeGraphScratchMemoryAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
-    table.vkCmdDispatchGraphAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchGraphAMDX"));
+    table.vkCmdDispatchGraphAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
-    table.vkCmdDispatchGraphIndirectAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectAMDX"));
+    table.vkCmdDispatchGraphIndirectAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
-    table.vkCmdDispatchGraphIndirectCountAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectCountAMDX>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectCountAMDX"));
+    table.vkCmdDispatchGraphIndirectCountAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectCountAMDX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectCountAMDX"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdBindDescriptorSets2 = reinterpret_cast<PFN_vkCmdBindDescriptorSets2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2"));
+    table.vkCmdBindDescriptorSets2 = reinterpret_cast<PFN_vkCmdBindDescriptorSets2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushConstants2 = reinterpret_cast<PFN_vkCmdPushConstants2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushConstants2"));
+    table.vkCmdPushConstants2 = reinterpret_cast<PFN_vkCmdPushConstants2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushDescriptorSet2 = reinterpret_cast<PFN_vkCmdPushDescriptorSet2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2"));
+    table.vkCmdPushDescriptorSet2 = reinterpret_cast<PFN_vkCmdPushDescriptorSet2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushDescriptorSetWithTemplate2 = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2"));
+    table.vkCmdPushDescriptorSetWithTemplate2 = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
-    table.vkCmdSetDescriptorBufferOffsets2EXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsets2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsets2EXT"));
+    table.vkCmdSetDescriptorBufferOffsets2EXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsets2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsets2EXT"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
-    table.vkCmdBindDescriptorBufferEmbeddedSamplers2EXT = reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"));
+    table.vkCmdBindDescriptorBufferEmbeddedSamplers2EXT = reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"));
 #endif
 #if defined(VK_NV_low_latency2)
-    table.vkSetLatencySleepModeNV = reinterpret_cast<PFN_vkSetLatencySleepModeNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetLatencySleepModeNV"));
+    table.vkSetLatencySleepModeNV = reinterpret_cast<PFN_vkSetLatencySleepModeNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLatencySleepModeNV"));
 #endif
 #if defined(VK_NV_low_latency2)
-    table.vkLatencySleepNV = reinterpret_cast<PFN_vkLatencySleepNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkLatencySleepNV"));
+    table.vkLatencySleepNV = reinterpret_cast<PFN_vkLatencySleepNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkLatencySleepNV"));
 #endif
 #if defined(VK_NV_low_latency2)
-    table.vkSetLatencyMarkerNV = reinterpret_cast<PFN_vkSetLatencyMarkerNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetLatencyMarkerNV"));
+    table.vkSetLatencyMarkerNV = reinterpret_cast<PFN_vkSetLatencyMarkerNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLatencyMarkerNV"));
 #endif
 #if VK_HEADER_VERSION >= 271 && (defined(VK_NV_low_latency2))
-    table.vkGetLatencyTimingsNV = reinterpret_cast<PFN_vkGetLatencyTimingsNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetLatencyTimingsNV"));
+    table.vkGetLatencyTimingsNV = reinterpret_cast<PFN_vkGetLatencyTimingsNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetLatencyTimingsNV"));
 #endif
 #if defined(VK_NV_low_latency2)
-    table.vkQueueNotifyOutOfBandNV = reinterpret_cast<PFN_vkQueueNotifyOutOfBandNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueNotifyOutOfBandNV"));
+    table.vkQueueNotifyOutOfBandNV = reinterpret_cast<PFN_vkQueueNotifyOutOfBandNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueNotifyOutOfBandNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdSetRenderingAttachmentLocations = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocations>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocations"));
+    table.vkCmdSetRenderingAttachmentLocations = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocations>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocations"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdSetRenderingInputAttachmentIndices = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndices>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndices"));
+    table.vkCmdSetRenderingInputAttachmentIndices = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndices>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndices"));
 #endif
 #if (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clamp_control)) || defined(VK_EXT_depth_clamp_control)
-    table.vkCmdSetDepthClampRangeEXT = reinterpret_cast<PFN_vkCmdSetDepthClampRangeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthClampRangeEXT"));
+    table.vkCmdSetDepthClampRangeEXT = reinterpret_cast<PFN_vkCmdSetDepthClampRangeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClampRangeEXT"));
 #endif
 #if defined(VK_EXT_external_memory_metal)
-    table.vkGetMemoryMetalHandleEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandleEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandleEXT"));
+    table.vkGetMemoryMetalHandleEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandleEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandleEXT"));
 #endif
 #if defined(VK_EXT_external_memory_metal)
-    table.vkGetMemoryMetalHandlePropertiesEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandlePropertiesEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandlePropertiesEXT"));
+    table.vkGetMemoryMetalHandlePropertiesEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandlePropertiesEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandlePropertiesEXT"));
 #endif
 #if defined(VK_NV_cooperative_vector)
-    table.vkConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkConvertCooperativeVectorMatrixNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkConvertCooperativeVectorMatrixNV"));
+    table.vkConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkConvertCooperativeVectorMatrixNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkConvertCooperativeVectorMatrixNV"));
 #endif
 #if defined(VK_NV_cooperative_vector)
-    table.vkCmdConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkCmdConvertCooperativeVectorMatrixNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdConvertCooperativeVectorMatrixNV"));
+    table.vkCmdConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkCmdConvertCooperativeVectorMatrixNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdConvertCooperativeVectorMatrixNV"));
 #endif
 #if defined(VK_QCOM_tile_shading)
-    table.vkCmdDispatchTileQCOM = reinterpret_cast<PFN_vkCmdDispatchTileQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchTileQCOM"));
+    table.vkCmdDispatchTileQCOM = reinterpret_cast<PFN_vkCmdDispatchTileQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchTileQCOM"));
 #endif
 #if defined(VK_QCOM_tile_shading)
-    table.vkCmdBeginPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdBeginPerTileExecutionQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginPerTileExecutionQCOM"));
+    table.vkCmdBeginPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdBeginPerTileExecutionQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginPerTileExecutionQCOM"));
 #endif
 #if defined(VK_QCOM_tile_shading)
-    table.vkCmdEndPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdEndPerTileExecutionQCOM>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndPerTileExecutionQCOM"));
+    table.vkCmdEndPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdEndPerTileExecutionQCOM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndPerTileExecutionQCOM"));
 #endif
 #if defined(VK_NV_external_compute_queue)
-    table.vkCreateExternalComputeQueueNV = reinterpret_cast<PFN_vkCreateExternalComputeQueueNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateExternalComputeQueueNV"));
+    table.vkCreateExternalComputeQueueNV = reinterpret_cast<PFN_vkCreateExternalComputeQueueNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateExternalComputeQueueNV"));
 #endif
 #if defined(VK_NV_external_compute_queue)
-    table.vkDestroyExternalComputeQueueNV = reinterpret_cast<PFN_vkDestroyExternalComputeQueueNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyExternalComputeQueueNV"));
+    table.vkDestroyExternalComputeQueueNV = reinterpret_cast<PFN_vkDestroyExternalComputeQueueNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyExternalComputeQueueNV"));
 #endif
 #if defined(VK_NV_external_compute_queue)
-    table.vkGetExternalComputeQueueDataNV = reinterpret_cast<PFN_vkGetExternalComputeQueueDataNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetExternalComputeQueueDataNV"));
+    table.vkGetExternalComputeQueueDataNV = reinterpret_cast<PFN_vkGetExternalComputeQueueDataNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExternalComputeQueueDataNV"));
 #endif
 #if defined(VK_EXT_host_query_reset)
-    table.vkResetQueryPoolEXT = reinterpret_cast<PFN_vkResetQueryPoolEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkResetQueryPoolEXT"));
+    table.vkResetQueryPoolEXT = reinterpret_cast<PFN_vkResetQueryPoolEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPoolEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
-    table.vkGetRenderingAreaGranularityKHR = reinterpret_cast<PFN_vkGetRenderingAreaGranularityKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularityKHR"));
+    table.vkGetRenderingAreaGranularityKHR = reinterpret_cast<PFN_vkGetRenderingAreaGranularityKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularityKHR"));
 #endif
 #if defined(VK_KHR_push_descriptor)
-    table.vkCmdPushDescriptorSetKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetKHR"));
+    table.vkCmdPushDescriptorSetKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetKHR"));
 #endif
 #if defined(VK_KHR_maintenance1)
-    table.vkTrimCommandPoolKHR = reinterpret_cast<PFN_vkTrimCommandPoolKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkTrimCommandPoolKHR"));
+    table.vkTrimCommandPoolKHR = reinterpret_cast<PFN_vkTrimCommandPoolKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTrimCommandPoolKHR"));
 #endif
 #if defined(VK_KHR_device_group)
-    table.vkGetDeviceGroupPeerMemoryFeaturesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeaturesKHR"));
+    table.vkGetDeviceGroupPeerMemoryFeaturesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeaturesKHR"));
 #endif
 #if defined(VK_KHR_bind_memory2)
-    table.vkBindBufferMemory2KHR = reinterpret_cast<PFN_vkBindBufferMemory2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindBufferMemory2KHR"));
+    table.vkBindBufferMemory2KHR = reinterpret_cast<PFN_vkBindBufferMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory2KHR"));
 #endif
 #if defined(VK_KHR_bind_memory2)
-    table.vkBindImageMemory2KHR = reinterpret_cast<PFN_vkBindImageMemory2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkBindImageMemory2KHR"));
+    table.vkBindImageMemory2KHR = reinterpret_cast<PFN_vkBindImageMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory2KHR"));
 #endif
 #if defined(VK_KHR_device_group)
-    table.vkCmdSetDeviceMaskKHR = reinterpret_cast<PFN_vkCmdSetDeviceMaskKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDeviceMaskKHR"));
+    table.vkCmdSetDeviceMaskKHR = reinterpret_cast<PFN_vkCmdSetDeviceMaskKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDeviceMaskKHR"));
 #endif
 #if defined(VK_KHR_device_group)
-    table.vkCmdDispatchBaseKHR = reinterpret_cast<PFN_vkCmdDispatchBaseKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDispatchBaseKHR"));
+    table.vkCmdDispatchBaseKHR = reinterpret_cast<PFN_vkCmdDispatchBaseKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchBaseKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
-    table.vkCreateDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplateKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplateKHR"));
+    table.vkCreateDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplateKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplateKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
-    table.vkDestroyDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplateKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplateKHR"));
+    table.vkDestroyDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplateKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplateKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
-    table.vkUpdateDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplateKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplateKHR"));
+    table.vkUpdateDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplateKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplateKHR"));
 #endif
 #if (defined(VK_KHR_push_descriptor) && (defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_descriptor_update_template))) || (defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor))
-    table.vkCmdPushDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplateKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplateKHR"));
+    table.vkCmdPushDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplateKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplateKHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
-    table.vkGetBufferMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2KHR"));
+    table.vkGetBufferMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
-    table.vkGetImageMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2KHR"));
+    table.vkGetImageMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
-    table.vkGetImageSparseMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2KHR"));
+    table.vkGetImageSparseMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
-    table.vkGetDeviceBufferMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirementsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirementsKHR"));
+    table.vkGetDeviceBufferMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirementsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
-    table.vkGetDeviceImageMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirementsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirementsKHR"));
+    table.vkGetDeviceImageMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirementsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
-    table.vkGetDeviceImageSparseMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirementsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirementsKHR"));
+    table.vkGetDeviceImageSparseMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirementsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_sampler_ycbcr_conversion)
-    table.vkCreateSamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversionKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversionKHR"));
+    table.vkCreateSamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversionKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversionKHR"));
 #endif
 #if defined(VK_KHR_sampler_ycbcr_conversion)
-    table.vkDestroySamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversionKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversionKHR"));
+    table.vkDestroySamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversionKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversionKHR"));
 #endif
 #if defined(VK_KHR_maintenance3)
-    table.vkGetDescriptorSetLayoutSupportKHR = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupportKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupportKHR"));
+    table.vkGetDescriptorSetLayoutSupportKHR = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupportKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupportKHR"));
 #endif
 #if defined(VK_EXT_calibrated_timestamps)
-    table.vkGetCalibratedTimestampsEXT = reinterpret_cast<PFN_vkGetCalibratedTimestampsEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsEXT"));
+    table.vkGetCalibratedTimestampsEXT = reinterpret_cast<PFN_vkGetCalibratedTimestampsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsEXT"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCreateRenderPass2KHR = reinterpret_cast<PFN_vkCreateRenderPass2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreateRenderPass2KHR"));
+    table.vkCreateRenderPass2KHR = reinterpret_cast<PFN_vkCreateRenderPass2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCmdBeginRenderPass2KHR = reinterpret_cast<PFN_vkCmdBeginRenderPass2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2KHR"));
+    table.vkCmdBeginRenderPass2KHR = reinterpret_cast<PFN_vkCmdBeginRenderPass2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCmdNextSubpass2KHR = reinterpret_cast<PFN_vkCmdNextSubpass2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdNextSubpass2KHR"));
+    table.vkCmdNextSubpass2KHR = reinterpret_cast<PFN_vkCmdNextSubpass2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCmdEndRenderPass2KHR = reinterpret_cast<PFN_vkCmdEndRenderPass2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2KHR"));
+    table.vkCmdEndRenderPass2KHR = reinterpret_cast<PFN_vkCmdEndRenderPass2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
-    table.vkGetSemaphoreCounterValueKHR = reinterpret_cast<PFN_vkGetSemaphoreCounterValueKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValueKHR"));
+    table.vkGetSemaphoreCounterValueKHR = reinterpret_cast<PFN_vkGetSemaphoreCounterValueKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValueKHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
-    table.vkWaitSemaphoresKHR = reinterpret_cast<PFN_vkWaitSemaphoresKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkWaitSemaphoresKHR"));
+    table.vkWaitSemaphoresKHR = reinterpret_cast<PFN_vkWaitSemaphoresKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitSemaphoresKHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
-    table.vkSignalSemaphoreKHR = reinterpret_cast<PFN_vkSignalSemaphoreKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSignalSemaphoreKHR"));
+    table.vkSignalSemaphoreKHR = reinterpret_cast<PFN_vkSignalSemaphoreKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSignalSemaphoreKHR"));
 #endif
 #if defined(VK_KHR_draw_indirect_count)
-    table.vkCmdDrawIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndirectCountKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountKHR"));
+    table.vkCmdDrawIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndirectCountKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountKHR"));
 #endif
 #if defined(VK_AMD_draw_indirect_count)
-    table.vkCmdDrawIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndirectCountAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountAMD"));
+    table.vkCmdDrawIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndirectCountAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountAMD"));
 #endif
 #if defined(VK_KHR_draw_indirect_count)
-    table.vkCmdDrawIndexedIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountKHR"));
+    table.vkCmdDrawIndexedIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountKHR"));
 #endif
 #if defined(VK_AMD_draw_indirect_count)
-    table.vkCmdDrawIndexedIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountAMD>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountAMD"));
+    table.vkCmdDrawIndexedIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountAMD"));
 #endif
 #if defined(VK_NV_ray_tracing)
-    table.vkGetRayTracingShaderGroupHandlesNV = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesNV>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesNV"));
+    table.vkGetRayTracingShaderGroupHandlesNV = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesNV"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
-    table.vkGetBufferOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddressKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddressKHR"));
+    table.vkGetBufferOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddressKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddressKHR"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
-    table.vkGetBufferDeviceAddressKHR = reinterpret_cast<PFN_vkGetBufferDeviceAddressKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressKHR"));
+    table.vkGetBufferDeviceAddressKHR = reinterpret_cast<PFN_vkGetBufferDeviceAddressKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressKHR"));
 #endif
 #if defined(VK_EXT_buffer_device_address)
-    table.vkGetBufferDeviceAddressEXT = reinterpret_cast<PFN_vkGetBufferDeviceAddressEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressEXT"));
+    table.vkGetBufferDeviceAddressEXT = reinterpret_cast<PFN_vkGetBufferDeviceAddressEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressEXT"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
-    table.vkGetDeviceMemoryOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"));
+    table.vkGetDeviceMemoryOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"));
 #endif
 #if defined(VK_KHR_line_rasterization)
-    table.vkCmdSetLineStippleKHR = reinterpret_cast<PFN_vkCmdSetLineStippleKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineStippleKHR"));
+    table.vkCmdSetLineStippleKHR = reinterpret_cast<PFN_vkCmdSetLineStippleKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleKHR"));
 #endif
 #if defined(VK_EXT_line_rasterization)
-    table.vkCmdSetLineStippleEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEXT"));
+    table.vkCmdSetLineStippleEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetCullModeEXT = reinterpret_cast<PFN_vkCmdSetCullModeEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetCullModeEXT"));
+    table.vkCmdSetCullModeEXT = reinterpret_cast<PFN_vkCmdSetCullModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCullModeEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetFrontFaceEXT = reinterpret_cast<PFN_vkCmdSetFrontFaceEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetFrontFaceEXT"));
+    table.vkCmdSetFrontFaceEXT = reinterpret_cast<PFN_vkCmdSetFrontFaceEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFrontFaceEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetPrimitiveTopologyEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveTopologyEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopologyEXT"));
+    table.vkCmdSetPrimitiveTopologyEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveTopologyEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopologyEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetViewportWithCountEXT = reinterpret_cast<PFN_vkCmdSetViewportWithCountEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCountEXT"));
+    table.vkCmdSetViewportWithCountEXT = reinterpret_cast<PFN_vkCmdSetViewportWithCountEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCountEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetScissorWithCountEXT = reinterpret_cast<PFN_vkCmdSetScissorWithCountEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCountEXT"));
+    table.vkCmdSetScissorWithCountEXT = reinterpret_cast<PFN_vkCmdSetScissorWithCountEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCountEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
-    table.vkCmdBindIndexBuffer2KHR = reinterpret_cast<PFN_vkCmdBindIndexBuffer2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2KHR"));
+    table.vkCmdBindIndexBuffer2KHR = reinterpret_cast<PFN_vkCmdBindIndexBuffer2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2KHR"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdBindVertexBuffers2EXT = reinterpret_cast<PFN_vkCmdBindVertexBuffers2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2EXT"));
+    table.vkCmdBindVertexBuffers2EXT = reinterpret_cast<PFN_vkCmdBindVertexBuffers2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2EXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthTestEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnableEXT"));
+    table.vkCmdSetDepthTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthTestEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthWriteEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnableEXT"));
+    table.vkCmdSetDepthWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthWriteEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthCompareOpEXT = reinterpret_cast<PFN_vkCmdSetDepthCompareOpEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOpEXT"));
+    table.vkCmdSetDepthCompareOpEXT = reinterpret_cast<PFN_vkCmdSetDepthCompareOpEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOpEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthBoundsTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnableEXT"));
+    table.vkCmdSetDepthBoundsTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetStencilTestEnableEXT = reinterpret_cast<PFN_vkCmdSetStencilTestEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnableEXT"));
+    table.vkCmdSetStencilTestEnableEXT = reinterpret_cast<PFN_vkCmdSetStencilTestEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetStencilOpEXT = reinterpret_cast<PFN_vkCmdSetStencilOpEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetStencilOpEXT"));
+    table.vkCmdSetStencilOpEXT = reinterpret_cast<PFN_vkCmdSetStencilOpEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilOpEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
-    table.vkCmdSetRasterizerDiscardEnableEXT = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnableEXT"));
+    table.vkCmdSetRasterizerDiscardEnableEXT = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
-    table.vkCmdSetDepthBiasEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBiasEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnableEXT"));
+    table.vkCmdSetDepthBiasEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBiasEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
-    table.vkCmdSetPrimitiveRestartEnableEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnableEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnableEXT"));
+    table.vkCmdSetPrimitiveRestartEnableEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnableEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnableEXT"));
 #endif
 #if defined(VK_EXT_private_data)
-    table.vkCreatePrivateDataSlotEXT = reinterpret_cast<PFN_vkCreatePrivateDataSlotEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlotEXT"));
+    table.vkCreatePrivateDataSlotEXT = reinterpret_cast<PFN_vkCreatePrivateDataSlotEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlotEXT"));
 #endif
 #if defined(VK_EXT_private_data)
-    table.vkDestroyPrivateDataSlotEXT = reinterpret_cast<PFN_vkDestroyPrivateDataSlotEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlotEXT"));
+    table.vkDestroyPrivateDataSlotEXT = reinterpret_cast<PFN_vkDestroyPrivateDataSlotEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlotEXT"));
 #endif
 #if defined(VK_EXT_private_data)
-    table.vkSetPrivateDataEXT = reinterpret_cast<PFN_vkSetPrivateDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkSetPrivateDataEXT"));
+    table.vkSetPrivateDataEXT = reinterpret_cast<PFN_vkSetPrivateDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetPrivateDataEXT"));
 #endif
 #if defined(VK_EXT_private_data)
-    table.vkGetPrivateDataEXT = reinterpret_cast<PFN_vkGetPrivateDataEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetPrivateDataEXT"));
+    table.vkGetPrivateDataEXT = reinterpret_cast<PFN_vkGetPrivateDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPrivateDataEXT"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdCopyBuffer2KHR = reinterpret_cast<PFN_vkCmdCopyBuffer2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2KHR"));
+    table.vkCmdCopyBuffer2KHR = reinterpret_cast<PFN_vkCmdCopyBuffer2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdCopyImage2KHR = reinterpret_cast<PFN_vkCmdCopyImage2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImage2KHR"));
+    table.vkCmdCopyImage2KHR = reinterpret_cast<PFN_vkCmdCopyImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdBlitImage2KHR = reinterpret_cast<PFN_vkCmdBlitImage2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBlitImage2KHR"));
+    table.vkCmdBlitImage2KHR = reinterpret_cast<PFN_vkCmdBlitImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdCopyBufferToImage2KHR = reinterpret_cast<PFN_vkCmdCopyBufferToImage2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2KHR"));
+    table.vkCmdCopyBufferToImage2KHR = reinterpret_cast<PFN_vkCmdCopyBufferToImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdCopyImageToBuffer2KHR = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2KHR"));
+    table.vkCmdCopyImageToBuffer2KHR = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdResolveImage2KHR = reinterpret_cast<PFN_vkCmdResolveImage2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResolveImage2KHR"));
+    table.vkCmdResolveImage2KHR = reinterpret_cast<PFN_vkCmdResolveImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkCmdSetEvent2KHR = reinterpret_cast<PFN_vkCmdSetEvent2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetEvent2KHR"));
+    table.vkCmdSetEvent2KHR = reinterpret_cast<PFN_vkCmdSetEvent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkCmdResetEvent2KHR = reinterpret_cast<PFN_vkCmdResetEvent2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdResetEvent2KHR"));
+    table.vkCmdResetEvent2KHR = reinterpret_cast<PFN_vkCmdResetEvent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkCmdWaitEvents2KHR = reinterpret_cast<PFN_vkCmdWaitEvents2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWaitEvents2KHR"));
+    table.vkCmdWaitEvents2KHR = reinterpret_cast<PFN_vkCmdWaitEvents2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkCmdPipelineBarrier2KHR = reinterpret_cast<PFN_vkCmdPipelineBarrier2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2KHR"));
+    table.vkCmdPipelineBarrier2KHR = reinterpret_cast<PFN_vkCmdPipelineBarrier2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkQueueSubmit2KHR = reinterpret_cast<PFN_vkQueueSubmit2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkQueueSubmit2KHR"));
+    table.vkQueueSubmit2KHR = reinterpret_cast<PFN_vkQueueSubmit2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
-    table.vkCmdWriteTimestamp2KHR = reinterpret_cast<PFN_vkCmdWriteTimestamp2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2KHR"));
+    table.vkCmdWriteTimestamp2KHR = reinterpret_cast<PFN_vkCmdWriteTimestamp2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2KHR"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyMemoryToImageEXT = reinterpret_cast<PFN_vkCopyMemoryToImageEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyMemoryToImageEXT"));
+    table.vkCopyMemoryToImageEXT = reinterpret_cast<PFN_vkCopyMemoryToImageEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToImageEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyImageToMemoryEXT = reinterpret_cast<PFN_vkCopyImageToMemoryEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyImageToMemoryEXT"));
+    table.vkCopyImageToMemoryEXT = reinterpret_cast<PFN_vkCopyImageToMemoryEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToMemoryEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyImageToImageEXT = reinterpret_cast<PFN_vkCopyImageToImageEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCopyImageToImageEXT"));
+    table.vkCopyImageToImageEXT = reinterpret_cast<PFN_vkCopyImageToImageEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToImageEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkTransitionImageLayoutEXT = reinterpret_cast<PFN_vkTransitionImageLayoutEXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkTransitionImageLayoutEXT"));
+    table.vkTransitionImageLayoutEXT = reinterpret_cast<PFN_vkTransitionImageLayoutEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayoutEXT"));
 #endif
 #if defined(VK_KHR_dynamic_rendering)
-    table.vkCmdBeginRenderingKHR = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBeginRenderingKHR"));
+    table.vkCmdBeginRenderingKHR = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderingKHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering)
-    table.vkCmdEndRenderingKHR = reinterpret_cast<PFN_vkCmdEndRenderingKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdEndRenderingKHR"));
+    table.vkCmdEndRenderingKHR = reinterpret_cast<PFN_vkCmdEndRenderingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderingKHR"));
 #endif
 #if defined(VK_KHR_maintenance5)
-    table.vkGetImageSubresourceLayout2KHR = reinterpret_cast<PFN_vkGetImageSubresourceLayout2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2KHR"));
+    table.vkGetImageSubresourceLayout2KHR = reinterpret_cast<PFN_vkGetImageSubresourceLayout2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2KHR"));
 #endif
 #if defined(VK_EXT_host_image_copy) || defined(VK_EXT_image_compression_control)
-    table.vkGetImageSubresourceLayout2EXT = reinterpret_cast<PFN_vkGetImageSubresourceLayout2EXT>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2EXT"));
+    table.vkGetImageSubresourceLayout2EXT = reinterpret_cast<PFN_vkGetImageSubresourceLayout2EXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2EXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
-    table.vkGetDeviceImageSubresourceLayoutKHR = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayoutKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayoutKHR"));
+    table.vkGetDeviceImageSubresourceLayoutKHR = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayoutKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayoutKHR"));
 #endif
 #if defined(VK_KHR_map_memory2)
-    table.vkMapMemory2KHR = reinterpret_cast<PFN_vkMapMemory2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkMapMemory2KHR"));
+    table.vkMapMemory2KHR = reinterpret_cast<PFN_vkMapMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory2KHR"));
 #endif
 #if defined(VK_KHR_map_memory2)
-    table.vkUnmapMemory2KHR = reinterpret_cast<PFN_vkUnmapMemory2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkUnmapMemory2KHR"));
+    table.vkUnmapMemory2KHR = reinterpret_cast<PFN_vkUnmapMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory2KHR"));
 #endif
 #if defined(VK_KHR_maintenance6)
-    table.vkCmdBindDescriptorSets2KHR = reinterpret_cast<PFN_vkCmdBindDescriptorSets2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2KHR"));
+    table.vkCmdBindDescriptorSets2KHR = reinterpret_cast<PFN_vkCmdBindDescriptorSets2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2KHR"));
 #endif
 #if defined(VK_KHR_maintenance6)
-    table.vkCmdPushConstants2KHR = reinterpret_cast<PFN_vkCmdPushConstants2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushConstants2KHR"));
+    table.vkCmdPushConstants2KHR = reinterpret_cast<PFN_vkCmdPushConstants2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants2KHR"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
-    table.vkCmdPushDescriptorSet2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSet2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2KHR"));
+    table.vkCmdPushDescriptorSet2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSet2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2KHR"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
-    table.vkCmdPushDescriptorSetWithTemplate2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2KHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2KHR"));
+    table.vkCmdPushDescriptorSetWithTemplate2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2KHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering_local_read)
-    table.vkCmdSetRenderingAttachmentLocationsKHR = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocationsKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocationsKHR"));
+    table.vkCmdSetRenderingAttachmentLocationsKHR = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocationsKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocationsKHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering_local_read)
-    table.vkCmdSetRenderingInputAttachmentIndicesKHR = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndicesKHR>(Vulkan::vkGetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndicesKHR"));
+    table.vkCmdSetRenderingInputAttachmentIndicesKHR = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndicesKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndicesKHR"));
 #endif
     return table;
 }
@@ -2111,6 +2101,15 @@ VkResult InstanceTable::EnumeratePhysicalDevices(VkInstance instance, uint32_t* 
     return fn(instance, pPhysicalDeviceCount, pPhysicalDevices);
 #else
     return this->vkEnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
+#endif
+}
+PFN_vkVoidFunction InstanceTable::GetDeviceProcAddr(VkDevice device, const char* pName) const noexcept
+{
+#ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDeviceProcAddr fn = validateFunction("vkGetDeviceProcAddr", this->vkGetDeviceProcAddr);
+    return fn(device, pName);
+#else
+    return this->vkGetDeviceProcAddr(device, pName);
 #endif
 }
 void InstanceTable::GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) const noexcept
