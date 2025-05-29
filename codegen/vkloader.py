@@ -171,7 +171,7 @@ class Function:
 
         rtype = self.return_type
         if no_discard and rtype != "void":
-            rtype = f"[[nodiscard]] {rtype}"
+            rtype = f"VKIT_LOADER_NO_DISCARD {rtype}"
         if api_macro:
             rtype = f"VKIT_API {rtype}"
         modifiers = " const" if const else ""
@@ -492,7 +492,11 @@ hpp = CPPFile("loader.hpp")
 hpp.disclaimer("vkloader.py")
 hpp("#pragma once")
 hpp.include("vkit/vulkan/vulkan.hpp", quotes=True)
-
+hpp("#ifdef TKIT_ENABLE_ASSERTS")
+hpp("#define VKIT_LOADER_NO_DISCARD [[nodiscard]]")
+hpp("#else")
+hpp("#define VKIT_LOADER_NO_DISCARD")
+hpp("#endif")
 
 with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp.spacing()
