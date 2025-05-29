@@ -155,8 +155,10 @@ endfunction()
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
-target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-                                         ${Vulkan_INCLUDE_DIRS})
+target_include_directories(
+  vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS}
+                ${vma_SOURCE_DIR}/include/vk_mem_alloc.h)
+
 target_link_libraries(vulkit PUBLIC toolkit)
 
 # link dlopen
