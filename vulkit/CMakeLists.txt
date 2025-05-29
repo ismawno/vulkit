@@ -157,7 +157,8 @@ message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
                                          ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(vulkit PUBLIC toolkit VulkanMemoryAllocator)
+target_link_libraries(vulkit PUBLIC toolkit)
+
 # link dlopen
 if(UNIX AND NOT APPLE)
   target_link_libraries(vulkit PUBLIC ${CMAKE_DL_LIBS})
