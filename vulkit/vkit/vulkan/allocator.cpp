@@ -71,4 +71,8 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 
     return Result<VmaAllocator>::Ok(allocator);
 }
+void DestroyAllocator(const VmaAllocator p_Allocator) noexcept
+{
+    vmaDestroyAllocator(p_Allocator);
+}
 } // namespace VKit
