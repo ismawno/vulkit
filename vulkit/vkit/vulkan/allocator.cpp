@@ -33,20 +33,49 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     functions.vkCreateImage = dtable.vkCreateImage;
     functions.vkDestroyImage = dtable.vkDestroyImage;
     functions.vkCmdCopyBuffer = dtable.vkCmdCopyBuffer;
+    const u32 version = p_Device.GetPhysicalDevice().GetInfo().ApiVersion;
 #if VMA_DEDICATED_ALLOCATION || VMA_VULKAN_VERSION >= 1001000
-    functions.vkGetBufferMemoryRequirements2KHR = dtable.vkGetBufferMemoryRequirements2KHR;
-    functions.vkGetImageMemoryRequirements2KHR = dtable.vkGetImageMemoryRequirements2KHR;
+    if (version >= 1001000)
+    {
+        functions.vkGetBufferMemoryRequirements2KHR = dtable.vkGetBufferMemoryRequirements2;
+        functions.vkGetImageMemoryRequirements2KHR = dtable.vkGetImageMemoryRequirements2;
+    }
+    else
+    {
+        functions.vkGetBufferMemoryRequirements2KHR = dtable.vkGetBufferMemoryRequirements2KHR;
+        functions.vkGetImageMemoryRequirements2KHR = dtable.vkGetImageMemoryRequirements2KHR;
+    }
 #endif
 #if VMA_BIND_MEMORY2 || VMA_VULKAN_VERSION >= 1001000
-    functions.vkBindBufferMemory2KHR = dtable.vkBindBufferMemory2KHR;
-    functions.vkBindImageMemory2KHR = dtable.vkBindImageMemory2KHR;
+    if (version >= 1001000)
+    {
+        functions.vkBindBufferMemory2KHR = dtable.vkBindBufferMemory2;
+        functions.vkBindImageMemory2KHR = dtable.vkBindImageMemory2;
+    }
+    else
+    {
+        functions.vkBindBufferMemory2KHR = dtable.vkBindBufferMemory2KHR;
+        functions.vkBindImageMemory2KHR = dtable.vkBindImageMemory2KHR;
+    }
 #endif
 #if VMA_MEMORY_BUDGET || VMA_VULKAN_VERSION >= 1001000
-    functions.vkGetPhysicalDeviceMemoryProperties2KHR = itable.vkGetPhysicalDeviceMemoryProperties2KHR;
+    if (version >= 1001000)
+        functions.vkGetPhysicalDeviceMemoryProperties2KHR = itable.vkGetPhysicalDeviceMemoryProperties2;
+    else
+        functions.vkGetPhysicalDeviceMemoryProperties2KHR = itable.vkGetPhysicalDeviceMemoryProperties2;
+
 #endif
 #if VMA_KHR_MAINTENANCE4 || VMA_VULKAN_VERSION >= 1003000
-    functions.vkGetDeviceBufferMemoryRequirements = dtable.vkGetDeviceBufferMemoryRequirementsKHR;
-    functions.vkGetDeviceImageMemoryRequirements = dtable.vkGetDeviceImageMemoryRequirementsKHR;
+    if (version >= 1003000)
+    {
+        functions.vkGetDeviceBufferMemoryRequirements = dtable.vkGetDeviceBufferMemoryRequirements;
+        functions.vkGetDeviceImageMemoryRequirements = dtable.vkGetDeviceImageMemoryRequirements;
+    }
+    else
+    {
+        functions.vkGetDeviceBufferMemoryRequirements = dtable.vkGetDeviceBufferMemoryRequirementsKHR;
+        functions.vkGetDeviceImageMemoryRequirements = dtable.vkGetDeviceImageMemoryRequirementsKHR;
+    }
 #endif
 
     VmaAllocatorCreateInfo allocatorInfo{};
