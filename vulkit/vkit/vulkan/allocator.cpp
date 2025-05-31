@@ -1,3 +1,4 @@
+#include "vkit/vulkan/vulkan.hpp"
 #define VMA_IMPLEMENTATION
 
 #include "vkit/core/pch.hpp"
@@ -35,7 +36,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     functions.vkCmdCopyBuffer = dtable.vkCmdCopyBuffer;
     const u32 version = p_Device.GetPhysicalDevice().GetInfo().ApiVersion;
 #if VMA_DEDICATED_ALLOCATION || VMA_VULKAN_VERSION >= 1001000
-    if (version >= 1001000)
+    if (version >= VKIT_MAKE_VERSION(0, 1, 1, 0))
     {
         functions.vkGetBufferMemoryRequirements2KHR = dtable.vkGetBufferMemoryRequirements2;
         functions.vkGetImageMemoryRequirements2KHR = dtable.vkGetImageMemoryRequirements2;
@@ -47,7 +48,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     }
 #endif
 #if VMA_BIND_MEMORY2 || VMA_VULKAN_VERSION >= 1001000
-    if (version >= 1001000)
+    if (version >= VKIT_MAKE_VERSION(0, 1, 1, 0))
     {
         functions.vkBindBufferMemory2KHR = dtable.vkBindBufferMemory2;
         functions.vkBindImageMemory2KHR = dtable.vkBindImageMemory2;
@@ -59,14 +60,14 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     }
 #endif
 #if VMA_MEMORY_BUDGET || VMA_VULKAN_VERSION >= 1001000
-    if (version >= 1001000)
+    if (version >= VKIT_MAKE_VERSION(0, 1, 1, 0))
         functions.vkGetPhysicalDeviceMemoryProperties2KHR = itable.vkGetPhysicalDeviceMemoryProperties2;
     else
         functions.vkGetPhysicalDeviceMemoryProperties2KHR = itable.vkGetPhysicalDeviceMemoryProperties2;
 
 #endif
 #if VMA_KHR_MAINTENANCE4 || VMA_VULKAN_VERSION >= 1003000
-    if (version >= 1003000)
+    if (version >= VKIT_MAKE_VERSION(0, 1, 3, 0))
     {
         functions.vkGetDeviceBufferMemoryRequirements = dtable.vkGetDeviceBufferMemoryRequirements;
         functions.vkGetDeviceImageMemoryRequirements = dtable.vkGetDeviceImageMemoryRequirements;
