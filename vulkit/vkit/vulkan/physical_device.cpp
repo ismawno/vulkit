@@ -580,9 +580,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 
     PhysicalDevice::Info deviceInfo{};
+    deviceInfo.ApiVersion = properties.Core.apiVersion;
     deviceInfo.AvailableExtensions = availableExtensions;
     deviceInfo.EnabledExtensions = enabledExtensions;
-    deviceInfo.Properties = properties;
     deviceInfo.Flags = deviceFlags;
     deviceInfo.GraphicsIndex = graphicsIndex;
     deviceInfo.ComputeIndex = computeIndex;
