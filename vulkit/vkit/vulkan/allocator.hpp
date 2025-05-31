@@ -8,6 +8,8 @@
 #include "vkit/vulkan/logical_device.hpp"
 #define VMA_NULLABLE
 #define VMA_NOT_NULL
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 0
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_GCC_WARNING_IGNORE("-Wunused-parameter")
 TKIT_GCC_WARNING_IGNORE("-Wunused-variable")
