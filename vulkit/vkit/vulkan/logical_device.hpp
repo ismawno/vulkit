@@ -11,6 +11,10 @@
 #    define VKIT_MAX_QUEUES_PER_FAMILY 4
 #endif
 
+#if VKIT_MAX_QUEUES_PER_FAMILY < 1
+#    error "[VULKIT] Maximum queues per family must be greater than 0"
+#endif
+
 namespace VKit
 {
 /**

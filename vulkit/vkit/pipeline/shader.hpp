@@ -12,6 +12,10 @@
 #    define VKIT_MAX_SHADER_SIZE 128 * 1024
 #endif
 
+#if VKIT_MAX_SHADER_SIZE < 1
+#    error "[VULKIT] Maximum shader size must be greater than 0"
+#endif
+
 namespace VKit
 {
 /**
