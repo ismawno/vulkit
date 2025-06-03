@@ -1,3 +1,4 @@
+#include "tkit/utils/logging.hpp"
 #include "vkit/core/pch.hpp"
 #include "vkit/vulkan/vulkan.hpp"
 #include "vkit/core/alias.hpp"
@@ -8,6 +9,11 @@ template <String MessageType>
 ErrorInfo<MessageType>::ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept
     : ErrorCode(p_Error), Message(p_Message)
 {
+}
+
+template <String MessageType> std::string ErrorInfo<MessageType>::ToString() const noexcept
+{
+    return TKIT_FORMAT("VkResult: '{}' - Message: '{}'", VkResultToString(ErrorCode), Message);
 }
 
 template <String MessageType> ErrorInfo<MessageType>::operator VkResult() const noexcept

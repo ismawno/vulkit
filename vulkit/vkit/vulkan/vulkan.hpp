@@ -57,25 +57,19 @@
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_ASSERT_RESULT(result)                                                                                 \
-        TKIT_ASSERT(result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                                 \
-                    VKit::VkResultToString(result.GetError().ErrorCode), result.GetError().Message)
+#    define VKIT_ASSERT_RESULT(result) TKIT_ASSERT(result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_ASSERT_RESULT(result)
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT(result)                                                                                    \
-        TKIT_LOG_INFO_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                           \
-                         VKit::VkResultToString(result.GetError().ErrorCode), result.GetError().Message)
+#    define VKIT_LOG_RESULT(result) TKIT_LOG_INFO_IF(!result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_LOG_RESULT(result)
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_WARN_RESULT(result)                                                                                   \
-        TKIT_LOG_WARNING_IF(!result, "[VULKIT] VkResult: '{}' - Message: '{}'",                                        \
-                            VKit::VkResultToString(result.GetError().ErrorCode), result.GetError().Message)
+#    define VKIT_WARN_RESULT(result) TKIT_LOG_WARNING_IF(!result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_WARN_RESULT(result)
 #endif
@@ -125,6 +119,8 @@ template <String MessageType> class ErrorInfo
      * @return A `ErrorInfo` instance representing the error.
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept;
+
+    std::string ToString() const noexcept;
 
     operator VkResult() const noexcept;
 
