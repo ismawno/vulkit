@@ -155,15 +155,9 @@ endfunction()
 find_program(GLSLC_EXECUTABLE glslc REQUIRED)
 message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
-if(NOT UNIX OR APPLE)
-  target_include_directories(
-    vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS}
-                  ${vma_SOURCE_DIR}/include)
-else()
-  target_include_directories(
-    vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS}
-                  ${vma_SOURCE_DIR}/include $ENV{VULKAN_SDK}/include)
-endif()
+target_include_directories(
+  vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS}
+                ${vma_SOURCE_DIR}/include)
 
 target_link_libraries(vulkit PUBLIC toolkit)
 
