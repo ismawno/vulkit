@@ -173,9 +173,18 @@ target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}"
 
 if(MSVC)
   tkit_configure_compile_link_options(vulkit FLAGS /W4 /WX)
-else()
+elseif(UNIX AND APPLE)
   tkit_configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic
                                       -Werror)
+else()
+  tkit_configure_compile_link_options(
+    vulkit
+    FLAGS
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Werror
+    -Wno-changes-meaning)
 endif()
 
 # No need for more: toolkit handles the rest. As it is a library I develop, I
