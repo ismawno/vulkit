@@ -171,21 +171,6 @@ target_precompile_headers(vulkit PRIVATE
 target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}"
                                          VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
 
-if(MSVC)
-  tkit_configure_compile_link_options(vulkit FLAGS /W4 /WX)
-elseif(UNIX AND APPLE)
-  tkit_configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic
-                                      -Werror)
-else()
-  tkit_configure_compile_link_options(
-    vulkit
-    FLAGS
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Werror
-    -Wno-changes-meaning)
-endif()
-
+tkit_default_configure(vulkit)
 # No need for more: toolkit handles the rest. As it is a library I develop, I
 # will be reusing its macros/configurations
