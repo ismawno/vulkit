@@ -103,7 +103,7 @@ def process_option(content: list[str]) -> tuple[str, str, str | bool]:
     return cmake_varname.lower().replace("_", "-"), cli_varname, val
 
 
-Convoy.log_label = "SCANNER"
+Convoy.program_label = "SCANNER"
 args = parse_arguments()
 Convoy.is_verbose = args.verbose
 
@@ -137,8 +137,8 @@ if cmake_path is not None:
         if cli_varname not in unique_varnames:
             unique_varnames[cli_varname] = cmake_varname
             continue
-        Convoy.verbose(
-            f"<fyellow>Warning: Found name clash with <bold>{cli_varname}</bold>. Trying to resolve by restoring preffixes..."
+        Convoy.warning(
+            f"Found name clash with <bold>{cli_varname}</bold>. Trying to resolve by restoring preffixes..."
         )
         if not strip_preffix:
             Convoy.exit_error(
@@ -210,11 +210,15 @@ write_help(
 )
 write_help("[<lowercase-cmake-option>.<value-that-triggers-override>]")
 write_help("<lowercase-build-cli-option> = <new-default-value>")
+write_help("This is useful when you would like to disable assertions or logs for distribution builds.")
+write_help("You can stack empty override sections to have those inherit the values of the bottom section:")
+write_help("[<lowercase-cmake-option-1>.<value-that-triggers-override-1>]")
+write_help("[<lowercase-cmake-option-2>.<value-that-triggers-override-2>]")
+write_help("<lowercase-build-cli-option> = <new-default-value>")
 write_help(
     "<value-that-triggers-override> may have uppercase letters, as well as <new-default-value> or <default-value>."
 )
 
-write_help("This is useful when you would like to disable assertions or logs for distribution builds.")
 
 for section, cnts in sections.items():
     if section == "cmake-options":

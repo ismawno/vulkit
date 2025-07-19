@@ -2,15 +2,15 @@ from pathlib import Path
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
 from collections.abc import Callable
+from generator import CPPGenerator
 
 import sys
 import copy
 import xml.etree.ElementTree as ET
 import difflib
 
-from cppgen import CPPFile
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from convoy import Convoy
 
@@ -241,7 +241,7 @@ def download_vk_xml() -> Path:
     return location
 
 
-Convoy.log_label = "VK-LOADER"
+Convoy.program_label = "VK-LOADER"
 rpath = Path(__file__).parent.resolve()
 
 args = parse_arguments()
@@ -473,22 +473,22 @@ for extension in root.findall("extensions/extension"):
             )
 
 
-def guard_if_needed(code: CPPFile, text: str | Callable, guards: str, /, *args, **kwargs) -> None:
+def guard_if_needed(gen: CPPGenerator, text: str | Callable, guards: str, /, *args, **kwargs) -> None:
     def put_code() -> None:
         if isinstance(text, str):
-            code(text)
+            gen(text)
         else:
-            text(code, *args, **kwargs)
+            text(gen, *args, **kwargs)
 
     if guards:
-        code(f"#if {guards}", indent=0)
+        gen(f"#if {guards}", indent=0)
         put_code()
-        code("#endif", indent=0)
+        gen("#endif", indent=0)
     else:
         put_code()
 
 
-hpp = CPPFile("loader.hpp")
+hpp = CPPGenerator()
 hpp.disclaimer("vkloader.py")
 hpp("#pragma once")
 hpp.include("vkit/vulkan/vulkan.hpp", quotes=True)
@@ -508,9 +508,9 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp("#endif", indent=0)
     hpp.spacing()
 
-    def codefn1(ffile: CPPFile, fn: Function, /) -> None:
-        ffile(fn.as_fn_pointer_declaration(modifier="extern"))
-        ffile(fn.as_string(vk_prefix=False, no_discard=True, api_macro=True, noexcept=True))
+    def codefn1(gen: CPPGenerator, fn: Function, /) -> None:
+        gen(fn.as_fn_pointer_declaration(modifier="extern"))
+        gen(fn.as_string(vk_prefix=False, no_discard=True, api_macro=True, noexcept=True))
 
     for fn in functions.values():
         if fn.is_instance_function() or fn.is_device_function():
@@ -522,9 +522,9 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
 
     hpp.spacing()
 
-    def codefn2(ffile: CPPFile, fn: Function, /) -> None:
-        ffile(fn.as_fn_pointer_declaration(null=True))
-        ffile(fn.as_string(vk_prefix=False, no_discard=True, noexcept=True, const=True))
+    def codefn2(gen: CPPGenerator, fn: Function, /) -> None:
+        gen(fn.as_fn_pointer_declaration(null=True))
+        gen(fn.as_string(vk_prefix=False, no_discard=True, noexcept=True, const=True))
 
     with hpp.scope("struct VKIT_API InstanceTable", closer="};"):
         hpp("static InstanceTable Create(VkInstance p_Instance);")
@@ -547,7 +547,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
             hpp.spacing()
 
 
-cpp = CPPFile("loader.cpp")
+cpp = CPPGenerator()
 cpp.disclaimer("vkloader.py")
 cpp.include("vkit/core/pch.hpp", quotes=True)
 cpp.include("vkit/vulkan/loader.hpp", quotes=True)
@@ -568,24 +568,24 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         cpp("return p_Function;")
     cpp("#endif", indent=0)
 
-    def codefn3(ffile: CPPFile, fn: Function, /) -> None:
-        ffile(fn.as_fn_pointer_declaration(null=True))
-        with ffile.scope(fn.as_string(vk_prefix=False, semicolon=False, noexcept=True)):
+    def codefn3(gen: CPPGenerator, fn: Function, /) -> None:
+        gen(fn.as_fn_pointer_declaration(null=True))
+        with gen.scope(fn.as_string(vk_prefix=False, semicolon=False, noexcept=True)):
 
             pnames = [p.name for p in fn.params]
 
             def write_fn(name: str, /) -> None:
                 if fn.return_type != "void":
-                    ffile(f"return {name}({', '.join(pnames)});")
+                    gen(f"return {name}({', '.join(pnames)});")
                 else:
-                    ffile(f"{name}({', '.join(pnames)});")
+                    gen(f"{name}({', '.join(pnames)});")
 
-            ffile("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
-            ffile(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", Vulkan::{fn.name});')
+            gen("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
+            gen(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", Vulkan::{fn.name});')
             write_fn("fn")
-            ffile("#else", indent=0)
+            gen("#else", indent=0)
             write_fn(f"Vulkan::{fn.name}")
-            ffile("#endif", indent=0)
+            gen("#endif", indent=0)
 
     cpp.spacing()
     for fn in functions.values():
@@ -650,8 +650,8 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             )
         cpp("return table;")
 
-    def codefn4(ffile: CPPFile, fn: Function, /, *, namespace: str) -> None:
-        with ffile.scope(
+    def codefn4(gen: CPPGenerator, fn: Function, /, *, namespace: str) -> None:
+        with gen.scope(
             fn.as_string(
                 vk_prefix=False,
                 semicolon=False,
@@ -665,16 +665,16 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
 
             def write_fn(name: str, /) -> None:
                 if fn.return_type != "void":
-                    ffile(f"return {name}({', '.join(pnames)});")
+                    gen(f"return {name}({', '.join(pnames)});")
                 else:
-                    ffile(f"{name}({', '.join(pnames)});")
+                    gen(f"{name}({', '.join(pnames)});")
 
-            ffile("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
-            ffile(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", this->{fn.name});')
+            gen("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
+            gen(f'static {fn.as_fn_pointer_type()} fn = validateFunction("{fn.name}", this->{fn.name});')
             write_fn("fn")
-            ffile("#else", indent=0)
+            gen("#else", indent=0)
             write_fn(f"this->{fn.name}")
-            ffile("#endif", indent=0)
+            gen("#endif", indent=0)
 
     cpp.spacing()
     for fn in functions.values():
