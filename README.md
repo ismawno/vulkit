@@ -141,9 +141,13 @@ Once all of the render pass specification has been declared, it is possible to c
 ```cpp
 const VKit::SwapChain::Info &info = m_SwapChain.GetInfo();
 const auto result =
-    renderPass.CreateResources(info.Extent, [&renderPass, &info](const ImageHouse &p_ImageHouse, const u32 p_ImageIndex, const u32 p_AttachmentIndex) {
-        return p_AttachmentIndex == 0 ? p_ImageHouse.CreateImage(info.ImageData[p_ImageIndex].ImageView)
-                                        : p_ImageHouse.CreateImage(renderPass.GetAttachment(p_AttachmentIndex).Flags, info.Extent);
+    m_RenderPass.CreateResources(info.Extent, [this, &info](const VKit::ImageHouse &p_ImageHouse,
+                                                            const u32 p_ImageIndex, const u32 p_AttachmentIndex) {
+        if (p_AttachmentIndex == 0)
+            return p_ImageHouse.CreateImage(info.ImageData[p_ImageIndex].ImageView);
+
+        const VKit::RenderPass::Attachment &attachment = m_RenderPass.GetAttachment(p_AttachmentIndex);
+        return p_ImageHouse.CreateImage(attachment.Description.format, info.Extent, attachment.Flags);
     });
 VKIT_ASSERT_RESULT(result);
 ```

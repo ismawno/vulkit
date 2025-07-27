@@ -3,6 +3,10 @@
 
 namespace VKit
 {
+ImageHouse::ImageHouse(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator) noexcept
+    : m_Device(p_Device), m_Allocator(p_Allocator)
+{
+}
 Result<ImageHouse> ImageHouse::Create(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator) noexcept
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateImageView, Result<ImageHouse>);
