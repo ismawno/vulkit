@@ -11,21 +11,6 @@
 
 namespace VKit
 {
-struct Attachment
-{
-    enum FlagBit : u8
-    {
-        Flag_Color = 1 << 0,
-        Flag_Depth = 1 << 1,
-        Flag_Stencil = 1 << 2,
-        Flag_Input = 1 << 3,
-        Flag_Sampled = 1 << 4,
-    };
-    using Flags = u8;
-
-    VkAttachmentDescription Description{};
-    Flags TypeFlags;
-};
 
 /**
  * @brief Represents a Vulkan render pass and its associated resources.
@@ -36,6 +21,22 @@ struct Attachment
 class VKIT_API RenderPass
 {
   public:
+    struct Attachment
+    {
+        enum FlagBit : u8
+        {
+            Flag_Color = 1 << 0,
+            Flag_Depth = 1 << 1,
+            Flag_Stencil = 1 << 2,
+            Flag_Input = 1 << 3,
+            Flag_Sampled = 1 << 4,
+        };
+        using Flags = u8;
+
+        VkAttachmentDescription Description{};
+        Flags TypeFlags;
+    };
+
     class Builder;
 
   private:

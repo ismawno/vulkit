@@ -165,14 +165,14 @@ Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageCreateInf
     return CreateImageData(p_Info, p_Range, viewType);
 }
 static Result<VkImageSubresourceRange> getRange(const VkImageCreateInfo &p_Info,
-                                                const Attachment::Flags p_Flags) noexcept
+                                                const RenderPass::Attachment::Flags p_Flags) noexcept
 {
     VkImageSubresourceRange range{};
-    if (p_Flags & Attachment::Flag_Color)
+    if (p_Flags & RenderPass::Attachment::Flag_Color)
         range.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
-    else if (p_Flags & Attachment::Flag_Depth)
+    else if (p_Flags & RenderPass::Attachment::Flag_Depth)
         range.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (p_Flags & Attachment::Flag_Stencil)
+    else if (p_Flags & RenderPass::Attachment::Flag_Stencil)
         range.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
     else
         return Result<VkImageSubresourceRange>::Error(VK_ERROR_INITIALIZATION_FAILED, "Invalid attachment type");
