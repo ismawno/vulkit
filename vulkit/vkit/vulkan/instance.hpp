@@ -119,7 +119,7 @@ class VKIT_API Instance
      * Use these flags to enable features like headless mode, validation layers,
      * or specific Vulkan extensions during instance creation.
      */
-    enum FlagBit : Flags
+    enum FlagBits : Flags
     {
         Flag_Headless = 1 << 0,
         Flag_HasValidationLayers = 1 << 1,

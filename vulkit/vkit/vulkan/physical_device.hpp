@@ -91,7 +91,7 @@ class VKIT_API PhysicalDevice
          * Used to filter devices based on required queue types, memory capabilities,
          * and extension support.
          */
-        enum FlagBit : Flags
+        enum FlagBits : Flags
         {
             Flag_AnyType = 1 << 0,
             Flag_RequireDedicatedComputeQueue = 1 << 1,
@@ -187,7 +187,7 @@ class VKIT_API PhysicalDevice
      * These flags indicate features like dedicated or separate queues, graphics
      * and compute support, and portability subset availability.
      */
-    enum FlagBit : Flags
+    enum FlagBits : Flags
     {
         Flag_Optimal = 1 << 0,
         Flag_HasDedicatedComputeQueue = 1 << 1,

@@ -13,8 +13,6 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
     const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateRenderPass, Result<RenderPass>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyRenderPass, Result<RenderPass>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateImageView, Result<RenderPass>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<RenderPass>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyFramebuffer, Result<RenderPass>);
 
     if (m_Subpasses.IsEmpty())
@@ -27,21 +25,21 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
         TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
         if (formats.IsEmpty())
         {
-            if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Color)
+            if (attachment.m_Attachment.Flags & AttachmentFlag_Color)
                 formats.Append(VK_FORMAT_B8G8R8A8_SRGB);
-            else if ((attachment.m_Attachment.TypeFlags & Attachment::Flag_Depth) &&
-                     (attachment.m_Attachment.TypeFlags & Attachment::Flag_Stencil))
+            else if ((attachment.m_Attachment.Flags & AttachmentFlag_Depth) &&
+                     (attachment.m_Attachment.Flags & AttachmentFlag_Stencil))
                 formats.Append(VK_FORMAT_D32_SFLOAT_S8_UINT);
-            else if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Depth)
+            else if (attachment.m_Attachment.Flags & AttachmentFlag_Depth)
                 formats.Append(VK_FORMAT_D32_SFLOAT);
-            else if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Stencil)
+            else if (attachment.m_Attachment.Flags & AttachmentFlag_Stencil)
                 formats.Append(VK_FORMAT_S8_UINT);
         }
         VkFormatFeatureFlags flags = 0;
-        if (attachment.m_Attachment.TypeFlags & Attachment::Flag_Color)
+        if (attachment.m_Attachment.Flags & AttachmentFlag_Color)
             flags = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
-        else if ((attachment.m_Attachment.TypeFlags & Attachment::Flag_Depth) ||
-                 (attachment.m_Attachment.TypeFlags & Attachment::Flag_Stencil))
+        else if ((attachment.m_Attachment.Flags & AttachmentFlag_Depth) ||
+                 (attachment.m_Attachment.Flags & AttachmentFlag_Stencil))
             flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
         const auto result = m_Device->FindSupportedFormat(formats, VK_IMAGE_TILING_OPTIMAL, flags);
@@ -109,144 +107,10 @@ void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     p_Queue.Push([renderPass]() { renderPass.destroy(); });
 }
 
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageCreateInfo &p_Info,
-                                                          const VkImageSubresourceRange &p_Range,
-                                                          const VkImageViewType p_ViewType) const noexcept
+const RenderPass::Attachment &RenderPass::GetAttachment(const u32 p_AttachmentIndex) const noexcept
 {
-    if (!m_Info.Allocator)
-        return Result<ImageData>::Error(VK_ERROR_INITIALIZATION_FAILED, "An allocator must be set to create resources");
-
-    VmaAllocationCreateInfo allocInfo{};
-    allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-    allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-
-    ImageData imageData;
-    VkResult result =
-        vmaCreateImage(m_Info.Allocator, &p_Info, &allocInfo, &imageData.Image, &imageData.Allocation, nullptr);
-    if (result != VK_SUCCESS)
-        return Result<ImageData>::Error(result, "Failed to create image");
-
-    VkImageViewCreateInfo viewInfo{};
-    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    viewInfo.image = imageData.Image;
-    viewInfo.viewType = p_ViewType;
-    viewInfo.format = p_Info.format;
-    viewInfo.subresourceRange = p_Range;
-
-    result = m_Device.Table->CreateImageView(m_Device, &viewInfo, m_Device.AllocationCallbacks, &imageData.ImageView);
-    if (result != VK_SUCCESS)
-    {
-        vmaDestroyImage(m_Info.Allocator, imageData.Image, imageData.Allocation);
-        return Result<ImageData>::Error(result, "Failed to create image view");
-    }
-    return Result<ImageData>::Ok(imageData);
+    return m_Info.Attachments[p_AttachmentIndex];
 }
-static VkImageViewType getImageViewType(const VkImageType p_Type) noexcept
-{
-    switch (p_Type)
-    {
-    case VK_IMAGE_TYPE_1D:
-        return VK_IMAGE_VIEW_TYPE_1D;
-    case VK_IMAGE_TYPE_2D:
-        return VK_IMAGE_VIEW_TYPE_2D;
-    case VK_IMAGE_TYPE_3D:
-        return VK_IMAGE_VIEW_TYPE_3D;
-    default:
-        break;
-    }
-    return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
-}
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageCreateInfo &p_Info,
-                                                          const VkImageSubresourceRange &p_Range) const noexcept
-{
-    const VkImageViewType viewType = getImageViewType(p_Info.imageType);
-    if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM)
-        return Result<ImageData>::Error(VK_ERROR_INITIALIZATION_FAILED, "Invalid image type");
-    return CreateImageData(p_Info, p_Range, viewType);
-}
-static Result<VkImageSubresourceRange> getRange(const VkImageCreateInfo &p_Info,
-                                                const RenderPass::Attachment::Flags p_Flags) noexcept
-{
-    VkImageSubresourceRange range{};
-    if (p_Flags & RenderPass::Attachment::Flag_Color)
-        range.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
-    else if (p_Flags & RenderPass::Attachment::Flag_Depth)
-        range.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (p_Flags & RenderPass::Attachment::Flag_Stencil)
-        range.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-    else
-        return Result<VkImageSubresourceRange>::Error(VK_ERROR_INITIALIZATION_FAILED, "Invalid attachment type");
-
-    range.baseMipLevel = 0;
-    range.levelCount = p_Info.mipLevels;
-    range.baseArrayLayer = 0;
-    range.layerCount = p_Info.arrayLayers;
-    return Result<VkImageSubresourceRange>::Ok(range);
-}
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info,
-                                                          const VkImageViewType p_ViewType) const noexcept
-{
-    const auto rangeResult = getRange(p_Info, m_Info.Attachments[p_AttachmentIndex].TypeFlags);
-    if (!rangeResult)
-        return Result<ImageData>::Error(rangeResult.GetError());
-
-    const VkImageSubresourceRange &range = rangeResult.GetValue();
-    return CreateImageData(p_Info, range, p_ViewType);
-}
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const u32 p_AttachmentIndex,
-                                                          const VkImageCreateInfo &p_Info) const noexcept
-{
-    const VkImageViewType viewType = getImageViewType(p_Info.imageType);
-    if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM)
-        return Result<ImageData>::Error(VK_ERROR_INITIALIZATION_FAILED, "Invalid image type");
-
-    const auto rangeResult = getRange(p_Info, m_Info.Attachments[p_AttachmentIndex].TypeFlags);
-    if (!rangeResult)
-        return Result<ImageData>::Error(rangeResult.GetError());
-
-    const VkImageSubresourceRange &range = rangeResult.GetValue();
-    return CreateImageData(p_Info, range, viewType);
-}
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const u32 p_AttachmentIndex,
-                                                          const VkExtent2D &p_Extent) const noexcept
-{
-    const Attachment &attachment = m_Info.Attachments[p_AttachmentIndex];
-
-    VkImageCreateInfo imageInfo{};
-    imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageInfo.imageType = VK_IMAGE_TYPE_2D;
-    imageInfo.extent.width = p_Extent.width;
-    imageInfo.extent.height = p_Extent.height;
-    imageInfo.extent.depth = 1;
-    imageInfo.mipLevels = 1;
-    imageInfo.arrayLayers = 1;
-    imageInfo.format = attachment.Description.format;
-    imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-    imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    imageInfo.flags = 0;
-    if (attachment.TypeFlags & Attachment::Flag_Color)
-        imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    else if ((attachment.TypeFlags & Attachment::Flag_Depth) || (attachment.TypeFlags & Attachment::Flag_Stencil))
-        imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-
-    if (attachment.TypeFlags & Attachment::Flag_Input)
-        imageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-    if (attachment.TypeFlags & Attachment::Flag_Sampled)
-        imageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
-
-    return CreateImageData(p_AttachmentIndex, imageInfo);
-}
-Result<RenderPass::ImageData> RenderPass::CreateImageData(const VkImageView p_ImageView) const noexcept
-{
-    ImageData imageData{};
-    imageData.Image = VK_NULL_HANDLE;
-    imageData.Allocation = VK_NULL_HANDLE;
-    imageData.ImageView = p_ImageView;
-    return Result<ImageData>::Ok(imageData);
-}
-
 const RenderPass::Info &RenderPass::GetInfo() const noexcept
 {
     return m_Info;
@@ -270,15 +134,12 @@ RenderPass::operator bool() const noexcept
 
 void RenderPass::Resources::destroy() const noexcept
 {
-    for (const ImageData &data : m_Images)
-        if (data.Image)
-        {
-            vmaDestroyImage(m_Allocator, data.Image, data.Allocation);
-            m_Device.Table->DestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
-        }
+    for (const Image &image : m_Images)
+        m_ImageHouse.DestroyImage(image);
 
+    const LogicalDevice::Proxy &device = m_ImageHouse.GetDevice();
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
-        m_Device.Table->DestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
+        device.Table->DestroyFramebuffer(device, frameBuffer, device.AllocationCallbacks);
 }
 void RenderPass::Resources::Destroy() noexcept
 {
@@ -302,9 +163,9 @@ VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) cons
     return m_FrameBuffers[p_ImageIndex];
 }
 
-RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const Attachment::Flags p_TypeFlags) noexcept
+RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const AttachmentFlags p_Flags) noexcept
 {
-    return m_Attachments.Append(this, p_TypeFlags);
+    return m_Attachments.Append(this, p_Flags);
 }
 RenderPass::SubpassBuilder &RenderPass::Builder::BeginSubpass(const VkPipelineBindPoint p_BindPoint) noexcept
 {
@@ -336,14 +197,13 @@ RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFl
     return *this;
 }
 
-RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
-                                                 const Attachment::Flags p_TypeFlags) noexcept
+RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const AttachmentFlags p_Flags) noexcept
     : m_Builder(p_Builder)
 {
-    TKIT_ASSERT(p_TypeFlags, "[VULKIT] Attachment must have at least one type flag");
-    TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Depth)),
+    TKIT_ASSERT(p_Flags, "[VULKIT] Attachment must have at least one type flag");
+    TKIT_ASSERT(!((p_Flags & AttachmentFlag_Color) && (p_Flags & AttachmentFlag_Depth)),
                 "[VULKIT] Attachment must be color or depth, not both");
-    TKIT_ASSERT(!((p_TypeFlags & Attachment::Flag_Color) && (p_TypeFlags & Attachment::Flag_Stencil)),
+    TKIT_ASSERT(!((p_Flags & AttachmentFlag_Color) && (p_Flags & AttachmentFlag_Stencil)),
                 "[VULKIT] Attachment must be color or stencil, not both");
 
     m_Attachment.Description.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -354,19 +214,19 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
     m_Attachment.Description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     m_Attachment.Description.finalLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     m_Attachment.Description.flags = 0;
-    m_Attachment.TypeFlags = p_TypeFlags;
+    m_Attachment.Flags = p_Flags;
 
-    if (p_TypeFlags & Attachment::Flag_Color)
+    if (p_Flags & AttachmentFlag_Color)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     }
-    if (p_TypeFlags & Attachment::Flag_Depth)
+    if (p_Flags & AttachmentFlag_Depth)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     }
-    if (p_TypeFlags & Attachment::Flag_Stencil)
+    if (p_Flags & AttachmentFlag_Stencil)
     {
         m_Attachment.Description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

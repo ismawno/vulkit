@@ -54,6 +54,10 @@ if(VULKIT_ENABLE_COMMAND_POOL)
   list(APPEND SOURCES vkit/rendering/command_pool.cpp)
 endif()
 
+if(VULKIT_ENABLE_IMAGES)
+  list(APPEND SOURCES vkit/rendering/image.cpp)
+endif()
+
 if(VULKIT_ENABLE_RENDER_PASS)
   list(APPEND SOURCES vkit/rendering/render_pass.cpp)
 endif()
@@ -110,6 +114,10 @@ endif()
 
 if(VULKIT_ENABLE_COMMAND_POOL)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_COMMAND_POOL)
+endif()
+
+if(VULKIT_ENABLE_IMAGES)
+  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_IMAGES)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)

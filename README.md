@@ -140,9 +140,9 @@ Once all of the render pass specification has been declared, it is possible to c
 
 ```cpp
 const auto result =
-    renderPass.CreateResources(info.Extent, [&renderPass, &info](const u32 p_ImageIndex, const u32 p_AttachmentIndex) {
-        return p_AttachmentIndex == 0 ? renderPass.CreateImageData(info.ImageData[p_ImageIndex].ImageView)
-                                        : renderPass.CreateImageData(p_AttachmentIndex, info.Extent);
+    renderPass.CreateResources(info.Extent, [&renderPass, &info](const ImageHouse &p_ImageHouse, const u32 p_ImageIndex, const u32 p_AttachmentIndex) {
+        return p_AttachmentIndex == 0 ? p_ImageHouse.CreateImage(info.ImageData[p_ImageIndex].ImageView)
+                                        : p_ImageHouse.CreateImage(renderPass.GetAttachment(p_AttachmentIndex).Flags, info.Extent);
     });
 VKIT_ASSERT_RESULT(result);
 ```

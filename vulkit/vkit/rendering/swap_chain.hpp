@@ -34,7 +34,7 @@ class VKIT_API SwapChain
          * These flags define optional behaviors for the swap chain, such as creating image views.
          *
          */
-        enum FlagBit : Flags
+        enum FlagBits : Flags
         {
             Flag_Clipped = 1 << 0,
             Flag_CreateImageViews = 1 << 1
@@ -111,7 +111,7 @@ class VKIT_API SwapChain
      *
      * Indicates features like whether the swap chain has image views.
      */
-    enum FlagBit : Flags
+    enum FlagBits : Flags
     {
         Flag_Clipped = 1 << 0,
         Flag_HasImageViews = 1 << 1

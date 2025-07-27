@@ -5,13 +5,11 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_RENDER_PASS"
 #endif
 
-#include "vkit/vulkan/logical_device.hpp"
-#include "vkit/vulkan/allocator.hpp"
+#include "vkit/rendering/image.hpp"
 #include "tkit/container/static_array.hpp"
 
 namespace VKit
 {
-
 /**
  * @brief Represents a Vulkan render pass and its associated resources.
  *
@@ -23,18 +21,8 @@ class VKIT_API RenderPass
   public:
     struct Attachment
     {
-        enum FlagBit : u8
-        {
-            Flag_Color = 1 << 0,
-            Flag_Depth = 1 << 1,
-            Flag_Stencil = 1 << 2,
-            Flag_Input = 1 << 3,
-            Flag_Sampled = 1 << 4,
-        };
-        using Flags = u8;
-
         VkAttachmentDescription Description{};
-        Flags TypeFlags;
+        AttachmentFlags Flags;
     };
 
     class Builder;
@@ -43,7 +31,7 @@ class VKIT_API RenderPass
     class AttachmentBuilder
     {
       public:
-        AttachmentBuilder(Builder *p_Builder, Attachment::Flags p_TypeFlags) noexcept;
+        AttachmentBuilder(Builder *p_Builder, AttachmentFlags p_Flags) noexcept;
 
         AttachmentBuilder &SetLoadOperation(
             VkAttachmentLoadOp p_Operation,
@@ -141,7 +129,7 @@ class VKIT_API RenderPass
 
         Result<RenderPass> Build() const noexcept;
 
-        AttachmentBuilder &BeginAttachment(Attachment::Flags p_Flags) noexcept;
+        AttachmentBuilder &BeginAttachment(AttachmentFlags p_Flags) noexcept;
 
         SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint) noexcept;
         DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass) noexcept;
@@ -163,13 +151,6 @@ class VKIT_API RenderPass
         TKit::StaticArray8<DependencyBuilder> m_Dependencies{};
     };
 
-    struct ImageData
-    {
-        VkImage Image;
-        VkImageView ImageView;
-        VmaAllocation Allocation;
-    };
-
     /**
      * @brief Manages frame buffers and image views associated with a render pass.
      *
@@ -189,10 +170,8 @@ class VKIT_API RenderPass
       private:
         void destroy() const noexcept;
 
-        LogicalDevice::Proxy m_Device{};
-        VmaAllocator m_Allocator = VK_NULL_HANDLE;
-
-        TKit::StaticArray64<ImageData> m_Images;          // size: m_ImageCount * m_Attachments.GetSize()
+        ImageHouse m_ImageHouse;
+        TKit::StaticArray64<Image> m_Images;              // size: m_ImageCount * m_Attachments.GetSize()
         TKit::StaticArray4<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
@@ -216,8 +195,8 @@ class VKIT_API RenderPass
      *
      * Populates frame buffers and associated images based on the provided extent and a user-defined image creation
      * callback. The `RenderPass` class provides many high-level options for `ImageData` struct creation, including the
-     * case where the underlying resource is directly provided by a `SwapChain` image. See the `CreateImageData()`
-     * methods for more.
+     * case where the underlying resource is directly provided by a `SwapChain` image. See the
+     * `ImageHouse::CreateImage()` methods for more.
      *
      * @tparam F The type of the callback function used for creating image data.
      * @param p_Extent The dimensions of the frame buffer.
@@ -238,8 +217,11 @@ class VKIT_API RenderPass
                                             "An allocator must be set to create resources");
 
         Resources resources;
-        resources.m_Device = m_Device;
-        resources.m_Allocator = m_Info.Allocator;
+        const auto result = ImageHouse::Create(m_Device, m_Info.Allocator);
+        if (!result)
+            return Result<Resources>::Error(result.GetError());
+
+        resources.m_ImageHouse = result.GetValue();
 
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateFramebuffer, Result<Resources>);
 
@@ -248,14 +230,14 @@ class VKIT_API RenderPass
         {
             for (u32 j = 0; j < attachments.GetSize(); ++j)
             {
-                const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
+                const auto imresult = std::forward<F>(p_CreateImageData)(resources.m_ImageHouse, i, j);
                 if (!imresult)
                 {
                     resources.Destroy();
                     return Result<Resources>::Error(imresult.GetError());
                 }
 
-                const ImageData &imageData = imresult.GetValue();
+                const Image &imageData = imresult.GetValue();
                 resources.m_Images.Append(imageData);
                 attachments[j] = imageData.ImageView;
             }
@@ -283,96 +265,7 @@ class VKIT_API RenderPass
         return Result<Resources>::Ok(resources);
     }
 
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
-     * configuration.
-     *
-     * @param p_Info The Vulkan image creation info.
-     * @param p_Range The subresource range for the image.
-     * @param p_ViewType The type of image view to create.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range,
-                                      VkImageViewType p_ViewType) const noexcept;
-
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
-     * configuration.
-     *
-     * The view type is determined based on the image type in the image creation info.
-     *
-     * @param p_Info The Vulkan image creation info.
-     * @param p_Range The subresource range for the image.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(const VkImageCreateInfo &p_Info,
-                                      const VkImageSubresourceRange &p_Range) const noexcept;
-
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
-     * configuration.
-     *
-     * The subresource range will default to the entire image.
-     *
-     * @param p_AttachmentIndex The index of the attachment.
-     * @param p_Info The Vulkan image creation info.
-     * @param p_ViewType The type of image view to create.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info,
-                                      VkImageViewType p_ViewType) const noexcept;
-
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
-     * configuration.
-     *
-     * The view type is determined based on the image type in the image creation info.
-     * The subresource range will default to the entire image.
-     *
-     * @param p_AttachmentIndex The index of the attachment.
-     * @param p_Info The Vulkan image creation info.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkImageCreateInfo &p_Info) const noexcept;
-
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * Generates Vulkan image handles, views, and allocations for an attachment, based on the provided image
-     * configuration.
-     *
-     * The image creation info will default to the attachment's format and usage flags to provide a
-     * basic image resource that works for most cases.
-     *
-     * @param p_AttachmentIndex The index of the attachment.
-     * @param p_Extent The extent of the image.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(u32 p_AttachmentIndex, const VkExtent2D &p_Extent) const noexcept;
-
-    /**
-     * @brief Creates image data for a render pass attachment.
-     *
-     * A dummy method used when the user provides the image data directly. Commonly used when the image is provided by
-     * a `SwapChain`.
-     *
-     * The underlying Resources struct will not take ownership of the image data (will skip this resource when the
-     * `Destroy()` method is called), and the user is responsible for managing the image and image view (which will very
-     * likely be automatically handled by the `SwapChain` itself).
-     *
-     * @param p_ImageView The image view to use.
-     * @return A `Result` containing the created `ImageData` or an error.
-     */
-    Result<ImageData> CreateImageData(VkImageView p_ImageView) const noexcept;
-
+    const Attachment &GetAttachment(u32 p_AttachmentIndex) const noexcept;
     const Info &GetInfo() const noexcept;
 
     const LogicalDevice::Proxy &GetDevice() const noexcept;
