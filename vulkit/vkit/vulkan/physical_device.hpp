@@ -224,6 +224,11 @@ class VKIT_API PhysicalDevice
     PhysicalDevice() noexcept = default;
     PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
 
+    bool AreFeaturesSupported(const Features &p_Features) const noexcept;
+    bool AreFeaturesEnabled(const Features &p_Features) const noexcept;
+
+    bool EnableFeatures(const Features &p_Features) noexcept;
+
     /**
      * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
      * in the user's current header version.

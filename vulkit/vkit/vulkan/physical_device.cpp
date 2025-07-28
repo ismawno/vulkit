@@ -42,6 +42,15 @@ template <typename T> void setFeaturesToFalse(T &p_Features) noexcept
     for (u32 i = 0; i < size; ++i)
         ptr[i] = VK_FALSE;
 }
+template <typename T> void orFeatures(T &p_Dest, const T &p_Src) noexcept
+{
+    auto [ptr1, size1] = getFeatureIterable<T, VkBool32>(p_Dest);
+    const auto [ptr2, size2] = getFeatureIterable(p_Src);
+    TKIT_ASSERT(size1 == size2, "[VULKIT] Feature struct sizes do not match");
+
+    for (u32 i = 0; i < size1; ++i)
+        ptr1[i] |= ptr2[i];
+}
 
 template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested) noexcept
 {
@@ -628,6 +637,23 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
 PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept
     : m_Device(p_Device), m_Info(p_Info)
 {
+}
+
+bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const noexcept
+{
+    return compareFeatureStructs(m_Info.AvailableFeatures, p_Features);
+}
+bool PhysicalDevice::AreFeaturesEnabled(const Features &p_Features) const noexcept
+{
+    return compareFeatureStructs(m_Info.EnabledFeatures, p_Features);
+}
+bool PhysicalDevice::EnableFeatures(const Features &p_Features) noexcept
+{
+    if (!AreFeaturesSupported(p_Features))
+        return false;
+
+    orFeatures(m_Info.EnabledFeatures, p_Features);
+    return true;
 }
 
 bool PhysicalDevice::IsExtensionSupported(const char *p_Extension) const noexcept
