@@ -398,7 +398,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     properties.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES;
 #endif
 
-#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
+#ifdef VK_KHR_dynamic_rendering
     const bool dynamicRendering = contains(availableExtensions, "VK_KHR_dynamic_rendering");
 #endif
 
@@ -445,30 +445,23 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
         {
             features.Vulkan12.pNext = &features.Vulkan13;
-            if (dynamicRendering)
-                features.Vulkan13.pNext = &features.DynamicRendering;
-
             properties.Vulkan12.pNext = &properties.Vulkan13;
-        }
-        else if (dynamicRendering)
-            features.Vulkan12.pNext = &features.DynamicRendering;
-#    elif defined(VK_KHR_dynamic_rendering)
-        if (dynamicRendering)
-        {
-            if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
-                features.Vulkan12.pNext = &features.DynamicRendering;
-            else
-                featuresChain.pNext = &features.DynamicRendering;
         }
 #    endif
 #    ifdef VKIT_API_VERSION_1_4
         if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 4, 0))
         {
-            if (dynamicRendering)
-                features.DynamicRendering.pNext = &features.Vulkan14;
-            else
-                features.Vulkan13.pNext = &features.Vulkan14;
-            &features.Vulkan14 properties.Vulkan13.pNext = &properties.Vulkan14;
+            features.Vulkan13.pNext = &features.Vulkan14;
+            properties.Vulkan13.pNext = &properties.Vulkan14;
+        }
+#    endif
+
+#    ifdef VK_KHR_dynamic_rendering
+        if (dynamicRendering)
+        {
+            void *next = featuresChain.pNext;
+            featuresChain.pNext = &features.DynamicRendering;
+            features.DynamicRendering.pNext = next;
         }
 #    endif
 
@@ -495,8 +488,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required features", name));
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
+                                                    "The device {} does not have the required core features", name));
+
+#ifdef VK_KHR_dynamic_rendering
+    if (!dynamicRendering && m_RequiredFeatures.DynamicRendering.dynamicRendering)
+        return JudgeResult::Error(VKIT_FORMAT_ERROR(
+            VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required dynamic rendering feature", name));
+#endif
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
@@ -505,14 +504,9 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13) ||
-        (!dynamicRendering && m_RequiredFeatures.DynamicRendering.dynamicRendering))
+    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required Vulkan 1.3 features", name));
-#elif defined(VK_KHR_dynamic_rendering)
-    if (!dynamicRendering && m_RequiredFeatures.DynamicRendering.dynamicRendering)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
-                                                    "The device {} does not have the dynamic rendering feature", name));
 #endif
 #ifdef VKIT_API_VERSION_1_4
     if (!compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14))
@@ -608,6 +602,10 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
 #ifdef VKIT_API_VERSION_1_3
     m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
     m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+    if (m_RequiredFeatures.Vulkan13.dynamicRendering)
+        m_RequiredFeatures.DynamicRendering.dynamicRendering = VK_TRUE;
+    if (m_RequiredFeatures.DynamicRendering.dynamicRendering)
+        m_RequiredFeatures.Vulkan13.dynamicRendering = VK_TRUE;
 #elif defined(VK_KHR_dynamic_rendering)
     m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
 #endif

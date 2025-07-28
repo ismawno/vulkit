@@ -39,6 +39,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pEnabledFeatures = nullptr;
 
 #    ifdef VKIT_API_VERSION_1_1
     VkPhysicalDeviceFeatures2 featuresChain{};
@@ -66,6 +67,12 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #    ifdef VKIT_API_VERSION_1_3
         if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
             devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
+#    endif
+
+#    ifdef VK_KHR_dynamic_rendering
+        void *next = featuresChain.pNext;
+        featuresChain.pNext = &devInfo.EnabledFeatures.DynamicRendering;
+        devInfo.EnabledFeatures.DynamicRendering.pNext = next;
 #    endif
 
         createInfo.pNext = &featuresChain;
