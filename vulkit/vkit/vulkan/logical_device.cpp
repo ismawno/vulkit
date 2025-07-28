@@ -56,31 +56,53 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #    endif
         featuresChain.features = devInfo.EnabledFeatures.Core;
 
+        const auto fillChain = [&devInfo, &featuresChain]() {
 #    ifdef VKIT_API_VERSION_1_2
-        if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
-        {
-            featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
-            devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
-        }
+            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+            {
+                featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
+                devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
+            }
+            else
+            {
+                featuresChain.pNext = devInfo.EnabledFeatures.Next;
+                return;
+            }
+#    else
+            featuresChain.pNext = devInfo.EnabledFeatures.Next;
 #    endif
 
 #    ifdef VKIT_API_VERSION_1_3
-        if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
-            devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
+            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+                devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
+            else
+            {
+                devInfo.EnabledFeatures.Vulkan12.pNext = devInfo.EnabledFeatures.Next;
+                return;
+            }
 #    endif
-
-#    ifdef VK_KHR_dynamic_rendering
-        void *next = featuresChain.pNext;
-        featuresChain.pNext = &devInfo.EnabledFeatures.DynamicRendering;
-        devInfo.EnabledFeatures.DynamicRendering.pNext = next;
+#    ifdef VKIT_API_VERSION_1_4
+            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 4, 0))
+                devInfo.EnabledFeatures.Vulkan13.pNext = &devInfo.EnabledFeatures.Vulkan14;
+            else
+            {
+                devInfo.EnabledFeatures.Vulkan13.pNext = devInfo.EnabledFeatures.Next;
+                return;
+            }
 #    endif
+        };
 
+        fillChain();
         createInfo.pNext = &featuresChain;
     }
     else
+    {
         createInfo.pEnabledFeatures = &devInfo.EnabledFeatures.Core;
+        createInfo.pNext = devInfo.EnabledFeatures.Next;
+    }
 #else
     createInfo.pEnabledFeatures = &devInfo.EnabledFeatures.Core;
+    createInfo.pNext = devInfo.EnabledFeatures.Next;
 #endif
 
     createInfo.queueCreateInfoCount = queueCreateInfos.GetSize();

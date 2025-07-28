@@ -43,13 +43,11 @@ class VKIT_API PhysicalDevice
 #endif
 #ifdef VKIT_API_VERSION_1_3
         VkPhysicalDeviceVulkan13Features Vulkan13{};
-        VkPhysicalDeviceDynamicRenderingFeatures DynamicRendering{};
-#elif defined(VK_KHR_dynamic_rendering)
-        VkPhysicalDeviceDynamicRenderingFeaturesKHR DynamicRendering{};
 #endif
 #ifdef VKIT_API_VERSION_1_4
         VkPhysicalDeviceVulkan14Features Vulkan14{};
 #endif
+        void *Next;
     };
 
     struct Properties
@@ -146,6 +144,22 @@ class VKIT_API PhysicalDevice
         Selector &RequestMemory(const VkDeviceSize p_Size) noexcept;
 
         Selector &RequireFeatures(const Features &p_Features) noexcept;
+
+        /**
+         * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
+         * in the user's current header version.
+         *
+         * The availability of such features will not be checked. It is up to you to provide the required support.
+         *
+         * @param p_Feature The feature, which must remain in scope until a logical device has been created.
+         */
+        template <typename T> Selector &AddExtensionBoundFeature(T *p_Feature) noexcept
+        {
+            void *next = m_RequiredFeatures.Next;
+            p_Feature->pNext = next;
+            m_RequiredFeatures.Next = p_Feature;
+            return *this;
+        }
 
         Selector &SetFlags(Flags p_Flags) noexcept;
         Selector &AddFlags(Flags p_Flags) noexcept;

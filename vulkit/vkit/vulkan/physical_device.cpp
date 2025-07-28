@@ -109,9 +109,7 @@ PhysicalDevice::Features::Features() noexcept
 #ifdef VKIT_API_VERSION_1_4
     setFeaturesToFalse(Vulkan14);
 #endif
-#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
-    DynamicRendering.dynamicRendering = VK_FALSE;
-#endif
+    Next = nullptr;
 }
 
 PhysicalDevice::Selector::Selector(const Instance *p_Instance) noexcept : m_Instance(p_Instance)
@@ -388,18 +386,11 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 #ifdef VKIT_API_VERSION_1_3
     features.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-    features.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
     properties.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
-#elif defined(VK_KHR_dynamic_rendering)
-    features.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
 #endif
 #ifdef VKIT_API_VERSION_1_4
     features.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
     properties.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES;
-#endif
-
-#ifdef VK_KHR_dynamic_rendering
-    const bool dynamicRendering = contains(availableExtensions, "VK_KHR_dynamic_rendering");
 #endif
 
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
@@ -456,15 +447,6 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         }
 #    endif
 
-#    ifdef VK_KHR_dynamic_rendering
-        if (dynamicRendering)
-        {
-            void *next = featuresChain.pNext;
-            featuresChain.pNext = &features.DynamicRendering;
-            features.DynamicRendering.pNext = next;
-        }
-#    endif
-
         getFeatures2(p_Device, &featuresChain);
         getProperties2(p_Device, &propertiesChain);
 
@@ -490,12 +472,6 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
                                                     "The device {} does not have the required core features", name));
-
-#ifdef VK_KHR_dynamic_rendering
-    if (!dynamicRendering && m_RequiredFeatures.DynamicRendering.dynamicRendering)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_FEATURE_NOT_PRESENT, "The device {} does not have the required dynamic rendering feature", name));
-#endif
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
@@ -565,9 +541,6 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     features.Vulkan13.pNext = nullptr;
     properties.Vulkan13.pNext = nullptr;
 #endif
-#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_dynamic_rendering)
-    features.DynamicRendering.pNext = nullptr;
-#endif
 #ifdef VKIT_API_VERSION_1_4
     features.Vulkan14.pNext = nullptr;
     properties.Vulkan14.pNext = nullptr;
@@ -601,13 +574,9 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
 #endif
 #ifdef VKIT_API_VERSION_1_3
     m_RequiredFeatures.Vulkan13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-    m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
-    if (m_RequiredFeatures.Vulkan13.dynamicRendering)
-        m_RequiredFeatures.DynamicRendering.dynamicRendering = VK_TRUE;
-    if (m_RequiredFeatures.DynamicRendering.dynamicRendering)
-        m_RequiredFeatures.Vulkan13.dynamicRendering = VK_TRUE;
-#elif defined(VK_KHR_dynamic_rendering)
-    m_RequiredFeatures.DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    m_RequiredFeatures.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
 #endif
 
     if (!(m_Instance->GetInfo().Flags & Instance::Flag_Headless))
@@ -775,7 +744,9 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDevice
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Features &p_Features) noexcept
 {
+    void *next = m_RequiredFeatures.Next;
     m_RequiredFeatures = p_Features;
+    m_RequiredFeatures.Next = next;
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const Flags p_Flags) noexcept
