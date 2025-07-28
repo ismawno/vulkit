@@ -58,7 +58,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
         const auto fillChain = [&devInfo, &featuresChain]() {
 #    ifdef VKIT_API_VERSION_1_2
-            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_2)
             {
                 featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
                 devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
@@ -73,7 +73,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #    endif
 
 #    ifdef VKIT_API_VERSION_1_3
-            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_3)
                 devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
             else
             {
@@ -82,7 +82,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
             }
 #    endif
 #    ifdef VKIT_API_VERSION_1_4
-            if (devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 4, 0))
+            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_4)
                 devInfo.EnabledFeatures.Vulkan13.pNext = &devInfo.EnabledFeatures.Vulkan14;
             else
             {

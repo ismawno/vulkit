@@ -372,7 +372,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #endif
 
 #ifdef VKIT_API_VERSION_1_1
-    const bool v11 = quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
+    const bool v11 = quickProperties.apiVersion >= VKIT_API_VERSION_1_1;
 #else
     const bool v11 = false;
 #endif
@@ -432,7 +432,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
 #    endif
 
 #    ifdef VKIT_API_VERSION_1_2
-        if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 2, 0))
+        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_2)
         {
             featuresChain.pNext = &features.Vulkan11;
             propertiesChain.pNext = &properties.Vulkan11;
@@ -442,14 +442,14 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         }
 #    endif
 #    ifdef VKIT_API_VERSION_1_3
-        if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 3, 0))
+        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_3)
         {
             features.Vulkan12.pNext = &features.Vulkan13;
             properties.Vulkan12.pNext = &properties.Vulkan13;
         }
 #    endif
 #    ifdef VKIT_API_VERSION_1_4
-        if (quickProperties.apiVersion >= VKIT_MAKE_VERSION(0, 1, 4, 0))
+        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_4)
         {
             features.Vulkan13.pNext = &features.Vulkan14;
             properties.Vulkan13.pNext = &properties.Vulkan14;
