@@ -145,22 +145,6 @@ class VKIT_API PhysicalDevice
 
         Selector &RequireFeatures(const Features &p_Features) noexcept;
 
-        /**
-         * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
-         * in the user's current header version.
-         *
-         * The availability of such features will not be checked. It is up to you to provide the required support.
-         *
-         * @param p_Feature The feature, which must remain in scope until a logical device has been created.
-         */
-        template <typename T> Selector &AddExtensionBoundFeature(T *p_Feature) noexcept
-        {
-            void *next = m_RequiredFeatures.Next;
-            p_Feature->pNext = next;
-            m_RequiredFeatures.Next = p_Feature;
-            return *this;
-        }
-
         Selector &SetFlags(Flags p_Flags) noexcept;
         Selector &AddFlags(Flags p_Flags) noexcept;
         Selector &RemoveFlags(Flags p_Flags) noexcept;
@@ -239,6 +223,22 @@ class VKIT_API PhysicalDevice
 
     PhysicalDevice() noexcept = default;
     PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
+
+    /**
+     * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
+     * in the user's current header version.
+     *
+     * The availability of such features will not be checked. It is up to you to provide the required support
+     * through extensions.
+     *
+     * @param p_Feature The feature, which must remain in scope until a logical device has been created.
+     */
+    template <typename T> void EnableExtensionBoundFeature(T *p_Feature) noexcept
+    {
+        void *next = m_Info.EnabledFeatures.Next;
+        p_Feature->pNext = next;
+        m_Info.EnabledFeatures.Next = p_Feature;
+    }
 
     bool IsExtensionSupported(const char *p_Extension) const noexcept;
     bool IsExtensionEnabled(const char *p_Extension) const noexcept;
