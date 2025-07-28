@@ -67,6 +67,8 @@ class VKIT_API GraphicsPipeline
 
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
                 u32 p_Subpass = 0) noexcept;
+        Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout,
+                const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo) noexcept;
 
         /**
          * @brief Builds the graphics pipeline based on the current settings.
@@ -181,8 +183,12 @@ class VKIT_API GraphicsPipeline
         Builder &SetDynamicStates(TKit::Span<const VkDynamicState> p_States) noexcept;
 
       private:
+        void initialize() noexcept;
         LogicalDevice::Proxy m_Device;
+        VkPipelineLayout m_Layout;
+        VkRenderPass m_RenderPass;
 
+        VkPipelineRenderingCreateInfoKHR m_RenderingInfo{};
         VkPipelineInputAssemblyStateCreateInfo m_InputAssemblyInfo{};
         VkPipelineViewportStateCreateInfo m_ViewportInfo{};
         VkPipelineRasterizationStateCreateInfo m_RasterizationInfo{};
@@ -191,9 +197,6 @@ class VKIT_API GraphicsPipeline
         VkPipelineDepthStencilStateCreateInfo m_DepthStencilInfo{};
         VkPipelineVertexInputStateCreateInfo m_VertexInputInfo{};
         VkPipelineDynamicStateCreateInfo m_DynamicStateInfo{};
-
-        VkPipelineLayout m_Layout;
-        VkRenderPass m_RenderPass;
 
         VkPipeline m_BasePipeline = VK_NULL_HANDLE;
         VkPipelineCache m_Cache = VK_NULL_HANDLE;

@@ -8,6 +8,17 @@ GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const V
                                    const VkRenderPass p_RenderPass, const u32 p_Subpass) noexcept
     : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(p_RenderPass), m_Subpass(p_Subpass)
 {
+    initialize();
+}
+GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
+                                   const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo) noexcept
+    : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(VK_NULL_HANDLE), m_RenderingInfo(p_RenderingInfo)
+{
+    initialize();
+}
+
+void GraphicsPipeline::Builder::initialize() noexcept
+{
     m_InputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     m_InputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     m_InputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
@@ -188,6 +199,7 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noe
 
     pipelineInfo.basePipelineHandle = m_BasePipeline;
     pipelineInfo.basePipelineIndex = m_BasePipelineIndex;
+    pipelineInfo.pNext = m_RenderPass ? nullptr : &m_RenderingInfo;
 
     return pipelineInfo;
 }
