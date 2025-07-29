@@ -64,6 +64,28 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
+static bool compareFeatures(const PhysicalDevice::Features &p_Supported,
+                            const PhysicalDevice::Features &p_Requested) noexcept
+{
+    if (!compareFeatureStructs(p_Supported.Core, p_Requested.Core))
+        return false;
+#ifdef VKIT_API_VERSION_1_2
+    if (!compareFeatureStructs(p_Supported.Vulkan11, p_Requested.Vulkan11))
+        return false;
+    if (!compareFeatureStructs(p_Supported.Vulkan12, p_Requested.Vulkan12))
+        return false;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    if (!compareFeatureStructs(p_Supported.Vulkan13, p_Requested.Vulkan13))
+        return false;
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    if (!compareFeatureStructs(p_Supported.Vulkan14, p_Requested.Vulkan14))
+        return false;
+#endif
+    return true;
+}
+
 #ifdef VK_KHR_surface
 static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *p_Table,
                                                                              const VkPhysicalDevice p_Device,
@@ -641,11 +663,11 @@ PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) no
 
 bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const noexcept
 {
-    return compareFeatureStructs(m_Info.AvailableFeatures, p_Features);
+    return compareFeatures(m_Info.AvailableFeatures, p_Features);
 }
 bool PhysicalDevice::AreFeaturesEnabled(const Features &p_Features) const noexcept
 {
-    return compareFeatureStructs(m_Info.EnabledFeatures, p_Features);
+    return compareFeatures(m_Info.EnabledFeatures, p_Features);
 }
 bool PhysicalDevice::EnableFeatures(const Features &p_Features) noexcept
 {
