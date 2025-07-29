@@ -117,8 +117,8 @@ class ImageHouse
     /**
      * @brief Creates an image.
      *
-     * A dummy method used when the user provides the image data directly. Commonly used when the image is provided by
-     * a `SwapChain`.
+     * A symbolic method where the user provides the handles for the images, used for example when the images are
+     * obtained through a swap chain.
      *
      * An image created this way does not need to be destroyed with the `ImageHouse`, and will be ignored if passed into
      * `DestroyImage`.
@@ -126,7 +126,7 @@ class ImageHouse
      * @param p_ImageView The image view to use.
      * @return A `Result` containing the created `Image` or an error.
      */
-    Result<Image> CreateImage(VkImageView p_ImageView) const noexcept;
+    Result<Image> CreateImage(VkImage p_Image, VkImageView p_ImageView = VK_NULL_HANDLE) const noexcept;
 
     const LogicalDevice::Proxy &GetDevice() const noexcept;
 

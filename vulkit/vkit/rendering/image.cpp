@@ -138,12 +138,12 @@ Result<Image> ImageHouse::CreateImage(const VkFormat p_Format, const VkExtent2D 
 
     return CreateImage(imageInfo, p_Flags);
 }
-Result<Image> ImageHouse::CreateImage(const VkImageView p_ImageView) const noexcept
+Result<Image> ImageHouse::CreateImage(const VkImage p_Image, const VkImageView p_ImageView) const noexcept
 {
     Image imageData{};
-    imageData.Image = VK_NULL_HANDLE;
-    imageData.Allocation = VK_NULL_HANDLE;
+    imageData.Image = p_Image;
     imageData.ImageView = p_ImageView;
+    imageData.Allocation = VK_NULL_HANDLE;
     return Result<Image>::Ok(imageData);
 }
 
@@ -154,7 +154,7 @@ const LogicalDevice::Proxy &ImageHouse::GetDevice() const noexcept
 
 void ImageHouse::DestroyImage(const Image &p_Image) const noexcept
 {
-    if (!p_Image.Image)
+    if (!p_Image.Allocation)
         return;
 
     vmaDestroyImage(m_Allocator, p_Image.Image, p_Image.Allocation);
