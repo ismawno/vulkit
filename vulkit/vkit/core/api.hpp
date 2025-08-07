@@ -19,5 +19,3 @@
 #        define VKIT_API
 #    endif
 #endif
-
-#define VKIT_VERSION "v0.2.1"
