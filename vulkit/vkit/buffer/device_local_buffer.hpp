@@ -24,7 +24,7 @@ class DeviceLocalBuffer
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
-        TKit::Span<const T> Data;
+        TKit::Span<const T> Data{};
         VkBufferUsageFlags Usage;
         CommandPool *CommandPool = nullptr;
         VkQueue Queue = VK_NULL_HANDLE;
@@ -62,6 +62,8 @@ class DeviceLocalBuffer
                                                     "Failed to create main device buffer");
 
         Buffer &buffer = result1.GetValue();
+        if (!p_Specs.Data || p_Specs.Data.IsEmpty())
+            return Result<DeviceLocalBuffer>::Ok(buffer);
 
         Buffer::Specs stagingSpecs = specs;
         stagingSpecs.Usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
