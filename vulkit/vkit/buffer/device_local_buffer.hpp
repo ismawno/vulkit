@@ -21,6 +21,7 @@ template <typename T>
 class DeviceLocalBuffer
 {
   public:
+    // To create an empty buffer, set data to Span{nullptr, desiredSize}. Pretty dodgy, but will work
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
@@ -62,7 +63,7 @@ class DeviceLocalBuffer
                                                     "Failed to create main device buffer");
 
         Buffer &buffer = result1.GetValue();
-        if (!p_Specs.Data || p_Specs.Data.IsEmpty())
+        if (!p_Specs.Data)
             return Result<DeviceLocalBuffer>::Ok(buffer);
 
         Buffer::Specs stagingSpecs = specs;
