@@ -85,20 +85,24 @@ bool Buffer::IsMapped() const noexcept
 void Buffer::Write(const void *p_Data) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, 0, m_Info.Size);
+    std::memcpy(m_Data, p_Data, m_Info.Size);
 }
 
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
-    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, p_Offset, p_Size);
+
+    std::byte *data = static_cast<std::byte *>(m_Data) + p_Offset;
+    std::memcpy(data, p_Data, p_Size);
 }
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    vmaCopyMemoryToAllocation(m_Info.Allocator, p_Data, m_Info.Allocation, m_Info.InstanceAlignedSize * p_Index,
-                              m_Info.InstanceSize);
+
+    const u32 size = m_Info.InstanceAlignedSize * p_Index;
+    std::byte *data = static_cast<std::byte *>(m_Data) + size;
+    std::memcpy(data, p_Data, m_Info.InstanceSize);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
