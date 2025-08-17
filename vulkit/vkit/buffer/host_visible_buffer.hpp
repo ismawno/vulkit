@@ -42,7 +42,7 @@ class HostVisibleBuffer
         specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Capacity;
         specs.InstanceSize = sizeof(T);
-        specs.Usage = p_Usage;
+        specs.Usage = p_Specs.Usage | p_Usage;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
         specs.AllocationInfo.preferredFlags = 0;

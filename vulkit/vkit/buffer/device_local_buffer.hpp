@@ -50,7 +50,7 @@ class DeviceLocalBuffer
         specs.Allocator = p_Specs.Allocator;
         specs.InstanceCount = p_Specs.Data.GetSize();
         specs.InstanceSize = sizeof(T);
-        specs.Usage = p_Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        specs.Usage = p_Specs.Usage | p_Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         specs.AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
         specs.AllocationInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         specs.AllocationInfo.preferredFlags = 0;
