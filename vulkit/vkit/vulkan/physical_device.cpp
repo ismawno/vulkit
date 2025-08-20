@@ -318,6 +318,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     {
         computeIndex = dedicatedCompute;
         deviceFlags |= PhysicalDevice::Flag_HasDedicatedComputeQueue;
+        deviceFlags |= PhysicalDevice::Flag_HasSeparateComputeQueue;
         deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
     }
     else if (separateCompute != UINT32_MAX)
@@ -336,6 +337,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     {
         transferIndex = dedicatedTransfer;
         deviceFlags |= PhysicalDevice::Flag_HasDedicatedTransferQueue;
+        deviceFlags |= PhysicalDevice::Flag_HasSeparateTransferQueue;
         deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
     }
     else if (separateTransfer != UINT32_MAX)
