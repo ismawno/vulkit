@@ -166,26 +166,4 @@ struct SyncData
     VkFence InFlightFence = VK_NULL_HANDLE;
 };
 
-/**
- * @brief Creates synchronization objects for the swap chain.
- *
- * Initializes semaphores and fences required for synchronization during rendering.
- * Each `SyncData` structure in the provided span must initially have its members set to `VK_NULL_HANDLE`.
- *
- * @param p_Device The logical device to create the synchronization objects with.
- * @param p_Objects A span of `SyncData` structures to populate with the created objects.
- * @return A `Result` indicating success or failure of the operation.
- */
-Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device, TKit::Span<SyncData> p_Objects) noexcept;
-
-/**
- * @brief Destroys synchronization objects.
- *
- * Releases Vulkan resources associated with the semaphores and fences in the given span of `SyncData` structures.
- *
- * @param p_Device The logical device used to destroy the synchronization objects.
- * @param p_Objects A span of `SyncData` structures whose resources will be destroyed.
- */
-void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device, TKit::Span<const SyncData> p_Objects) noexcept;
-
 } // namespace VKit

@@ -234,62 +234,6 @@ void SwapChain::destroy() const noexcept
     m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 }
 
-Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                      const TKit::Span<SyncData> p_Objects) noexcept
-{
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateSemaphore, Result<>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateFence, Result<>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroySemaphore, Result<>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyFence, Result<>);
-    for (u32 i = 0; i < p_Objects.GetSize(); ++i)
-    {
-        VkSemaphoreCreateInfo semaphoreInfo{};
-        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-        VkFenceCreateInfo fenceInfo{};
-        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-        VkResult result = p_Device.Table->CreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                                          &p_Objects[i].ImageAvailableSemaphore);
-        if (result != VK_SUCCESS)
-        {
-            DestroySynchronizationObjects(p_Device, p_Objects);
-            return Result<>::Error(result, "Failed to create the image available semaphore");
-        }
-
-        result = p_Device.Table->CreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                                 &p_Objects[i].RenderFinishedSemaphore);
-        if (result != VK_SUCCESS)
-        {
-            DestroySynchronizationObjects(p_Device, p_Objects);
-            return Result<>::Error(result, "Failed to create the image available semaphore");
-        }
-
-        result = p_Device.Table->CreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks,
-                                             &p_Objects[i].InFlightFence);
-        if (result != VK_SUCCESS)
-        {
-            DestroySynchronizationObjects(p_Device, p_Objects);
-            return Result<>::Error(result, "Failed to create the image available semaphore");
-        }
-    }
-    return Result<>::Ok();
-}
-void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
-                                   const TKit::Span<const SyncData> p_Objects) noexcept
-{
-    for (const SyncData &data : p_Objects)
-    {
-        if (data.RenderFinishedSemaphore)
-            p_Device.Table->DestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
-        if (data.ImageAvailableSemaphore)
-            p_Device.Table->DestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
-        if (data.InFlightFence)
-            p_Device.Table->DestroyFence(p_Device, data.InFlightFence, p_Device.AllocationCallbacks);
-    }
-}
-
 void SwapChain::Destroy() noexcept
 {
     destroy();
