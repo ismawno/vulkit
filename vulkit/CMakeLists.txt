@@ -18,29 +18,30 @@ set(SOURCES
     vkit/pipeline/shader.cpp
     vkit/descriptors/descriptor_pool.cpp
     vkit/descriptors/descriptor_set_layout.cpp
-    vkit/descriptors/descriptor_set.cpp
-)
+    vkit/descriptors/descriptor_set.cpp)
 
 add_library(vulkit STATIC ${SOURCES})
 
 include(FetchContent)
 FetchContent_Declare(
-    toolkit
-    GIT_REPOSITORY https://github.com/ismawno/toolkit.git
-    GIT_TAG v0.1.0
-)
+  toolkit
+  GIT_REPOSITORY https://github.com/ismawno/toolkit.git
+  GIT_TAG v0.1.0)
 FetchContent_MakeAvailable(toolkit)
-target_compile_definitions(toolkit PUBLIC TKIT_SIZE_TYPE=TKit::Alias::u32 TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
+target_compile_definitions(toolkit PUBLIC TKIT_SIZE_TYPE=TKit::Alias::u32
+                                          TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
 
 FetchContent_Declare(
-    vma
-    GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
-    GIT_TAG v3.1.0
-)
+  vma
+  GIT_REPOSITORY
+    https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+  GIT_TAG v3.1.0)
 FetchContent_MakeAvailable(vma)
 
-# It is set to required for now even though there is a fallback mechanism with FetchContent (the latter seems to provide very few extensions and I am not sure if it will work well for now)
-# TODO: Check if the fallback mechanism works well
+# It is set to required for now even though there is a fallback mechanism with
+# FetchContent (the latter seems to provide very few extensions and I am not
+# sure if it will work well for now) TODO: Check if the fallback mechanism works
+# well
 find_package(Vulkan REQUIRED)
 message(STATUS "VULKIT: Vulkan SDK found")
 
@@ -49,15 +50,30 @@ message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # Vulkan and GLFW are already linked with imgui
-target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan VulkanMemoryAllocator)
+target_link_libraries(vulkit PUBLIC toolkit Vulkan::Vulkan
+                                    VulkanMemoryAllocator)
 
-target_precompile_headers(vulkit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
-target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}" VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
+target_precompile_headers(vulkit PRIVATE
+                          ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
+target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}"
+                                         VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
 
-if (MSVC)
-    tkit_configure_compile_link_options(vulkit FLAGS /W4 /WX)
+if(MSVC)
+  tkit_configure_compile_link_options(vulkit FLAGS /W4 /WX)
+elseif(UNIX AND NOT APPLE)
+  tkit_configure_compile_link_options(
+    vulkit
+    FLAGS
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Werror
+    -Wno-changes-meaning)
 else()
-    tkit_configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic -Werror)
+  tkit_configure_compile_link_options(vulkit FLAGS -Wall -Wextra -Wpedantic
+                                      -Werror)
 endif()
 
-# No need for more: toolkit handles the rest. As it is a library I develop, I will be reusing its macros/configurations
+# No need for more: toolkit handles the rest. As it is a library I develop, I
+# will be reusing its macros/configurations
+

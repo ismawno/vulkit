@@ -6,6 +6,8 @@
 docs/html/
 docs/latex/
 __pycache__/
+.cache/
+generate-vkit-loader.sh
 
 # Prerequisites
 *.d
