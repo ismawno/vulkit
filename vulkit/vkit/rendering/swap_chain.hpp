@@ -36,6 +36,7 @@ class VKIT_API SwapChain
          */
         enum FlagBits : Flags
         {
+            Flag_None = 0,
             Flag_Clipped = 1 << 0,
             Flag_CreateImageViews = 1 << 1
         };
@@ -113,6 +114,7 @@ class VKIT_API SwapChain
      */
     enum FlagBits : Flags
     {
+        Flag_None = 0,
         Flag_Clipped = 1 << 0,
         Flag_HasImageViews = 1 << 1
     };

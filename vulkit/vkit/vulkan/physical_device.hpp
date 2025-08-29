@@ -91,6 +91,7 @@ class VKIT_API PhysicalDevice
          */
         enum FlagBits : Flags
         {
+            Flag_None = 0,
             Flag_AnyType = 1 << 0,
             Flag_RequireDedicatedComputeQueue = 1 << 1,
             Flag_RequireDedicatedTransferQueue = 1 << 2,
@@ -187,6 +188,7 @@ class VKIT_API PhysicalDevice
      */
     enum FlagBits : Flags
     {
+        Flag_None = 0,
         Flag_Optimal = 1 << 0,
         Flag_HasDedicatedComputeQueue = 1 << 1,
         Flag_HasDedicatedTransferQueue = 1 << 2,

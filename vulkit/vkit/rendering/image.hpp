@@ -12,6 +12,7 @@ namespace VKit
 using AttachmentFlags = u8;
 enum AttachmentFlagBits
 {
+    AttachmentFlag_None = 0,
     AttachmentFlag_Color = 1 << 0,
     AttachmentFlag_Depth = 1 << 1,
     AttachmentFlag_Stencil = 1 << 2,
