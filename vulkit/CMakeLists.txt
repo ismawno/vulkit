@@ -67,7 +67,7 @@ if(VULKIT_ENABLE_SWAP_CHAIN)
 endif()
 
 add_library(vulkit STATIC ${SOURCES})
-target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.3.2\")
+target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.3.3\")
 
 if(VULKIT_ENABLE_INSTANCE)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_INSTANCE)
@@ -133,7 +133,7 @@ include(FetchContent)
 FetchContent_Declare(
   toolkit
   GIT_REPOSITORY https://github.com/ismawno/toolkit.git
-  GIT_TAG v0.4.0
+  GIT_TAG v0.3.1
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE)
 FetchContent_MakeAvailable(toolkit)
