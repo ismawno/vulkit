@@ -4,12 +4,12 @@
 
 namespace VKit
 {
-static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_Alignment) noexcept
+static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_Alignment)
 {
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
 }
 
-Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
+Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindVertexBuffers, Result<Buffer>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
@@ -44,18 +44,18 @@ Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs 
 }
 
 Buffer::Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info,
-               void *p_MappedData) noexcept
+               void *p_MappedData)
     : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
 {
 }
 
-void Buffer::Destroy() noexcept
+void Buffer::Destroy()
 {
     vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
     m_Buffer = VK_NULL_HANDLE;
 }
 
-void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VmaAllocator allocator = m_Info.Allocator;
     const VkBuffer buffer = m_Buffer;
@@ -63,32 +63,32 @@ void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     p_Queue.Push([allocator, buffer, allocation]() { vmaDestroyBuffer(allocator, buffer, allocation); });
 }
 
-void Buffer::Map() noexcept
+void Buffer::Map()
 {
     TKIT_ASSERT(!m_Data, "[VULKIT] Buffer is already mapped");
     TKIT_ASSERT_RETURNS(vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data), VK_SUCCESS,
                         "[VULKIT] Failed to map buffer memory");
 }
 
-void Buffer::Unmap() noexcept
+void Buffer::Unmap()
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Buffer is not mapped");
     vmaUnmapMemory(m_Info.Allocator, m_Info.Allocation);
     m_Data = nullptr;
 }
 
-bool Buffer::IsMapped() const noexcept
+bool Buffer::IsMapped() const
 {
     return m_Data != nullptr;
 }
 
-void Buffer::Write(const void *p_Data) noexcept
+void Buffer::Write(const void *p_Data)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     std::memcpy(m_Data, p_Data, m_Info.Size);
 }
 
-void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
+void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
@@ -96,7 +96,7 @@ void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p
     std::byte *data = static_cast<std::byte *>(m_Data) + p_Offset;
     std::memcpy(data, p_Data, p_Size);
 }
-void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
+void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
 
@@ -105,38 +105,38 @@ void Buffer::WriteAt(const u32 p_Index, const void *p_Data) noexcept
     std::memcpy(data, p_Data, m_Info.InstanceSize);
 }
 
-void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
+void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot flush unmapped buffer");
     TKIT_ASSERT_RETURNS(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "[VULKIT] Failed to flush buffer memory");
 }
-void Buffer::FlushAt(const u32 p_Index) noexcept
+void Buffer::FlushAt(const u32 p_Index)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) noexcept
+void Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot invalidate unmapped buffer");
     TKIT_ASSERT_RETURNS(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size), VK_SUCCESS,
                         "[VULKIT] Failed to invalidate buffer memory");
 }
-void Buffer::InvalidateAt(const u32 p_Index) noexcept
+void Buffer::InvalidateAt(const u32 p_Index)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const noexcept
+void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const
 {
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
 }
 
 void Buffer::BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                                 const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
-                                const TKit::Span<const VkDeviceSize> p_Offsets) noexcept
+                                const TKit::Span<const VkDeviceSize> p_Offsets)
 {
     if (!p_Offsets.IsEmpty())
         p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
@@ -147,12 +147,12 @@ void Buffer::BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCo
 }
 
 void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
-                                const VkDeviceSize p_Offset) const noexcept
+                                const VkDeviceSize p_Offset) const
 {
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
 }
 
-VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const noexcept
+VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const
 {
     VkDescriptorBufferInfo info{};
     info.buffer = m_Buffer;
@@ -160,23 +160,23 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, cons
     info.range = p_Size;
     return info;
 }
-VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const noexcept
+VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-void *Buffer::GetData() const noexcept
+void *Buffer::GetData() const
 {
     return m_Data;
 }
-void *Buffer::ReadAt(const u32 p_Index) const noexcept
+void *Buffer::ReadAt(const u32 p_Index) const
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
 }
 
-Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue) noexcept
+Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue)
 {
     TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "[VULKIT] Cannot copy buffers of different sizes");
     const auto result1 = p_Pool.BeginSingleTimeCommands();
@@ -194,24 +194,24 @@ Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const V
     return p_Pool.EndSingleTimeCommands(commandBuffer, p_Queue);
 }
 
-const LogicalDevice::Proxy &Buffer::GetDevice() const noexcept
+const LogicalDevice::Proxy &Buffer::GetDevice() const
 {
     return m_Device;
 }
-VkBuffer Buffer::GetHandle() const noexcept
+VkBuffer Buffer::GetHandle() const
 {
     return m_Buffer;
 }
-Buffer::operator VkBuffer() const noexcept
+Buffer::operator VkBuffer() const
 {
     return m_Buffer;
 }
-Buffer::operator bool() const noexcept
+Buffer::operator bool() const
 {
     return m_Buffer != VK_NULL_HANDLE;
 }
 
-const Buffer::Info &Buffer::GetInfo() const noexcept
+const Buffer::Info &Buffer::GetInfo() const
 {
     return m_Info;
 }

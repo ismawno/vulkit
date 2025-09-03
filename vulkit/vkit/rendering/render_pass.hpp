@@ -31,29 +31,29 @@ class VKIT_API RenderPass
     class AttachmentBuilder
     {
       public:
-        AttachmentBuilder(Builder *p_Builder, AttachmentFlags p_Flags) noexcept;
+        AttachmentBuilder(Builder *p_Builder, AttachmentFlags p_Flags);
 
         AttachmentBuilder &SetLoadOperation(
             VkAttachmentLoadOp p_Operation,
-            VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM) noexcept;
+            VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
         AttachmentBuilder &SetStoreOperation(
             VkAttachmentStoreOp p_Operation,
-            VkAttachmentStoreOp p_StencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM) noexcept;
+            VkAttachmentStoreOp p_StencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM);
 
-        AttachmentBuilder &SetStencilLoadOperation(VkAttachmentLoadOp p_Operation) noexcept;
-        AttachmentBuilder &SetStencilStoreOperation(VkAttachmentStoreOp p_Operation) noexcept;
+        AttachmentBuilder &SetStencilLoadOperation(VkAttachmentLoadOp p_Operation);
+        AttachmentBuilder &SetStencilStoreOperation(VkAttachmentStoreOp p_Operation);
 
-        AttachmentBuilder &RequestFormat(VkFormat p_Format) noexcept;
-        AttachmentBuilder &AllowFormat(VkFormat p_Format) noexcept;
+        AttachmentBuilder &RequestFormat(VkFormat p_Format);
+        AttachmentBuilder &AllowFormat(VkFormat p_Format);
 
-        AttachmentBuilder &SetLayouts(VkImageLayout p_InitialLayout, VkImageLayout p_FinalLayout) noexcept;
-        AttachmentBuilder &SetInitialLayout(VkImageLayout p_Layout) noexcept;
-        AttachmentBuilder &SetFinalLayout(VkImageLayout p_Layout) noexcept;
+        AttachmentBuilder &SetLayouts(VkImageLayout p_InitialLayout, VkImageLayout p_FinalLayout);
+        AttachmentBuilder &SetInitialLayout(VkImageLayout p_Layout);
+        AttachmentBuilder &SetFinalLayout(VkImageLayout p_Layout);
 
-        AttachmentBuilder &SetSampleCount(VkSampleCountFlagBits p_SampleCount) noexcept;
-        AttachmentBuilder &SetFlags(VkAttachmentDescriptionFlags p_Flags) noexcept;
+        AttachmentBuilder &SetSampleCount(VkSampleCountFlagBits p_SampleCount);
+        AttachmentBuilder &SetFlags(VkAttachmentDescriptionFlags p_Flags);
 
-        Builder &EndAttachment() noexcept;
+        Builder &EndAttachment();
 
       private:
         Builder *m_Builder;
@@ -66,22 +66,22 @@ class VKIT_API RenderPass
     class SubpassBuilder
     {
       public:
-        SubpassBuilder(Builder *p_Builder, VkPipelineBindPoint p_BindPoint) noexcept;
+        SubpassBuilder(Builder *p_Builder, VkPipelineBindPoint p_BindPoint);
 
         SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex,
                                            VkImageLayout p_Layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                           u32 p_ResolveIndex = UINT32_MAX) noexcept;
-        SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex, u32 p_ResolveIndex) noexcept;
+                                           u32 p_ResolveIndex = UINT32_MAX);
+        SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex, u32 p_ResolveIndex);
 
-        SubpassBuilder &AddInputAttachment(u32 p_AttachmentIndex, VkImageLayout p_Layout) noexcept;
-        SubpassBuilder &AddPreserveAttachment(u32 p_AttachmentIndex) noexcept;
+        SubpassBuilder &AddInputAttachment(u32 p_AttachmentIndex, VkImageLayout p_Layout);
+        SubpassBuilder &AddPreserveAttachment(u32 p_AttachmentIndex);
 
         SubpassBuilder &SetDepthStencilAttachment(
-            u32 p_AttachmentIndex, VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) noexcept;
+            u32 p_AttachmentIndex, VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-        SubpassBuilder &SetFlags(VkSubpassDescriptionFlags p_Flags) noexcept;
+        SubpassBuilder &SetFlags(VkSubpassDescriptionFlags p_Flags);
 
-        Builder &EndSubpass() noexcept;
+        Builder &EndSubpass();
 
       private:
         Builder *m_Builder;
@@ -98,15 +98,15 @@ class VKIT_API RenderPass
     class DependencyBuilder
     {
       public:
-        DependencyBuilder(Builder *p_Builder, u32 p_SourceSubpass, u32 p_DestinationSubpass) noexcept;
+        DependencyBuilder(Builder *p_Builder, u32 p_SourceSubpass, u32 p_DestinationSubpass);
 
         DependencyBuilder &SetStageMask(VkPipelineStageFlags p_SourceStage,
-                                        VkPipelineStageFlags p_DestinationStage) noexcept;
-        DependencyBuilder &SetAccessMask(VkAccessFlags p_SourceAccess, VkAccessFlags p_DestinationAccess) noexcept;
+                                        VkPipelineStageFlags p_DestinationStage);
+        DependencyBuilder &SetAccessMask(VkAccessFlags p_SourceAccess, VkAccessFlags p_DestinationAccess);
 
-        DependencyBuilder &SetFlags(VkDependencyFlags p_Flags) noexcept;
+        DependencyBuilder &SetFlags(VkDependencyFlags p_Flags);
 
-        Builder &EndDependency() noexcept;
+        Builder &EndDependency();
 
       private:
         Builder *m_Builder;
@@ -125,20 +125,20 @@ class VKIT_API RenderPass
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice *p_Device, u32 p_ImageCount) noexcept;
+        explicit Builder(const LogicalDevice *p_Device, u32 p_ImageCount);
 
-        Result<RenderPass> Build() const noexcept;
+        Result<RenderPass> Build() const;
 
-        AttachmentBuilder &BeginAttachment(AttachmentFlags p_Flags) noexcept;
+        AttachmentBuilder &BeginAttachment(AttachmentFlags p_Flags);
 
-        SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint) noexcept;
-        DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass) noexcept;
+        SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint);
+        DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass);
 
-        Builder &SetFlags(VkRenderPassCreateFlags p_Flags) noexcept;
-        Builder &AddFlags(VkRenderPassCreateFlags p_Flags) noexcept;
-        Builder &RemoveFlags(VkRenderPassCreateFlags p_Flags) noexcept;
+        Builder &SetFlags(VkRenderPassCreateFlags p_Flags);
+        Builder &AddFlags(VkRenderPassCreateFlags p_Flags);
+        Builder &RemoveFlags(VkRenderPassCreateFlags p_Flags);
 
-        Builder &SetAllocator(VmaAllocator p_Allocator) noexcept;
+        Builder &SetAllocator(VmaAllocator p_Allocator);
 
       private:
         const LogicalDevice *m_Device;
@@ -161,14 +161,14 @@ class VKIT_API RenderPass
     class Resources
     {
       public:
-        void Destroy() noexcept;
-        void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+        void Destroy();
+        void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-        VkImageView GetImageView(u32 p_ImageIndex, u32 p_AttachmentIndex) const noexcept;
-        VkFramebuffer GetFrameBuffer(u32 p_ImageIndex) const noexcept;
+        VkImageView GetImageView(u32 p_ImageIndex, u32 p_AttachmentIndex) const;
+        VkFramebuffer GetFrameBuffer(u32 p_ImageIndex) const;
 
       private:
-        void destroy() const noexcept;
+        void destroy() const;
 
         ImageHouse m_ImageHouse;
         TKit::StaticArray64<Image> m_Images;              // size: m_ImageCount * m_Attachments.GetSize()
@@ -184,11 +184,11 @@ class VKIT_API RenderPass
         u32 ImageCount;
     };
 
-    RenderPass() noexcept = default;
-    RenderPass(const LogicalDevice::Proxy &p_Device, VkRenderPass p_RenderPass, const Info &p_Info) noexcept;
+    RenderPass() = default;
+    RenderPass(const LogicalDevice::Proxy &p_Device, VkRenderPass p_RenderPass, const Info &p_Info);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Creates resources for the render pass, including frame buffers and image data.
@@ -207,7 +207,7 @@ class VKIT_API RenderPass
      */
     template <typename F>
     Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
-                                      u32 p_FrameBufferLayers = 1) noexcept
+                                      u32 p_FrameBufferLayers = 1)
     {
         if (m_Info.ImageCount == 0)
             return Result<Resources>::Error(VK_ERROR_INITIALIZATION_FAILED,
@@ -265,17 +265,17 @@ class VKIT_API RenderPass
         return Result<Resources>::Ok(resources);
     }
 
-    const Attachment &GetAttachment(u32 p_AttachmentIndex) const noexcept;
-    const Info &GetInfo() const noexcept;
+    const Attachment &GetAttachment(u32 p_AttachmentIndex) const;
+    const Info &GetInfo() const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkRenderPass GetHandle() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkRenderPass GetHandle() const;
 
-    explicit(false) operator VkRenderPass() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkRenderPass() const;
+    explicit(false) operator bool() const;
 
   private:
-    void destroy() const noexcept;
+    void destroy() const;
 
     LogicalDevice::Proxy m_Device{};
     VkRenderPass m_RenderPass = VK_NULL_HANDLE;

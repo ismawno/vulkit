@@ -41,7 +41,7 @@ class VKIT_API SwapChain
             Flag_CreateImageViews = 1 << 1
         };
 
-        Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) noexcept;
+        Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface);
 
         /**
          * @brief Creates a swap chain based on the builder's configuration.
@@ -50,38 +50,38 @@ class VKIT_API SwapChain
          *
          * @return A `Result` containing the created `SwapChain` or an error.
          */
-        Result<SwapChain> Build() const noexcept;
+        Result<SwapChain> Build() const;
 
-        Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
-        Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format) noexcept;
+        Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format);
+        Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format);
 
-        Builder &RequestPresentMode(VkPresentModeKHR p_Mode) noexcept;
-        Builder &AllowPresentMode(VkPresentModeKHR p_Mode) noexcept;
+        Builder &RequestPresentMode(VkPresentModeKHR p_Mode);
+        Builder &AllowPresentMode(VkPresentModeKHR p_Mode);
 
-        Builder &RequestImageCount(u32 p_Images) noexcept;
-        Builder &RequireImageCount(u32 p_Images) noexcept;
+        Builder &RequestImageCount(u32 p_Images);
+        Builder &RequireImageCount(u32 p_Images);
 
-        Builder &RequestExtent(u32 p_Width, u32 p_Height) noexcept;
-        Builder &RequestExtent(const VkExtent2D &p_Extent) noexcept;
+        Builder &RequestExtent(u32 p_Width, u32 p_Height);
+        Builder &RequestExtent(const VkExtent2D &p_Extent);
 
-        Builder &SetImageArrayLayers(u32 p_Layers) noexcept;
+        Builder &SetImageArrayLayers(u32 p_Layers);
 
-        Builder &SetFlags(Flags p_Flags) noexcept;
-        Builder &AddFlags(Flags p_Flags) noexcept;
-        Builder &RemoveFlags(Flags p_Flags) noexcept;
+        Builder &SetFlags(Flags p_Flags);
+        Builder &AddFlags(Flags p_Flags);
+        Builder &RemoveFlags(Flags p_Flags);
 
-        Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR p_Flags) noexcept;
-        Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR p_Flags) noexcept;
-        Builder &RemoveCreateFlags(VkSwapchainCreateFlagsKHR p_Flags) noexcept;
+        Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
+        Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
+        Builder &RemoveCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
 
-        Builder &SetImageUsageFlags(VkImageUsageFlags p_Flags) noexcept;
-        Builder &AddImageUsageFlags(VkImageUsageFlags p_Flags) noexcept;
-        Builder &RemoveImageUsageFlags(VkImageUsageFlags p_Flags) noexcept;
+        Builder &SetImageUsageFlags(VkImageUsageFlags p_Flags);
+        Builder &AddImageUsageFlags(VkImageUsageFlags p_Flags);
+        Builder &RemoveImageUsageFlags(VkImageUsageFlags p_Flags);
 
-        Builder &SetTransformBit(VkSurfaceTransformFlagBitsKHR p_Transform) noexcept;
-        Builder &SetCompositeAlphaBit(VkCompositeAlphaFlagBitsKHR p_Alpha) noexcept;
+        Builder &SetTransformBit(VkSurfaceTransformFlagBitsKHR p_Transform);
+        Builder &SetCompositeAlphaBit(VkCompositeAlphaFlagBitsKHR p_Alpha);
 
-        Builder &SetOldSwapChain(VkSwapchainKHR p_OldSwapChain) noexcept;
+        Builder &SetOldSwapChain(VkSwapchainKHR p_OldSwapChain);
 
       private:
         const LogicalDevice *m_Device;
@@ -139,22 +139,22 @@ class VKIT_API SwapChain
         TKit::StaticArray4<ImageData> ImageData;
     };
 
-    SwapChain() noexcept = default;
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept;
+    SwapChain() = default;
+    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const noexcept;
+    const Info &GetInfo() const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkSwapchainKHR GetHandle() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkSwapchainKHR GetHandle() const;
 
-    explicit(false) operator VkSwapchainKHR() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkSwapchainKHR() const;
+    explicit(false) operator bool() const;
 
   private:
-    void destroy() const noexcept;
+    void destroy() const;
 
     LogicalDevice::Proxy m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;

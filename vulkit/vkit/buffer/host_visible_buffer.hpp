@@ -36,7 +36,7 @@ class HostVisibleBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs,
-                                            const VkBufferUsageFlags p_Usage) noexcept
+                                            const VkBufferUsageFlags p_Usage)
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -66,7 +66,7 @@ class HostVisibleBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                        const Specs &p_Specs) noexcept
+                                                        const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
@@ -81,7 +81,7 @@ class HostVisibleBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                       const Specs &p_Specs) noexcept
+                                                       const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
@@ -96,7 +96,7 @@ class HostVisibleBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs) noexcept
+                                                         const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
@@ -111,21 +111,21 @@ class HostVisibleBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<HostVisibleBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs) noexcept
+                                                         const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
-    HostVisibleBuffer() noexcept = default;
-    explicit HostVisibleBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
+    HostVisibleBuffer() = default;
+    explicit HostVisibleBuffer(const Buffer &p_Buffer) : m_Buffer(p_Buffer)
     {
     }
 
-    void Destroy() noexcept
+    void Destroy()
     {
         m_Buffer.Destroy();
     }
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+    void SubmitForDeletion(DeletionQueue &p_Queue) const
     {
         m_Buffer.SubmitForDeletion(p_Queue);
     }
@@ -137,7 +137,7 @@ class HostVisibleBuffer
      *
      * @param p_Data A pointer to the data to write.
      */
-    void Write(const T *p_Data) noexcept
+    void Write(const T *p_Data)
     {
         m_Buffer.Write(p_Data);
     }
@@ -151,7 +151,7 @@ class HostVisibleBuffer
      * @param p_Size The size of the data to write.
      * @param p_Offset The offset within the buffer to start writing.
      */
-    void Write(const T *p_Data, const VkDeviceSize p_Size, const VkDeviceSize p_Offset = 0) noexcept
+    void Write(const T *p_Data, const VkDeviceSize p_Size, const VkDeviceSize p_Offset = 0)
     {
         m_Buffer.Write(p_Data, p_Size, p_Offset);
     }
@@ -164,7 +164,7 @@ class HostVisibleBuffer
      * @param p_Data A span containing the data to write.
      * @param p_Offset The offset within the buffer to start writing, not in bytes but in elements.
      */
-    void Write(const TKit::Span<const T> p_Data, const usize p_Offset = 0) noexcept
+    void Write(const TKit::Span<const T> p_Data, const usize p_Offset = 0)
     {
         m_Buffer.Write(p_Data.GetData(), p_Data.GetSize() * sizeof(T), p_Offset * sizeof(T));
     }
@@ -178,43 +178,43 @@ class HostVisibleBuffer
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
      */
-    void WriteAt(const u32 p_Index, const T *p_Data) noexcept
+    void WriteAt(const u32 p_Index, const T *p_Data)
     {
         m_Buffer.WriteAt(p_Index, p_Data);
     }
 
-    void Flush() noexcept
+    void Flush()
     {
         m_Buffer.Flush();
     }
-    void FlushAt(const u32 p_Index) noexcept
+    void FlushAt(const u32 p_Index)
     {
         m_Buffer.FlushAt(p_Index);
     }
 
-    void Invalidate() noexcept
+    void Invalidate()
     {
         m_Buffer.Invalidate();
     }
-    void InvalidateAt(const u32 p_Index) noexcept
+    void InvalidateAt(const u32 p_Index)
     {
         m_Buffer.InvalidateAt(p_Index);
     }
 
-    VkDescriptorBufferInfo GetDescriptorInfo() const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfo() const
     {
         return m_Buffer.GetDescriptorInfo();
     }
-    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const
     {
         return m_Buffer.GetDescriptorInfoAt(p_Index);
     }
 
-    T *GetData() const noexcept
+    T *GetData() const
     {
         return static_cast<T *>(m_Buffer.GetData());
     }
-    T *ReadAt(const u32 p_Index) const noexcept
+    T *ReadAt(const u32 p_Index) const
     {
         return static_cast<T *>(m_Buffer.ReadAt(p_Index));
     }
@@ -227,7 +227,7 @@ class HostVisibleBuffer
      * @param p_CommandBuffer The command buffer to bind the index buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
+    void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsIndexBuffer<T>(p_CommandBuffer, p_Offset);
     }
@@ -238,7 +238,7 @@ class HostVisibleBuffer
      * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
+    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Offset);
     }
@@ -252,7 +252,7 @@ class HostVisibleBuffer
      */
     static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                                    const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding = 0,
-                                   const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
+                                   const TKit::Span<const VkDeviceSize> p_Offsets = {})
     {
         Buffer::BindAsVertexBuffer(p_Device, p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
     }
@@ -264,33 +264,33 @@ class HostVisibleBuffer
      * @param p_Offset The offset within the buffer (default: 0).
      */
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
-                            const VkDeviceSize p_Offset = 0) const noexcept
+                            const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Buffer, p_Offset);
     }
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept
+    const LogicalDevice::Proxy &GetDevice() const
     {
         return m_Buffer.GetDevice();
     }
-    VkBuffer GetHandle() const noexcept
+    VkBuffer GetHandle() const
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator const Buffer &() const noexcept
+    explicit(false) operator const Buffer &() const
     {
         return m_Buffer;
     }
-    explicit(false) operator VkBuffer() const noexcept
+    explicit(false) operator VkBuffer() const
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator bool() const noexcept
+    explicit(false) operator bool() const
     {
         return static_cast<bool>(m_Buffer);
     }
 
-    const Buffer::Info &GetInfo() const noexcept
+    const Buffer::Info &GetInfo() const
     {
         return m_Buffer.GetInfo();
     }

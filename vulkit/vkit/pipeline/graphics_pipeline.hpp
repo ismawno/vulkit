@@ -25,20 +25,20 @@ class VKIT_API GraphicsPipeline
     class ColorAttachmentBuilder
     {
       public:
-        explicit ColorAttachmentBuilder(Builder *p_Builder) noexcept;
+        explicit ColorAttachmentBuilder(Builder *p_Builder);
 
-        ColorAttachmentBuilder &EnableBlending() noexcept;
-        ColorAttachmentBuilder &DisableBlending() noexcept;
+        ColorAttachmentBuilder &EnableBlending();
+        ColorAttachmentBuilder &DisableBlending();
 
-        ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags p_Mask) noexcept;
+        ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags p_Mask);
 
-        ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor p_SrcColor, VkBlendFactor p_DstColor) noexcept;
-        ColorAttachmentBuilder &SetColorBlendOperation(VkBlendOp p_ColorOp) noexcept;
+        ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor p_SrcColor, VkBlendFactor p_DstColor);
+        ColorAttachmentBuilder &SetColorBlendOperation(VkBlendOp p_ColorOp);
 
-        ColorAttachmentBuilder &SetAlphaBlendFactors(VkBlendFactor p_SrcAlpha, VkBlendFactor p_DstAlpha) noexcept;
-        ColorAttachmentBuilder &SetAlphaBlendOperation(VkBlendOp p_AlphaOp) noexcept;
+        ColorAttachmentBuilder &SetAlphaBlendFactors(VkBlendFactor p_SrcAlpha, VkBlendFactor p_DstAlpha);
+        ColorAttachmentBuilder &SetAlphaBlendOperation(VkBlendOp p_AlphaOp);
 
-        Builder &EndColorAttachment() noexcept;
+        Builder &EndColorAttachment();
 
       private:
         Builder *m_Builder;
@@ -67,9 +67,9 @@ class VKIT_API GraphicsPipeline
         };
 
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
-                u32 p_Subpass = 0) noexcept;
+                u32 p_Subpass = 0);
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout,
-                const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo) noexcept;
+                const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo);
 
         /**
          * @brief Builds the graphics pipeline based on the current settings.
@@ -83,7 +83,7 @@ class VKIT_API GraphicsPipeline
          * @param p_Device The logical device proxy for Vulkan operations.
          * @return A `Result` containing the created `GraphicsPipeline` or an error if the creation fails.
          */
-        Result<GraphicsPipeline> Build() noexcept;
+        Result<GraphicsPipeline> Build();
 
         /**
          * @brief Generates the `VkGraphicsPipelineCreateInfo` object.
@@ -93,98 +93,98 @@ class VKIT_API GraphicsPipeline
          *
          * @return A `VkGraphicsPipelineCreateInfo` that represents the current pipeline configuration.
          */
-        VkGraphicsPipelineCreateInfo CreatePipelineInfo() noexcept;
+        VkGraphicsPipelineCreateInfo CreatePipelineInfo();
 
-        Builder &SetBasePipeline(VkPipeline p_BasePipeline) noexcept;
-        Builder &SetBasePipelineIndex(i32 p_BasePipelineIndex) noexcept;
-        Builder &SetCache(VkPipelineCache p_Cache) noexcept;
+        Builder &SetBasePipeline(VkPipeline p_BasePipeline);
+        Builder &SetBasePipelineIndex(i32 p_BasePipelineIndex);
+        Builder &SetCache(VkPipelineCache p_Cache);
 
         // Input Assembly
-        Builder &SetTopology(VkPrimitiveTopology p_Topology) noexcept;
-        Builder &EnablePrimitiveRestart() noexcept;
-        Builder &DisablePrimitiveRestart() noexcept;
+        Builder &SetTopology(VkPrimitiveTopology p_Topology);
+        Builder &EnablePrimitiveRestart();
+        Builder &DisablePrimitiveRestart();
 
         // Viewport and Scissor
-        Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor) noexcept;
-        Builder &AddViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
-        Builder &SetViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept;
-        Builder &SetViewportCount(u32 p_ViewportCount) noexcept;
+        Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor);
+        Builder &AddViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports);
+        Builder &SetViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports);
+        Builder &SetViewportCount(u32 p_ViewportCount);
 
         // Rasterization
-        Builder &EnableRasterizerDiscard() noexcept;
-        Builder &EnableDepthClamp() noexcept;
-        Builder &EnableDepthBias() noexcept;
-        Builder &DisableRasterizerDiscard() noexcept;
-        Builder &DisableDepthClamp() noexcept;
-        Builder &DisableDepthBias() noexcept;
-        Builder &SetPolygonMode(VkPolygonMode p_Mode) noexcept;
-        Builder &SetLineWidth(f32 p_Width) noexcept;
-        Builder &SetCullMode(VkCullModeFlags p_Mode) noexcept;
-        Builder &SetFrontFace(VkFrontFace p_FrontFace) noexcept;
-        Builder &SetDepthBias(f32 p_ConstantFactor, f32 p_Clamp, f32 p_SlopeFactor) noexcept;
+        Builder &EnableRasterizerDiscard();
+        Builder &EnableDepthClamp();
+        Builder &EnableDepthBias();
+        Builder &DisableRasterizerDiscard();
+        Builder &DisableDepthClamp();
+        Builder &DisableDepthBias();
+        Builder &SetPolygonMode(VkPolygonMode p_Mode);
+        Builder &SetLineWidth(f32 p_Width);
+        Builder &SetCullMode(VkCullModeFlags p_Mode);
+        Builder &SetFrontFace(VkFrontFace p_FrontFace);
+        Builder &SetDepthBias(f32 p_ConstantFactor, f32 p_Clamp, f32 p_SlopeFactor);
 
         // Multisampling
-        Builder &EnableSampleShading() noexcept;
-        Builder &EnableAlphaToCoverage() noexcept;
-        Builder &EnableAlphaToOne() noexcept;
-        Builder &DisableSampleShading() noexcept;
-        Builder &DisableAlphaToCoverage() noexcept;
-        Builder &DisableAlphaToOne() noexcept;
-        Builder &SetSampleCount(VkSampleCountFlagBits p_SampleCount) noexcept;
-        Builder &SetMinSampleShading(f32 p_MinSampleShading) noexcept;
-        Builder &SetSampleMask(const VkSampleMask *p_SampleMask) noexcept;
+        Builder &EnableSampleShading();
+        Builder &EnableAlphaToCoverage();
+        Builder &EnableAlphaToOne();
+        Builder &DisableSampleShading();
+        Builder &DisableAlphaToCoverage();
+        Builder &DisableAlphaToOne();
+        Builder &SetSampleCount(VkSampleCountFlagBits p_SampleCount);
+        Builder &SetMinSampleShading(f32 p_MinSampleShading);
+        Builder &SetSampleMask(const VkSampleMask *p_SampleMask);
 
         // Color Blending
-        Builder &EnableLogicOperation() noexcept;
-        Builder &DisableLogicOperation() noexcept;
-        Builder &SetLogicOperation(VkLogicOp p_Operation) noexcept;
-        Builder &SetBlendConstants(const f32 *p_Constants) noexcept;
-        Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4) noexcept;
-        Builder &SetBlendConstant(u32 p_Index, f32 p_Value) noexcept;
-        Builder &AddDefaultColorAttachment() noexcept;
-        ColorAttachmentBuilder &BeginColorAttachment() noexcept;
+        Builder &EnableLogicOperation();
+        Builder &DisableLogicOperation();
+        Builder &SetLogicOperation(VkLogicOp p_Operation);
+        Builder &SetBlendConstants(const f32 *p_Constants);
+        Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4);
+        Builder &SetBlendConstant(u32 p_Index, f32 p_Value);
+        Builder &AddDefaultColorAttachment();
+        ColorAttachmentBuilder &BeginColorAttachment();
 
         // Depth and Stencil
-        Builder &EnableDepthTest() noexcept;
-        Builder &EnableDepthWrite() noexcept;
-        Builder &EnableDepthBoundsTest() noexcept;
-        Builder &EnableStencilTest() noexcept;
-        Builder &DisableDepthTest() noexcept;
-        Builder &DisableDepthWrite() noexcept;
-        Builder &DisableDepthBoundsTest() noexcept;
-        Builder &DisableStencilTest() noexcept;
-        Builder &SetDepthCompareOperation(VkCompareOp p_Op) noexcept;
-        Builder &SetDepthBounds(f32 p_Min, f32 p_Max) noexcept;
-        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, Flags p_Flags) noexcept;
-        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, Flags p_Flags) noexcept;
-        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, Flags p_Flags) noexcept;
-        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, Flags p_Flags) noexcept;
-        Builder &SetStencilCompareMask(u32 p_Mask, Flags p_Flags) noexcept;
-        Builder &SetStencilWriteMask(u32 p_Mask, Flags p_Flags) noexcept;
-        Builder &SetStencilReference(u32 p_Reference, Flags p_Flags) noexcept;
+        Builder &EnableDepthTest();
+        Builder &EnableDepthWrite();
+        Builder &EnableDepthBoundsTest();
+        Builder &EnableStencilTest();
+        Builder &DisableDepthTest();
+        Builder &DisableDepthWrite();
+        Builder &DisableDepthBoundsTest();
+        Builder &DisableStencilTest();
+        Builder &SetDepthCompareOperation(VkCompareOp p_Op);
+        Builder &SetDepthBounds(f32 p_Min, f32 p_Max);
+        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, Flags p_Flags);
+        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, Flags p_Flags);
+        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, Flags p_Flags);
+        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, Flags p_Flags);
+        Builder &SetStencilCompareMask(u32 p_Mask, Flags p_Flags);
+        Builder &SetStencilWriteMask(u32 p_Mask, Flags p_Flags);
+        Builder &SetStencilReference(u32 p_Reference, Flags p_Flags);
 
         // Vertex Input
-        Builder &AddBindingDescription(VkVertexInputRate p_InputRate, u32 p_Stride) noexcept;
-        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate p_InputRate) noexcept
+        Builder &AddBindingDescription(VkVertexInputRate p_InputRate, u32 p_Stride);
+        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate p_InputRate)
         {
             AddBindingDescription(p_InputRate, sizeof(T));
             return *this;
         }
-        Builder &AddAttributeDescription(u32 p_Binding, VkFormat p_Format, u32 p_Offset) noexcept;
+        Builder &AddAttributeDescription(u32 p_Binding, VkFormat p_Format, u32 p_Offset);
 
         // Shader Stages
         Builder &AddShaderStage(VkShaderModule p_Module, VkShaderStageFlagBits p_Stage,
                                 VkPipelineShaderStageCreateFlags p_Flags = 0,
                                 const VkSpecializationInfo *p_Info = nullptr,
-                                const char *p_EntryPoint = "main") noexcept;
+                                const char *p_EntryPoint = "main");
 
         // Dynamic State
-        Builder &AddDynamicState(VkDynamicState p_State) noexcept;
-        Builder &AddDynamicStates(TKit::Span<const VkDynamicState> p_States) noexcept;
-        Builder &SetDynamicStates(TKit::Span<const VkDynamicState> p_States) noexcept;
+        Builder &AddDynamicState(VkDynamicState p_State);
+        Builder &AddDynamicStates(TKit::Span<const VkDynamicState> p_States);
+        Builder &SetDynamicStates(TKit::Span<const VkDynamicState> p_States);
 
       private:
-        void initialize() noexcept;
+        void initialize();
         LogicalDevice::Proxy m_Device;
         VkPipelineLayout m_Layout;
         VkRenderPass m_RenderPass;
@@ -231,13 +231,13 @@ class VKIT_API GraphicsPipeline
      * @return A `Result` indicating success or failure for the batch operation.
      */
     static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
-                           TKit::Span<GraphicsPipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
+                           TKit::Span<GraphicsPipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
-    GraphicsPipeline() noexcept = default;
-    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept;
+    GraphicsPipeline() = default;
+    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Binds the graphics pipeline to a command buffer.
@@ -246,12 +246,12 @@ class VKIT_API GraphicsPipeline
      *
      * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
      */
-    void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
+    void Bind(VkCommandBuffer p_CommandBuffer) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkPipeline GetHandle() const noexcept;
-    explicit(false) operator VkPipeline() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkPipeline GetHandle() const;
+    explicit(false) operator VkPipeline() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

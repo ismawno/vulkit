@@ -21,14 +21,14 @@ struct VKIT_API Core
      *
      * @return A `Result` indicating success or an error if initialization fails.
      */
-    static Result<> Initialize() noexcept;
-    static void Terminate() noexcept;
+    static Result<> Initialize();
+    static void Terminate();
 
-    static bool IsExtensionSupported(const char *p_Name) noexcept;
-    static bool IsLayerSupported(const char *p_Name) noexcept;
+    static bool IsExtensionSupported(const char *p_Name);
+    static bool IsLayerSupported(const char *p_Name);
 
-    static const VkExtensionProperties *GetExtension(const char *p_Name) noexcept;
-    static const VkLayerProperties *GetLayer(const char *p_Name) noexcept;
+    static const VkExtensionProperties *GetExtension(const char *p_Name);
+    static const VkLayerProperties *GetLayer(const char *p_Name);
 
     static inline TKit::StaticArray64<VkExtensionProperties> AvailableExtensions{};
     static inline TKit::StaticArray16<VkLayerProperties> AvailableLayers{};

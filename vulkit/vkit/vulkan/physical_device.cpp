@@ -3,12 +3,12 @@
 
 namespace VKit
 {
-template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value) noexcept
+template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value)
 {
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
 }
 
-template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> getFeatureIterable(T &p_Features) noexcept
+template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> getFeatureIterable(T &p_Features)
 {
     u32 size;
     Bool *ptr;
@@ -36,13 +36,13 @@ template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> get
     return {ptr, size};
 }
 
-template <typename T> void setFeaturesToFalse(T &p_Features) noexcept
+template <typename T> void setFeaturesToFalse(T &p_Features)
 {
     auto [ptr, size] = getFeatureIterable<T, VkBool32>(p_Features);
     for (u32 i = 0; i < size; ++i)
         ptr[i] = VK_FALSE;
 }
-template <typename T> void orFeatures(T &p_Dest, const T &p_Src) noexcept
+template <typename T> void orFeatures(T &p_Dest, const T &p_Src)
 {
     auto [ptr1, size1] = getFeatureIterable<T, VkBool32>(p_Dest);
     const auto [ptr2, size2] = getFeatureIterable(p_Src);
@@ -52,7 +52,7 @@ template <typename T> void orFeatures(T &p_Dest, const T &p_Src) noexcept
         ptr1[i] |= ptr2[i];
 }
 
-template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested) noexcept
+template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested)
 {
     const auto [ptr1, size1] = getFeatureIterable(p_Supported);
     const auto [ptr2, size2] = getFeatureIterable(p_Requested);
@@ -65,7 +65,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
 }
 
 static bool compareFeatures(const PhysicalDevice::Features &p_Supported,
-                            const PhysicalDevice::Features &p_Requested) noexcept
+                            const PhysicalDevice::Features &p_Requested)
 {
     if (!compareFeatureStructs(p_Supported.Core, p_Requested.Core))
         return false;
@@ -89,7 +89,7 @@ static bool compareFeatures(const PhysicalDevice::Features &p_Supported,
 #ifdef VK_KHR_surface
 static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *p_Table,
                                                                              const VkPhysicalDevice p_Device,
-                                                                             const VkSurfaceKHR p_Surface) noexcept
+                                                                             const VkSurfaceKHR p_Surface)
 {
     using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
     u32 formatCount = 0;
@@ -127,7 +127,7 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
 }
 #endif
 
-PhysicalDevice::Features::Features() noexcept
+PhysicalDevice::Features::Features()
 {
     setFeaturesToFalse(Core);
 #ifdef VKIT_API_VERSION_1_2
@@ -143,11 +143,11 @@ PhysicalDevice::Features::Features() noexcept
     Next = nullptr;
 }
 
-PhysicalDevice::Selector::Selector(const Instance *p_Instance) noexcept : m_Instance(p_Instance)
+PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_Instance)
 {
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() noexcept
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select()
 {
     const auto result = Enumerate();
     if (!result)
@@ -157,7 +157,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() noexcept
     return devices[0];
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const noexcept
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const
 {
     using JudgeResult = FormattedResult<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
@@ -597,7 +597,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     return JudgeResult::Ok(p_Device, deviceInfo);
 }
 
-Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() noexcept
+Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate()
 {
     using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
 
@@ -658,20 +658,20 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     return EnumerateResult::Ok(devices);
 }
 
-PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept
+PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info)
     : m_Device(p_Device), m_Info(p_Info)
 {
 }
 
-bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const noexcept
+bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const
 {
     return compareFeatures(m_Info.AvailableFeatures, p_Features);
 }
-bool PhysicalDevice::AreFeaturesEnabled(const Features &p_Features) const noexcept
+bool PhysicalDevice::AreFeaturesEnabled(const Features &p_Features) const
 {
     return compareFeatures(m_Info.EnabledFeatures, p_Features);
 }
-bool PhysicalDevice::EnableFeatures(const Features &p_Features) noexcept
+bool PhysicalDevice::EnableFeatures(const Features &p_Features)
 {
     if (!AreFeaturesSupported(p_Features))
         return false;
@@ -680,15 +680,15 @@ bool PhysicalDevice::EnableFeatures(const Features &p_Features) noexcept
     return true;
 }
 
-bool PhysicalDevice::IsExtensionSupported(const char *p_Extension) const noexcept
+bool PhysicalDevice::IsExtensionSupported(const char *p_Extension) const
 {
     return contains(m_Info.AvailableExtensions, p_Extension);
 }
-bool PhysicalDevice::IsExtensionEnabled(const char *p_Extension) const noexcept
+bool PhysicalDevice::IsExtensionEnabled(const char *p_Extension) const
 {
     return contains(m_Info.EnabledExtensions, p_Extension);
 }
-bool PhysicalDevice::EnableExtension(const char *p_Extension) noexcept
+bool PhysicalDevice::EnableExtension(const char *p_Extension)
 {
     if (IsExtensionEnabled(p_Extension))
         return true;
@@ -698,123 +698,123 @@ bool PhysicalDevice::EnableExtension(const char *p_Extension) noexcept
     return true;
 }
 
-PhysicalDevice::operator VkPhysicalDevice() const noexcept
+PhysicalDevice::operator VkPhysicalDevice() const
 {
     return m_Device;
 }
-PhysicalDevice::operator bool() const noexcept
+PhysicalDevice::operator bool() const
 {
     return m_Device != VK_NULL_HANDLE;
 }
 
-VkPhysicalDevice PhysicalDevice::GetHandle() const noexcept
+VkPhysicalDevice PhysicalDevice::GetHandle() const
 {
     return m_Device;
 }
-const PhysicalDevice::Info &PhysicalDevice::GetInfo() const noexcept
+const PhysicalDevice::Info &PhysicalDevice::GetInfo() const
 {
     return m_Info;
 }
 
 #ifdef VK_KHR_surface
 Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
-    const Instance::Proxy &p_Instance, const VkSurfaceKHR p_Surface) const noexcept
+    const Instance::Proxy &p_Instance, const VkSurfaceKHR p_Surface) const
 {
     return querySwapChainSupport(p_Instance.Table, m_Device, p_Surface);
 }
 #endif
 
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name)
 {
     m_Name = p_Name;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const Type p_Type) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const Type p_Type)
 {
     m_PreferredType = p_Type;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Version) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Version)
 {
     m_RequiredApiVersion = p_Version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequestedApiVersion = m_RequiredApiVersion;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return RequireApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Version) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Version)
 {
     m_RequestedApiVersion = p_Version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequiredApiVersion = m_RequestedApiVersion;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return RequestApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *p_Extension) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *p_Extension)
 {
     m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(
-    const TKit::Span<const char *const> p_Extensions) noexcept
+    const TKit::Span<const char *const> p_Extensions)
 {
     m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *p_Extension) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *p_Extension)
 {
     m_RequestedExtensions.Append(p_Extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(
-    const TKit::Span<const char *const> p_Extensions) noexcept
+    const TKit::Span<const char *const> p_Extensions)
 {
     m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize p_Size) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize p_Size)
 {
     m_RequiredMemory = p_Size;
     if (m_RequestedMemory < m_RequiredMemory)
         m_RequestedMemory = m_RequiredMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDeviceSize p_Size) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDeviceSize p_Size)
 {
     m_RequestedMemory = p_Size;
     if (m_RequestedMemory < m_RequiredMemory)
         m_RequiredMemory = m_RequestedMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Features &p_Features) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Features &p_Features)
 {
     void *next = m_RequiredFeatures.Next;
     m_RequiredFeatures = p_Features;
     m_RequiredFeatures.Next = next;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const Flags p_Flags) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const Flags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const Flags p_Flags) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const Flags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const Flags p_Flags) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const Flags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetSurface(const VkSurfaceKHR p_Surface) noexcept
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetSurface(const VkSurfaceKHR p_Surface)
 {
     m_Surface = p_Surface;
     return *this;

@@ -5,7 +5,7 @@
 namespace VKit::Detail
 {
 template <Pipeline Pip>
-IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept
+IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout)
     : m_Pipeline(p_Pipeline), m_Layout(p_Layout)
 {
     m_DescriptorSets.Resize(p_Layout.GetInfo().DescriptorSetLayouts.GetSize(), VK_NULL_HANDLE);
@@ -13,14 +13,14 @@ IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_L
 }
 
 template <Pipeline Pip>
-void IPipelineJob<Pip>::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept
+void IPipelineJob<Pip>::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet)
 {
     m_DescriptorSets[p_Index] = p_DescriptorSet;
 }
 
 template <Pipeline Pip>
 void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstSet,
-                             const TKit::Span<const u32> p_DynamicOffsets) const noexcept
+                             const TKit::Span<const u32> p_DynamicOffsets) const
 {
     m_Pipeline.Bind(p_CommandBuffer);
     u32 offset = 0;
@@ -50,13 +50,13 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
         DescriptorSet::Bind(device, p_CommandBuffer, m_DescriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, m_Layout,
                             p_FirstSet, p_DynamicOffsets);
 }
-template <Pipeline Pip> IPipelineJob<Pip>::operator bool() const noexcept
+template <Pipeline Pip> IPipelineJob<Pip>::operator bool() const
 {
     return m_Pipeline;
 }
 
 Result<PipelineJob<GraphicsPipeline>> PipelineJob<GraphicsPipeline>::Create(const GraphicsPipeline &p_Pipeline,
-                                                                            const PipelineLayout &p_Layout) noexcept
+                                                                            const PipelineLayout &p_Layout)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Pipeline.GetDevice().Table, vkCmdPushConstants,
                                         Result<PipelineJob<GraphicsPipeline>>);
@@ -70,14 +70,14 @@ Result<PipelineJob<GraphicsPipeline>> PipelineJob<GraphicsPipeline>::Create(cons
 
 void PipelineJob<GraphicsPipeline>::Draw(const VkCommandBuffer p_CommandBuffer, const u32 p_VertexCount,
                                          const u32 p_InstanceCount, const u32 p_FirstVertex,
-                                         const u32 p_FirstInstance) const noexcept
+                                         const u32 p_FirstInstance) const
 {
     const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
     device.Table->CmdDraw(p_CommandBuffer, p_VertexCount, p_InstanceCount, p_FirstVertex, p_FirstInstance);
 }
 void PipelineJob<GraphicsPipeline>::DrawIndexed(const VkCommandBuffer p_CommandBuffer, const u32 p_IndexCount,
                                                 const u32 p_InstanceCount, const u32 p_FirstIndex,
-                                                const i32 p_VertexOffset, const u32 p_FirstInstance) const noexcept
+                                                const i32 p_VertexOffset, const u32 p_FirstInstance) const
 {
     const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
     device.Table->CmdDrawIndexed(p_CommandBuffer, p_IndexCount, p_InstanceCount, p_FirstIndex, p_VertexOffset,
@@ -85,7 +85,7 @@ void PipelineJob<GraphicsPipeline>::DrawIndexed(const VkCommandBuffer p_CommandB
 }
 
 Result<PipelineJob<ComputePipeline>> PipelineJob<ComputePipeline>::Create(const ComputePipeline &p_Pipeline,
-                                                                          const PipelineLayout &p_Layout) noexcept
+                                                                          const PipelineLayout &p_Layout)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Pipeline.GetDevice().Table, vkCmdPushConstants,
                                         Result<PipelineJob<ComputePipeline>>);
@@ -97,7 +97,7 @@ Result<PipelineJob<ComputePipeline>> PipelineJob<ComputePipeline>::Create(const 
 }
 
 void PipelineJob<ComputePipeline>::Dispatch(const VkCommandBuffer p_CommandBuffer, const u32 p_GroupCountX,
-                                            const u32 p_GroupCountY, const u32 p_GroupCountZ) const noexcept
+                                            const u32 p_GroupCountY, const u32 p_GroupCountZ) const
 {
     const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
     device.Table->CmdDispatch(p_CommandBuffer, p_GroupCountX, p_GroupCountY, p_GroupCountZ);

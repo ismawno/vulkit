@@ -4,7 +4,7 @@
 namespace VKit
 {
 Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const u32 p_QueueFamilyIndex,
-                                        const VkCommandPoolCreateFlags p_Flags) noexcept
+                                        const VkCommandPoolCreateFlags p_Flags)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateCommandPool, Result<CommandPool>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyCommandPool, Result<CommandPool>);
@@ -29,12 +29,12 @@ Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, co
     return Result<CommandPool>::Ok(p_Device, pool);
 }
 
-CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool) noexcept
+CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool)
     : m_Device(p_Device), m_Pool(p_Pool)
 {
 }
 
-void CommandPool::Destroy() noexcept
+void CommandPool::Destroy()
 {
     TKIT_ASSERT(m_Pool, "[VULKIT] The command pool is a NULL handle");
     LogicalDevice::WaitIdle(m_Device);
@@ -42,7 +42,7 @@ void CommandPool::Destroy() noexcept
     m_Pool = VK_NULL_HANDLE;
 }
 
-void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const LogicalDevice::Proxy device = m_Device;
     const VkCommandPool pool = m_Pool;
@@ -54,7 +54,7 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
 }
 
 Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                               const VkCommandBufferLevel p_Level) const noexcept
+                               const VkCommandBufferLevel p_Level) const
 {
     VkCommandBufferAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -67,7 +67,7 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffer
         return Result<>::Error(result, "Failed to allocate command buffers");
     return Result<>::Ok();
 }
-Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const noexcept
+Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const
 {
     VkCommandBuffer commandBuffer;
     const TKit::Span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
@@ -78,17 +78,17 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
     return Result<VkCommandBuffer>::Error(result.GetError());
 }
 
-void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept
+void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const
 {
     m_Device.Table->FreeCommandBuffers(m_Device, m_Pool, p_CommandBuffers.GetSize(), p_CommandBuffers.GetData());
 }
-void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const noexcept
+void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const
 {
     const TKit::Span<const VkCommandBuffer> commandBuffers(&p_CommandBuffer, 1);
     Deallocate(commandBuffers);
 }
 
-Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcept
+Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const
 {
     const VkResult result = m_Device.Table->ResetCommandPool(m_Device, m_Pool, p_Flags);
     if (result != VK_SUCCESS)
@@ -96,7 +96,7 @@ Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const noexcep
     return Result<>::Ok();
 }
 
-Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
+Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
 {
     const Result<VkCommandBuffer> result = Allocate();
     if (!result)
@@ -114,7 +114,7 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const noexcept
     return Result<VkCommandBuffer>::Ok(commandBuffer);
 }
 
-Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer, const VkQueue p_Queue) const noexcept
+Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer, const VkQueue p_Queue) const
 {
     VkResult result = m_Device.Table->EndCommandBuffer(p_CommandBuffer);
     if (result != VK_SUCCESS)
@@ -137,20 +137,20 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
     return Result<>::Ok();
 }
 
-const LogicalDevice::Proxy &CommandPool::GetDevice() const noexcept
+const LogicalDevice::Proxy &CommandPool::GetDevice() const
 {
     return m_Device;
 }
 
-VkCommandPool CommandPool::GetHandle() const noexcept
+VkCommandPool CommandPool::GetHandle() const
 {
     return m_Pool;
 }
-CommandPool::operator VkCommandPool() const noexcept
+CommandPool::operator VkCommandPool() const
 {
     return m_Pool;
 }
-CommandPool::operator bool() const noexcept
+CommandPool::operator bool() const
 {
     return m_Pool != VK_NULL_HANDLE;
 }

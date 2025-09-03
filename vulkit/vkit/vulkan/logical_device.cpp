@@ -4,7 +4,7 @@
 namespace VKit
 {
 Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                            const TKit::Span<const QueuePriorities> p_QueuePriorities) noexcept
+                                            const TKit::Span<const QueuePriorities> p_QueuePriorities)
 {
     const Instance::Info &instanceInfo = p_Instance.GetInfo();
     PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
@@ -136,7 +136,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, table, device);
 }
 
-Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept
+Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice)
 {
     const u32 queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.GetSize();
     TKit::StaticArray8<QueuePriorities> queuePriorities;
@@ -151,41 +151,41 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 }
 
 LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                             const Vulkan::DeviceTable &p_Table, const VkDevice p_Device) noexcept
+                             const Vulkan::DeviceTable &p_Table, const VkDevice p_Device)
     : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Table(p_Table), m_Device(p_Device)
 {
 }
 
-static void destroy(const LogicalDevice::Proxy &p_Device) noexcept
+static void destroy(const LogicalDevice::Proxy &p_Device)
 {
     p_Device.Table->DestroyDevice(p_Device, p_Device.AllocationCallbacks);
 }
 
-void LogicalDevice::Destroy() noexcept
+void LogicalDevice::Destroy()
 {
     destroy(CreateProxy());
     m_Device = VK_NULL_HANDLE;
 }
 
-const Instance &LogicalDevice::GetInstance() const noexcept
+const Instance &LogicalDevice::GetInstance() const
 {
     return m_Instance;
 }
-const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const noexcept
+const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const
 {
     return m_PhysicalDevice;
 }
-void LogicalDevice::WaitIdle(const Proxy &p_Device) noexcept
+void LogicalDevice::WaitIdle(const Proxy &p_Device)
 {
     TKIT_ASSERT_RETURNS(p_Device.Table->DeviceWaitIdle(p_Device), VK_SUCCESS,
                         "[VULKIT] Failed to wait for the logical device to be idle");
 }
-void LogicalDevice::WaitIdle() const noexcept
+void LogicalDevice::WaitIdle() const
 {
     WaitIdle(*this);
 }
 
-void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Proxy proxy = CreateProxy();
     p_Queue.Push([proxy]() {
@@ -194,14 +194,14 @@ void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
     });
 }
 
-VkDevice LogicalDevice::GetHandle() const noexcept
+VkDevice LogicalDevice::GetHandle() const
 {
     return m_Device;
 }
 
 #ifdef VK_KHR_surface
 Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(
-    const VkSurfaceKHR p_Surface) const noexcept
+    const VkSurfaceKHR p_Surface) const
 {
     return m_PhysicalDevice.QuerySwapChainSupport(m_Instance, p_Surface);
 }
@@ -209,7 +209,7 @@ Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSup
 
 Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates,
                                                     const VkImageTiling p_Tiling,
-                                                    const VkFormatFeatureFlags p_Features) const noexcept
+                                                    const VkFormatFeatureFlags p_Features) const
 {
     const Vulkan::InstanceTable *table = &m_Instance.GetInfo().Table;
 
@@ -226,16 +226,16 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
     return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
 
-LogicalDevice::Proxy::operator VkDevice() const noexcept
+LogicalDevice::Proxy::operator VkDevice() const
 {
     return Device;
 }
-LogicalDevice::Proxy::operator bool() const noexcept
+LogicalDevice::Proxy::operator bool() const
 {
     return Device != VK_NULL_HANDLE;
 }
 
-LogicalDevice::Proxy LogicalDevice::CreateProxy() const noexcept
+LogicalDevice::Proxy LogicalDevice::CreateProxy() const
 {
     Proxy proxy;
     proxy.Device = m_Device;
@@ -244,12 +244,12 @@ LogicalDevice::Proxy LogicalDevice::CreateProxy() const noexcept
     return proxy;
 }
 
-const Vulkan::DeviceTable &LogicalDevice::GetTable() const noexcept
+const Vulkan::DeviceTable &LogicalDevice::GetTable() const
 {
     return m_Table;
 }
 
-VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const noexcept
+VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
 {
     const PhysicalDevice::Info &info = m_PhysicalDevice.GetInfo();
     switch (p_Type)
@@ -267,22 +267,22 @@ VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) 
     return VK_NULL_HANDLE;
 }
 
-VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const noexcept
+VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const
 {
     VkQueue queue;
     m_Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
     return queue;
 }
 
-LogicalDevice::operator VkDevice() const noexcept
+LogicalDevice::operator VkDevice() const
 {
     return m_Device;
 }
-LogicalDevice::operator LogicalDevice::Proxy() const noexcept
+LogicalDevice::operator LogicalDevice::Proxy() const
 {
     return CreateProxy();
 }
-LogicalDevice::operator bool() const noexcept
+LogicalDevice::operator bool() const
 {
     return m_Device != VK_NULL_HANDLE;
 }

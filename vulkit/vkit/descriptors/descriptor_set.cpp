@@ -4,7 +4,7 @@
 
 namespace VKit
 {
-Result<DescriptorSet> DescriptorSet::Create(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set) noexcept
+Result<DescriptorSet> DescriptorSet::Create(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkUpdateDescriptorSets, Result<DescriptorSet>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindDescriptorSets, Result<DescriptorSet>);
@@ -12,20 +12,20 @@ Result<DescriptorSet> DescriptorSet::Create(const LogicalDevice::Proxy &p_Device
     return Result<DescriptorSet>::Ok(p_Device, p_Set);
 }
 
-DescriptorSet::DescriptorSet(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set) noexcept
+DescriptorSet::DescriptorSet(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set)
     : m_Device(p_Device), m_Set(p_Set)
 {
 }
 
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const TKit::Span<const u32> p_DynamicOffsets) const noexcept
+                         const VkPipelineLayout p_Layout, const TKit::Span<const u32> p_DynamicOffsets) const
 {
     Bind(m_Device, p_CommandBuffer, m_Set, p_BindPoint, p_Layout, 0, p_DynamicOffsets);
 }
 void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                          const TKit::Span<const VkDescriptorSet> p_Sets, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const TKit::Span<const u32> p_DynamicOffsets) noexcept
+                         const TKit::Span<const u32> p_DynamicOffsets)
 {
     if (!p_DynamicOffsets.IsEmpty())
         p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
@@ -37,7 +37,7 @@ void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBu
 void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                          const VkDescriptorSet p_Set, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const TKit::Span<const u32> p_DynamicOffsets) noexcept
+                         const TKit::Span<const u32> p_DynamicOffsets)
 {
     if (!p_DynamicOffsets.IsEmpty())
         p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,
@@ -47,29 +47,29 @@ void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBu
                                               nullptr);
 }
 
-const LogicalDevice::Proxy &DescriptorSet::GetDevice() const noexcept
+const LogicalDevice::Proxy &DescriptorSet::GetDevice() const
 {
     return m_Device;
 }
-VkDescriptorSet DescriptorSet::GetHandle() const noexcept
+VkDescriptorSet DescriptorSet::GetHandle() const
 {
     return m_Set;
 }
-DescriptorSet::operator VkDescriptorSet() const noexcept
+DescriptorSet::operator VkDescriptorSet() const
 {
     return m_Set;
 }
-DescriptorSet::operator bool() const noexcept
+DescriptorSet::operator bool() const
 {
     return m_Set != VK_NULL_HANDLE;
 }
 
-DescriptorSet::Writer::Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout) noexcept
+DescriptorSet::Writer::Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout)
     : m_Device(p_Device), m_Layout(p_Layout)
 {
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo) noexcept
+void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[p_Binding];
 
@@ -85,12 +85,12 @@ void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorB
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const Buffer &p_Buffer) noexcept
+void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const Buffer &p_Buffer)
 {
     WriteBuffer(p_Binding, p_Buffer.GetDescriptorInfo());
 }
 
-void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo) noexcept
+void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[p_Binding];
 
@@ -106,7 +106,7 @@ void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorIm
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set) noexcept
+void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set)
 {
     for (VkWriteDescriptorSet &write : m_Writes)
         write.dstSet = p_Set;

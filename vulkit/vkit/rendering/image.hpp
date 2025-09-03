@@ -36,10 +36,10 @@ struct Image
 class ImageHouse
 {
   public:
-    ImageHouse() noexcept = default;
-    ImageHouse(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator) noexcept;
+    ImageHouse() = default;
+    ImageHouse(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator);
 
-    static Result<ImageHouse> Create(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator) noexcept;
+    static Result<ImageHouse> Create(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator);
 
     /**
      * @brief Creates an image.
@@ -53,7 +53,7 @@ class ImageHouse
      * @return A `Result` containing the created `Image` or an error.
      */
     Result<Image> CreateImage(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range,
-                              VkImageViewType p_ViewType) const noexcept;
+                              VkImageViewType p_ViewType) const;
 
     /**
      * @brief Creates an image.
@@ -67,7 +67,7 @@ class ImageHouse
      * @param p_Range The subresource range for the image.
      * @return A `Result` containing the created `Image` or an error.
      */
-    Result<Image> CreateImage(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range) const noexcept;
+    Result<Image> CreateImage(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range) const;
 
     /**
      * @brief Creates an image.
@@ -83,7 +83,7 @@ class ImageHouse
      * @return A `Result` containing the created `Image` or an error.
      */
     Result<Image> CreateImage(const VkImageCreateInfo &p_Info, VkImageViewType p_ViewType,
-                              AttachmentFlags p_Flags) const noexcept;
+                              AttachmentFlags p_Flags) const;
 
     /**
      * @brief Creates an image.
@@ -98,7 +98,7 @@ class ImageHouse
      * @param p_Flags The flags of the attachment this image will be used for.
      * @return A `Result` containing the created `Image` or an error.
      */
-    Result<Image> CreateImage(const VkImageCreateInfo &p_Info, AttachmentFlags p_Flags) const noexcept;
+    Result<Image> CreateImage(const VkImageCreateInfo &p_Info, AttachmentFlags p_Flags) const;
 
     /**
      * @brief Creates an image.
@@ -113,7 +113,7 @@ class ImageHouse
      * @param p_Flags The flags of the attachment this image will be used for.
      * @return A `Result` containing the created `Image` or an error.
      */
-    Result<Image> CreateImage(VkFormat p_Format, const VkExtent2D &p_Extent, AttachmentFlags p_Flags) const noexcept;
+    Result<Image> CreateImage(VkFormat p_Format, const VkExtent2D &p_Extent, AttachmentFlags p_Flags) const;
 
     /**
      * @brief Creates an image.
@@ -127,12 +127,12 @@ class ImageHouse
      * @param p_ImageView The image view to use.
      * @return A `Result` containing the created `Image` or an error.
      */
-    Result<Image> CreateImage(VkImage p_Image, VkImageView p_ImageView = VK_NULL_HANDLE) const noexcept;
+    Result<Image> CreateImage(VkImage p_Image, VkImageView p_ImageView = VK_NULL_HANDLE) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
 
-    void DestroyImage(const Image &p_Image) const noexcept;
-    void SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const noexcept;
+    void DestroyImage(const Image &p_Image) const;
+    void SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const;
 
   private:
     LogicalDevice::Proxy m_Device{};

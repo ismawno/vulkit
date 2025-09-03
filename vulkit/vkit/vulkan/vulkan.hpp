@@ -110,7 +110,7 @@ concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::strin
 template <String MessageType> class ErrorInfo
 {
   public:
-    ErrorInfo() noexcept = default;
+    ErrorInfo() = default;
     /**
      * @brief Creates an error result with the given Vulkan result code and message.
      *
@@ -118,11 +118,11 @@ template <String MessageType> class ErrorInfo
      * @param p_Message A descriptive message providing details about the error.
      * @return A `ErrorInfo` instance representing the error.
      */
-    ErrorInfo(VkResult p_Error, const MessageType &p_Message) noexcept;
+    ErrorInfo(VkResult p_Error, const MessageType &p_Message);
 
-    std::string ToString() const noexcept;
+    std::string ToString() const;
 
-    operator VkResult() const noexcept;
+    operator VkResult() const;
 
     VkResult ErrorCode{};
     MessageType Message{};
@@ -134,8 +134,8 @@ using FormattedError = ErrorInfo<std::string>;
 template <typename T = void> using Result = TKit::Result<T, Error>;
 template <typename T = void> using FormattedResult = TKit::Result<T, FormattedError>;
 
-VKIT_API FormattedError ToFormatted(const Error &p_Result) noexcept;
-template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result) noexcept
+VKIT_API FormattedError ToFormatted(const Error &p_Result);
+template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result)
 {
     return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue())
                     : FormattedResult<T>::Error(p_Result.GetError().ErrorCode, p_Result.GetError().Message);
@@ -150,10 +150,10 @@ template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result) 
 class VKIT_API DeletionQueue
 {
   public:
-    void Push(std::function<void()> &&p_Deleter) noexcept;
-    void Flush() noexcept;
+    void Push(std::function<void()> &&p_Deleter);
+    void Flush();
 
-    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object) noexcept
+    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object)
     {
         p_Object.SubmitForDeletion(*this);
     }
@@ -162,6 +162,6 @@ class VKIT_API DeletionQueue
     TKit::StaticArray1024<std::function<void()>> m_Deleters;
 };
 
-VKIT_API const char *VkResultToString(VkResult p_Result) noexcept;
+VKIT_API const char *VkResultToString(VkResult p_Result);
 
 } // namespace VKit

@@ -44,7 +44,7 @@ class DeviceLocalBuffer
      * @return A `Result` containing the created `DeviceLocalBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs,
-                                            const VkBufferUsageFlags p_Usage) noexcept
+                                            const VkBufferUsageFlags p_Usage)
     {
         Buffer::Specs specs{};
         specs.Allocator = p_Specs.Allocator;
@@ -98,7 +98,7 @@ class DeviceLocalBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                        const Specs &p_Specs) noexcept
+                                                        const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
@@ -114,7 +114,7 @@ class DeviceLocalBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                       const Specs &p_Specs) noexcept
+                                                       const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
@@ -130,7 +130,7 @@ class DeviceLocalBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs) noexcept
+                                                         const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
@@ -146,21 +146,21 @@ class DeviceLocalBuffer
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
     static Result<DeviceLocalBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs) noexcept
+                                                         const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
-    DeviceLocalBuffer() noexcept = default;
-    explicit DeviceLocalBuffer(const Buffer &p_Buffer) noexcept : m_Buffer(p_Buffer)
+    DeviceLocalBuffer() = default;
+    explicit DeviceLocalBuffer(const Buffer &p_Buffer) : m_Buffer(p_Buffer)
     {
     }
 
-    void Destroy() noexcept
+    void Destroy()
     {
         m_Buffer.Destroy();
     }
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+    void SubmitForDeletion(DeletionQueue &p_Queue) const
     {
         m_Buffer.SubmitForDeletion(p_Queue);
     }
@@ -173,7 +173,7 @@ class DeviceLocalBuffer
      * @param p_CommandBuffer The command buffer to bind the index buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
+    void BindAsIndexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsIndexBuffer<T>(p_CommandBuffer, p_Offset);
     }
@@ -184,7 +184,7 @@ class DeviceLocalBuffer
      * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const noexcept
+    void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Offset);
     }
@@ -198,7 +198,7 @@ class DeviceLocalBuffer
      */
     static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                                    const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding = 0,
-                                   const TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept
+                                   const TKit::Span<const VkDeviceSize> p_Offsets = {})
     {
         Buffer::BindAsVertexBuffer(p_Device, p_CommandBuffer, p_Buffers, p_FirstBinding, p_Offsets);
     }
@@ -210,41 +210,41 @@ class DeviceLocalBuffer
      * @param p_Offset The offset within the buffer (default: 0).
      */
     void BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
-                            const VkDeviceSize p_Offset = 0) const noexcept
+                            const VkDeviceSize p_Offset = 0) const
     {
         m_Buffer.BindAsVertexBuffer(p_CommandBuffer, p_Buffer, p_Offset);
     }
 
-    VkDescriptorBufferInfo GetDescriptorInfo() const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfo() const
     {
         return m_Buffer.GetDescriptorInfo();
     }
-    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const noexcept
+    VkDescriptorBufferInfo GetDescriptorInfoAt(const u32 p_Index) const
     {
         return m_Buffer.GetDescriptorInfoAt(p_Index);
     }
-    const LogicalDevice::Proxy &GetDevice() const noexcept
+    const LogicalDevice::Proxy &GetDevice() const
     {
         return m_Buffer.GetDevice();
     }
-    VkBuffer GetHandle() const noexcept
+    VkBuffer GetHandle() const
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator const Buffer &() const noexcept
+    explicit(false) operator const Buffer &() const
     {
         return m_Buffer;
     }
-    explicit(false) operator VkBuffer() const noexcept
+    explicit(false) operator VkBuffer() const
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator bool() const noexcept
+    explicit(false) operator bool() const
     {
         return static_cast<bool>(m_Buffer);
     }
 
-    const Buffer::Info &GetInfo() const noexcept
+    const Buffer::Info &GetInfo() const
     {
         return m_Buffer.GetInfo();
     }

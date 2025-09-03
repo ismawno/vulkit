@@ -4,11 +4,11 @@
 
 namespace VKit
 {
-DescriptorPool::Builder::Builder(const LogicalDevice::Proxy &p_Device) noexcept : m_Device(p_Device)
+DescriptorPool::Builder::Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
 {
 }
 
-Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
+Result<DescriptorPool> DescriptorPool::Builder::Build() const
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateDescriptorPool, Result<DescriptorPool>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyDescriptorPool, Result<DescriptorPool>);
@@ -37,30 +37,30 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const noexcept
 }
 
 DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool,
-                               const Info &p_Info) noexcept
+                               const Info &p_Info)
     : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
 {
 }
 
-void DescriptorPool::Destroy() noexcept
+void DescriptorPool::Destroy()
 {
     TKIT_ASSERT(m_Pool, "[VULKIT] The descriptor pool is a NULL handle");
     m_Device.Table->DestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
     m_Pool = VK_NULL_HANDLE;
 }
-void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkDescriptorPool pool = m_Pool;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([pool, device]() { device.Table->DestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
 }
 
-const DescriptorPool::Info &DescriptorPool::GetInfo() const noexcept
+const DescriptorPool::Info &DescriptorPool::GetInfo() const
 {
     return m_Info;
 }
 
-Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const noexcept
+Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const
 {
     VkDescriptorSet set;
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -76,7 +76,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     return DescriptorSet::Create(m_Device, set);
 }
 
-Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const noexcept
+Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const
 {
     const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
     if (result != VK_SUCCESS)
@@ -84,7 +84,7 @@ Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Se
     return Result<>::Ok();
 }
 
-Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
+Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const
 {
     const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
     if (result != VK_SUCCESS)
@@ -92,7 +92,7 @@ Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const noexcept
     return Result<>::Ok();
 }
 
-Result<> DescriptorPool::Reset() noexcept
+Result<> DescriptorPool::Reset()
 {
     const VkResult result = m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, 0);
     if (result != VK_SUCCESS)
@@ -100,44 +100,44 @@ Result<> DescriptorPool::Reset() noexcept
     return Result<>::Ok();
 }
 
-const LogicalDevice::Proxy &DescriptorPool::GetDevice() const noexcept
+const LogicalDevice::Proxy &DescriptorPool::GetDevice() const
 {
     return m_Device;
 }
-VkDescriptorPool DescriptorPool::GetHandle() const noexcept
+VkDescriptorPool DescriptorPool::GetHandle() const
 {
     return m_Pool;
 }
-DescriptorPool::operator VkDescriptorPool() const noexcept
+DescriptorPool::operator VkDescriptorPool() const
 {
     return m_Pool;
 }
-DescriptorPool::operator bool() const noexcept
+DescriptorPool::operator bool() const
 {
     return m_Pool != VK_NULL_HANDLE;
 }
 
-DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets) noexcept
+DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets)
 {
     m_MaxSets = p_MaxSets;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept
+DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept
+DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size)
 {
     m_PoolSizes.Append(VkDescriptorPoolSize{p_Type, p_Size});
     return *this;

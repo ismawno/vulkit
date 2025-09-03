@@ -30,7 +30,7 @@ class VKIT_API DescriptorSetLayout
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
+        explicit Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a descriptor set layout based on the builder's configuration.
@@ -39,7 +39,7 @@ class VKIT_API DescriptorSetLayout
          *
          * @return A `Result` containing the created `DescriptorSetLayout` or an error.
          */
-        Result<DescriptorSetLayout> Build() const noexcept;
+        Result<DescriptorSetLayout> Build() const;
 
         /**
          * @brief Adds a binding to the descriptor set layout.
@@ -52,26 +52,26 @@ class VKIT_API DescriptorSetLayout
          * @param p_Count The number of descriptors for this binding (default: 1).
          * @return A reference to the builder for chaining.
          */
-        Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1) noexcept;
+        Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1);
 
       private:
         LogicalDevice::Proxy m_Device;
         TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
-    DescriptorSetLayout() noexcept = default;
+    DescriptorSetLayout() = default;
     DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
-                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings) noexcept;
+                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkDescriptorSetLayout GetHandle() const noexcept;
-    explicit(false) operator VkDescriptorSetLayout() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkDescriptorSetLayout GetHandle() const;
+    explicit(false) operator VkDescriptorSetLayout() const;
+    explicit(false) operator bool() const;
 
-    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const noexcept;
+    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

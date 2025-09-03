@@ -51,21 +51,21 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 }
 #endif
 
-static bool contains(const TKit::Span<const char *const> p_Extensions, const char *p_Extension) noexcept
+static bool contains(const TKit::Span<const char *const> p_Extensions, const char *p_Extension)
 {
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
-Instance::Proxy::operator bool() const noexcept
+Instance::Proxy::operator bool() const
 {
     return Instance != VK_NULL_HANDLE;
 }
-Instance::Proxy::operator VkInstance() const noexcept
+Instance::Proxy::operator VkInstance() const
 {
     return Instance;
 }
 
-FormattedResult<Instance> Instance::Builder::Build() const noexcept
+FormattedResult<Instance> Instance::Builder::Build() const
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
 #ifdef VKIT_API_VERSION_1_1
@@ -306,20 +306,20 @@ FormattedResult<Instance> Instance::Builder::Build() const noexcept
     return FormattedResult<Instance>::Ok(vkinstance, info);
 }
 
-Instance::Instance(VkInstance p_Instance, const Info &p_Info) noexcept : m_Instance(p_Instance), m_Info(p_Info)
+Instance::Instance(VkInstance p_Instance, const Info &p_Info) : m_Instance(p_Instance), m_Info(p_Info)
 {
 }
 
-bool Instance::IsExtensionEnabled(const char *p_Extension) const noexcept
+bool Instance::IsExtensionEnabled(const char *p_Extension) const
 {
     return contains(m_Info.EnabledExtensions, p_Extension);
 }
-bool Instance::IsLayerEnabled(const char *p_Layer) const noexcept
+bool Instance::IsLayerEnabled(const char *p_Layer) const
 {
     return contains(m_Info.EnabledLayers, p_Layer);
 }
 
-static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) noexcept
+static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info)
 {
     TKIT_ASSERT(p_Instance, "[VULKIT] The vulkan instance is null, which probably means it has already been destroyed");
 
@@ -329,28 +329,28 @@ static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info) n
     p_Info.Table.DestroyInstance(p_Instance, p_Info.AllocationCallbacks);
 }
 
-void Instance::Destroy() noexcept
+void Instance::Destroy()
 {
     destroy(m_Instance, m_Info);
     m_Instance = VK_NULL_HANDLE;
 }
 
-void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkInstance instance = m_Instance;
     const Info info = m_Info;
     p_Queue.Push([instance, info]() { destroy(instance, info); });
 }
 
-VkInstance Instance::GetHandle() const noexcept
+VkInstance Instance::GetHandle() const
 {
     return m_Instance;
 }
-const Instance::Info &Instance::GetInfo() const noexcept
+const Instance::Info &Instance::GetInfo() const
 {
     return m_Info;
 }
-Instance::Proxy Instance::CreateProxy() const noexcept
+Instance::Proxy Instance::CreateProxy() const
 {
     Proxy proxy;
     proxy.Instance = m_Instance;
@@ -358,137 +358,137 @@ Instance::Proxy Instance::CreateProxy() const noexcept
     proxy.Table = &m_Info.Table;
     return proxy;
 }
-Instance::operator VkInstance() const noexcept
+Instance::operator VkInstance() const
 {
     return m_Instance;
 }
-Instance::operator Proxy() const noexcept
+Instance::operator Proxy() const
 {
     return CreateProxy();
 }
-Instance::operator bool() const noexcept
+Instance::operator bool() const
 {
     return m_Instance != VK_NULL_HANDLE;
 }
 
-Instance::Builder &Instance::Builder::SetApplicationName(const char *p_Name) noexcept
+Instance::Builder &Instance::Builder::SetApplicationName(const char *p_Name)
 {
     m_ApplicationName = p_Name;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetEngineName(const char *p_Name) noexcept
+Instance::Builder &Instance::Builder::SetEngineName(const char *p_Name)
 {
     m_EngineName = p_Name;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Version) noexcept
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Version)
 {
     m_ApplicationVersion = p_Version;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Version) noexcept
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Version)
 {
     m_EngineVersion = p_Version;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return SetApplicationVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return SetEngineVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Version) noexcept
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Version)
 {
     m_RequiredApiVersion = p_Version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequestedApiVersion = m_RequiredApiVersion;
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return RequireApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Version) noexcept
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Version)
 {
     m_RequestedApiVersion = p_Version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequiredApiVersion = m_RequestedApiVersion;
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
 {
     return RequestApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
 }
-Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension) noexcept
+Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension)
 {
     m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept
+Instance::Builder &Instance::Builder::RequireExtensions(TKit::Span<const char *const> p_Extensions)
 {
     m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension) noexcept
+Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension)
 {
     m_RequestedExtensions.Append(p_Extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept
+Instance::Builder &Instance::Builder::RequestExtensions(TKit::Span<const char *const> p_Extensions)
 {
     m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer) noexcept
+Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer)
 {
     m_RequiredLayers.Append(p_Layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireLayers(TKit::Span<const char *const> p_Layers) noexcept
+Instance::Builder &Instance::Builder::RequireLayers(TKit::Span<const char *const> p_Layers)
 {
     m_RequiredLayers.Insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer) noexcept
+Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer)
 {
     m_RequestedLayers.Append(p_Layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestLayers(TKit::Span<const char *const> p_Layers) noexcept
+Instance::Builder &Instance::Builder::RequestLayers(TKit::Span<const char *const> p_Layers)
 {
     m_RequestedLayers.Insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireValidationLayers() noexcept
+Instance::Builder &Instance::Builder::RequireValidationLayers()
 {
     m_RequireValidationLayers = true;
     m_RequestValidationLayers = true;
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestValidationLayers() noexcept
+Instance::Builder &Instance::Builder::RequestValidationLayers()
 {
     m_RequestValidationLayers = true;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback) noexcept
+Instance::Builder &Instance::Builder::SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback)
 {
     m_DebugCallback = p_Callback;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetHeadless(bool p_Headless) noexcept
+Instance::Builder &Instance::Builder::SetHeadless(bool p_Headless)
 {
     m_Headless = p_Headless;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *p_Data) noexcept
+Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *p_Data)
 {
     m_DebugMessengerUserData = p_Data;
     return *this;
 }
 Instance::Builder &Instance::Builder::SetAllocationCallbacks(
-    const VkAllocationCallbacks *p_AllocationCallbacks) noexcept
+    const VkAllocationCallbacks *p_AllocationCallbacks)
 {
     m_AllocationCallbacks = p_AllocationCallbacks;
     return *this;

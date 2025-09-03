@@ -34,7 +34,7 @@ class VKIT_API PhysicalDevice
 
     struct Features
     {
-        Features() noexcept;
+        Features();
 
         VkPhysicalDeviceFeatures Core{};
 #ifdef VKIT_API_VERSION_1_2
@@ -104,7 +104,7 @@ class VKIT_API PhysicalDevice
             Flag_RequirePresentQueue = 1 << 9
         };
 
-        explicit Selector(const Instance *p_Instance) noexcept;
+        explicit Selector(const Instance *p_Instance);
 
         /**
          * @brief Selects the best matching physical device.
@@ -114,7 +114,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing the selected PhysicalDevice or an error.
          */
-        FormattedResult<PhysicalDevice> Select() noexcept;
+        FormattedResult<PhysicalDevice> Select();
 
         /**
          * @brief Lists all available physical devices along with their evaluation results.
@@ -124,38 +124,38 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing an array of formatted results for each physical device.
          */
-        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() noexcept;
+        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate();
 
-        Selector &SetName(const char *p_Name) noexcept;
-        Selector &PreferType(Type p_Type) noexcept;
+        Selector &SetName(const char *p_Name);
+        Selector &PreferType(Type p_Type);
 
-        Selector &RequireApiVersion(u32 p_Version) noexcept;
-        Selector &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Selector &RequireApiVersion(u32 p_Version);
+        Selector &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
-        Selector &RequestApiVersion(u32 p_Version) noexcept;
-        Selector &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Selector &RequestApiVersion(u32 p_Version);
+        Selector &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
-        Selector &RequireExtension(const char *p_Extension) noexcept;
-        Selector &RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
+        Selector &RequireExtension(const char *p_Extension);
+        Selector &RequireExtensions(TKit::Span<const char *const> p_Extensions);
 
-        Selector &RequestExtension(const char *p_Extension) noexcept;
-        Selector &RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
+        Selector &RequestExtension(const char *p_Extension);
+        Selector &RequestExtensions(TKit::Span<const char *const> p_Extensions);
 
-        Selector &RequireMemory(const VkDeviceSize p_Size) noexcept;
-        Selector &RequestMemory(const VkDeviceSize p_Size) noexcept;
+        Selector &RequireMemory(const VkDeviceSize p_Size);
+        Selector &RequestMemory(const VkDeviceSize p_Size);
 
-        Selector &RequireFeatures(const Features &p_Features) noexcept;
+        Selector &RequireFeatures(const Features &p_Features);
 
-        Selector &SetFlags(Flags p_Flags) noexcept;
-        Selector &AddFlags(Flags p_Flags) noexcept;
-        Selector &RemoveFlags(Flags p_Flags) noexcept;
+        Selector &SetFlags(Flags p_Flags);
+        Selector &AddFlags(Flags p_Flags);
+        Selector &RemoveFlags(Flags p_Flags);
 
 #ifdef VK_KHR_surface
-        Selector &SetSurface(VkSurfaceKHR p_Surface) noexcept;
+        Selector &SetSurface(VkSurfaceKHR p_Surface);
 #endif
 
       private:
-        FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const noexcept;
+        FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;
@@ -223,13 +223,13 @@ class VKIT_API PhysicalDevice
         Properties Properties{};
     };
 
-    PhysicalDevice() noexcept = default;
-    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) noexcept;
+    PhysicalDevice() = default;
+    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info);
 
-    bool AreFeaturesSupported(const Features &p_Features) const noexcept;
-    bool AreFeaturesEnabled(const Features &p_Features) const noexcept;
+    bool AreFeaturesSupported(const Features &p_Features) const;
+    bool AreFeaturesEnabled(const Features &p_Features) const;
 
-    bool EnableFeatures(const Features &p_Features) noexcept;
+    bool EnableFeatures(const Features &p_Features);
 
     /**
      * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
@@ -240,28 +240,28 @@ class VKIT_API PhysicalDevice
      *
      * @param p_Feature The feature, which must remain in scope until a logical device has been created.
      */
-    template <typename T> void EnableExtensionBoundFeature(T *p_Feature) noexcept
+    template <typename T> void EnableExtensionBoundFeature(T *p_Feature)
     {
         void *next = m_Info.EnabledFeatures.Next;
         p_Feature->pNext = next;
         m_Info.EnabledFeatures.Next = p_Feature;
     }
 
-    bool IsExtensionSupported(const char *p_Extension) const noexcept;
-    bool IsExtensionEnabled(const char *p_Extension) const noexcept;
+    bool IsExtensionSupported(const char *p_Extension) const;
+    bool IsExtensionEnabled(const char *p_Extension) const;
 
-    bool EnableExtension(const char *p_Extension) noexcept;
+    bool EnableExtension(const char *p_Extension);
 
-    VkPhysicalDevice GetHandle() const noexcept;
-    const Info &GetInfo() const noexcept;
+    VkPhysicalDevice GetHandle() const;
+    const Info &GetInfo() const;
 
 #ifdef VK_KHR_surface
     Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
-                                                          VkSurfaceKHR p_Surface) const noexcept;
+                                                          VkSurfaceKHR p_Surface) const;
 #endif
 
-    explicit(false) operator VkPhysicalDevice() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkPhysicalDevice() const;
+    explicit(false) operator bool() const;
 
   private:
     VkPhysicalDevice m_Device = VK_NULL_HANDLE;

@@ -34,13 +34,13 @@ class VKIT_API CommandPool
      * @return A `Result` containing the created `CommandPool` or an error.
      */
     static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, u32 p_QueueFamilyIndex,
-                                      VkCommandPoolCreateFlags p_Flags = 0) noexcept;
+                                      VkCommandPoolCreateFlags p_Flags = 0);
 
-    CommandPool() noexcept = default;
-    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool) noexcept;
+    CommandPool() = default;
+    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Allocates a Vulkan command buffer from the pool.
@@ -50,7 +50,7 @@ class VKIT_API CommandPool
      * @param p_Level The level of the command buffer (primary or secondary).
      * @return A `Result` containing the allocated command buffer or an error.
      */
-    Result<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
+    Result<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
     /**
      * @brief Allocates multiple Vulkan command buffers from the pool.
@@ -62,7 +62,7 @@ class VKIT_API CommandPool
      * @return A `Result` indicating success or failure.
      */
     Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                      VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const noexcept;
+                      VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
     /**
      * @brief Deallocates a Vulkan command buffer from the pool.
@@ -71,7 +71,7 @@ class VKIT_API CommandPool
      *
      * @param p_CommandBuffer The command buffer to deallocate.
      */
-    void Deallocate(VkCommandBuffer p_CommandBuffer) const noexcept;
+    void Deallocate(VkCommandBuffer p_CommandBuffer) const;
 
     /**
      * @brief Deallocates multiple Vulkan command buffers from the pool.
@@ -80,7 +80,7 @@ class VKIT_API CommandPool
      *
      * @param p_CommandBuffers The span of command buffers to deallocate.
      */
-    void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const noexcept;
+    void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const;
 
     /**
      * @brief Resets the command pool.
@@ -90,7 +90,7 @@ class VKIT_API CommandPool
      * @param p_ResetFlags The flags to use when resetting the command pool.
      * @return A `Result<>` indicating success or failure.
      */
-    Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const noexcept;
+    Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const;
 
     /**
      * @brief Begins a single-time command operation.
@@ -100,7 +100,7 @@ class VKIT_API CommandPool
      *
      * @return A `Result` containing the allocated and started command buffer or an error.
      */
-    Result<VkCommandBuffer> BeginSingleTimeCommands() const noexcept;
+    Result<VkCommandBuffer> BeginSingleTimeCommands() const;
 
     /**
      * @brief Ends a single-time command operation.
@@ -111,12 +111,12 @@ class VKIT_API CommandPool
      * @param p_Queue The queue to submit the command buffer to.
      * @return A `Result` indicating success or failure.
      */
-    Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const noexcept;
+    Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkCommandPool GetHandle() const noexcept;
-    explicit(false) operator VkCommandPool() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkCommandPool GetHandle() const;
+    explicit(false) operator VkCommandPool() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

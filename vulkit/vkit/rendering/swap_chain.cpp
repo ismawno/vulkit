@@ -3,13 +3,13 @@
 
 namespace VKit
 {
-SwapChain::Builder::Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) noexcept
+SwapChain::Builder::Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface)
     : m_Device(p_Device), m_Surface(p_Surface)
 {
 }
 
 Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
-                                        const TKit::Span<const VkSurfaceFormatKHR> p_Supported) noexcept
+                                        const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
 {
     for (const VkSurfaceFormatKHR &desired : p_Requested)
         for (const VkSurfaceFormatKHR &supported : p_Supported)
@@ -20,7 +20,7 @@ Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKH
 }
 
 Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
-                                           const TKit::Span<const VkPresentModeKHR> p_Supported) noexcept
+                                           const TKit::Span<const VkPresentModeKHR> p_Supported)
 {
     for (const VkPresentModeKHR &desired : p_Requested)
         for (const VkPresentModeKHR &supported : p_Supported)
@@ -30,7 +30,7 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
                                            "No desired present mode that is supported found");
 }
 
-Result<SwapChain> SwapChain::Builder::Build() const noexcept
+Result<SwapChain> SwapChain::Builder::Build() const
 {
     const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateSwapchainKHR, Result<SwapChain>);
@@ -218,12 +218,12 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     return Result<SwapChain>::Ok(proxy, swapChain, info);
 }
 
-SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info) noexcept
+SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info)
     : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Info(p_Info)
 {
 }
 
-void SwapChain::destroy() const noexcept
+void SwapChain::destroy() const
 {
     TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
 
@@ -234,143 +234,143 @@ void SwapChain::destroy() const noexcept
     m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 }
 
-void SwapChain::Destroy() noexcept
+void SwapChain::Destroy()
 {
     destroy();
     m_SwapChain = VK_NULL_HANDLE;
 }
-void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const SwapChain swapChain = *this;
     p_Queue.Push([swapChain]() { swapChain.destroy(); }); // That is stupid...
 }
-const LogicalDevice::Proxy &SwapChain::GetDevice() const noexcept
+const LogicalDevice::Proxy &SwapChain::GetDevice() const
 {
     return m_Device;
 }
-VkSwapchainKHR SwapChain::GetHandle() const noexcept
+VkSwapchainKHR SwapChain::GetHandle() const
 {
     return m_SwapChain;
 }
-const SwapChain::Info &SwapChain::GetInfo() const noexcept
+const SwapChain::Info &SwapChain::GetInfo() const
 {
     return m_Info;
 }
-SwapChain::operator VkSwapchainKHR() const noexcept
+SwapChain::operator VkSwapchainKHR() const
 {
     return m_SwapChain;
 }
-SwapChain::operator bool() const noexcept
+SwapChain::operator bool() const
 {
     return m_SwapChain != VK_NULL_HANDLE;
 }
 
-SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format) noexcept
+SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format)
 {
     m_SurfaceFormats.Insert(m_SurfaceFormats.begin(), p_Format);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormatKHR p_Format) noexcept
+SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormatKHR p_Format)
 {
     m_SurfaceFormats.Append(p_Format);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode) noexcept
+SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode)
 {
     m_PresentModes.Insert(m_PresentModes.begin(), p_Mode);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AllowPresentMode(const VkPresentModeKHR p_Mode) noexcept
+SwapChain::Builder &SwapChain::Builder::AllowPresentMode(const VkPresentModeKHR p_Mode)
 {
     m_PresentModes.Append(p_Mode);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestImageCount(const u32 p_Images) noexcept
+SwapChain::Builder &SwapChain::Builder::RequestImageCount(const u32 p_Images)
 {
     m_RequestedImages = p_Images;
     if (m_RequestedImages < m_RequiredImages)
         m_RequiredImages = m_RequestedImages;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequireImageCount(const u32 p_Images) noexcept
+SwapChain::Builder &SwapChain::Builder::RequireImageCount(const u32 p_Images)
 {
     m_RequiredImages = p_Images;
     if (m_RequestedImages < m_RequiredImages)
         m_RequestedImages = m_RequiredImages;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u32 p_Height) noexcept
+SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u32 p_Height)
 {
     m_Extent.width = p_Width;
     m_Extent.height = p_Height;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent) noexcept
+SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent)
 {
     m_Extent = p_Extent;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetFlags(const Flags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::SetFlags(const Flags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddFlags(const Flags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::AddFlags(const Flags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveFlags(const Flags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::RemoveFlags(const Flags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetImageArrayLayers(const u32 p_Layers) noexcept
+SwapChain::Builder &SwapChain::Builder::SetImageArrayLayers(const u32 p_Layers)
 {
     m_ImageArrayLayers = p_Layers;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::SetCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
 {
     m_CreateFlags = p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::AddCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
 {
     m_CreateFlags |= p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::RemoveCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
 {
     m_CreateFlags &= ~p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetImageUsageFlags(const VkImageUsageFlags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::SetImageUsageFlags(const VkImageUsageFlags p_Flags)
 {
     m_ImageUsage = p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddImageUsageFlags(const VkImageUsageFlags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::AddImageUsageFlags(const VkImageUsageFlags p_Flags)
 {
     m_ImageUsage |= p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveImageUsageFlags(const VkImageUsageFlags p_Flags) noexcept
+SwapChain::Builder &SwapChain::Builder::RemoveImageUsageFlags(const VkImageUsageFlags p_Flags)
 {
     m_ImageUsage &= ~p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetTransformBit(const VkSurfaceTransformFlagBitsKHR p_Transform) noexcept
+SwapChain::Builder &SwapChain::Builder::SetTransformBit(const VkSurfaceTransformFlagBitsKHR p_Transform)
 {
     m_TransformBit = p_Transform;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetCompositeAlphaBit(const VkCompositeAlphaFlagBitsKHR p_Alpha) noexcept
+SwapChain::Builder &SwapChain::Builder::SetCompositeAlphaBit(const VkCompositeAlphaFlagBitsKHR p_Alpha)
 {
     m_CompositeAlphaFlags = p_Alpha;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetOldSwapChain(const VkSwapchainKHR p_OldSwapChain) noexcept
+SwapChain::Builder &SwapChain::Builder::SetOldSwapChain(const VkSwapchainKHR p_OldSwapChain)
 {
     m_OldSwapChain = p_OldSwapChain;
     return *this;

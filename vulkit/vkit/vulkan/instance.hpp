@@ -28,8 +28,8 @@ class VKIT_API Instance
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::InstanceTable *Table = nullptr;
 
-        explicit(false) operator VkInstance() const noexcept;
-        explicit(false) operator bool() const noexcept;
+        explicit(false) operator VkInstance() const;
+        explicit(false) operator bool() const;
     };
 
     /**
@@ -49,43 +49,43 @@ class VKIT_API Instance
          *
          * @return A `Result` containing the created `Instance` or an error.
          */
-        FormattedResult<Instance> Build() const noexcept;
+        FormattedResult<Instance> Build() const;
 
-        Builder &SetApplicationName(const char *p_Name) noexcept;
-        Builder &SetEngineName(const char *p_Name) noexcept;
+        Builder &SetApplicationName(const char *p_Name);
+        Builder &SetEngineName(const char *p_Name);
 
-        Builder &SetApplicationVersion(u32 p_Version) noexcept;
-        Builder &SetEngineVersion(u32 p_Version) noexcept;
+        Builder &SetApplicationVersion(u32 p_Version);
+        Builder &SetEngineVersion(u32 p_Version);
 
-        Builder &SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
-        Builder &SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Builder &SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
-        Builder &RequireApiVersion(u32 p_Version) noexcept;
-        Builder &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &RequireApiVersion(u32 p_Version);
+        Builder &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
-        Builder &RequestApiVersion(u32 p_Version) noexcept;
-        Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch) noexcept;
+        Builder &RequestApiVersion(u32 p_Version);
+        Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
-        Builder &RequireExtension(const char *p_Extension) noexcept;
-        Builder &RequireExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
+        Builder &RequireExtension(const char *p_Extension);
+        Builder &RequireExtensions(TKit::Span<const char *const> p_Extensions);
 
-        Builder &RequestExtension(const char *p_Extension) noexcept;
-        Builder &RequestExtensions(TKit::Span<const char *const> p_Extensions) noexcept;
+        Builder &RequestExtension(const char *p_Extension);
+        Builder &RequestExtensions(TKit::Span<const char *const> p_Extensions);
 
-        Builder &RequireLayer(const char *p_Layer) noexcept;
-        Builder &RequireLayers(TKit::Span<const char *const> p_Layers) noexcept;
+        Builder &RequireLayer(const char *p_Layer);
+        Builder &RequireLayers(TKit::Span<const char *const> p_Layers);
 
-        Builder &RequestLayer(const char *p_Layer) noexcept;
-        Builder &RequestLayers(TKit::Span<const char *const> p_Layers) noexcept;
+        Builder &RequestLayer(const char *p_Layer);
+        Builder &RequestLayers(TKit::Span<const char *const> p_Layers);
 
-        Builder &RequireValidationLayers() noexcept;
-        Builder &RequestValidationLayers() noexcept;
+        Builder &RequireValidationLayers();
+        Builder &RequestValidationLayers();
 
-        Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback) noexcept;
-        Builder &SetHeadless(bool p_Headless = true) noexcept;
+        Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback);
+        Builder &SetHeadless(bool p_Headless = true);
 
-        Builder &SetDebugMessengerUserData(void *p_Data) noexcept;
-        Builder &SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks) noexcept;
+        Builder &SetDebugMessengerUserData(void *p_Data);
+        Builder &SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks);
 
       private:
         const char *m_ApplicationName = nullptr;
@@ -153,23 +153,23 @@ class VKIT_API Instance
         const VkAllocationCallbacks *AllocationCallbacks;
     };
 
-    Instance() noexcept = default;
-    Instance(VkInstance p_Instance, const Info &p_Info) noexcept;
+    Instance() = default;
+    Instance(VkInstance p_Instance, const Info &p_Info);
 
-    bool IsExtensionEnabled(const char *p_Extension) const noexcept;
-    bool IsLayerEnabled(const char *p_Layer) const noexcept;
+    bool IsExtensionEnabled(const char *p_Extension) const;
+    bool IsLayerEnabled(const char *p_Layer) const;
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    VkInstance GetHandle() const noexcept;
-    const Info &GetInfo() const noexcept;
+    VkInstance GetHandle() const;
+    const Info &GetInfo() const;
 
-    Proxy CreateProxy() const noexcept;
+    Proxy CreateProxy() const;
 
-    explicit(false) operator VkInstance() const noexcept;
-    explicit(false) operator Proxy() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkInstance() const;
+    explicit(false) operator Proxy() const;
+    explicit(false) operator bool() const;
 
   private:
     VkInstance m_Instance = VK_NULL_HANDLE;

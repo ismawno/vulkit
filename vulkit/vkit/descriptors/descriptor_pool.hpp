@@ -31,7 +31,7 @@ class VKIT_API DescriptorPool
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
+        explicit Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a descriptor pool based on the builder's configuration.
@@ -40,13 +40,13 @@ class VKIT_API DescriptorPool
          *
          * @return A `Result` containing the created `DescriptorPool` or an error.
          */
-        Result<DescriptorPool> Build() const noexcept;
+        Result<DescriptorPool> Build() const;
 
-        Builder &SetMaxSets(u32 p_MaxSets) noexcept;
-        Builder &SetFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
-        Builder &AddFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
-        Builder &RemoveFlags(VkDescriptorPoolCreateFlags p_Flags) noexcept;
-        Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size) noexcept;
+        Builder &SetMaxSets(u32 p_MaxSets);
+        Builder &SetFlags(VkDescriptorPoolCreateFlags p_Flags);
+        Builder &AddFlags(VkDescriptorPoolCreateFlags p_Flags);
+        Builder &RemoveFlags(VkDescriptorPoolCreateFlags p_Flags);
+        Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size);
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -62,13 +62,13 @@ class VKIT_API DescriptorPool
         TKit::StaticArray32<VkDescriptorPoolSize> PoolSizes;
     };
 
-    DescriptorPool() noexcept = default;
-    DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info) noexcept;
+    DescriptorPool() = default;
+    DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const noexcept;
+    const Info &GetInfo() const;
 
     /**
      * @brief Allocates a descriptor set from the pool.
@@ -78,7 +78,7 @@ class VKIT_API DescriptorPool
      * @param p_Layout The descriptor set layout to use for allocation.
      * @return A `Result` containing the allocated descriptor set or an error.
      */
-    Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const noexcept;
+    Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const;
 
     /**
      * @brief Deallocates one or more descriptor sets from the pool.
@@ -88,7 +88,7 @@ class VKIT_API DescriptorPool
      * @param p_Sets A span containing the descriptor sets to deallocate.
      * @return A `Result` indicating success or failure.
      */
-    Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const noexcept;
+    Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const;
 
     /**
      * @brief Deallocates a descriptor set from the pool.
@@ -98,19 +98,19 @@ class VKIT_API DescriptorPool
      * @param p_Set The descriptor set to deallocate.
      * @return A `Result` indicating success or failure.
      */
-    Result<> Deallocate(VkDescriptorSet p_Set) const noexcept;
+    Result<> Deallocate(VkDescriptorSet p_Set) const;
 
     /**
      * @brief Resets the descriptor pool, making all resources available for reallocation.
      *
      * @return A `Result` indicating success or failure.
      */
-    Result<> Reset() noexcept;
+    Result<> Reset();
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkDescriptorPool GetHandle() const noexcept;
-    explicit(false) operator VkDescriptorPool() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkDescriptorPool GetHandle() const;
+    explicit(false) operator VkDescriptorPool() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

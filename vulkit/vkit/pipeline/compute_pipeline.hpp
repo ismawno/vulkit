@@ -35,7 +35,7 @@ class VKIT_API ComputePipeline
      * @param p_Specs The specifications for the compute pipeline.
      * @return A `Result` containing the created `ComputePipeline` or an error.
      */
-    static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
+    static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs);
 
     /**
      * @brief Creates multiple compute pipelines in a batch.
@@ -48,13 +48,13 @@ class VKIT_API ComputePipeline
      * @return A `Result` indicating success or failure for the batch operation.
      */
     static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<const Specs> p_Specs,
-                           TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE) noexcept;
+                           TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
-    ComputePipeline() noexcept = default;
-    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept;
+    ComputePipeline() = default;
+    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Binds the compute pipeline to a command buffer.
@@ -63,12 +63,12 @@ class VKIT_API ComputePipeline
      *
      * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
      */
-    void Bind(VkCommandBuffer p_CommandBuffer) const noexcept;
+    void Bind(VkCommandBuffer p_CommandBuffer) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkPipeline GetHandle() const noexcept;
-    explicit(false) operator VkPipeline() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkPipeline GetHandle() const;
+    explicit(false) operator VkPipeline() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

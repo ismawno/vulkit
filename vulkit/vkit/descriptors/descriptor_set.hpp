@@ -24,7 +24,7 @@ class VKIT_API DescriptorSet
     class Writer
     {
       public:
-        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout) noexcept;
+        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout);
 
         /**
          * @brief Writes a buffer to a descriptor set binding.
@@ -34,7 +34,7 @@ class VKIT_API DescriptorSet
          * @param p_Binding The binding index in the descriptor set layout.
          * @param p_BufferInfo A pointer to the buffer descriptor info.
          */
-        void WriteBuffer(u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo) noexcept;
+        void WriteBuffer(u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo);
 
         /**
          * @brief Writes a buffer to a descriptor set binding.
@@ -44,7 +44,7 @@ class VKIT_API DescriptorSet
          * @param p_Binding The binding index in the descriptor set layout.
          * @param p_Buffer A reference to the buffer to bind.
          */
-        void WriteBuffer(u32 p_Binding, const Buffer &p_Buffer) noexcept;
+        void WriteBuffer(u32 p_Binding, const Buffer &p_Buffer);
 
         /**
          * @brief Writes an image to a descriptor set binding.
@@ -54,7 +54,7 @@ class VKIT_API DescriptorSet
          * @param p_Binding The binding index in the descriptor set layout.
          * @param p_ImageInfo A pointer to the image descriptor info.
          */
-        void WriteImage(u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo) noexcept;
+        void WriteImage(u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo);
 
         /**
          * @brief Overwrites an existing descriptor set.
@@ -63,7 +63,7 @@ class VKIT_API DescriptorSet
          *
          * @param p_Set The descriptor set to overwrite.
          */
-        void Overwrite(const VkDescriptorSet p_Set) noexcept;
+        void Overwrite(const VkDescriptorSet p_Set);
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -72,27 +72,27 @@ class VKIT_API DescriptorSet
         TKit::StaticArray16<VkWriteDescriptorSet> m_Writes;
     };
 
-    static Result<DescriptorSet> Create(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set) noexcept;
+    static Result<DescriptorSet> Create(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set);
 
-    DescriptorSet() noexcept = default;
-    DescriptorSet(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set) noexcept;
+    DescriptorSet() = default;
+    DescriptorSet(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set);
 
     void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
-              TKit::Span<const u32> p_DynamicOffsets = {}) const noexcept;
+              TKit::Span<const u32> p_DynamicOffsets = {}) const;
 
     static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                      TKit::Span<const VkDescriptorSet> p_Sets, VkPipelineBindPoint p_BindPoint,
                      VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
-                     TKit::Span<const u32> p_DynamicOffsets = {}) noexcept;
+                     TKit::Span<const u32> p_DynamicOffsets = {});
 
     static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer, VkDescriptorSet p_Set,
                      VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
-                     TKit::Span<const u32> p_DynamicOffsets = {}) noexcept;
+                     TKit::Span<const u32> p_DynamicOffsets = {});
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkDescriptorSet GetHandle() const noexcept;
-    explicit(false) operator VkDescriptorSet() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkDescriptorSet GetHandle() const;
+    explicit(false) operator VkDescriptorSet() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

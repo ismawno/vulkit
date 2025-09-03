@@ -13,7 +13,7 @@ namespace VKit::Detail
 {
 template <typename T>
 concept Pipeline = std::is_same_v<T, GraphicsPipeline> || std::is_same_v<T, ComputePipeline>;
-template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexcept
+template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage()
 {
     if constexpr (std::is_same_v<Pip, GraphicsPipeline>)
         return VK_SHADER_STAGE_ALL_GRAPHICS;
@@ -32,8 +32,8 @@ template <Pipeline Pip> constexpr VkShaderStageFlags DefaultShaderStage() noexce
 template <Pipeline Pip> class IPipelineJob
 {
   public:
-    IPipelineJob() noexcept = default;
-    IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
+    IPipelineJob() = default;
+    IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_Layout);
 
     /**
      * @brief Updates the descriptor set at the specified index.
@@ -44,7 +44,7 @@ template <Pipeline Pip> class IPipelineJob
      * @param p_Index The index of the descriptor set to update.
      * @param p_DescriptorSet The descriptor set to update.
      */
-    void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet) noexcept;
+    void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet);
 
     /**
      * @brief Updates the push constant range at the specified index.
@@ -58,7 +58,7 @@ template <Pipeline Pip> class IPipelineJob
      */
     template <typename T>
     void UpdatePushConstantRange(u32 p_Index, const T *p_Data,
-                                 const VkShaderStageFlags p_Stages = DefaultShaderStage<Pip>()) noexcept
+                                 const VkShaderStageFlags p_Stages = DefaultShaderStage<Pip>())
     {
         m_PushData[p_Index] = PushDataInfo{p_Data, sizeof(T), p_Stages};
     }
@@ -74,9 +74,9 @@ template <Pipeline Pip> class IPipelineJob
      * @param p_DynamicOffsets The dynamic offsets to use for the descriptor sets.
      */
     void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FirstSet = 0,
-              TKit::Span<const u32> p_DynamicOffsets = {}) const noexcept;
+              TKit::Span<const u32> p_DynamicOffsets = {}) const;
 
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator bool() const;
 
   protected:
     Pip m_Pipeline{};
@@ -110,7 +110,7 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
   public:
     using IPipelineJob<GraphicsPipeline>::IPipelineJob;
 
-    static Result<PipelineJob> Create(const GraphicsPipeline &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
+    static Result<PipelineJob> Create(const GraphicsPipeline &p_Pipeline, const PipelineLayout &p_Layout);
 
     /**
      * @brief A simple wrapper around `vkCmdDraw` to draw the pipeline job.
@@ -124,7 +124,7 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
      * @param p_FirstInstance The first instance to draw.
      */
     void Draw(VkCommandBuffer p_CommandBuffer, u32 p_VertexCount, u32 p_InstanceCount = 1, u32 p_FirstVertex = 0,
-              u32 p_Firstinstance = 0) const noexcept;
+              u32 p_Firstinstance = 0) const;
 
     /**
      * @brief A simple wrapper around `vkCmdDrawIndexed` to draw the pipeline job with indices.
@@ -139,7 +139,7 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
      * @param p_FirstInstance The first instance to draw.
      */
     void DrawIndexed(VkCommandBuffer commandBuffer, u32 p_IndexCount, u32 p_InstanceCount = 1, u32 p_FirstIndex = 0,
-                     i32 p_VertexOffset = 0, u32 p_FirstInstance = 0) const noexcept;
+                     i32 p_VertexOffset = 0, u32 p_FirstInstance = 0) const;
 };
 
 /**
@@ -156,7 +156,7 @@ template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipeline
   public:
     using IPipelineJob<ComputePipeline>::IPipelineJob;
 
-    static Result<PipelineJob> Create(const ComputePipeline &p_Pipeline, const PipelineLayout &p_Layout) noexcept;
+    static Result<PipelineJob> Create(const ComputePipeline &p_Pipeline, const PipelineLayout &p_Layout);
 
     /**
      * @brief A simple wrapper around `vkCmdDispatch` to dispatch the pipeline job.
@@ -169,7 +169,7 @@ template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipeline
      * @param p_GroupCountZ The number of groups in the Z dimension.
      */
     void Dispatch(VkCommandBuffer p_CommandBuffer, u32 p_GroupCountX, u32 p_GroupCountY,
-                  u32 p_GroupCountZ) const noexcept;
+                  u32 p_GroupCountZ) const;
 };
 } // namespace VKit::Detail
 

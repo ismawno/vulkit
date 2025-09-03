@@ -61,17 +61,17 @@ class VKIT_API Buffer
      * @param p_Specs The specifications for the buffer.
      * @return A `Result` containing the created `Buffer` or an error.
      */
-    static Result<Buffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept;
+    static Result<Buffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs);
 
-    Buffer() noexcept = default;
-    Buffer(const LogicalDevice::Proxy &p_Device, VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData) noexcept;
+    Buffer() = default;
+    Buffer(const LogicalDevice::Proxy &p_Device, VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    void Map() noexcept;
-    void Unmap() noexcept;
-    bool IsMapped() const noexcept;
+    void Map();
+    void Unmap();
+    bool IsMapped() const;
 
     /**
      * @brief Writes data to the buffer, up to the buffer size.
@@ -80,7 +80,7 @@ class VKIT_API Buffer
      *
      * @param p_Data A pointer to the data to write.
      */
-    void Write(const void *p_Data) noexcept;
+    void Write(const void *p_Data);
 
     /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
@@ -91,7 +91,7 @@ class VKIT_API Buffer
      * @param p_Size The size of the data to write.
      * @param p_Offset The offset within the buffer to start writing.
      */
-    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0) noexcept;
+    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0);
 
     /**
      * @brief Writes data to the buffer at the specified index.
@@ -101,7 +101,7 @@ class VKIT_API Buffer
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
      */
-    void WriteAt(u32 p_Index, const void *p_Data) noexcept;
+    void WriteAt(u32 p_Index, const void *p_Data);
 
     /**
      * @brief Flushes a range of the buffer's memory to ensure visibility to the device.
@@ -111,7 +111,7 @@ class VKIT_API Buffer
      * @param p_Size The size of the memory range to flush (default: entire buffer).
      * @param p_Offset The offset within the buffer to start flushing (default: 0).
      */
-    void Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
+    void Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
 
     /**
      * @brief Flushes a range of the buffer's memory at the specified index.
@@ -120,10 +120,10 @@ class VKIT_API Buffer
      *
      * @param p_Index The index of the buffer instance to flush.
      */
-    void FlushAt(u32 p_Index) noexcept;
+    void FlushAt(u32 p_Index);
 
-    void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) noexcept;
-    void InvalidateAt(u32 p_Index) noexcept;
+    void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    void InvalidateAt(u32 p_Index);
 
     /**
      * @brief Binds the buffer as an index buffer to a command buffer.
@@ -134,7 +134,7 @@ class VKIT_API Buffer
      * @param p_Offset The offset within the buffer (default: 0).
      */
     template <typename Index>
-    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept
+    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
                       "[VULKIT] Index type must be u8, u16 or u32");
@@ -151,7 +151,7 @@ class VKIT_API Buffer
      * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const noexcept;
+    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const;
 
     /**
      * @brief Binds multiple buffers as vertex buffers to a command buffer.
@@ -163,7 +163,7 @@ class VKIT_API Buffer
      */
     static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, VkCommandBuffer p_CommandBuffer,
                                    TKit::Span<const VkBuffer> p_Buffers, u32 p_FirstBinding = 0,
-                                   TKit::Span<const VkDeviceSize> p_Offsets = {}) noexcept;
+                                   TKit::Span<const VkDeviceSize> p_Offsets = {});
 
     /**
      * @brief Binds a buffer as a vertex buffer to a command buffer.
@@ -172,14 +172,14 @@ class VKIT_API Buffer
      * @param p_Offset The offset within the buffer (default: 0).
      */
     void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer,
-                            VkDeviceSize p_Offset = 0) const noexcept;
+                            VkDeviceSize p_Offset = 0) const;
 
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE,
-                                             VkDeviceSize p_Offset = 0) const noexcept;
-    VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const noexcept;
+                                             VkDeviceSize p_Offset = 0) const;
+    VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const;
 
-    void *GetData() const noexcept;
-    void *ReadAt(u32 p_Index) const noexcept;
+    void *GetData() const;
+    void *ReadAt(u32 p_Index) const;
 
     /**
      * @brief Copies data from another buffer into this buffer.
@@ -191,15 +191,15 @@ class VKIT_API Buffer
      * @param p_Queue The queue to submit the copy command.
      * @return A `Result` indicating success or failure.
      */
-    Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue) noexcept;
+    Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue);
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkBuffer GetHandle() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkBuffer GetHandle() const;
 
-    explicit(false) operator VkBuffer() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkBuffer() const;
+    explicit(false) operator bool() const;
 
-    const Info &GetInfo() const noexcept;
+    const Info &GetInfo() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

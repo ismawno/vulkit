@@ -3,11 +3,11 @@
 
 namespace VKit
 {
-PipelineLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) noexcept : m_Device(p_Device)
+PipelineLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
 {
 }
 
-Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
+Result<PipelineLayout> PipelineLayout::Builder::Build() const
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreatePipelineLayout, Result<PipelineLayout>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipelineLayout, Result<PipelineLayout>);
@@ -33,69 +33,69 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const noexcept
 }
 
 PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
-                               const Info &p_Info) noexcept
+                               const Info &p_Info)
     : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
 {
 }
 
-void PipelineLayout::Destroy() noexcept
+void PipelineLayout::Destroy()
 {
     TKIT_ASSERT(m_Layout, "[VULKIT] The pipeline layout is a NULL handle");
     m_Device.Table->DestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
     m_Layout = VK_NULL_HANDLE;
 }
 
-void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipelineLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push(
         [layout, device]() { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
 }
-const PipelineLayout::Info &PipelineLayout::GetInfo() const noexcept
+const PipelineLayout::Info &PipelineLayout::GetInfo() const
 {
     return m_Info;
 }
 
-const LogicalDevice::Proxy &PipelineLayout::GetDevice() const noexcept
+const LogicalDevice::Proxy &PipelineLayout::GetDevice() const
 {
     return m_Device;
 }
-VkPipelineLayout PipelineLayout::GetHandle() const noexcept
+VkPipelineLayout PipelineLayout::GetHandle() const
 {
     return m_Layout;
 }
-PipelineLayout::operator VkPipelineLayout() const noexcept
+PipelineLayout::operator VkPipelineLayout() const
 {
     return m_Layout;
 }
-PipelineLayout::operator bool() const noexcept
+PipelineLayout::operator bool() const
 {
     return m_Layout != VK_NULL_HANDLE;
 }
 
-PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout) noexcept
+PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout)
 {
     m_DescriptorSetLayouts.Append(p_Layout);
     return *this;
 }
 PipelineLayout::Builder &PipelineLayout::Builder::AddPushConstantRange(const VkShaderStageFlags p_Stages,
-                                                                       const u32 p_Size, const u32 p_Offset) noexcept
+                                                                       const u32 p_Size, const u32 p_Offset)
 {
     m_PushConstantRanges.Append(VkPushConstantRange{p_Stages, p_Offset, p_Size});
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags p_Flags) noexcept
+PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::AddFlags(const VkPipelineLayoutCreateFlags p_Flags) noexcept
+PipelineLayout::Builder &PipelineLayout::Builder::AddFlags(const VkPipelineLayoutCreateFlags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::RemoveFlags(const VkPipelineLayoutCreateFlags p_Flags) noexcept
+PipelineLayout::Builder &PipelineLayout::Builder::RemoveFlags(const VkPipelineLayoutCreateFlags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;

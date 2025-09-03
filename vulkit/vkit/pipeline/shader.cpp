@@ -7,7 +7,7 @@
 
 namespace VKit
 {
-Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) noexcept
+Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module)
     : m_Device(p_Device), m_Module(p_Module)
 {
 }
@@ -16,7 +16,7 @@ TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
 FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
-                                       const std::string_view p_BinaryPath) noexcept
+                                       const std::string_view p_BinaryPath)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, FormattedResult<Shader>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, FormattedResult<Shader>);
@@ -49,7 +49,7 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
 TKIT_COMPILER_WARNING_IGNORE_POP()
 
 i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath,
-                    const std::string_view p_Arguments) noexcept
+                    const std::string_view p_Arguments)
 {
     namespace fs = std::filesystem;
     const fs::path binaryPath = p_BinaryPath;
@@ -60,7 +60,7 @@ i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view 
     return std::system(compileCommand.c_str());
 }
 
-bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath) noexcept
+bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath)
 {
     namespace fs = std::filesystem;
     const fs::path sourcePath = p_SourcePath;
@@ -76,32 +76,32 @@ bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_
     return sourceTime > binaryTime;
 }
 
-void Shader::Destroy() noexcept
+void Shader::Destroy()
 {
     TKIT_ASSERT(m_Module, "[VULKIT] The shader is a NULL handle");
     m_Device.Table->DestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
     m_Module = VK_NULL_HANDLE;
 }
-void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkShaderModule module = m_Module;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([module, device]() { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
 }
 
-const LogicalDevice::Proxy &Shader::GetDevice() const noexcept
+const LogicalDevice::Proxy &Shader::GetDevice() const
 {
     return m_Device;
 }
-VkShaderModule Shader::GetHandle() const noexcept
+VkShaderModule Shader::GetHandle() const
 {
     return m_Module;
 }
-Shader::operator VkShaderModule() const noexcept
+Shader::operator VkShaderModule() const
 {
     return m_Module;
 }
-Shader::operator bool() const noexcept
+Shader::operator bool() const
 {
     return m_Module != VK_NULL_HANDLE;
 }

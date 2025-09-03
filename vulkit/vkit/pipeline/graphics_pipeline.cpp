@@ -5,19 +5,19 @@
 namespace VKit
 {
 GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
-                                   const VkRenderPass p_RenderPass, const u32 p_Subpass) noexcept
+                                   const VkRenderPass p_RenderPass, const u32 p_Subpass)
     : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(p_RenderPass), m_Subpass(p_Subpass)
 {
     initialize();
 }
 GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
-                                   const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo) noexcept
+                                   const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo)
     : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(VK_NULL_HANDLE), m_RenderingInfo(p_RenderingInfo)
 {
     initialize();
 }
 
-void GraphicsPipeline::Builder::initialize() noexcept
+void GraphicsPipeline::Builder::initialize()
 {
     m_InputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     m_InputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -77,7 +77,7 @@ void GraphicsPipeline::Builder::initialize() noexcept
     m_VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 }
 
-Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
+Result<GraphicsPipeline> GraphicsPipeline::Builder::Build()
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateGraphicsPipelines, Result<GraphicsPipeline>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipeline, Result<GraphicsPipeline>);
@@ -96,7 +96,7 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() noexcept
 
 Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
                                   const TKit::Span<GraphicsPipeline> p_Pipelines,
-                                  const VkPipelineCache p_Cache) noexcept
+                                  const VkPipelineCache p_Cache)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateGraphicsPipelines, Result<>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
@@ -125,47 +125,47 @@ Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TK
     return Result<>::Ok();
 }
 
-GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline) noexcept
+GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline)
     : m_Device(p_Device), m_Pipeline(p_Pipeline)
 {
 }
 
-void GraphicsPipeline::Destroy() noexcept
+void GraphicsPipeline::Destroy()
 {
     TKIT_ASSERT(m_Pipeline, "[VULKIT] The graphics pipeline is a NULL handle");
     m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
-void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
-void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
+void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
 {
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 }
 
-const LogicalDevice::Proxy &GraphicsPipeline::GetDevice() const noexcept
+const LogicalDevice::Proxy &GraphicsPipeline::GetDevice() const
 {
     return m_Device;
 }
-VkPipeline GraphicsPipeline::GetHandle() const noexcept
+VkPipeline GraphicsPipeline::GetHandle() const
 {
     return m_Pipeline;
 }
-GraphicsPipeline::operator VkPipeline() const noexcept
+GraphicsPipeline::operator VkPipeline() const
 {
     return m_Pipeline;
 }
-GraphicsPipeline::operator bool() const noexcept
+GraphicsPipeline::operator bool() const
 {
     return m_Pipeline != VK_NULL_HANDLE;
 }
 
-VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noexcept
+VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()
 {
     m_ColorBlendInfo.attachmentCount = m_ColorAttachments.GetSize();
     m_ColorBlendInfo.pAttachments = m_ColorAttachments.IsEmpty() ? nullptr : m_ColorAttachments.GetData();
@@ -204,34 +204,34 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() noe
     return pipelineInfo;
 }
 
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipeline(const VkPipeline p_BasePipeline) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipeline(const VkPipeline p_BasePipeline)
 {
     m_BasePipeline = p_BasePipeline;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipelineIndex(const i32 p_BasePipelineIndex) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipelineIndex(const i32 p_BasePipelineIndex)
 {
     m_BasePipelineIndex = p_BasePipelineIndex;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCache(const VkPipelineCache p_Cache) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCache(const VkPipelineCache p_Cache)
 {
     m_Cache = p_Cache;
     return *this;
 }
 
 // Input Assembly
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetTopology(const VkPrimitiveTopology p_Topology) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetTopology(const VkPrimitiveTopology p_Topology)
 {
     m_InputAssemblyInfo.topology = p_Topology;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart()
 {
     m_InputAssemblyInfo.primitiveRestartEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
 {
     m_InputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
     return *this;
@@ -239,26 +239,26 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart() 
 
 // Viewport and Scissor
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport,
-                                                                  const VkRect2D p_Scissor) noexcept
+                                                                  const VkRect2D p_Scissor)
 {
     m_Viewports.Append(std::make_pair(p_Viewport, p_Scissor));
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewports(
-    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports)
 {
     for (const auto &viewport : p_Viewports)
         m_Viewports.Append(viewport);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewports(
-    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports) noexcept
+    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports)
 {
     m_Viewports.Clear();
     AddViewports(p_Viewports);
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount)
 {
     m_ViewportInfo.viewportCount = p_ViewportCount;
     m_ViewportInfo.scissorCount = p_ViewportCount;
@@ -268,58 +268,58 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32
 }
 
 // Rasterization
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableRasterizerDiscard() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableRasterizerDiscard()
 {
     m_RasterizationInfo.rasterizerDiscardEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp()
 {
     m_RasterizationInfo.depthClampEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableRasterizerDiscard() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableRasterizerDiscard()
 {
     m_RasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthClamp() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthClamp()
 {
     m_RasterizationInfo.depthClampEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBias() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBias()
 {
     m_RasterizationInfo.depthBiasEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode p_Mode) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode p_Mode)
 {
     m_RasterizationInfo.polygonMode = p_Mode;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLineWidth(const f32 p_Width) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLineWidth(const f32 p_Width)
 {
     m_RasterizationInfo.lineWidth = p_Width;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCullMode(const VkCullModeFlags p_Mode) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCullMode(const VkCullModeFlags p_Mode)
 {
     m_RasterizationInfo.cullMode = p_Mode;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetFrontFace(const VkFrontFace p_FrontFace) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetFrontFace(const VkFrontFace p_FrontFace)
 {
     m_RasterizationInfo.frontFace = p_FrontFace;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias()
 {
     m_RasterizationInfo.depthBiasEnable = VK_TRUE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 p_ConstantFactor, const f32 p_Clamp,
-                                                                   const f32 p_SlopeFactor) noexcept
+                                                                   const f32 p_SlopeFactor)
 {
     m_RasterizationInfo.depthBiasConstantFactor = p_ConstantFactor;
     m_RasterizationInfo.depthBiasClamp = p_Clamp;
@@ -328,69 +328,69 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 p_C
 }
 
 // Multisampling
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableSampleShading() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableSampleShading()
 {
     m_MultisampleInfo.sampleShadingEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableSampleShading() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableSampleShading()
 {
     m_MultisampleInfo.sampleShadingEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits p_SampleCount) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits p_SampleCount)
 {
     m_MultisampleInfo.rasterizationSamples = p_SampleCount;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetMinSampleShading(const f32 p_MinSampleShading) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetMinSampleShading(const f32 p_MinSampleShading)
 {
     m_MultisampleInfo.minSampleShading = p_MinSampleShading;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleMask(const VkSampleMask *p_SampleMask) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleMask(const VkSampleMask *p_SampleMask)
 {
     m_MultisampleInfo.pSampleMask = p_SampleMask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToCoverage() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToCoverage()
 {
     m_MultisampleInfo.alphaToCoverageEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToOne() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToOne()
 {
     m_MultisampleInfo.alphaToOneEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToCoverage() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToCoverage()
 {
     m_MultisampleInfo.alphaToCoverageEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToOne() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToOne()
 {
     m_MultisampleInfo.alphaToOneEnable = VK_FALSE;
     return *this;
 }
 
 // Color Blending
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation()
 {
     m_ColorBlendInfo.logicOpEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableLogicOperation() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableLogicOperation()
 {
     m_ColorBlendInfo.logicOpEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp p_Operation) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp p_Operation)
 {
     m_ColorBlendInfo.logicOp = p_Operation;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *p_Constants) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *p_Constants)
 {
     m_ColorBlendInfo.blendConstants[0] = p_Constants[0];
     m_ColorBlendInfo.blendConstants[1] = p_Constants[1];
@@ -399,7 +399,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f3
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 p_C1, const f32 p_C2, const f32 p_C3,
-                                                                        const f32 p_C4) noexcept
+                                                                        const f32 p_C4)
 {
     m_ColorBlendInfo.blendConstants[0] = p_C1;
     m_ColorBlendInfo.blendConstants[1] = p_C2;
@@ -407,76 +407,76 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f3
     m_ColorBlendInfo.blendConstants[3] = p_C4;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32 p_Index, const f32 p_Value) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32 p_Index, const f32 p_Value)
 {
     m_ColorBlendInfo.blendConstants[p_Index] = p_Value;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment()
 {
     m_ColorAttachmentBuilders.Append(this);
     m_ColorAttachments.Append(m_ColorAttachmentBuilders.GetBack().m_ColorBlendAttachmentInfo);
     return *this;
 }
-GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorAttachment() noexcept
+GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorAttachment()
 {
     return m_ColorAttachmentBuilders.Append(this);
 }
 
 // Depth and Stencil
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthTest()
 {
     m_DepthStencilInfo.depthTestEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthWrite() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthWrite()
 {
     m_DepthStencilInfo.depthWriteEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBoundsTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBoundsTest()
 {
     m_DepthStencilInfo.depthBoundsTestEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableStencilTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableStencilTest()
 {
     m_DepthStencilInfo.stencilTestEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthTest()
 {
     m_DepthStencilInfo.depthTestEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthWrite() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthWrite()
 {
     m_DepthStencilInfo.depthWriteEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBoundsTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBoundsTest()
 {
     m_DepthStencilInfo.depthBoundsTestEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableStencilTest() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableStencilTest()
 {
     m_DepthStencilInfo.stencilTestEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp p_Op) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp p_Op)
 {
     m_DepthStencilInfo.depthCompareOp = p_Op;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBounds(const f32 p_Min, const f32 p_Max) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBounds(const f32 p_Min, const f32 p_Max)
 {
     m_DepthStencilInfo.minDepthBounds = p_Min;
     m_DepthStencilInfo.maxDepthBounds = p_Max;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilFailOperation(const VkStencilOp p_FailOp,
-                                                                              const Flags p_Flags) noexcept
+                                                                              const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.failOp = p_FailOp;
@@ -485,7 +485,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilFailOperation(co
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilPassOperation(const VkStencilOp p_PassOp,
-                                                                              const Flags p_Flags) noexcept
+                                                                              const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.passOp = p_PassOp;
@@ -494,7 +494,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilPassOperation(co
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilDepthFailOperation(const VkStencilOp p_DepthFailOp,
-                                                                                   const Flags p_Flags) noexcept
+                                                                                   const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.depthFailOp = p_DepthFailOp;
@@ -503,7 +503,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilDepthFailOperati
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation(const VkCompareOp p_CompareOp,
-                                                                                 const Flags p_Flags) noexcept
+                                                                                 const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.compareOp = p_CompareOp;
@@ -512,7 +512,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask,
-                                                                            const Flags p_Flags) noexcept
+                                                                            const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.compareMask = p_Mask;
@@ -521,7 +521,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(cons
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask,
-                                                                          const Flags p_Flags) noexcept
+                                                                          const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.writeMask = p_Mask;
@@ -530,7 +530,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const 
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference,
-                                                                          const Flags p_Flags) noexcept
+                                                                          const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.reference = p_Reference;
@@ -541,7 +541,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const 
 
 // Vertex Input
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(const VkVertexInputRate p_InputRate,
-                                                                            const u32 p_Stride) noexcept
+                                                                            const u32 p_Stride)
 {
     VkVertexInputBindingDescription binding{};
     binding.binding = m_BindingDescriptions.GetSize();
@@ -552,7 +552,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(cons
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(const u32 p_Binding,
                                                                               const VkFormat p_Format,
-                                                                              const u32 p_Offset) noexcept
+                                                                              const u32 p_Offset)
 {
     VkVertexInputAttributeDescription attribute{};
     attribute.binding = p_Binding;
@@ -568,7 +568,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkSha
                                                                      const VkShaderStageFlagBits p_Stage,
                                                                      const VkPipelineShaderStageCreateFlags p_Flags,
                                                                      const VkSpecializationInfo *p_Info,
-                                                                     const char *p_EntryPoint) noexcept
+                                                                     const char *p_EntryPoint)
 {
     VkPipelineShaderStageCreateInfo stage{};
     stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -582,27 +582,27 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkSha
 }
 
 // Dynamic State
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState p_State) noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState p_State)
 {
     m_DynamicStates.Append(p_State);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(
-    const TKit::Span<const VkDynamicState> p_States) noexcept
+    const TKit::Span<const VkDynamicState> p_States)
 {
     for (const VkDynamicState state : p_States)
         m_DynamicStates.Append(state);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(
-    const TKit::Span<const VkDynamicState> p_States) noexcept
+    const TKit::Span<const VkDynamicState> p_States)
 {
     m_DynamicStates.Clear();
     AddDynamicStates(p_States);
     return *this;
 }
 
-GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Builder) noexcept : m_Builder(p_Builder)
+GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Builder) : m_Builder(p_Builder)
 {
     m_ColorBlendAttachmentInfo.colorWriteMask =
         VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -615,49 +615,49 @@ GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Buil
     m_ColorBlendAttachmentInfo.alphaBlendOp = VK_BLEND_OP_ADD;                            // Optional
 }
 
-GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::EnableBlending() noexcept
+GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::EnableBlending()
 {
     m_ColorBlendAttachmentInfo.blendEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::DisableBlending() noexcept
+GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::DisableBlending()
 {
     m_ColorBlendAttachmentInfo.blendEnable = VK_FALSE;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorWriteMask(
-    const VkColorComponentFlags p_WriteMask) noexcept
+    const VkColorComponentFlags p_WriteMask)
 {
     m_ColorBlendAttachmentInfo.colorWriteMask = p_WriteMask;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorBlendFactors(
-    const VkBlendFactor p_SrcColor, const VkBlendFactor p_DstColor) noexcept
+    const VkBlendFactor p_SrcColor, const VkBlendFactor p_DstColor)
 {
     m_ColorBlendAttachmentInfo.srcColorBlendFactor = p_SrcColor;
     m_ColorBlendAttachmentInfo.dstColorBlendFactor = p_DstColor;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorBlendOperation(
-    const VkBlendOp p_ColorOp) noexcept
+    const VkBlendOp p_ColorOp)
 {
     m_ColorBlendAttachmentInfo.colorBlendOp = p_ColorOp;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetAlphaBlendFactors(
-    const VkBlendFactor p_SrcAlpha, const VkBlendFactor p_DstAlpha) noexcept
+    const VkBlendFactor p_SrcAlpha, const VkBlendFactor p_DstAlpha)
 {
     m_ColorBlendAttachmentInfo.srcAlphaBlendFactor = p_SrcAlpha;
     m_ColorBlendAttachmentInfo.dstAlphaBlendFactor = p_DstAlpha;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetAlphaBlendOperation(
-    const VkBlendOp p_AlphaOp) noexcept
+    const VkBlendOp p_AlphaOp)
 {
     m_ColorBlendAttachmentInfo.alphaBlendOp = p_AlphaOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAttachment() noexcept
+GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAttachment()
 {
     m_Builder->m_ColorAttachments.Append(m_ColorBlendAttachmentInfo);
     return *m_Builder;

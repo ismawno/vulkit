@@ -51,8 +51,8 @@ class VKIT_API LogicalDevice
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::DeviceTable *Table = nullptr;
 
-        explicit(false) operator VkDevice() const noexcept;
-        explicit(false) operator bool() const noexcept;
+        explicit(false) operator VkDevice() const;
+        explicit(false) operator bool() const;
     };
 
     /**
@@ -69,7 +69,7 @@ class VKIT_API LogicalDevice
      * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
      */
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                        TKit::Span<const QueuePriorities> p_QueuePriorities) noexcept;
+                                        TKit::Span<const QueuePriorities> p_QueuePriorities);
 
     /**
      * @brief Creates a Vulkan logical device with the specified parameters.
@@ -85,37 +85,37 @@ class VKIT_API LogicalDevice
      *
      * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
      */
-    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice) noexcept;
+    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice);
 
-    LogicalDevice() noexcept = default;
+    LogicalDevice() = default;
     LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                  const Vulkan::DeviceTable &p_Table, VkDevice p_Device) noexcept;
+                  const Vulkan::DeviceTable &p_Table, VkDevice p_Device);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Instance &GetInstance() const noexcept;
-    const PhysicalDevice &GetPhysicalDevice() const noexcept;
-    VkDevice GetHandle() const noexcept;
+    const Instance &GetInstance() const;
+    const PhysicalDevice &GetPhysicalDevice() const;
+    VkDevice GetHandle() const;
 
 #ifdef VK_KHR_surface
-    Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const noexcept;
+    Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
 #endif
     Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
-                                         VkFormatFeatureFlags p_Features) const noexcept;
+                                         VkFormatFeatureFlags p_Features) const;
 
-    static void WaitIdle(const Proxy &p_Device) noexcept;
-    void WaitIdle() const noexcept;
+    static void WaitIdle(const Proxy &p_Device);
+    void WaitIdle() const;
 
-    VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const noexcept;
-    VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const noexcept;
+    VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const;
+    VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;
 
-    Proxy CreateProxy() const noexcept;
-    const Vulkan::DeviceTable &GetTable() const noexcept;
+    Proxy CreateProxy() const;
+    const Vulkan::DeviceTable &GetTable() const;
 
-    explicit(false) operator VkDevice() const noexcept;
-    explicit(false) operator Proxy() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    explicit(false) operator VkDevice() const;
+    explicit(false) operator Proxy() const;
+    explicit(false) operator bool() const;
 
   private:
     Instance m_Instance{};

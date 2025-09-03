@@ -27,7 +27,7 @@ class VKIT_API PipelineLayout
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device) noexcept;
+        explicit Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a pipeline layout based on the builder's configuration.
@@ -36,18 +36,18 @@ class VKIT_API PipelineLayout
          *
          * @return A `Result` containing the created `PipelineLayout` or an error.
          */
-        Result<PipelineLayout> Build() const noexcept;
+        Result<PipelineLayout> Build() const;
 
-        Builder &AddDescriptorSetLayout(VkDescriptorSetLayout p_Layout) noexcept;
-        Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Size, u32 p_Offset = 0) noexcept;
-        template <typename T> Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Offset = 0) noexcept
+        Builder &AddDescriptorSetLayout(VkDescriptorSetLayout p_Layout);
+        Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Size, u32 p_Offset = 0);
+        template <typename T> Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Offset = 0)
         {
             return AddPushConstantRange(p_Stages, sizeof(T), p_Offset);
         }
 
-        Builder &SetFlags(VkPipelineLayoutCreateFlags p_Flags) noexcept;
-        Builder &AddFlags(VkPipelineLayoutCreateFlags p_Flags) noexcept;
-        Builder &RemoveFlags(VkPipelineLayoutCreateFlags p_Flags) noexcept;
+        Builder &SetFlags(VkPipelineLayoutCreateFlags p_Flags);
+        Builder &AddFlags(VkPipelineLayoutCreateFlags p_Flags);
+        Builder &RemoveFlags(VkPipelineLayoutCreateFlags p_Flags);
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -63,18 +63,18 @@ class VKIT_API PipelineLayout
         TKit::StaticArray4<VkPushConstantRange> PushConstantRanges;
     };
 
-    PipelineLayout() noexcept = default;
-    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, const Info &p_Info) noexcept;
+    PipelineLayout() = default;
+    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, const Info &p_Info);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const noexcept;
+    const Info &GetInfo() const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkPipelineLayout GetHandle() const noexcept;
-    explicit(false) operator VkPipelineLayout() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkPipelineLayout GetHandle() const;
+    explicit(false) operator VkPipelineLayout() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

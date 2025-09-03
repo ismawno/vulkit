@@ -36,7 +36,7 @@ class VKIT_API Shader
      * @param p_BinaryPath The path to the precompiled shader binary.
      * @return A `Result` containing the created `Shader` or an error.
      */
-    static FormattedResult<Shader> Create(const LogicalDevice::Proxy &p_Device, std::string_view p_BinaryPath) noexcept;
+    static FormattedResult<Shader> Create(const LogicalDevice::Proxy &p_Device, std::string_view p_BinaryPath);
 
     /**
      * @brief Compiles a shader source file into a binary file.
@@ -49,7 +49,7 @@ class VKIT_API Shader
      * @return An integer status code (0 for success, non-zero for failure).
      */
     static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath,
-                       std::string_view p_Arguments = "") noexcept;
+                       std::string_view p_Arguments = "");
 
     /**
      * @brief Determines if a shader source file must be compiled.
@@ -60,18 +60,18 @@ class VKIT_API Shader
      * @param p_BinaryPath The path where the compiled binary will be saved.
      * @return `true` if the source must be compiled, `false` if the binary is up-to-date.
      */
-    static bool MustCompile(std::string_view p_SourcePath, std::string_view p_BinaryPath) noexcept;
+    static bool MustCompile(std::string_view p_SourcePath, std::string_view p_BinaryPath);
 
-    Shader() noexcept = default;
-    Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) noexcept;
+    Shader() = default;
+    Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module);
 
-    void Destroy() noexcept;
-    void SubmitForDeletion(DeletionQueue &p_Queue) const noexcept;
+    void Destroy();
+    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const noexcept;
-    VkShaderModule GetHandle() const noexcept;
-    explicit(false) operator VkShaderModule() const noexcept;
-    explicit(false) operator bool() const noexcept;
+    const LogicalDevice::Proxy &GetDevice() const;
+    VkShaderModule GetHandle() const;
+    explicit(false) operator VkShaderModule() const;
+    explicit(false) operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

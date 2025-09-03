@@ -3,11 +3,11 @@
 
 namespace VKit
 {
-ImageHouse::ImageHouse(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator) noexcept
+ImageHouse::ImageHouse(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator)
     : m_Device(p_Device), m_Allocator(p_Allocator)
 {
 }
-Result<ImageHouse> ImageHouse::Create(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator) noexcept
+Result<ImageHouse> ImageHouse::Create(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateImageView, Result<ImageHouse>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyImageView, Result<ImageHouse>);
@@ -15,7 +15,7 @@ Result<ImageHouse> ImageHouse::Create(const LogicalDevice::Proxy &p_Device, cons
     return Result<ImageHouse>::Ok(p_Device, p_Allocator);
 }
 Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range,
-                                      const VkImageViewType p_ViewType) const noexcept
+                                      const VkImageViewType p_ViewType) const
 {
     if (!m_Allocator)
         return Result<Image>::Error(VK_ERROR_INITIALIZATION_FAILED, "An allocator must be set to create resources");
@@ -45,7 +45,7 @@ Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const VkI
     }
     return Result<Image>::Ok(imageData);
 }
-static VkImageViewType getImageViewType(const VkImageType p_Type) noexcept
+static VkImageViewType getImageViewType(const VkImageType p_Type)
 {
     switch (p_Type)
     {
@@ -61,14 +61,14 @@ static VkImageViewType getImageViewType(const VkImageType p_Type) noexcept
     return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
 Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info,
-                                      const VkImageSubresourceRange &p_Range) const noexcept
+                                      const VkImageSubresourceRange &p_Range) const
 {
     const VkImageViewType viewType = getImageViewType(p_Info.imageType);
     if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM)
         return Result<Image>::Error(VK_ERROR_INITIALIZATION_FAILED, "Invalid image type");
     return CreateImage(p_Info, p_Range, viewType);
 }
-static Result<VkImageSubresourceRange> getRange(const VkImageCreateInfo &p_Info, const AttachmentFlags p_Flags) noexcept
+static Result<VkImageSubresourceRange> getRange(const VkImageCreateInfo &p_Info, const AttachmentFlags p_Flags)
 {
     VkImageSubresourceRange range{};
     if (p_Flags & AttachmentFlag_Color)
@@ -87,7 +87,7 @@ static Result<VkImageSubresourceRange> getRange(const VkImageCreateInfo &p_Info,
     return Result<VkImageSubresourceRange>::Ok(range);
 }
 Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const VkImageViewType p_ViewType,
-                                      const AttachmentFlags p_Flags) const noexcept
+                                      const AttachmentFlags p_Flags) const
 {
     const auto rangeResult = getRange(p_Info, p_Flags);
     if (!rangeResult)
@@ -96,7 +96,7 @@ Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const VkI
     const VkImageSubresourceRange &range = rangeResult.GetValue();
     return CreateImage(p_Info, range, p_ViewType);
 }
-Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const AttachmentFlags p_Flags) const noexcept
+Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const AttachmentFlags p_Flags) const
 {
     const VkImageViewType viewType = getImageViewType(p_Info.imageType);
     if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM)
@@ -110,7 +110,7 @@ Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const Att
     return CreateImage(p_Info, range, viewType);
 }
 Result<Image> ImageHouse::CreateImage(const VkFormat p_Format, const VkExtent2D &p_Extent,
-                                      const AttachmentFlags p_Flags) const noexcept
+                                      const AttachmentFlags p_Flags) const
 {
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -138,7 +138,7 @@ Result<Image> ImageHouse::CreateImage(const VkFormat p_Format, const VkExtent2D 
 
     return CreateImage(imageInfo, p_Flags);
 }
-Result<Image> ImageHouse::CreateImage(const VkImage p_Image, const VkImageView p_ImageView) const noexcept
+Result<Image> ImageHouse::CreateImage(const VkImage p_Image, const VkImageView p_ImageView) const
 {
     Image imageData{};
     imageData.Image = p_Image;
@@ -147,12 +147,12 @@ Result<Image> ImageHouse::CreateImage(const VkImage p_Image, const VkImageView p
     return Result<Image>::Ok(imageData);
 }
 
-const LogicalDevice::Proxy &ImageHouse::GetDevice() const noexcept
+const LogicalDevice::Proxy &ImageHouse::GetDevice() const
 {
     return m_Device;
 }
 
-void ImageHouse::DestroyImage(const Image &p_Image) const noexcept
+void ImageHouse::DestroyImage(const Image &p_Image) const
 {
     if (!p_Image.Allocation)
         return;
@@ -160,7 +160,7 @@ void ImageHouse::DestroyImage(const Image &p_Image) const noexcept
     vmaDestroyImage(m_Allocator, p_Image.Image, p_Image.Allocation);
     m_Device.Table->DestroyImageView(m_Device, p_Image.ImageView, m_Device.AllocationCallbacks);
 }
-void ImageHouse::SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const noexcept
+void ImageHouse::SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const
 {
     p_Queue.Push([this, p_Image]() { DestroyImage(p_Image); });
 }

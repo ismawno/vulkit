@@ -19,7 +19,7 @@ static void *s_Library = nullptr;
 static HMODULE s_Library = nullptr;
 #endif
 
-Result<> Core::Initialize() noexcept
+Result<> Core::Initialize()
 {
     if (s_Library)
         return Result<>::Ok();
@@ -77,7 +77,7 @@ Result<> Core::Initialize() noexcept
     return Result<>::Ok();
 }
 
-void Core::Terminate() noexcept
+void Core::Terminate()
 {
     if (!s_Library)
         return;
@@ -89,7 +89,7 @@ void Core::Terminate() noexcept
     s_Library = nullptr;
 }
 
-const VkExtensionProperties *Core::GetExtension(const char *p_Name) noexcept
+const VkExtensionProperties *Core::GetExtension(const char *p_Name)
 {
     for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
@@ -97,7 +97,7 @@ const VkExtensionProperties *Core::GetExtension(const char *p_Name) noexcept
     return nullptr;
 }
 
-const VkLayerProperties *Core::GetLayer(const char *p_Name) noexcept
+const VkLayerProperties *Core::GetLayer(const char *p_Name)
 {
     for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
@@ -105,7 +105,7 @@ const VkLayerProperties *Core::GetLayer(const char *p_Name) noexcept
     return nullptr;
 }
 
-bool Core::IsExtensionSupported(const char *p_Name) noexcept
+bool Core::IsExtensionSupported(const char *p_Name)
 {
     for (const VkExtensionProperties &extension : AvailableExtensions)
         if (strcmp(p_Name, extension.extensionName) == 0)
@@ -113,7 +113,7 @@ bool Core::IsExtensionSupported(const char *p_Name) noexcept
     return false;
 }
 
-bool Core::IsLayerSupported(const char *p_Name) noexcept
+bool Core::IsLayerSupported(const char *p_Name)
 {
     for (const VkLayerProperties &layer : AvailableLayers)
         if (strcmp(p_Name, layer.layerName) == 0)
@@ -121,7 +121,7 @@ bool Core::IsLayerSupported(const char *p_Name) noexcept
     return false;
 }
 
-const char *VkResultToString(const VkResult p_Result) noexcept
+const char *VkResultToString(const VkResult p_Result)
 {
     switch (p_Result)
     {

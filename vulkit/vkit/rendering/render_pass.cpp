@@ -3,12 +3,12 @@
 
 namespace VKit
 {
-RenderPass::Builder::Builder(const LogicalDevice *p_Device, const u32 p_ImageCount) noexcept
+RenderPass::Builder::Builder(const LogicalDevice *p_Device, const u32 p_ImageCount)
     : m_Device(p_Device), m_ImageCount(p_ImageCount)
 {
 }
 
-Result<RenderPass> RenderPass::Builder::Build() const noexcept
+Result<RenderPass> RenderPass::Builder::Build() const
 {
     const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateRenderPass, Result<RenderPass>);
@@ -85,54 +85,54 @@ Result<RenderPass> RenderPass::Builder::Build() const noexcept
 }
 
 RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass,
-                       const Info &p_Info) noexcept
+                       const Info &p_Info)
     : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
 {
 }
 
-void RenderPass::destroy() const noexcept
+void RenderPass::destroy() const
 {
     TKIT_ASSERT(m_RenderPass, "[VULKIT] Render pass is already destroyed");
     m_Device.Table->DestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
 }
 
-void RenderPass::Destroy() noexcept
+void RenderPass::Destroy()
 {
     destroy();
     m_RenderPass = VK_NULL_HANDLE;
 }
-void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const RenderPass renderPass = *this;
     p_Queue.Push([renderPass]() { renderPass.destroy(); });
 }
 
-const RenderPass::Attachment &RenderPass::GetAttachment(const u32 p_AttachmentIndex) const noexcept
+const RenderPass::Attachment &RenderPass::GetAttachment(const u32 p_AttachmentIndex) const
 {
     return m_Info.Attachments[p_AttachmentIndex];
 }
-const RenderPass::Info &RenderPass::GetInfo() const noexcept
+const RenderPass::Info &RenderPass::GetInfo() const
 {
     return m_Info;
 }
-const LogicalDevice::Proxy &RenderPass::GetDevice() const noexcept
+const LogicalDevice::Proxy &RenderPass::GetDevice() const
 {
     return m_Device;
 }
-VkRenderPass RenderPass::GetHandle() const noexcept
+VkRenderPass RenderPass::GetHandle() const
 {
     return m_RenderPass;
 }
-RenderPass::operator VkRenderPass() const noexcept
+RenderPass::operator VkRenderPass() const
 {
     return m_RenderPass;
 }
-RenderPass::operator bool() const noexcept
+RenderPass::operator bool() const
 {
     return m_RenderPass != VK_NULL_HANDLE;
 }
 
-void RenderPass::Resources::destroy() const noexcept
+void RenderPass::Resources::destroy() const
 {
     for (const Image &image : m_Images)
         m_ImageHouse.DestroyImage(image);
@@ -141,63 +141,63 @@ void RenderPass::Resources::destroy() const noexcept
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
         device.Table->DestroyFramebuffer(device, frameBuffer, device.AllocationCallbacks);
 }
-void RenderPass::Resources::Destroy() noexcept
+void RenderPass::Resources::Destroy()
 {
     destroy();
     m_Images.Clear();
     m_FrameBuffers.Clear();
 }
-void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Resources resources = *this;
     p_Queue.Push([resources]() { resources.destroy(); });
 }
 
-VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const noexcept
+VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
 {
     const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
     return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
 }
-VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) const noexcept
+VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) const
 {
     return m_FrameBuffers[p_ImageIndex];
 }
 
-RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const AttachmentFlags p_Flags) noexcept
+RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const AttachmentFlags p_Flags)
 {
     return m_Attachments.Append(this, p_Flags);
 }
-RenderPass::SubpassBuilder &RenderPass::Builder::BeginSubpass(const VkPipelineBindPoint p_BindPoint) noexcept
+RenderPass::SubpassBuilder &RenderPass::Builder::BeginSubpass(const VkPipelineBindPoint p_BindPoint)
 {
     return m_Subpasses.Append(this, p_BindPoint);
 }
 RenderPass::DependencyBuilder &RenderPass::Builder::BeginDependency(const u32 p_SourceSubpass,
-                                                                    const u32 p_DestinationSubpass) noexcept
+                                                                    const u32 p_DestinationSubpass)
 {
     return m_Dependencies.Append(this, p_SourceSubpass, p_DestinationSubpass);
 }
-RenderPass::Builder &RenderPass::Builder::SetAllocator(const VmaAllocator p_Allocator) noexcept
+RenderPass::Builder &RenderPass::Builder::SetAllocator(const VmaAllocator p_Allocator)
 {
     m_Allocator = p_Allocator;
     return *this;
 }
-RenderPass::Builder &RenderPass::Builder::SetFlags(const VkRenderPassCreateFlags p_Flags) noexcept
+RenderPass::Builder &RenderPass::Builder::SetFlags(const VkRenderPassCreateFlags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-RenderPass::Builder &RenderPass::Builder::AddFlags(const VkRenderPassCreateFlags p_Flags) noexcept
+RenderPass::Builder &RenderPass::Builder::AddFlags(const VkRenderPassCreateFlags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFlags p_Flags) noexcept
+RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFlags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;
 }
 
-RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const AttachmentFlags p_Flags) noexcept
+RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const AttachmentFlags p_Flags)
     : m_Builder(p_Builder)
 {
     TKIT_ASSERT(p_Flags, "[VULKIT] Attachment must have at least one type flag");
@@ -234,7 +234,7 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
 }
 
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetLoadOperation(
-    const VkAttachmentLoadOp p_Operation, const VkAttachmentLoadOp p_StencilOperation) noexcept
+    const VkAttachmentLoadOp p_Operation, const VkAttachmentLoadOp p_StencilOperation)
 {
     m_Attachment.Description.loadOp = p_Operation;
     if (p_StencilOperation != VK_ATTACHMENT_LOAD_OP_MAX_ENUM)
@@ -242,7 +242,7 @@ RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetLoadOperation(
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetStoreOperation(
-    const VkAttachmentStoreOp p_Operation, const VkAttachmentStoreOp p_StencilOperation) noexcept
+    const VkAttachmentStoreOp p_Operation, const VkAttachmentStoreOp p_StencilOperation)
 {
     m_Attachment.Description.storeOp = p_Operation;
     if (p_StencilOperation != VK_ATTACHMENT_STORE_OP_MAX_ENUM)
@@ -250,63 +250,63 @@ RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetStoreOperation(
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetStencilLoadOperation(
-    const VkAttachmentLoadOp p_Operation) noexcept
+    const VkAttachmentLoadOp p_Operation)
 {
     m_Attachment.Description.stencilLoadOp = p_Operation;
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetStencilStoreOperation(
-    const VkAttachmentStoreOp p_Operation) noexcept
+    const VkAttachmentStoreOp p_Operation)
 {
     m_Attachment.Description.stencilStoreOp = p_Operation;
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::RequestFormat(const VkFormat p_Format) noexcept
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::RequestFormat(const VkFormat p_Format)
 {
     m_Formats.Insert(m_Formats.begin(), p_Format);
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::AllowFormat(const VkFormat p_Format) noexcept
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::AllowFormat(const VkFormat p_Format)
 {
     m_Formats.Append(p_Format);
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetLayouts(const VkImageLayout p_InitialLayout,
-                                                                         const VkImageLayout p_FinalLayout) noexcept
+                                                                         const VkImageLayout p_FinalLayout)
 {
     m_Attachment.Description.initialLayout = p_InitialLayout;
     m_Attachment.Description.finalLayout = p_FinalLayout;
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetInitialLayout(const VkImageLayout p_Layout) noexcept
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetInitialLayout(const VkImageLayout p_Layout)
 {
     m_Attachment.Description.initialLayout = p_Layout;
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFinalLayout(const VkImageLayout p_Layout) noexcept
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFinalLayout(const VkImageLayout p_Layout)
 {
     m_Attachment.Description.finalLayout = p_Layout;
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetSampleCount(
-    const VkSampleCountFlagBits p_Samples) noexcept
+    const VkSampleCountFlagBits p_Samples)
 {
     m_Attachment.Description.samples = p_Samples;
     return *this;
 }
 RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFlags(
-    const VkAttachmentDescriptionFlags p_Flags) noexcept
+    const VkAttachmentDescriptionFlags p_Flags)
 {
     m_Attachment.Description.flags = p_Flags;
     return *this;
 }
-RenderPass::Builder &RenderPass::AttachmentBuilder::EndAttachment() noexcept
+RenderPass::Builder &RenderPass::AttachmentBuilder::EndAttachment()
 {
     return *m_Builder;
 }
 
 RenderPass::SubpassBuilder::SubpassBuilder(RenderPass::Builder *p_Builder,
-                                           const VkPipelineBindPoint p_BindPoint) noexcept
+                                           const VkPipelineBindPoint p_BindPoint)
     : m_Builder(p_Builder)
 {
     m_Description.pipelineBindPoint = p_BindPoint;
@@ -315,7 +315,7 @@ RenderPass::SubpassBuilder::SubpassBuilder(RenderPass::Builder *p_Builder,
 
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const u32 p_AttachmentIndex,
                                                                            const VkImageLayout p_Layout,
-                                                                           const u32 p_ResolveIndex) noexcept
+                                                                           const u32 p_ResolveIndex)
 {
     m_ColorAttachments.Append(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     if (p_ResolveIndex != UINT32_MAX)
@@ -327,33 +327,33 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
     return *this;
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const u32 p_AttachmentIndex,
-                                                                           const u32 p_ResolveIndex) noexcept
+                                                                           const u32 p_ResolveIndex)
 {
     return AddColorAttachment(p_AttachmentIndex, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, p_ResolveIndex);
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddInputAttachment(const u32 p_AttachmentIndex,
-                                                                           const VkImageLayout p_Layout) noexcept
+                                                                           const VkImageLayout p_Layout)
 {
     m_InputAttachments.Append(VkAttachmentReference{p_AttachmentIndex, p_Layout});
     return *this;
 }
-RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddPreserveAttachment(const u32 p_AttachmentIndex) noexcept
+RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddPreserveAttachment(const u32 p_AttachmentIndex)
 {
     m_PreserveAttachments.Append(p_AttachmentIndex);
     return *this;
 }
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetDepthStencilAttachment(const u32 p_AttachmentIndex,
-                                                                                  const VkImageLayout p_Layout) noexcept
+                                                                                  const VkImageLayout p_Layout)
 {
     m_DepthStencilAttachment = {p_AttachmentIndex, p_Layout};
     return *this;
 }
-RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetFlags(const VkSubpassDescriptionFlags p_Flags) noexcept
+RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::SetFlags(const VkSubpassDescriptionFlags p_Flags)
 {
     m_Description.flags = p_Flags;
     return *this;
 }
-RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass() noexcept
+RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass()
 {
     m_Description.colorAttachmentCount = m_ColorAttachments.GetSize();
     m_Description.pColorAttachments = m_ColorAttachments.IsEmpty() ? nullptr : m_ColorAttachments.GetData();
@@ -369,7 +369,7 @@ RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass() noexcept
 }
 
 RenderPass::DependencyBuilder::DependencyBuilder(RenderPass::Builder *p_Builder, const u32 p_SourceSubpass,
-                                                 const u32 p_DestinationSubpass) noexcept
+                                                 const u32 p_DestinationSubpass)
     : m_Builder(p_Builder)
 {
     m_Dependency.srcSubpass = p_SourceSubpass;
@@ -377,25 +377,25 @@ RenderPass::DependencyBuilder::DependencyBuilder(RenderPass::Builder *p_Builder,
 }
 
 RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetStageMask(
-    const VkPipelineStageFlags p_SourceStage, const VkPipelineStageFlags p_DestinationStage) noexcept
+    const VkPipelineStageFlags p_SourceStage, const VkPipelineStageFlags p_DestinationStage)
 {
     m_Dependency.srcStageMask = p_SourceStage;
     m_Dependency.dstStageMask = p_DestinationStage;
     return *this;
 }
 RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetAccessMask(
-    const VkAccessFlags p_SourceAccess, const VkAccessFlags p_DestinationAccess) noexcept
+    const VkAccessFlags p_SourceAccess, const VkAccessFlags p_DestinationAccess)
 {
     m_Dependency.srcAccessMask = p_SourceAccess;
     m_Dependency.dstAccessMask = p_DestinationAccess;
     return *this;
 }
-RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetFlags(const VkDependencyFlags p_Flags) noexcept
+RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetFlags(const VkDependencyFlags p_Flags)
 {
     m_Dependency.dependencyFlags = p_Flags;
     return *this;
 }
-RenderPass::Builder &RenderPass::DependencyBuilder::EndDependency() noexcept
+RenderPass::Builder &RenderPass::DependencyBuilder::EndDependency()
 {
     return *m_Builder;
 }

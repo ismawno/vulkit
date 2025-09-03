@@ -6,7 +6,7 @@
 
 namespace VKit
 {
-Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs) noexcept
+Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs)
 {
     const Instance &instance = p_Device.GetInstance();
     const PhysicalDevice &physicalDevice = p_Device.GetPhysicalDevice();
@@ -101,7 +101,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 
     return Result<VmaAllocator>::Ok(allocator);
 }
-void DestroyAllocator(const VmaAllocator p_Allocator) noexcept
+void DestroyAllocator(const VmaAllocator p_Allocator)
 {
     vmaDestroyAllocator(p_Allocator);
 }

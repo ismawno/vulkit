@@ -3,12 +3,12 @@
 
 namespace VKit
 {
-ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline) noexcept
+ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline)
     : m_Device(p_Device), m_Pipeline(p_Pipeline)
 {
 }
 
-static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs) noexcept
+static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs)
 {
     if (!p_Specs.Layout)
         return Result<VkComputePipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
@@ -28,7 +28,7 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
     return Result<VkComputePipelineCreateInfo>::Ok(pipelineInfo);
 }
 
-Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs) noexcept
+Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<ComputePipeline>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<ComputePipeline>);
@@ -49,7 +49,7 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
     return Result<ComputePipeline>::Ok(p_Device, pipeline);
 }
 Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<const Specs> p_Specs,
-                                 const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache) noexcept
+                                 const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
@@ -77,38 +77,38 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
     return Result<>::Ok();
 }
 
-void ComputePipeline::Destroy() noexcept
+void ComputePipeline::Destroy()
 {
     TKIT_ASSERT(m_Pipeline, "[VULKIT] The compute pipeline is a NULL handle");
     m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
     m_Pipeline = VK_NULL_HANDLE;
 }
 
-void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const noexcept
+void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
-void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const noexcept
+void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const
 {
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
 }
 
-const LogicalDevice::Proxy &ComputePipeline::GetDevice() const noexcept
+const LogicalDevice::Proxy &ComputePipeline::GetDevice() const
 {
     return m_Device;
 }
-VkPipeline ComputePipeline::GetHandle() const noexcept
+VkPipeline ComputePipeline::GetHandle() const
 {
     return m_Pipeline;
 }
-ComputePipeline::operator VkPipeline() const noexcept
+ComputePipeline::operator VkPipeline() const
 {
     return m_Pipeline;
 }
-ComputePipeline::operator bool() const noexcept
+ComputePipeline::operator bool() const
 {
     return m_Pipeline != VK_NULL_HANDLE;
 }
