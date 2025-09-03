@@ -13,6 +13,7 @@ reminders.txt
 timeline.txt
 codegen/vendor
 generate-vkit-loader.sh
+codegen/cpp/vendor/
 
 # Prerequisites
 *.d
