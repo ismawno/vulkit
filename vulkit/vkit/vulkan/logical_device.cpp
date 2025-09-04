@@ -56,7 +56,7 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 #    endif
         featuresChain.features = devInfo.EnabledFeatures.Core;
 
-        const auto fillChain = [&devInfo, &featuresChain]() {
+        const auto fillChain = [&] {
 #    ifdef VKIT_API_VERSION_1_2
             if (devInfo.ApiVersion >= VKIT_API_VERSION_1_2)
             {
@@ -200,8 +200,7 @@ VkDevice LogicalDevice::GetHandle() const
 }
 
 #ifdef VK_KHR_surface
-Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(
-    const VkSurfaceKHR p_Surface) const
+Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR p_Surface) const
 {
     return m_PhysicalDevice.QuerySwapChainSupport(m_Instance, p_Surface);
 }

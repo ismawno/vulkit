@@ -64,8 +64,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
-static bool compareFeatures(const PhysicalDevice::Features &p_Supported,
-                            const PhysicalDevice::Features &p_Requested)
+static bool compareFeatures(const PhysicalDevice::Features &p_Supported, const PhysicalDevice::Features &p_Requested)
 {
     if (!compareFeatureStructs(p_Supported.Core, p_Requested.Core))
         return false;
@@ -234,7 +233,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
 
-    const auto compatibleQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags) -> u32 {
+    const auto compatibleQueueIndex = [&](const VkQueueFlags p_Flags) -> u32 {
         for (u32 i = 0; i < familyCount; ++i)
             if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags)
                 return i;
@@ -658,8 +657,7 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     return EnumerateResult::Ok(devices);
 }
 
-PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info)
-    : m_Device(p_Device), m_Info(p_Info)
+PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
 {
 }
 
@@ -761,8 +759,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char 
     m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(
-    const TKit::Span<const char *const> p_Extensions)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(const TKit::Span<const char *const> p_Extensions)
 {
     m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
@@ -772,8 +769,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char 
     m_RequestedExtensions.Append(p_Extension);
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(
-    const TKit::Span<const char *const> p_Extensions)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(const TKit::Span<const char *const> p_Extensions)
 {
     m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
