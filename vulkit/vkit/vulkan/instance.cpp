@@ -339,7 +339,7 @@ void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkInstance instance = m_Instance;
     const Info info = m_Info;
-    p_Queue.Push([instance, info]() { destroy(instance, info); });
+    p_Queue.Push([=] { destroy(instance, info); });
 }
 
 VkInstance Instance::GetHandle() const
@@ -487,8 +487,7 @@ Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *p_Data)
     m_DebugMessengerUserData = p_Data;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetAllocationCallbacks(
-    const VkAllocationCallbacks *p_AllocationCallbacks)
+Instance::Builder &Instance::Builder::SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks)
 {
     m_AllocationCallbacks = p_AllocationCallbacks;
     return *this;

@@ -88,7 +88,7 @@ void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
 void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const

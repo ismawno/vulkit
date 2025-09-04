@@ -43,8 +43,7 @@ Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs 
     return Result<Buffer>::Ok(p_Device, buffer, info, data);
 }
 
-Buffer::Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info,
-               void *p_MappedData)
+Buffer::Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
     : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
 {
 }
@@ -60,7 +59,7 @@ void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const
     const VmaAllocator allocator = m_Info.Allocator;
     const VkBuffer buffer = m_Buffer;
     const VmaAllocation allocation = m_Info.Allocation;
-    p_Queue.Push([allocator, buffer, allocation]() { vmaDestroyBuffer(allocator, buffer, allocation); });
+    p_Queue.Push([=] { vmaDestroyBuffer(allocator, buffer, allocation); });
 }
 
 void Buffer::Map()

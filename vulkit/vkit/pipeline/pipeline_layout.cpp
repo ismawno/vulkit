@@ -49,8 +49,7 @@ void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipelineLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push(
-        [layout, device]() { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
 }
 const PipelineLayout::Info &PipelineLayout::GetInfo() const
 {

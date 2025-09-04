@@ -95,8 +95,7 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build()
 }
 
 Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
-                                  const TKit::Span<GraphicsPipeline> p_Pipelines,
-                                  const VkPipelineCache p_Cache)
+                                  const TKit::Span<GraphicsPipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateGraphicsPipelines, Result<>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
@@ -140,7 +139,7 @@ void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkPipeline pipeline = m_Pipeline;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([pipeline, device]() { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
 }
 
 void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
@@ -238,8 +237,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
 }
 
 // Viewport and Scissor
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport,
-                                                                  const VkRect2D p_Scissor)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport, const VkRect2D p_Scissor)
 {
     m_Viewports.Append(std::make_pair(p_Viewport, p_Scissor));
     return *this;
@@ -511,8 +509,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation
         m_DepthStencilInfo.back.compareOp = p_CompareOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask,
-                                                                            const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask, const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.compareMask = p_Mask;
@@ -520,8 +517,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(cons
         m_DepthStencilInfo.back.compareMask = p_Mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask,
-                                                                          const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask, const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.writeMask = p_Mask;
@@ -529,8 +525,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const 
         m_DepthStencilInfo.back.writeMask = p_Mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference,
-                                                                          const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference, const Flags p_Flags)
 {
     if (p_Flags & Flag_StencilFront)
         m_DepthStencilInfo.front.reference = p_Reference;
@@ -587,15 +582,13 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDy
     m_DynamicStates.Append(p_State);
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(
-    const TKit::Span<const VkDynamicState> p_States)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(const TKit::Span<const VkDynamicState> p_States)
 {
     for (const VkDynamicState state : p_States)
         m_DynamicStates.Append(state);
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(
-    const TKit::Span<const VkDynamicState> p_States)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(const TKit::Span<const VkDynamicState> p_States)
 {
     m_DynamicStates.Clear();
     AddDynamicStates(p_States);

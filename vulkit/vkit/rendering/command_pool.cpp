@@ -47,7 +47,7 @@ void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const
     const LogicalDevice::Proxy device = m_Device;
     const VkCommandPool pool = m_Pool;
     const VkAllocationCallbacks *alloc = m_Device.AllocationCallbacks;
-    p_Queue.Push([device, pool, alloc]() {
+    p_Queue.Push([=] {
         LogicalDevice::WaitIdle(device);
         device.Table->DestroyCommandPool(device, pool, alloc);
     });

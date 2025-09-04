@@ -188,7 +188,7 @@ void LogicalDevice::WaitIdle() const
 void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Proxy proxy = CreateProxy();
-    p_Queue.Push([proxy]() {
+    p_Queue.Push([proxy] {
         WaitIdle(proxy);
         destroy(proxy);
     });

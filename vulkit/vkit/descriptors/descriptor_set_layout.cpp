@@ -41,8 +41,7 @@ void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkDescriptorSetLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push(
-        [layout, device]() { device.Table->DestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
 }
 
 const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const
@@ -67,8 +66,7 @@ DescriptorSetLayout::operator bool() const
 }
 
 DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,
-                                                                       VkShaderStageFlags p_StageFlags,
-                                                                       u32 p_Count)
+                                                                       VkShaderStageFlags p_StageFlags, u32 p_Count)
 {
     VkDescriptorSetLayoutBinding binding{};
     binding.binding = m_Bindings.GetSize();

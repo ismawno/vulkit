@@ -84,8 +84,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
     return Result<RenderPass>::Ok(proxy, renderPass, info);
 }
 
-RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass,
-                       const Info &p_Info)
+RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
     : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
 {
 }
@@ -104,7 +103,7 @@ void RenderPass::Destroy()
 void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const RenderPass renderPass = *this;
-    p_Queue.Push([renderPass]() { renderPass.destroy(); });
+    p_Queue.Push([renderPass] { renderPass.destroy(); });
 }
 
 const RenderPass::Attachment &RenderPass::GetAttachment(const u32 p_AttachmentIndex) const
@@ -150,7 +149,7 @@ void RenderPass::Resources::Destroy()
 void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Resources resources = *this;
-    p_Queue.Push([resources]() { resources.destroy(); });
+    p_Queue.Push([resources] { resources.destroy(); });
 }
 
 VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
@@ -288,14 +287,12 @@ RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFinalLayout(con
     m_Attachment.Description.finalLayout = p_Layout;
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetSampleCount(
-    const VkSampleCountFlagBits p_Samples)
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetSampleCount(const VkSampleCountFlagBits p_Samples)
 {
     m_Attachment.Description.samples = p_Samples;
     return *this;
 }
-RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFlags(
-    const VkAttachmentDescriptionFlags p_Flags)
+RenderPass::AttachmentBuilder &RenderPass::AttachmentBuilder::SetFlags(const VkAttachmentDescriptionFlags p_Flags)
 {
     m_Attachment.Description.flags = p_Flags;
     return *this;
@@ -305,8 +302,7 @@ RenderPass::Builder &RenderPass::AttachmentBuilder::EndAttachment()
     return *m_Builder;
 }
 
-RenderPass::SubpassBuilder::SubpassBuilder(RenderPass::Builder *p_Builder,
-                                           const VkPipelineBindPoint p_BindPoint)
+RenderPass::SubpassBuilder::SubpassBuilder(RenderPass::Builder *p_Builder, const VkPipelineBindPoint p_BindPoint)
     : m_Builder(p_Builder)
 {
     m_Description.pipelineBindPoint = p_BindPoint;
@@ -383,8 +379,8 @@ RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetStageMask(
     m_Dependency.dstStageMask = p_DestinationStage;
     return *this;
 }
-RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetAccessMask(
-    const VkAccessFlags p_SourceAccess, const VkAccessFlags p_DestinationAccess)
+RenderPass::DependencyBuilder &RenderPass::DependencyBuilder::SetAccessMask(const VkAccessFlags p_SourceAccess,
+                                                                            const VkAccessFlags p_DestinationAccess)
 {
     m_Dependency.srcAccessMask = p_SourceAccess;
     m_Dependency.dstAccessMask = p_DestinationAccess;

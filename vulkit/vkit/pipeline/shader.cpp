@@ -7,16 +7,14 @@
 
 namespace VKit
 {
-Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module)
-    : m_Device(p_Device), m_Module(p_Module)
+Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) : m_Device(p_Device), m_Module(p_Module)
 {
 }
 
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device,
-                                       const std::string_view p_BinaryPath)
+FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_BinaryPath)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, FormattedResult<Shader>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, FormattedResult<Shader>);
@@ -86,7 +84,7 @@ void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkShaderModule module = m_Module;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([module, device]() { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
 }
 
 const LogicalDevice::Proxy &Shader::GetDevice() const

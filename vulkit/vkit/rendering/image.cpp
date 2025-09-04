@@ -60,8 +60,7 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
     }
     return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
-Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info,
-                                      const VkImageSubresourceRange &p_Range) const
+Result<Image> ImageHouse::CreateImage(const VkImageCreateInfo &p_Info, const VkImageSubresourceRange &p_Range) const
 {
     const VkImageViewType viewType = getImageViewType(p_Info.imageType);
     if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM)
@@ -162,7 +161,7 @@ void ImageHouse::DestroyImage(const Image &p_Image) const
 }
 void ImageHouse::SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const
 {
-    p_Queue.Push([this, p_Image]() { DestroyImage(p_Image); });
+    p_Queue.Push([this, p_Image] { DestroyImage(p_Image); });
 }
 
 } // namespace VKit

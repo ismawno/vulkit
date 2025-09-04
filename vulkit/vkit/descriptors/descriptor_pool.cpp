@@ -36,8 +36,7 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const
     return Result<DescriptorPool>::Ok(m_Device, pool, info);
 }
 
-DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool,
-                               const Info &p_Info)
+DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
     : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
 {
 }
@@ -52,7 +51,7 @@ void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const VkDescriptorPool pool = m_Pool;
     const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([pool, device]() { device.Table->DestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
+    p_Queue.Push([=] { device.Table->DestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
 }
 
 const DescriptorPool::Info &DescriptorPool::GetInfo() const

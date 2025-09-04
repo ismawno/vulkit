@@ -157,7 +157,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto earlyDestroy = [proxy, swapChain, &checkFlag, &info]() {
+    const auto earlyDestroy = [proxy, swapChain, &checkFlag, &info] {
         if (checkFlag(Flag_CreateImageViews))
             for (const ImageData &data : info.ImageData)
                 if (data.ImageView)
@@ -242,7 +242,7 @@ void SwapChain::Destroy()
 void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const SwapChain swapChain = *this;
-    p_Queue.Push([swapChain]() { swapChain.destroy(); }); // That is stupid...
+    p_Queue.Push([swapChain] { swapChain.destroy(); }); // That is stupid...
 }
 const LogicalDevice::Proxy &SwapChain::GetDevice() const
 {
