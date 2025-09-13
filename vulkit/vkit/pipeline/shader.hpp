@@ -70,8 +70,8 @@ class VKIT_API Shader
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkShaderModule GetHandle() const;
-    explicit(false) operator VkShaderModule() const;
-    explicit(false) operator bool() const;
+    operator VkShaderModule() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

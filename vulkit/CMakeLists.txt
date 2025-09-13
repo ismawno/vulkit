@@ -137,8 +137,10 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE)
 FetchContent_MakeAvailable(toolkit)
-target_compile_definitions(toolkit PUBLIC TKIT_SIZE_TYPE=TKit::Alias::u32
-                                          TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
+target_compile_definitions(
+  toolkit
+  PUBLIC TKIT_USIZE_TYPE=TKit::Alias::u32 TKIT_SSIZE_TYPE=TKit::Alias::i32
+         TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
 
 FetchContent_Declare(
   vma

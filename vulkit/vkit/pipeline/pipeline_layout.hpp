@@ -27,7 +27,7 @@ class VKIT_API PipelineLayout
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a pipeline layout based on the builder's configuration.
@@ -73,8 +73,8 @@ class VKIT_API PipelineLayout
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkPipelineLayout GetHandle() const;
-    explicit(false) operator VkPipelineLayout() const;
-    explicit(false) operator bool() const;
+    operator VkPipelineLayout() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

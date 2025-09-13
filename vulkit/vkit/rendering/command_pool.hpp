@@ -115,8 +115,8 @@ class VKIT_API CommandPool
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkCommandPool GetHandle() const;
-    explicit(false) operator VkCommandPool() const;
-    explicit(false) operator bool() const;
+    operator VkCommandPool() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

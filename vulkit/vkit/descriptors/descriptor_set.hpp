@@ -91,8 +91,8 @@ class VKIT_API DescriptorSet
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkDescriptorSet GetHandle() const;
-    explicit(false) operator VkDescriptorSet() const;
-    explicit(false) operator bool() const;
+    operator VkDescriptorSet() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

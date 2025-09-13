@@ -104,7 +104,7 @@ class VKIT_API PhysicalDevice
             Flag_RequirePresentQueue = 1 << 9
         };
 
-        explicit Selector(const Instance *p_Instance);
+        Selector(const Instance *p_Instance);
 
         /**
          * @brief Selects the best matching physical device.
@@ -260,8 +260,8 @@ class VKIT_API PhysicalDevice
                                                           VkSurfaceKHR p_Surface) const;
 #endif
 
-    explicit(false) operator VkPhysicalDevice() const;
-    explicit(false) operator bool() const;
+    operator VkPhysicalDevice() const;
+    operator bool() const;
 
   private:
     VkPhysicalDevice m_Device = VK_NULL_HANDLE;

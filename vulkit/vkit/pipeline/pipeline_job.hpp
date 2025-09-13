@@ -76,7 +76,7 @@ template <Pipeline Pip> class IPipelineJob
     void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FirstSet = 0,
               TKit::Span<const u32> p_DynamicOffsets = {}) const;
 
-    explicit(false) operator bool() const;
+    operator bool() const;
 
   protected:
     Pip m_Pipeline{};

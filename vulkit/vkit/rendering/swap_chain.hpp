@@ -150,8 +150,8 @@ class VKIT_API SwapChain
     const LogicalDevice::Proxy &GetDevice() const;
     VkSwapchainKHR GetHandle() const;
 
-    explicit(false) operator VkSwapchainKHR() const;
-    explicit(false) operator bool() const;
+    operator VkSwapchainKHR() const;
+    operator bool() const;
 
   private:
     void destroy() const;

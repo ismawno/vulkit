@@ -33,12 +33,10 @@ class VKIT_API RenderPass
       public:
         AttachmentBuilder(Builder *p_Builder, AttachmentFlags p_Flags);
 
-        AttachmentBuilder &SetLoadOperation(
-            VkAttachmentLoadOp p_Operation,
-            VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
-        AttachmentBuilder &SetStoreOperation(
-            VkAttachmentStoreOp p_Operation,
-            VkAttachmentStoreOp p_StencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM);
+        AttachmentBuilder &SetLoadOperation(VkAttachmentLoadOp p_Operation,
+                                            VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
+        AttachmentBuilder &SetStoreOperation(VkAttachmentStoreOp p_Operation,
+                                             VkAttachmentStoreOp p_StencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM);
 
         AttachmentBuilder &SetStencilLoadOperation(VkAttachmentLoadOp p_Operation);
         AttachmentBuilder &SetStencilStoreOperation(VkAttachmentStoreOp p_Operation);
@@ -76,8 +74,8 @@ class VKIT_API RenderPass
         SubpassBuilder &AddInputAttachment(u32 p_AttachmentIndex, VkImageLayout p_Layout);
         SubpassBuilder &AddPreserveAttachment(u32 p_AttachmentIndex);
 
-        SubpassBuilder &SetDepthStencilAttachment(
-            u32 p_AttachmentIndex, VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        SubpassBuilder &SetDepthStencilAttachment(u32 p_AttachmentIndex,
+                                                  VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
         SubpassBuilder &SetFlags(VkSubpassDescriptionFlags p_Flags);
 
@@ -100,8 +98,7 @@ class VKIT_API RenderPass
       public:
         DependencyBuilder(Builder *p_Builder, u32 p_SourceSubpass, u32 p_DestinationSubpass);
 
-        DependencyBuilder &SetStageMask(VkPipelineStageFlags p_SourceStage,
-                                        VkPipelineStageFlags p_DestinationStage);
+        DependencyBuilder &SetStageMask(VkPipelineStageFlags p_SourceStage, VkPipelineStageFlags p_DestinationStage);
         DependencyBuilder &SetAccessMask(VkAccessFlags p_SourceAccess, VkAccessFlags p_DestinationAccess);
 
         DependencyBuilder &SetFlags(VkDependencyFlags p_Flags);
@@ -125,7 +122,7 @@ class VKIT_API RenderPass
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice *p_Device, u32 p_ImageCount);
+        Builder(const LogicalDevice *p_Device, u32 p_ImageCount);
 
         Result<RenderPass> Build() const;
 
@@ -206,8 +203,7 @@ class VKIT_API RenderPass
      * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
-    Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
-                                      u32 p_FrameBufferLayers = 1)
+    Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData, u32 p_FrameBufferLayers = 1)
     {
         if (m_Info.ImageCount == 0)
             return Result<Resources>::Error(VK_ERROR_INITIALIZATION_FAILED,
@@ -271,8 +267,8 @@ class VKIT_API RenderPass
     const LogicalDevice::Proxy &GetDevice() const;
     VkRenderPass GetHandle() const;
 
-    explicit(false) operator VkRenderPass() const;
-    explicit(false) operator bool() const;
+    operator VkRenderPass() const;
+    operator bool() const;
 
   private:
     void destroy() const;

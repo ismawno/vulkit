@@ -196,8 +196,8 @@ class VKIT_API Buffer
     const LogicalDevice::Proxy &GetDevice() const;
     VkBuffer GetHandle() const;
 
-    explicit(false) operator VkBuffer() const;
-    explicit(false) operator bool() const;
+    operator VkBuffer() const;
+    operator bool() const;
 
     const Info &GetInfo() const;
 

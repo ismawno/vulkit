@@ -30,7 +30,7 @@ class VKIT_API DescriptorSetLayout
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a descriptor set layout based on the builder's configuration.
@@ -68,8 +68,8 @@ class VKIT_API DescriptorSetLayout
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkDescriptorSetLayout GetHandle() const;
-    explicit(false) operator VkDescriptorSetLayout() const;
-    explicit(false) operator bool() const;
+    operator VkDescriptorSetLayout() const;
+    operator bool() const;
 
     const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const;
 

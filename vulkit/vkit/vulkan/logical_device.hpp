@@ -51,8 +51,8 @@ class VKIT_API LogicalDevice
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::DeviceTable *Table = nullptr;
 
-        explicit(false) operator VkDevice() const;
-        explicit(false) operator bool() const;
+        operator VkDevice() const;
+        operator bool() const;
     };
 
     /**
@@ -113,9 +113,9 @@ class VKIT_API LogicalDevice
     Proxy CreateProxy() const;
     const Vulkan::DeviceTable &GetTable() const;
 
-    explicit(false) operator VkDevice() const;
-    explicit(false) operator Proxy() const;
-    explicit(false) operator bool() const;
+    operator VkDevice() const;
+    operator Proxy() const;
+    operator bool() const;
 
   private:
     Instance m_Instance{};

@@ -67,8 +67,8 @@ class VKIT_API ComputePipeline
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkPipeline GetHandle() const;
-    explicit(false) operator VkPipeline() const;
-    explicit(false) operator bool() const;
+    operator VkPipeline() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

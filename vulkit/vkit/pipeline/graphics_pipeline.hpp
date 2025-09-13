@@ -25,7 +25,7 @@ class VKIT_API GraphicsPipeline
     class ColorAttachmentBuilder
     {
       public:
-        explicit ColorAttachmentBuilder(Builder *p_Builder);
+        ColorAttachmentBuilder(Builder *p_Builder);
 
         ColorAttachmentBuilder &EnableBlending();
         ColorAttachmentBuilder &DisableBlending();
@@ -175,8 +175,7 @@ class VKIT_API GraphicsPipeline
         // Shader Stages
         Builder &AddShaderStage(VkShaderModule p_Module, VkShaderStageFlagBits p_Stage,
                                 VkPipelineShaderStageCreateFlags p_Flags = 0,
-                                const VkSpecializationInfo *p_Info = nullptr,
-                                const char *p_EntryPoint = "main");
+                                const VkSpecializationInfo *p_Info = nullptr, const char *p_EntryPoint = "main");
 
         // Dynamic State
         Builder &AddDynamicState(VkDynamicState p_State);
@@ -250,8 +249,8 @@ class VKIT_API GraphicsPipeline
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkPipeline GetHandle() const;
-    explicit(false) operator VkPipeline() const;
-    explicit(false) operator bool() const;
+    operator VkPipeline() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};

@@ -28,8 +28,8 @@ class VKIT_API Instance
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::InstanceTable *Table = nullptr;
 
-        explicit(false) operator VkInstance() const;
-        explicit(false) operator bool() const;
+        operator VkInstance() const;
+        operator bool() const;
     };
 
     /**
@@ -167,9 +167,9 @@ class VKIT_API Instance
 
     Proxy CreateProxy() const;
 
-    explicit(false) operator VkInstance() const;
-    explicit(false) operator Proxy() const;
-    explicit(false) operator bool() const;
+    operator VkInstance() const;
+    operator Proxy() const;
+    operator bool() const;
 
   private:
     VkInstance m_Instance = VK_NULL_HANDLE;

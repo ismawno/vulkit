@@ -65,8 +65,7 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the vertex buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                        const Specs &p_Specs)
+    static Result<HostVisibleBuffer> CreateVertexBuffer(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
@@ -80,8 +79,7 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the index buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device,
-                                                       const Specs &p_Specs)
+    static Result<HostVisibleBuffer> CreateIndexBuffer(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
@@ -95,8 +93,7 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the uniform buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs)
+    static Result<HostVisibleBuffer> CreateUniformBuffer(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     }
@@ -110,14 +107,13 @@ class HostVisibleBuffer
      * @param p_Specs The specifications for the storage buffer.
      * @return A `Result` containing the created `HostVisibleBuffer` or an error.
      */
-    static Result<HostVisibleBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device,
-                                                         const Specs &p_Specs)
+    static Result<HostVisibleBuffer> CreateStorageBuffer(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
     {
         return Create(p_Device, p_Specs, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     }
 
     HostVisibleBuffer() = default;
-    explicit HostVisibleBuffer(const Buffer &p_Buffer) : m_Buffer(p_Buffer)
+    HostVisibleBuffer(const Buffer &p_Buffer) : m_Buffer(p_Buffer)
     {
     }
 
@@ -277,15 +273,15 @@ class HostVisibleBuffer
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator const Buffer &() const
+    operator const Buffer &() const
     {
         return m_Buffer;
     }
-    explicit(false) operator VkBuffer() const
+    operator VkBuffer() const
     {
         return m_Buffer.GetHandle();
     }
-    explicit(false) operator bool() const
+    operator bool() const
     {
         return static_cast<bool>(m_Buffer);
     }

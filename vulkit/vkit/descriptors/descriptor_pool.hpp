@@ -31,7 +31,7 @@ class VKIT_API DescriptorPool
     class Builder
     {
       public:
-        explicit Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device);
 
         /**
          * @brief Creates a descriptor pool based on the builder's configuration.
@@ -109,8 +109,8 @@ class VKIT_API DescriptorPool
 
     const LogicalDevice::Proxy &GetDevice() const;
     VkDescriptorPool GetHandle() const;
-    explicit(false) operator VkDescriptorPool() const;
-    explicit(false) operator bool() const;
+    operator VkDescriptorPool() const;
+    operator bool() const;
 
   private:
     LogicalDevice::Proxy m_Device{};
