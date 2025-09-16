@@ -143,6 +143,7 @@ target_compile_definitions(
          TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(vulkit PUBLIC toolkit)
 
 find_package(VulkanMemoryAllocator QUIET)
 if(NOT VulkanMemoryAllocator_FOUND)
@@ -175,7 +176,7 @@ if(NOT VULKAN_FOUND)
     GIT_PROGRESS TRUE)
   FetchContent_MakeAvailable(VulkanHeaders)
 
-  target_link_libraries(vulkit PUBLIC toolkit Vulkan::Headers)
+  target_link_libraries(vulkit PUBLIC Vulkan::Headers)
 else()
   message(STATUS "VULKIT: Vulkan found")
   target_include_directories(vulkit PUBLIC ${Vulkan_INCLUDE_DIRS})
