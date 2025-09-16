@@ -142,40 +142,120 @@ target_compile_definitions(
   PUBLIC TKIT_USIZE_TYPE=TKit::Alias::u32 TKIT_SSIZE_TYPE=TKit::Alias::i32
          TKIT_DIFFERENCE_TYPE=TKit::Alias::i32)
 
-FetchContent_Declare(
-  vma
-  GIT_REPOSITORY
-    https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
-  GIT_TAG v3.1.0
-  GIT_SHALLOW TRUE
-  GIT_PROGRESS TRUE)
+target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-FetchContent_MakeAvailable(vma)
+find_package(vma QUIET)
+if(NOT vma_FOUND)
+  message(STATUS "VULKIT: VMA was not found. Fetching headers...")
+  FetchContent_Declare(
+    vma
+    GIT_REPOSITORY
+      https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+    GIT_TAG v3.1.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
 
-# It is set to required for now even though there is a fallback mechanism with
-# FetchContent (the latter seems to provide very few extensions and I am not
-# sure if it will work well for now) TODO: Check if the fallback mechanism works
-# well
-find_package(Vulkan REQUIRED)
-message(STATUS "VULKIT: Vulkan SDK found")
+  FetchContent_MakeAvailable(vma)
+  target_include_directories(vulkit PUBLIC ${vma_SOURCE_DIR}/include)
+else()
+  message(STATUS "VULKIT: VMA was found")
+  target_link_libraries(vulkit PUBLIC vma::VulkanMemoryAllocator)
+endif()
 
-function(vkit_add_vulkan_executable_macos_rpath target)
-  get_filename_component(VULKAN_LIB_DIR ${Vulkan_LIBRARY} DIRECTORY)
-  set_target_properties(
-    ${target}
-    PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE
-               INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib;${VULKAN_LIB_DIR}"
-               INSTALL_RPATH_USE_LINK_PATH TRUE)
-endfunction()
+find_package(Vulkan QUIET)
 
-find_program(GLSLC_EXECUTABLE glslc REQUIRED)
-message(STATUS "VULKIT: Found glslc: ${GLSLC_EXECUTABLE}")
+if(NOT VULKAN_FOUND)
+  message(STATUS "VULKIT: Vulkan was not found. Fetching headers...")
+  set(VULKAN_SDK_VERSION 1.4.321.1)
+  FetchContent_Declare(
+    VulkanHeaders
+    GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+  FetchContent_MakeAvailable(VulkanHeaders)
 
-target_include_directories(
-  vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Vulkan_INCLUDE_DIRS}
-                ${vma_SOURCE_DIR}/include)
+  target_link_libraries(vulkit PUBLIC toolkit Vulkan::Headers)
+else()
+  message(STATUS "VULKIT: Vulkan was found")
+  target_include_directories(vulkit PUBLIC ${Vulkan_INCLUDE_DIRS})
+endif()
 
-target_link_libraries(vulkit PUBLIC toolkit)
+find_program(GLSLC_EXECUTABLE glslc QUIET)
+
+if(NOT GLSLC_EXECUTABLE)
+  message(STATUS "VULKIT: GLSLC executable was not found. Fetching source...")
+
+  FetchContent_Declare(
+    spirv-headers
+    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Headers.git
+    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+  FetchContent_MakeAvailable(spirv-headers)
+
+  FetchContent_Declare(
+    spirv-tools
+    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
+    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+  set(SPIRV_SKIP_TESTS
+      ON
+      CACHE BOOL "" FORCE)
+  set(SPIRV_TOOLS_BUILD_STATIC
+      ON
+      CACHE BOOL "" FORCE)
+  set(SPIRV_SKIP_EXECUTABLES
+      ON
+      CACHE BOOL "" FORCE)
+  set(SKIP_SPIRV_TOOLS_INSTALL
+      ON
+      CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(spirv-tools)
+
+  FetchContent_Declare(
+    glslang
+    GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
+    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+  set(SKIP_GLSLANG_INSTALL
+      ON
+      CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(glslang)
+
+  FetchContent_Declare(
+    shaderc
+    GIT_REPOSITORY https://github.com/google/shaderc.git
+    GIT_TAG v2025.3
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+  set(SHADERC_SKIP_TESTS
+      ON
+      CACHE BOOL "" FORCE)
+  set(SHADERC_SKIP_INSTALL
+      ON
+      CACHE BOOL "" FORCE)
+  set(SHADERC_ENABLE_SHARED_CRT
+      OFF
+      CACHE BOOL "" FORCE)
+  set(SHADERC_ENABLE_SPIRV_TOOLS_INSTALL
+      ON
+      CACHE BOOL "" FORCE)
+  set(SHADERC_SKIP_EXAMPLES
+      ON
+      CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(shaderc)
+
+  set(GLSLC_EXECUTABLE ${shaderc_BINARY_DIR}/glslc)
+else()
+  message(STATUS "VULKIT: GLSLC executable was found")
+endif()
 
 # link dlopen
 if(UNIX AND NOT APPLE)

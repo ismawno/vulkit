@@ -61,6 +61,9 @@ class VKIT_API PhysicalDevice
 #ifdef VKIT_API_VERSION_1_3
         VkPhysicalDeviceVulkan13Properties Vulkan13{};
 #endif
+#ifdef VKIT_API_VERSION_1_4
+        VkPhysicalDeviceVulkan14Properties Vulkan14{};
+#endif
     };
 
 #ifdef VK_KHR_surface
