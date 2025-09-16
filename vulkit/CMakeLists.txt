@@ -146,7 +146,7 @@ target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(vma QUIET)
 if(NOT vma_FOUND)
-  message(STATUS "VULKIT: VMA was not found. Fetching headers...")
+  message(STATUS "VULKIT: VMA not found. Fetching headers...")
   FetchContent_Declare(
     vma
     GIT_REPOSITORY
@@ -158,14 +158,14 @@ if(NOT vma_FOUND)
   FetchContent_MakeAvailable(vma)
   target_include_directories(vulkit PUBLIC ${vma_SOURCE_DIR}/include)
 else()
-  message(STATUS "VULKIT: VMA was found")
+  message(STATUS "VULKIT: VMA found")
   target_link_libraries(vulkit PUBLIC vma::VulkanMemoryAllocator)
 endif()
 
 find_package(Vulkan QUIET)
 
 if(NOT VULKAN_FOUND)
-  message(STATUS "VULKIT: Vulkan was not found. Fetching headers...")
+  message(STATUS "VULKIT: Vulkan not found. Fetching headers...")
   set(VULKAN_SDK_VERSION 1.4.321.1)
   FetchContent_Declare(
     VulkanHeaders
@@ -177,14 +177,14 @@ if(NOT VULKAN_FOUND)
 
   target_link_libraries(vulkit PUBLIC toolkit Vulkan::Headers)
 else()
-  message(STATUS "VULKIT: Vulkan was found")
+  message(STATUS "VULKIT: Vulkan found")
   target_include_directories(vulkit PUBLIC ${Vulkan_INCLUDE_DIRS})
 endif()
 
 find_program(GLSLC_EXECUTABLE glslc QUIET)
 
 if(NOT GLSLC_EXECUTABLE)
-  message(STATUS "VULKIT: GLSLC executable was not found. Fetching source...")
+  message(STATUS "VULKIT: GLSLC executable not found. Fetching source...")
 
   FetchContent_Declare(
     spirv-headers
@@ -254,7 +254,7 @@ if(NOT GLSLC_EXECUTABLE)
 
   set(GLSLC_EXECUTABLE ${shaderc_BINARY_DIR}/glslc)
 else()
-  message(STATUS "VULKIT: GLSLC executable was found")
+  message(STATUS "VULKIT: GLSLC executable found")
 endif()
 
 # link dlopen
