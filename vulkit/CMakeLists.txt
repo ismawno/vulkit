@@ -144,8 +144,8 @@ target_compile_definitions(
 
 target_include_directories(vulkit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-find_package(vma QUIET)
-if(NOT vma_FOUND)
+find_package(VulkanMemoryAllocator QUIET)
+if(NOT VulkanMemoryAllocator_FOUND)
   message(STATUS "VULKIT: VMA not found. Fetching headers...")
   FetchContent_Declare(
     vma
@@ -159,14 +159,14 @@ if(NOT vma_FOUND)
   target_include_directories(vulkit PUBLIC ${vma_SOURCE_DIR}/include)
 else()
   message(STATUS "VULKIT: VMA found")
-  target_link_libraries(vulkit PUBLIC vma::VulkanMemoryAllocator)
+  target_link_libraries(vulkit PUBLIC GPUOpen::VulkanMemoryAllocator)
 endif()
 
 find_package(Vulkan QUIET)
 
 if(NOT VULKAN_FOUND)
   message(STATUS "VULKIT: Vulkan not found. Fetching headers...")
-  set(VULKAN_SDK_VERSION 1.4.321.1)
+  set(VULKAN_SDK_VERSION 1.4.321.0)
   FetchContent_Declare(
     VulkanHeaders
     GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
