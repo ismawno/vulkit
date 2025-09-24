@@ -118,11 +118,16 @@ template <String MessageType> class ErrorInfo
      * @param p_Message A descriptive message providing details about the error.
      * @return A `ErrorInfo` instance representing the error.
      */
-    ErrorInfo(VkResult p_Error, const MessageType &p_Message);
+    ErrorInfo(VkResult p_Error, const MessageType &p_Message) : ErrorCode(p_Error), Message(p_Message)
+    {
+    }
 
     std::string ToString() const;
 
-    operator VkResult() const;
+    operator VkResult() const
+    {
+        return ErrorCode;
+    }
 
     VkResult ErrorCode{};
     MessageType Message{};

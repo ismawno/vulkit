@@ -124,11 +124,6 @@ Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TK
     return Result<>::Ok();
 }
 
-GraphicsPipeline::GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline)
-    : m_Device(p_Device), m_Pipeline(p_Pipeline)
-{
-}
-
 void GraphicsPipeline::Destroy()
 {
     TKIT_ASSERT(m_Pipeline, "[VULKIT] The graphics pipeline is a NULL handle");
@@ -145,23 +140,6 @@ void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
 {
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
-}
-
-const LogicalDevice::Proxy &GraphicsPipeline::GetDevice() const
-{
-    return m_Device;
-}
-VkPipeline GraphicsPipeline::GetHandle() const
-{
-    return m_Pipeline;
-}
-GraphicsPipeline::operator VkPipeline() const
-{
-    return m_Pipeline;
-}
-GraphicsPipeline::operator bool() const
-{
-    return m_Pipeline != VK_NULL_HANDLE;
 }
 
 VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()

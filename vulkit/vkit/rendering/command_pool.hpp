@@ -37,7 +37,9 @@ class VKIT_API CommandPool
                                       VkCommandPoolCreateFlags p_Flags = 0);
 
     CommandPool() = default;
-    CommandPool(const LogicalDevice::Proxy &p_Device, VkCommandPool p_Pool);
+    CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool) : m_Device(p_Device), m_Pool(p_Pool)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
@@ -113,10 +115,23 @@ class VKIT_API CommandPool
      */
     Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkCommandPool GetHandle() const;
-    operator VkCommandPool() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+
+    VkCommandPool GetHandle() const
+    {
+        return m_Pool;
+    }
+    operator VkCommandPool() const
+    {
+        return m_Pool;
+    }
+    operator bool() const
+    {
+        return m_Pool != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

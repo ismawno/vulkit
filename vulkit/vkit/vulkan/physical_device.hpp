@@ -107,7 +107,9 @@ class VKIT_API PhysicalDevice
             Flag_RequirePresentQueue = 1 << 9
         };
 
-        Selector(const Instance *p_Instance);
+        Selector(const Instance *p_Instance) : m_Instance(p_Instance)
+        {
+        }
 
         /**
          * @brief Selects the best matching physical device.
@@ -227,7 +229,9 @@ class VKIT_API PhysicalDevice
     };
 
     PhysicalDevice() = default;
-    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info);
+    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
+    {
+    }
 
     bool AreFeaturesSupported(const Features &p_Features) const;
     bool AreFeaturesEnabled(const Features &p_Features) const;
@@ -255,16 +259,28 @@ class VKIT_API PhysicalDevice
 
     bool EnableExtension(const char *p_Extension);
 
-    VkPhysicalDevice GetHandle() const;
-    const Info &GetInfo() const;
+    VkPhysicalDevice GetHandle() const
+    {
+        return m_Device;
+    }
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
 
 #ifdef VK_KHR_surface
     Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
                                                           VkSurfaceKHR p_Surface) const;
 #endif
 
-    operator VkPhysicalDevice() const;
-    operator bool() const;
+    operator VkPhysicalDevice() const
+    {
+        return m_Device;
+    }
+    operator bool() const
+    {
+        return m_Device != VK_NULL_HANDLE;
+    }
 
   private:
     VkPhysicalDevice m_Device = VK_NULL_HANDLE;

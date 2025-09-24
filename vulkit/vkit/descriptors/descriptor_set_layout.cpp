@@ -3,9 +3,6 @@
 
 namespace VKit
 {
-DescriptorSetLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
-{
-}
 
 Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 {
@@ -25,12 +22,6 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
     return Result<DescriptorSetLayout>::Ok(m_Device, layout, m_Bindings);
 }
 
-DescriptorSetLayout::DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, const VkDescriptorSetLayout p_Layout,
-                                         const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings)
-    : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
-{
-}
-
 void DescriptorSetLayout::Destroy()
 {
     TKIT_ASSERT(m_Layout, "[VULKIT] The descriptor set layout is a NULL handle");
@@ -42,27 +33,6 @@ void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
     const VkDescriptorSetLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([=] { device.Table->DestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
-}
-
-const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &DescriptorSetLayout::GetBindings() const
-{
-    return m_Bindings;
-}
-const LogicalDevice::Proxy &DescriptorSetLayout::GetDevice() const
-{
-    return m_Device;
-}
-VkDescriptorSetLayout DescriptorSetLayout::GetHandle() const
-{
-    return m_Layout;
-}
-DescriptorSetLayout::operator VkDescriptorSetLayout() const
-{
-    return m_Layout;
-}
-DescriptorSetLayout::operator bool() const
-{
-    return m_Layout != VK_NULL_HANDLE;
 }
 
 DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,

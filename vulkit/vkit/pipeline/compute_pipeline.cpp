@@ -3,10 +3,6 @@
 
 namespace VKit
 {
-ComputePipeline::ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline)
-    : m_Device(p_Device), m_Pipeline(p_Pipeline)
-{
-}
 
 static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs)
 {
@@ -94,23 +90,6 @@ void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
 void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const
 {
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
-}
-
-const LogicalDevice::Proxy &ComputePipeline::GetDevice() const
-{
-    return m_Device;
-}
-VkPipeline ComputePipeline::GetHandle() const
-{
-    return m_Pipeline;
-}
-ComputePipeline::operator VkPipeline() const
-{
-    return m_Pipeline;
-}
-ComputePipeline::operator bool() const
-{
-    return m_Pipeline != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

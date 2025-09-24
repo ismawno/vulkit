@@ -64,14 +64,22 @@ class VKIT_API Buffer
     static Result<Buffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs);
 
     Buffer() = default;
-    Buffer(const LogicalDevice::Proxy &p_Device, VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData);
+
+    Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
+        : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     void Map();
     void Unmap();
-    bool IsMapped() const;
+
+    bool IsMapped() const
+    {
+        return m_Data != nullptr;
+    }
 
     /**
      * @brief Writes data to the buffer, up to the buffer size.
@@ -133,8 +141,7 @@ class VKIT_API Buffer
      * @param p_CommandBuffer The command buffer to bind the index buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    template <typename Index>
-    void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
+    template <typename Index> void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
                       "[VULKIT] Index type must be u8, u16 or u32");
@@ -171,15 +178,20 @@ class VKIT_API Buffer
      * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
      * @param p_Offset The offset within the buffer (default: 0).
      */
-    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer,
-                            VkDeviceSize p_Offset = 0) const;
+    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer, VkDeviceSize p_Offset = 0) const;
 
-    VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE,
-                                             VkDeviceSize p_Offset = 0) const;
+    VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
     VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const;
 
-    void *GetData() const;
-    void *ReadAt(u32 p_Index) const;
+    void *GetData() const
+    {
+        return m_Data;
+    }
+    void *ReadAt(const u32 p_Index) const
+    {
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+    }
 
     /**
      * @brief Copies data from another buffer into this buffer.
@@ -193,13 +205,27 @@ class VKIT_API Buffer
      */
     Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue);
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkBuffer GetHandle() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkBuffer GetHandle() const
+    {
+        return m_Buffer;
+    }
+    operator VkBuffer() const
+    {
+        return m_Buffer;
+    }
+    operator bool() const
+    {
+        return m_Buffer != VK_NULL_HANDLE;
+    }
 
-    operator VkBuffer() const;
-    operator bool() const;
-
-    const Info &GetInfo() const;
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

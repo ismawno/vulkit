@@ -3,9 +3,6 @@
 
 namespace VKit
 {
-PipelineLayout::Builder::Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
-{
-}
 
 Result<PipelineLayout> PipelineLayout::Builder::Build() const
 {
@@ -32,12 +29,6 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const
     return Result<PipelineLayout>::Ok(m_Device, layout, info);
 }
 
-PipelineLayout::PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
-                               const Info &p_Info)
-    : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
-{
-}
-
 void PipelineLayout::Destroy()
 {
     TKIT_ASSERT(m_Layout, "[VULKIT] The pipeline layout is a NULL handle");
@@ -50,27 +41,6 @@ void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
     const VkPipelineLayout layout = m_Layout;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([=] { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
-}
-const PipelineLayout::Info &PipelineLayout::GetInfo() const
-{
-    return m_Info;
-}
-
-const LogicalDevice::Proxy &PipelineLayout::GetDevice() const
-{
-    return m_Device;
-}
-VkPipelineLayout PipelineLayout::GetHandle() const
-{
-    return m_Layout;
-}
-PipelineLayout::operator VkPipelineLayout() const
-{
-    return m_Layout;
-}
-PipelineLayout::operator bool() const
-{
-    return m_Layout != VK_NULL_HANDLE;
 }
 
 PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout)

@@ -44,7 +44,10 @@ template <Pipeline Pip> class IPipelineJob
      * @param p_Index The index of the descriptor set to update.
      * @param p_DescriptorSet The descriptor set to update.
      */
-    void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet);
+    void UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet)
+    {
+        m_DescriptorSets[p_Index] = p_DescriptorSet;
+    }
 
     /**
      * @brief Updates the push constant range at the specified index.
@@ -73,8 +76,7 @@ template <Pipeline Pip> class IPipelineJob
      * @param p_FirstSet The first descriptor set to bind.
      * @param p_DynamicOffsets The dynamic offsets to use for the descriptor sets.
      */
-    void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FirstSet = 0,
-              TKit::Span<const u32> p_DynamicOffsets = {}) const;
+    void Bind(VkCommandBuffer p_CommandBuffer, u32 p_FirstSet = 0, TKit::Span<const u32> p_DynamicOffsets = {}) const;
 
     operator bool() const;
 
@@ -168,8 +170,7 @@ template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipeline
      * @param p_GroupCountY The number of groups in the Y dimension.
      * @param p_GroupCountZ The number of groups in the Z dimension.
      */
-    void Dispatch(VkCommandBuffer p_CommandBuffer, u32 p_GroupCountX, u32 p_GroupCountY,
-                  u32 p_GroupCountZ) const;
+    void Dispatch(VkCommandBuffer p_CommandBuffer, u32 p_GroupCountX, u32 p_GroupCountY, u32 p_GroupCountZ) const;
 };
 } // namespace VKit::Detail
 

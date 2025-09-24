@@ -122,7 +122,9 @@ class VKIT_API RenderPass
     class Builder
     {
       public:
-        Builder(const LogicalDevice *p_Device, u32 p_ImageCount);
+        Builder(const LogicalDevice *p_Device, const u32 p_ImageCount) : m_Device(p_Device), m_ImageCount(p_ImageCount)
+        {
+        }
 
         Result<RenderPass> Build() const;
 
@@ -161,8 +163,15 @@ class VKIT_API RenderPass
         void Destroy();
         void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-        VkImageView GetImageView(u32 p_ImageIndex, u32 p_AttachmentIndex) const;
-        VkFramebuffer GetFrameBuffer(u32 p_ImageIndex) const;
+        VkImageView GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
+        {
+            const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
+            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
+        }
+        VkFramebuffer GetFrameBuffer(const u32 p_ImageIndex) const
+        {
+            return m_FrameBuffers[p_ImageIndex];
+        }
 
       private:
         void destroy() const;
@@ -182,7 +191,10 @@ class VKIT_API RenderPass
     };
 
     RenderPass() = default;
-    RenderPass(const LogicalDevice::Proxy &p_Device, VkRenderPass p_RenderPass, const Info &p_Info);
+    RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
+        : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
@@ -261,14 +273,30 @@ class VKIT_API RenderPass
         return Result<Resources>::Ok(resources);
     }
 
-    const Attachment &GetAttachment(u32 p_AttachmentIndex) const;
-    const Info &GetInfo() const;
-
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkRenderPass GetHandle() const;
-
-    operator VkRenderPass() const;
-    operator bool() const;
+    const Attachment &GetAttachment(const u32 p_AttachmentIndex) const
+    {
+        return m_Info.Attachments[p_AttachmentIndex];
+    }
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkRenderPass GetHandle() const
+    {
+        return m_RenderPass;
+    }
+    operator VkRenderPass() const
+    {
+        return m_RenderPass;
+    }
+    operator bool() const
+    {
+        return m_RenderPass != VK_NULL_HANDLE;
+    }
 
   private:
     void destroy() const;

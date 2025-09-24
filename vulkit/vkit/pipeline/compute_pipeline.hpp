@@ -51,7 +51,10 @@ class VKIT_API ComputePipeline
                            TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
     ComputePipeline() = default;
-    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline);
+    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline)
+        : m_Device(p_Device), m_Pipeline(p_Pipeline)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
@@ -65,10 +68,22 @@ class VKIT_API ComputePipeline
      */
     void Bind(VkCommandBuffer p_CommandBuffer) const;
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkPipeline GetHandle() const;
-    operator VkPipeline() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkPipeline GetHandle() const
+    {
+        return m_Pipeline;
+    }
+    operator VkPipeline() const
+    {
+        return m_Pipeline;
+    }
+    operator bool() const
+    {
+        return m_Pipeline != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

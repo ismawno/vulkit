@@ -3,10 +3,6 @@
 
 namespace VKit
 {
-ImageHouse::ImageHouse(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator)
-    : m_Device(p_Device), m_Allocator(p_Allocator)
-{
-}
 Result<ImageHouse> ImageHouse::Create(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateImageView, Result<ImageHouse>);
@@ -144,11 +140,6 @@ Result<Image> ImageHouse::CreateImage(const VkImage p_Image, const VkImageView p
     imageData.ImageView = p_ImageView;
     imageData.Allocation = VK_NULL_HANDLE;
     return Result<Image>::Ok(imageData);
-}
-
-const LogicalDevice::Proxy &ImageHouse::GetDevice() const
-{
-    return m_Device;
 }
 
 void ImageHouse::DestroyImage(const Image &p_Image) const

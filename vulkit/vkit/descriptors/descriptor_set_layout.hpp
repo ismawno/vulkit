@@ -30,7 +30,9 @@ class VKIT_API DescriptorSetLayout
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
+        {
+        }
 
         /**
          * @brief Creates a descriptor set layout based on the builder's configuration.
@@ -60,18 +62,35 @@ class VKIT_API DescriptorSetLayout
     };
 
     DescriptorSetLayout() = default;
-    DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, VkDescriptorSetLayout p_Layout,
-                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings);
+    DescriptorSetLayout(const LogicalDevice::Proxy &p_Device, const VkDescriptorSetLayout p_Layout,
+                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings)
+        : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkDescriptorSetLayout GetHandle() const;
-    operator VkDescriptorSetLayout() const;
-    operator bool() const;
-
-    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const;
+    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const
+    {
+        return m_Bindings;
+    }
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkDescriptorSetLayout GetHandle() const
+    {
+        return m_Layout;
+    }
+    operator VkDescriptorSetLayout() const
+    {
+        return m_Layout;
+    }
+    operator bool() const
+    {
+        return m_Layout != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

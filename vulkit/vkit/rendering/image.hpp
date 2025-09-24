@@ -37,7 +37,10 @@ class ImageHouse
 {
   public:
     ImageHouse() = default;
-    ImageHouse(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator);
+    ImageHouse(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator)
+        : m_Device(p_Device), m_Allocator(p_Allocator)
+    {
+    }
 
     static Result<ImageHouse> Create(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator);
 
@@ -129,7 +132,10 @@ class ImageHouse
      */
     Result<Image> CreateImage(VkImage p_Image, VkImageView p_ImageView = VK_NULL_HANDLE) const;
 
-    const LogicalDevice::Proxy &GetDevice() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
 
     void DestroyImage(const Image &p_Image) const;
     void SubmitImageForDeletion(const Image &p_Image, DeletionQueue &p_Queue) const;

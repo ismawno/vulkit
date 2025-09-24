@@ -3,10 +3,6 @@
 
 namespace VKit
 {
-SwapChain::Builder::Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface)
-    : m_Device(p_Device), m_Surface(p_Surface)
-{
-}
 
 Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
                                         const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
@@ -218,11 +214,6 @@ Result<SwapChain> SwapChain::Builder::Build() const
     return Result<SwapChain>::Ok(proxy, swapChain, info);
 }
 
-SwapChain::SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info)
-    : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Info(p_Info)
-{
-}
-
 void SwapChain::destroy() const
 {
     TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
@@ -243,26 +234,6 @@ void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const SwapChain swapChain = *this;
     p_Queue.Push([swapChain] { swapChain.destroy(); }); // That is stupid...
-}
-const LogicalDevice::Proxy &SwapChain::GetDevice() const
-{
-    return m_Device;
-}
-VkSwapchainKHR SwapChain::GetHandle() const
-{
-    return m_SwapChain;
-}
-const SwapChain::Info &SwapChain::GetInfo() const
-{
-    return m_Info;
-}
-SwapChain::operator VkSwapchainKHR() const
-{
-    return m_SwapChain;
-}
-SwapChain::operator bool() const
-{
-    return m_SwapChain != VK_NULL_HANDLE;
 }
 
 SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format)

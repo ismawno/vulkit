@@ -7,9 +7,6 @@
 
 namespace VKit
 {
-Shader::Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) : m_Device(p_Device), m_Module(p_Module)
-{
-}
 
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
@@ -85,23 +82,6 @@ void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const
     const VkShaderModule module = m_Module;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([=] { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
-}
-
-const LogicalDevice::Proxy &Shader::GetDevice() const
-{
-    return m_Device;
-}
-VkShaderModule Shader::GetHandle() const
-{
-    return m_Module;
-}
-Shader::operator VkShaderModule() const
-{
-    return m_Module;
-}
-Shader::operator bool() const
-{
-    return m_Module != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

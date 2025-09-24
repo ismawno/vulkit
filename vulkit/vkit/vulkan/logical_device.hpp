@@ -51,8 +51,14 @@ class VKIT_API LogicalDevice
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::DeviceTable *Table = nullptr;
 
-        operator VkDevice() const;
-        operator bool() const;
+        operator VkDevice() const
+        {
+            return Device;
+        }
+        operator bool() const
+        {
+            return Device != VK_NULL_HANDLE;
+        }
     };
 
     /**
@@ -89,14 +95,27 @@ class VKIT_API LogicalDevice
 
     LogicalDevice() = default;
     LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                  const Vulkan::DeviceTable &p_Table, VkDevice p_Device);
+                  const Vulkan::DeviceTable &p_Table, const VkDevice p_Device)
+        : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Table(p_Table), m_Device(p_Device)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Instance &GetInstance() const;
-    const PhysicalDevice &GetPhysicalDevice() const;
-    VkDevice GetHandle() const;
+    const Instance &GetInstance() const
+    {
+        return m_Instance;
+    }
+    const PhysicalDevice &GetPhysicalDevice() const
+    {
+        return m_PhysicalDevice;
+    }
+
+    VkDevice GetHandle() const
+    {
+        return m_Device;
+    }
 
 #ifdef VK_KHR_surface
     Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
@@ -111,11 +130,23 @@ class VKIT_API LogicalDevice
     VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;
 
     Proxy CreateProxy() const;
-    const Vulkan::DeviceTable &GetTable() const;
+    const Vulkan::DeviceTable &GetTable() const
+    {
+        return m_Table;
+    }
 
-    operator VkDevice() const;
-    operator Proxy() const;
-    operator bool() const;
+    operator VkDevice() const
+    {
+        return m_Device;
+    }
+    operator Proxy() const
+    {
+        return CreateProxy();
+    }
+    operator bool() const
+    {
+        return m_Device != VK_NULL_HANDLE;
+    }
 
   private:
     Instance m_Instance{};

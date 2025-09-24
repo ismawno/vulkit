@@ -43,11 +43,6 @@ Result<Buffer> Buffer::Create(const LogicalDevice::Proxy &p_Device, const Specs 
     return Result<Buffer>::Ok(p_Device, buffer, info, data);
 }
 
-Buffer::Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
-    : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
-{
-}
-
 void Buffer::Destroy()
 {
     vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
@@ -74,11 +69,6 @@ void Buffer::Unmap()
     TKIT_ASSERT(m_Data, "[VULKIT] Buffer is not mapped");
     vmaUnmapMemory(m_Info.Allocator, m_Info.Allocation);
     m_Data = nullptr;
-}
-
-bool Buffer::IsMapped() const
-{
-    return m_Data != nullptr;
 }
 
 void Buffer::Write(const void *p_Data)
@@ -165,16 +155,6 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-void *Buffer::GetData() const
-{
-    return m_Data;
-}
-void *Buffer::ReadAt(const u32 p_Index) const
-{
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-    return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
-}
-
 Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const VkQueue p_Queue)
 {
     TKIT_ASSERT(m_Info.Size == p_Source.m_Info.Size, "[VULKIT] Cannot copy buffers of different sizes");
@@ -191,28 +171,6 @@ Result<> Buffer::DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, const V
     m_Device.Table->CmdCopyBuffer(commandBuffer, p_Source.m_Buffer, m_Buffer, 1, &copyRegion);
 
     return p_Pool.EndSingleTimeCommands(commandBuffer, p_Queue);
-}
-
-const LogicalDevice::Proxy &Buffer::GetDevice() const
-{
-    return m_Device;
-}
-VkBuffer Buffer::GetHandle() const
-{
-    return m_Buffer;
-}
-Buffer::operator VkBuffer() const
-{
-    return m_Buffer;
-}
-Buffer::operator bool() const
-{
-    return m_Buffer != VK_NULL_HANDLE;
-}
-
-const Buffer::Info &Buffer::GetInfo() const
-{
-    return m_Info;
 }
 
 } // namespace VKit

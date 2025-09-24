@@ -28,8 +28,14 @@ class VKIT_API Instance
         const VkAllocationCallbacks *AllocationCallbacks = nullptr;
         const Vulkan::InstanceTable *Table = nullptr;
 
-        operator VkInstance() const;
-        operator bool() const;
+        operator bool() const
+        {
+            return Instance != VK_NULL_HANDLE;
+        }
+        operator VkInstance() const
+        {
+            return Instance;
+        }
     };
 
     /**
@@ -154,7 +160,9 @@ class VKIT_API Instance
     };
 
     Instance() = default;
-    Instance(VkInstance p_Instance, const Info &p_Info);
+    Instance(VkInstance p_Instance, const Info &p_Info) : m_Instance(p_Instance), m_Info(p_Info)
+    {
+    }
 
     bool IsExtensionEnabled(const char *p_Extension) const;
     bool IsLayerEnabled(const char *p_Layer) const;
@@ -162,14 +170,29 @@ class VKIT_API Instance
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    VkInstance GetHandle() const;
-    const Info &GetInfo() const;
+    VkInstance GetHandle() const
+    {
+        return m_Instance;
+    }
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
 
     Proxy CreateProxy() const;
 
-    operator VkInstance() const;
-    operator Proxy() const;
-    operator bool() const;
+    operator VkInstance() const
+    {
+        return m_Instance;
+    }
+    operator Proxy() const
+    {
+        return CreateProxy();
+    }
+    operator bool() const
+    {
+        return m_Instance != VK_NULL_HANDLE;
+    }
 
   private:
     VkInstance m_Instance = VK_NULL_HANDLE;

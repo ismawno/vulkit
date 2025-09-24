@@ -13,12 +13,6 @@ IPipelineJob<Pip>::IPipelineJob(const Pip &p_Pipeline, const PipelineLayout &p_L
 }
 
 template <Pipeline Pip>
-void IPipelineJob<Pip>::UpdateDescriptorSet(u32 p_Index, VkDescriptorSet p_DescriptorSet)
-{
-    m_DescriptorSets[p_Index] = p_DescriptorSet;
-}
-
-template <Pipeline Pip>
 void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstSet,
                              const TKit::Span<const u32> p_DynamicOffsets) const
 {

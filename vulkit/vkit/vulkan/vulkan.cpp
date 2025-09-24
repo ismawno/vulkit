@@ -5,20 +5,10 @@
 
 namespace VKit
 {
-template <String MessageType>
-ErrorInfo<MessageType>::ErrorInfo(VkResult p_Error, const MessageType &p_Message)
-    : ErrorCode(p_Error), Message(p_Message)
-{
-}
 
 template <String MessageType> std::string ErrorInfo<MessageType>::ToString() const
 {
     return TKIT_FORMAT("VkResult: '{}' - Message: '{}'", VkResultToString(ErrorCode), Message);
-}
-
-template <String MessageType> ErrorInfo<MessageType>::operator VkResult() const
-{
-    return ErrorCode;
 }
 
 template class VKIT_API ErrorInfo<const char *>;

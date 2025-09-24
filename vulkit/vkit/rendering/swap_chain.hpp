@@ -41,7 +41,9 @@ class VKIT_API SwapChain
             Flag_CreateImageViews = 1 << 1
         };
 
-        Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface);
+        Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) : m_Device(p_Device), m_Surface(p_Surface)
+        {
+        }
 
         /**
          * @brief Creates a swap chain based on the builder's configuration.
@@ -140,18 +142,34 @@ class VKIT_API SwapChain
     };
 
     SwapChain() = default;
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info);
+    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info)
+        : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Info(p_Info)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const;
-
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkSwapchainKHR GetHandle() const;
-
-    operator VkSwapchainKHR() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkSwapchainKHR GetHandle() const
+    {
+        return m_SwapChain;
+    }
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
+    operator VkSwapchainKHR() const
+    {
+        return m_SwapChain;
+    }
+    operator bool() const
+    {
+        return m_SwapChain != VK_NULL_HANDLE;
+    }
 
   private:
     void destroy() const;

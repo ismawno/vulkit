@@ -4,9 +4,6 @@
 
 namespace VKit
 {
-DescriptorPool::Builder::Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
-{
-}
 
 Result<DescriptorPool> DescriptorPool::Builder::Build() const
 {
@@ -36,11 +33,6 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const
     return Result<DescriptorPool>::Ok(m_Device, pool, info);
 }
 
-DescriptorPool::DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
-    : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
-{
-}
-
 void DescriptorPool::Destroy()
 {
     TKIT_ASSERT(m_Pool, "[VULKIT] The descriptor pool is a NULL handle");
@@ -52,11 +44,6 @@ void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const
     const VkDescriptorPool pool = m_Pool;
     const LogicalDevice::Proxy device = m_Device;
     p_Queue.Push([=] { device.Table->DestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
-}
-
-const DescriptorPool::Info &DescriptorPool::GetInfo() const
-{
-    return m_Info;
 }
 
 Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const
@@ -97,23 +84,6 @@ Result<> DescriptorPool::Reset()
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to deallocate descriptor sets");
     return Result<>::Ok();
-}
-
-const LogicalDevice::Proxy &DescriptorPool::GetDevice() const
-{
-    return m_Device;
-}
-VkDescriptorPool DescriptorPool::GetHandle() const
-{
-    return m_Pool;
-}
-DescriptorPool::operator VkDescriptorPool() const
-{
-    return m_Pool;
-}
-DescriptorPool::operator bool() const
-{
-    return m_Pool != VK_NULL_HANDLE;
 }
 
 DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets)

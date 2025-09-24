@@ -3,10 +3,6 @@
 
 namespace VKit
 {
-RenderPass::Builder::Builder(const LogicalDevice *p_Device, const u32 p_ImageCount)
-    : m_Device(p_Device), m_ImageCount(p_ImageCount)
-{
-}
 
 Result<RenderPass> RenderPass::Builder::Build() const
 {
@@ -84,11 +80,6 @@ Result<RenderPass> RenderPass::Builder::Build() const
     return Result<RenderPass>::Ok(proxy, renderPass, info);
 }
 
-RenderPass::RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
-    : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
-{
-}
-
 void RenderPass::destroy() const
 {
     TKIT_ASSERT(m_RenderPass, "[VULKIT] Render pass is already destroyed");
@@ -104,31 +95,6 @@ void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const RenderPass renderPass = *this;
     p_Queue.Push([renderPass] { renderPass.destroy(); });
-}
-
-const RenderPass::Attachment &RenderPass::GetAttachment(const u32 p_AttachmentIndex) const
-{
-    return m_Info.Attachments[p_AttachmentIndex];
-}
-const RenderPass::Info &RenderPass::GetInfo() const
-{
-    return m_Info;
-}
-const LogicalDevice::Proxy &RenderPass::GetDevice() const
-{
-    return m_Device;
-}
-VkRenderPass RenderPass::GetHandle() const
-{
-    return m_RenderPass;
-}
-RenderPass::operator VkRenderPass() const
-{
-    return m_RenderPass;
-}
-RenderPass::operator bool() const
-{
-    return m_RenderPass != VK_NULL_HANDLE;
 }
 
 void RenderPass::Resources::destroy() const
@@ -150,16 +116,6 @@ void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Resources resources = *this;
     p_Queue.Push([resources] { resources.destroy(); });
-}
-
-VkImageView RenderPass::Resources::GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
-{
-    const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
-    return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
-}
-VkFramebuffer RenderPass::Resources::GetFrameBuffer(const u32 p_ImageIndex) const
-{
-    return m_FrameBuffers[p_ImageIndex];
 }
 
 RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const AttachmentFlags p_Flags)

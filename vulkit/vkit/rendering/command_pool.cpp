@@ -29,11 +29,6 @@ Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, co
     return Result<CommandPool>::Ok(p_Device, pool);
 }
 
-CommandPool::CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool)
-    : m_Device(p_Device), m_Pool(p_Pool)
-{
-}
-
 void CommandPool::Destroy()
 {
     TKIT_ASSERT(m_Pool, "[VULKIT] The command pool is a NULL handle");
@@ -135,24 +130,6 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
 
     Deallocate(p_CommandBuffer);
     return Result<>::Ok();
-}
-
-const LogicalDevice::Proxy &CommandPool::GetDevice() const
-{
-    return m_Device;
-}
-
-VkCommandPool CommandPool::GetHandle() const
-{
-    return m_Pool;
-}
-CommandPool::operator VkCommandPool() const
-{
-    return m_Pool;
-}
-CommandPool::operator bool() const
-{
-    return m_Pool != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

@@ -142,10 +142,6 @@ PhysicalDevice::Features::Features()
     Next = nullptr;
 }
 
-PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_Instance)
-{
-}
-
 FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select()
 {
     const auto result = Enumerate();
@@ -657,10 +653,6 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     return EnumerateResult::Ok(devices);
 }
 
-PhysicalDevice::PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
-{
-}
-
 bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const
 {
     return compareFeatures(m_Info.AvailableFeatures, p_Features);
@@ -694,24 +686,6 @@ bool PhysicalDevice::EnableExtension(const char *p_Extension)
         return false;
     m_Info.EnabledExtensions.Append(p_Extension);
     return true;
-}
-
-PhysicalDevice::operator VkPhysicalDevice() const
-{
-    return m_Device;
-}
-PhysicalDevice::operator bool() const
-{
-    return m_Device != VK_NULL_HANDLE;
-}
-
-VkPhysicalDevice PhysicalDevice::GetHandle() const
-{
-    return m_Device;
-}
-const PhysicalDevice::Info &PhysicalDevice::GetInfo() const
-{
-    return m_Info;
 }
 
 #ifdef VK_KHR_surface

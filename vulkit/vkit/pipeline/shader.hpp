@@ -48,8 +48,7 @@ class VKIT_API Shader
      * @param p_Arguments Additional arguments to pass to the compiler.
      * @return An integer status code (0 for success, non-zero for failure).
      */
-    static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath,
-                       std::string_view p_Arguments = "");
+    static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath, std::string_view p_Arguments = "");
 
     /**
      * @brief Determines if a shader source file must be compiled.
@@ -63,15 +62,29 @@ class VKIT_API Shader
     static bool MustCompile(std::string_view p_SourcePath, std::string_view p_BinaryPath);
 
     Shader() = default;
-    Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module);
+    Shader(const LogicalDevice::Proxy &p_Device, VkShaderModule p_Module) : m_Device(p_Device), m_Module(p_Module)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkShaderModule GetHandle() const;
-    operator VkShaderModule() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkShaderModule GetHandle() const
+    {
+        return m_Module;
+    }
+    operator VkShaderModule() const
+    {
+        return m_Module;
+    }
+    operator bool() const
+    {
+        return m_Module != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

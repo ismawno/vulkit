@@ -24,7 +24,10 @@ class VKIT_API DescriptorSet
     class Writer
     {
       public:
-        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout);
+        Writer(const LogicalDevice::Proxy &p_Device, const DescriptorSetLayout *p_Layout)
+            : m_Device(p_Device), m_Layout(p_Layout)
+        {
+        }
 
         /**
          * @brief Writes a buffer to a descriptor set binding.
@@ -75,24 +78,37 @@ class VKIT_API DescriptorSet
     static Result<DescriptorSet> Create(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set);
 
     DescriptorSet() = default;
-    DescriptorSet(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set);
+    DescriptorSet(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set) : m_Device(p_Device), m_Set(p_Set)
+    {
+    }
 
     void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
               TKit::Span<const u32> p_DynamicOffsets = {}) const;
 
     static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
                      TKit::Span<const VkDescriptorSet> p_Sets, VkPipelineBindPoint p_BindPoint,
-                     VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
-                     TKit::Span<const u32> p_DynamicOffsets = {});
+                     VkPipelineLayout p_Layout, u32 p_FirstSet = 0, TKit::Span<const u32> p_DynamicOffsets = {});
 
     static void Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer, VkDescriptorSet p_Set,
                      VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
                      TKit::Span<const u32> p_DynamicOffsets = {});
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkDescriptorSet GetHandle() const;
-    operator VkDescriptorSet() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkDescriptorSet GetHandle() const
+    {
+        return m_Set;
+    }
+    operator VkDescriptorSet() const
+    {
+        return m_Set;
+    }
+    operator bool() const
+    {
+        return m_Set != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

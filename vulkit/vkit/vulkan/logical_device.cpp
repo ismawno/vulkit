@@ -150,12 +150,6 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     return Create(p_Instance, p_PhysicalDevice, queuePriorities);
 }
 
-LogicalDevice::LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                             const Vulkan::DeviceTable &p_Table, const VkDevice p_Device)
-    : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Table(p_Table), m_Device(p_Device)
-{
-}
-
 static void destroy(const LogicalDevice::Proxy &p_Device)
 {
     p_Device.Table->DestroyDevice(p_Device, p_Device.AllocationCallbacks);
@@ -167,14 +161,6 @@ void LogicalDevice::Destroy()
     m_Device = VK_NULL_HANDLE;
 }
 
-const Instance &LogicalDevice::GetInstance() const
-{
-    return m_Instance;
-}
-const PhysicalDevice &LogicalDevice::GetPhysicalDevice() const
-{
-    return m_PhysicalDevice;
-}
 void LogicalDevice::WaitIdle(const Proxy &p_Device)
 {
     TKIT_ASSERT_RETURNS(p_Device.Table->DeviceWaitIdle(p_Device), VK_SUCCESS,
@@ -192,11 +178,6 @@ void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
         WaitIdle(proxy);
         destroy(proxy);
     });
-}
-
-VkDevice LogicalDevice::GetHandle() const
-{
-    return m_Device;
 }
 
 #ifdef VK_KHR_surface
@@ -225,15 +206,6 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
     return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
 
-LogicalDevice::Proxy::operator VkDevice() const
-{
-    return Device;
-}
-LogicalDevice::Proxy::operator bool() const
-{
-    return Device != VK_NULL_HANDLE;
-}
-
 LogicalDevice::Proxy LogicalDevice::CreateProxy() const
 {
     Proxy proxy;
@@ -241,11 +213,6 @@ LogicalDevice::Proxy LogicalDevice::CreateProxy() const
     proxy.AllocationCallbacks = m_Instance.GetInfo().AllocationCallbacks;
     proxy.Table = &m_Table;
     return proxy;
-}
-
-const Vulkan::DeviceTable &LogicalDevice::GetTable() const
-{
-    return m_Table;
 }
 
 VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
@@ -271,19 +238,6 @@ VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex)
     VkQueue queue;
     m_Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
     return queue;
-}
-
-LogicalDevice::operator VkDevice() const
-{
-    return m_Device;
-}
-LogicalDevice::operator LogicalDevice::Proxy() const
-{
-    return CreateProxy();
-}
-LogicalDevice::operator bool() const
-{
-    return m_Device != VK_NULL_HANDLE;
 }
 
 } // namespace VKit

@@ -56,15 +56,6 @@ static bool contains(const TKit::Span<const char *const> p_Extensions, const cha
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
-Instance::Proxy::operator bool() const
-{
-    return Instance != VK_NULL_HANDLE;
-}
-Instance::Proxy::operator VkInstance() const
-{
-    return Instance;
-}
-
 FormattedResult<Instance> Instance::Builder::Build() const
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
@@ -306,10 +297,6 @@ FormattedResult<Instance> Instance::Builder::Build() const
     return FormattedResult<Instance>::Ok(vkinstance, info);
 }
 
-Instance::Instance(VkInstance p_Instance, const Info &p_Info) : m_Instance(p_Instance), m_Info(p_Info)
-{
-}
-
 bool Instance::IsExtensionEnabled(const char *p_Extension) const
 {
     return contains(m_Info.EnabledExtensions, p_Extension);
@@ -342,14 +329,6 @@ void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const
     p_Queue.Push([=] { destroy(instance, info); });
 }
 
-VkInstance Instance::GetHandle() const
-{
-    return m_Instance;
-}
-const Instance::Info &Instance::GetInfo() const
-{
-    return m_Info;
-}
 Instance::Proxy Instance::CreateProxy() const
 {
     Proxy proxy;
@@ -357,18 +336,6 @@ Instance::Proxy Instance::CreateProxy() const
     proxy.AllocationCallbacks = m_Info.AllocationCallbacks;
     proxy.Table = &m_Info.Table;
     return proxy;
-}
-Instance::operator VkInstance() const
-{
-    return m_Instance;
-}
-Instance::operator Proxy() const
-{
-    return CreateProxy();
-}
-Instance::operator bool() const
-{
-    return m_Instance != VK_NULL_HANDLE;
 }
 
 Instance::Builder &Instance::Builder::SetApplicationName(const char *p_Name)

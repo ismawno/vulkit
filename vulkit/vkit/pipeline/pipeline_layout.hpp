@@ -27,7 +27,9 @@ class VKIT_API PipelineLayout
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
+        {
+        }
 
         /**
          * @brief Creates a pipeline layout based on the builder's configuration.
@@ -64,17 +66,35 @@ class VKIT_API PipelineLayout
     };
 
     PipelineLayout() = default;
-    PipelineLayout(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, const Info &p_Info);
+    PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout, const Info &p_Info)
+        : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const;
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkPipelineLayout GetHandle() const;
-    operator VkPipelineLayout() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkPipelineLayout GetHandle() const
+    {
+        return m_Layout;
+    }
+    operator VkPipelineLayout() const
+    {
+        return m_Layout;
+    }
+    operator bool() const
+    {
+        return m_Layout != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};

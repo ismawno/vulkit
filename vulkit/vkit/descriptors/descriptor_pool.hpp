@@ -31,7 +31,9 @@ class VKIT_API DescriptorPool
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device);
+        Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
+        {
+        }
 
         /**
          * @brief Creates a descriptor pool based on the builder's configuration.
@@ -63,12 +65,18 @@ class VKIT_API DescriptorPool
     };
 
     DescriptorPool() = default;
-    DescriptorPool(const LogicalDevice::Proxy &p_Device, VkDescriptorPool p_Pool, const Info &p_Info);
+    DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
+        : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
+    {
+    }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    const Info &GetInfo() const;
+    const Info &GetInfo() const
+    {
+        return m_Info;
+    }
 
     /**
      * @brief Allocates a descriptor set from the pool.
@@ -107,10 +115,22 @@ class VKIT_API DescriptorPool
      */
     Result<> Reset();
 
-    const LogicalDevice::Proxy &GetDevice() const;
-    VkDescriptorPool GetHandle() const;
-    operator VkDescriptorPool() const;
-    operator bool() const;
+    const LogicalDevice::Proxy &GetDevice() const
+    {
+        return m_Device;
+    }
+    VkDescriptorPool GetHandle() const
+    {
+        return m_Pool;
+    }
+    operator VkDescriptorPool() const
+    {
+        return m_Pool;
+    }
+    operator bool() const
+    {
+        return m_Pool != VK_NULL_HANDLE;
+    }
 
   private:
     LogicalDevice::Proxy m_Device{};
