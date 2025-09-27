@@ -133,7 +133,7 @@ include(FetchContent)
 FetchContent_Declare(
   toolkit
   GIT_REPOSITORY https://github.com/ismawno/toolkit.git
-  GIT_TAG v0.6.0
+  GIT_TAG main
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE)
 FetchContent_MakeAvailable(toolkit)
