@@ -184,11 +184,6 @@ Try to always use a tagged commit when using the library, as I can guarantee tho
 The building process is straightforward. Using `CMake`:
 
 ```sh
-mkdir build
-cmake .. # specify build options here
-
-make -j 8 # compile
-```
-
-I heavily dislike `CMake` cache system and how options are displayed, and so under the [setup](https://github.com/ismawno/vulkit/tree/main/setup) folder I have also left a `build.ini` configuration file where build options can be tweaked and then their values used through the [build.py](https://github.com/ismawno/vulkit/blob/main/setup/build.py) script (use `-h` or `--help` for help). More details on the rationale behind this script and how it works can be found [here](https://github.com/ismawno/convoy).
+cmake --preset release
+cmake --build --preset release
 
