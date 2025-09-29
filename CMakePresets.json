@@ -101,21 +101,5 @@
       "inherits": "base",
       "configurePreset": "release"
     }
-  ],
-  "testPresets": [
-    {
-      "name": "debug",
-      "configurePreset": "debug",
-      "output": {
-        "outputOnFailure": true
-      }
-    },
-    {
-      "name": "release",
-      "configurePreset": "release",
-      "output": {
-        "outputOnFailure": true
-      }
-    }
   ]
 }
