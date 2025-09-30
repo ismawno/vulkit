@@ -1310,12 +1310,24 @@ struct VKIT_API DeviceTable
                                  uint32_t stride) const;
 #endif
 
+#if defined(VK_KHR_copy_memory_indirect)
+    PFN_vkCmdCopyMemoryIndirectKHR vkCmdCopyMemoryIndirectKHR = VK_NULL_HANDLE;
+    void CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                  const VkCopyMemoryIndirectInfoKHR *pCopyMemoryIndirectInfo) const;
+#endif
+
 #if defined(VK_NV_copy_memory_indirect)
     PFN_vkCmdCopyMemoryToImageIndirectNV vkCmdCopyMemoryToImageIndirectNV = VK_NULL_HANDLE;
     void CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                         uint32_t copyCount, uint32_t stride, VkImage dstImage,
                                         VkImageLayout dstImageLayout,
                                         const VkImageSubresourceLayers *pImageSubresources) const;
+#endif
+
+#if defined(VK_KHR_copy_memory_indirect)
+    PFN_vkCmdCopyMemoryToImageIndirectKHR vkCmdCopyMemoryToImageIndirectKHR = VK_NULL_HANDLE;
+    void CmdCopyMemoryToImageIndirectKHR(
+        VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR *pCopyMemoryToImageIndirectInfo) const;
 #endif
 
     PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer = VK_NULL_HANDLE;
@@ -2281,7 +2293,8 @@ struct VKIT_API DeviceTable
                                     uint32_t drawCount, uint32_t stride) const;
 #endif
 
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     PFN_vkCmdDrawMeshTasksIndirectCountNV vkCmdDrawMeshTasksIndirectCountNV = VK_NULL_HANDLE;
     void CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                          VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
@@ -2300,7 +2313,8 @@ struct VKIT_API DeviceTable
                                      uint32_t drawCount, uint32_t stride) const;
 #endif
 
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     PFN_vkCmdDrawMeshTasksIndirectCountEXT vkCmdDrawMeshTasksIndirectCountEXT = VK_NULL_HANDLE;
     void CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                           VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,

@@ -845,9 +845,17 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdCopyMemoryIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectNV"));
 #endif
+#if defined(VK_KHR_copy_memory_indirect)
+    table.vkCmdCopyMemoryIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectKHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectKHR"));
+#endif
 #if defined(VK_NV_copy_memory_indirect)
     table.vkCmdCopyMemoryToImageIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectNV"));
+#endif
+#if defined(VK_KHR_copy_memory_indirect)
+    table.vkCmdCopyMemoryToImageIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectKHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectKHR"));
 #endif
     table.vkCmdUpdateBuffer =
         reinterpret_cast<PFN_vkCmdUpdateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdateBuffer"));
@@ -1451,7 +1459,8 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdDrawMeshTasksIndirectNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectNV"));
 #endif
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountNV"));
 #endif
@@ -1463,7 +1472,8 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdDrawMeshTasksIndirectEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectEXT"));
 #endif
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountEXT"));
 #endif
@@ -5799,6 +5809,19 @@ void DeviceTable::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDevic
 #    endif
 }
 #endif
+#if defined(VK_KHR_copy_memory_indirect)
+void DeviceTable::CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                           const VkCopyMemoryIndirectInfoKHR *pCopyMemoryIndirectInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdCopyMemoryIndirectKHR fn =
+        validateFunction("vkCmdCopyMemoryIndirectKHR", this->vkCmdCopyMemoryIndirectKHR);
+    fn(commandBuffer, pCopyMemoryIndirectInfo);
+#    else
+    this->vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+#    endif
+}
+#endif
 #if defined(VK_NV_copy_memory_indirect)
 void DeviceTable::CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                                  uint32_t copyCount, uint32_t stride, VkImage dstImage,
@@ -5812,6 +5835,19 @@ void DeviceTable::CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, 
 #    else
     this->vkCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage,
                                            dstImageLayout, pImageSubresources);
+#    endif
+}
+#endif
+#if defined(VK_KHR_copy_memory_indirect)
+void DeviceTable::CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR *pCopyMemoryToImageIndirectInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdCopyMemoryToImageIndirectKHR fn =
+        validateFunction("vkCmdCopyMemoryToImageIndirectKHR", this->vkCmdCopyMemoryToImageIndirectKHR);
+    fn(commandBuffer, pCopyMemoryToImageIndirectInfo);
+#    else
+    this->vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 #    endif
 }
 #endif
@@ -7846,7 +7882,8 @@ void DeviceTable::CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBu
 #    endif
 }
 #endif
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
 void DeviceTable::CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                                   VkBuffer countBuffer, VkDeviceSize countBufferOffset,
                                                   uint32_t maxDrawCount, uint32_t stride) const
@@ -7886,7 +7923,8 @@ void DeviceTable::CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkB
 #    endif
 }
 #endif
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
 void DeviceTable::CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                                    VkBuffer countBuffer, VkDeviceSize countBufferOffset,
                                                    uint32_t maxDrawCount, uint32_t stride) const
