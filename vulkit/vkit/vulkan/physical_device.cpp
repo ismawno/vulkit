@@ -467,8 +467,10 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
             if (dynamicRendering)
                 features.DynamicRendering.pNext = &features.Vulkan14;
             else
+            {
                 features.Vulkan13.pNext = &features.Vulkan14;
-            &features.Vulkan14 properties.Vulkan13.pNext = &properties.Vulkan14;
+                properties.Vulkan13.pNext = &properties.Vulkan14;
+            }
         }
 #    endif
 
