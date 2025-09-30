@@ -11,7 +11,7 @@ docs/latex/
 __pycache__/
 reminders.txt
 timeline.txt
-codegen/vendor
+codegen/cpp/vendor
 generate-vkit-loader.sh
 
 # Prerequisites
