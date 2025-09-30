@@ -269,19 +269,11 @@ VulkanResult CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
             return VulkanResult::Error(result, "Failed to create the image available semaphore");
         }
 
-        result = vkCreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                   &p_Objects[i].RenderFinishedSemaphore);
-        if (result != VK_SUCCESS)
-        {
-            DestroySynchronizationObjects(p_Device, p_Objects);
-            return VulkanResult::Error(result, "Failed to create the image available semaphore");
-        }
-
         result = vkCreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks, &p_Objects[i].InFlightFence);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
-            return VulkanResult::Error(result, "Failed to create the image available semaphore");
+            return VulkanResult::Error(result, "Failed to create the in flight fence");
         }
     }
     return VulkanResult::Success();
@@ -291,8 +283,6 @@ void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
 {
     for (const SyncData &data : p_Objects)
     {
-        if (data.RenderFinishedSemaphore)
-            vkDestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
         if (data.ImageAvailableSemaphore)
             vkDestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
         if (data.InFlightFence)
