@@ -160,12 +160,4 @@ class VKIT_API SwapChain
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
     Info m_Info;
 };
-
-struct SyncData
-{
-    VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
-    VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
-    VkFence InFlightFence = VK_NULL_HANDLE;
-};
-
 } // namespace VKit
