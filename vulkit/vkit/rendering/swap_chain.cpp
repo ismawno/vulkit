@@ -56,27 +56,29 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
 
     const PhysicalDevice::SwapChainSupportDetails &support = suppResult.GetValue();
 
-    const auto badImageCount = [&support](const u32 p_Count) -> const char * {
-        if (p_Count < support.Capabilities.minImageCount)
+    const u32 mnic = support.Capabilities.minImageCount;
+    const u32 mxic = support.Capabilities.maxImageCount;
+    const auto badImageCount = [=](const u32 p_Count) -> const char * {
+        if (p_Count < mnic)
             return "The requested image count is less than the minimum image count";
-        if (support.Capabilities.maxImageCount > 0 && p_Count > support.Capabilities.maxImageCount)
+        if (mxic > 0 && p_Count > mxic)
             return "The requested image count is greater than the maximum image count";
         return nullptr;
     };
 
-    u32 minImageCount = m_RequestedImages;
-    if (badImageCount(minImageCount))
+    u32 imageCount = m_RequestedImages;
+    if (badImageCount(imageCount))
     {
         if (m_RequiredImages == 0)
         {
-            minImageCount = support.Capabilities.minImageCount + 1;
-            if (minImageCount > support.Capabilities.maxImageCount)
-                minImageCount = support.Capabilities.maxImageCount;
+            imageCount = mnic + 1;
+            if (mxic > 0 && imageCount > mxic)
+                imageCount = mxic;
         }
         else
         {
-            minImageCount = m_RequiredImages;
-            const char *error = badImageCount(minImageCount);
+            imageCount = m_RequiredImages;
+            const char *error = badImageCount(imageCount);
             if (error)
                 return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, error);
         }
@@ -111,7 +113,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = m_Surface;
-    createInfo.minImageCount = minImageCount;
+    createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
@@ -178,7 +180,6 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
                                         "Failed to get the vkGetSwapchainImagesKHR function");
     }
 
-    u32 imageCount;
     result = getImages(proxy, swapChain, &imageCount, nullptr);
     if (result != VK_SUCCESS)
     {
