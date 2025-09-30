@@ -192,7 +192,7 @@ class VKIT_API RenderPass
         VmaAllocator m_Allocator = VK_NULL_HANDLE;
 
         TKit::StaticArray64<ImageData> m_Images;          // size: m_ImageCount * m_Attachments.GetSize()
-        TKit::StaticArray4<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
+        TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
     };
