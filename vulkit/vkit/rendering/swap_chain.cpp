@@ -186,7 +186,7 @@ Result<SwapChain> SwapChain::Builder::Build() const noexcept
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
     }
 
-    TKit::StaticArray4<VkImage> images;
+    TKit::StaticArray8<VkImage> images;
     images.resize(imageCount);
 
     result = getImages(proxy, swapChain, &imageCount, images.data());

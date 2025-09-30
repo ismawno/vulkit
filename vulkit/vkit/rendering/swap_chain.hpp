@@ -130,7 +130,7 @@ class VKIT_API SwapChain
         Flags Flags;
 
         PhysicalDevice::SwapChainSupportDetails SupportDetails;
-        TKit::StaticArray4<ImageData> ImageData;
+        TKit::StaticArray8<ImageData> ImageData;
     };
 
     SwapChain() noexcept = default;
