@@ -162,7 +162,6 @@ class VKIT_API SwapChain
 struct SyncData
 {
     VkSemaphore ImageAvailableSemaphore = VK_NULL_HANDLE;
-    VkSemaphore RenderFinishedSemaphore = VK_NULL_HANDLE;
     VkFence InFlightFence = VK_NULL_HANDLE;
 };
 

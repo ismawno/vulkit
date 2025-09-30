@@ -258,20 +258,12 @@ Result<> CreateSynchronizationObjects(const LogicalDevice::Proxy &p_Device,
             return Result<>::Error(result, "Failed to create the image available semaphore");
         }
 
-        result = p_Device.Table->CreateSemaphore(p_Device, &semaphoreInfo, p_Device.AllocationCallbacks,
-                                                 &p_Objects[i].RenderFinishedSemaphore);
-        if (result != VK_SUCCESS)
-        {
-            DestroySynchronizationObjects(p_Device, p_Objects);
-            return Result<>::Error(result, "Failed to create the image available semaphore");
-        }
-
         result = p_Device.Table->CreateFence(p_Device, &fenceInfo, p_Device.AllocationCallbacks,
                                              &p_Objects[i].InFlightFence);
         if (result != VK_SUCCESS)
         {
             DestroySynchronizationObjects(p_Device, p_Objects);
-            return Result<>::Error(result, "Failed to create the image available semaphore");
+            return Result<>::Error(result, "Failed to create the in flight fence");
         }
     }
     return Result<>::Ok();
@@ -281,8 +273,6 @@ void DestroySynchronizationObjects(const LogicalDevice::Proxy &p_Device,
 {
     for (const SyncData &data : p_Objects)
     {
-        if (data.RenderFinishedSemaphore)
-            p_Device.Table->DestroySemaphore(p_Device, data.RenderFinishedSemaphore, p_Device.AllocationCallbacks);
         if (data.ImageAvailableSemaphore)
             p_Device.Table->DestroySemaphore(p_Device, data.ImageAvailableSemaphore, p_Device.AllocationCallbacks);
         if (data.InFlightFence)
