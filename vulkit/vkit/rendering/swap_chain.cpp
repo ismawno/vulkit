@@ -170,7 +170,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
     }
 
-    TKit::StaticArray4<VkImage> images;
+    TKit::StaticArray8<VkImage> images;
     images.Resize(imageCount);
 
     result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData());

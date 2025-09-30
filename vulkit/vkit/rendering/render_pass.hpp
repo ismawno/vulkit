@@ -177,8 +177,8 @@ class VKIT_API RenderPass
         void destroy() const;
 
         ImageHouse m_ImageHouse;
-        TKit::StaticArray64<Image> m_Images;              // size: m_ImageCount * m_Attachments.GetSize()
-        TKit::StaticArray4<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
+        TKit::StaticArray128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
+        TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
     };
