@@ -164,7 +164,7 @@ class _MetaConvoy(type):
 
     @property
     def version(self) -> str:
-        return "v0.1.1"
+        return "v0.3.1"
 
     @property
     def is_windows(self) -> bool:
@@ -408,7 +408,7 @@ class _MetaConvoy(type):
         input(msg)
 
     def run_process(
-        self, command: str | list[str], /, *args, exit_on_decline: bool = True, **kwargs
+        self, command: str | list[str], /, *args, exit_on_decline: bool = True, log: bool = True, **kwargs
     ) -> subprocess.CompletedProcess | None:
         if self.safe and not self.prompt(
             f"The command <bold>{command if isinstance(command, str) else ' '.join(command)}</bold> is about to be executed. Do you wish to continue?"
@@ -416,6 +416,9 @@ class _MetaConvoy(type):
             if exit_on_decline:
                 self.exit_declined()
             return None
+
+        if not self.safe and log:
+            self.log(f"Executing command <bold>{command if isinstance(command, str) else ' '.join(command)}</bold>.")
 
         return subprocess.run(command, *args, **kwargs)
 
@@ -459,7 +462,8 @@ class _MetaConvoy(type):
         if not openers or not closers:
             Convoy.exit_error("Both openers and closers must not be empty.")
 
-        depth = 0
+        matchers = {op: (cl, 0) for op, cl in zip(openers, closers)}
+
         result = []
         current = []
         remaining = string
@@ -469,11 +473,17 @@ class _MetaConvoy(type):
             if n is not None and len(result) == n:
                 result.append(substr)
                 return result
-            if any(substr.startswith(op) for op in openers):
-                depth += 1
-            if any(substr.startswith(cl) for cl in closers):
-                depth -= 1
-            if depth == 0 and substr.startswith(delim):
+            tdepth = 0
+            for op, (cl, depth) in matchers.items():
+                if substr.startswith(op):
+                    depth = depth + 1 if op != cl or depth == 0 else depth - 1
+                elif substr.startswith(cl):
+                    depth -= 1
+
+                matchers[op] = (cl, depth)
+                tdepth += depth
+
+            if tdepth == 0 and substr.startswith(delim):
                 index += len(delim)
                 result.append("".join(current))
                 remaining = string[index:]
