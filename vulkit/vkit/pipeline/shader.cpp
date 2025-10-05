@@ -52,7 +52,7 @@ i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view 
     std::filesystem::create_directories(binaryPath.parent_path());
     const std::string compileCommand =
         VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + binaryPath.string();
-    return std::system(compileCommand.c_str());
+    return static_cast<i32>(std::system(compileCommand.c_str()));
 }
 
 bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath)
