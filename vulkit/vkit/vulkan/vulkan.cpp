@@ -3,8 +3,6 @@
 #include "vkit/vulkan/vulkan.hpp"
 #include "vkit/core/alias.hpp"
 
-#include <functional>
-
 namespace VKit
 {
 

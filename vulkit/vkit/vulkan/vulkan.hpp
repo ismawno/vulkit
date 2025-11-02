@@ -4,6 +4,7 @@
 #include "tkit/utils/result.hpp"
 #include "tkit/container/static_array.hpp"
 #include <vulkan/vulkan.h>
+#include <functional>
 
 #ifdef VK_MAKE_API_VERSION
 #    define VKIT_MAKE_VERSION(p_Variant, p_Major, p_Minor, p_Patch)                                                    \
