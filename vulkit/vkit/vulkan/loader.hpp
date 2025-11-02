@@ -101,13 +101,6 @@ struct VKIT_API InstanceTable
                                                             VkSurfaceKHR *pSurface) const;
 #endif
 
-#if defined(VK_OHOS_surface)
-    PFN_vkCreateSurfaceOHOS vkCreateSurfaceOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS *pCreateInfo,
-                                                      const VkAllocationCallbacks *pAllocator,
-                                                      VkSurfaceKHR *pSurface) const;
-#endif
-
 #if defined(VK_KHR_display)
     PFN_vkGetPhysicalDeviceDisplayPropertiesKHR vkGetPhysicalDeviceDisplayPropertiesKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice physicalDevice,
@@ -697,30 +690,6 @@ struct VKIT_API InstanceTable
         VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetPhysicalDeviceCooperativeVectorPropertiesNV(
         VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount, VkCooperativeVectorPropertiesNV *pProperties) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM vkGetPhysicalDeviceExternalTensorPropertiesARM = VK_NULL_HANDLE;
-    void GetPhysicalDeviceExternalTensorPropertiesARM(VkPhysicalDevice physicalDevice,
-                                                      const VkPhysicalDeviceExternalTensorInfoARM *pExternalTensorInfo,
-                                                      VkExternalTensorPropertiesARM *pExternalTensorProperties) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM =
-        VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
-        VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pQueueFamilyDataGraphPropertyCount,
-        VkQueueFamilyDataGraphPropertiesARM *pQueueFamilyDataGraphProperties) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM
-        vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM = VK_NULL_HANDLE;
-    void GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
-        VkPhysicalDevice physicalDevice,
-        const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM *pQueueFamilyDataGraphProcessingEngineInfo,
-        VkQueueFamilyDataGraphProcessingEnginePropertiesARM *pQueueFamilyDataGraphProcessingEngineProperties) const;
 #endif
 
 #if defined(VK_KHR_get_physical_device_properties2)
@@ -2690,6 +2659,13 @@ struct VKIT_API DeviceTable
                            uint16_t lineStipplePattern) const;
 #endif
 
+#if defined(VKSC_VERSION_1_0)
+    PFN_vkGetFaultData vkGetFaultData = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior,
+                                                 VkBool32 *pUnrecordedFaults, uint32_t *pFaultCount,
+                                                 VkFaultData *pFaults) const;
+#endif
+
 #if defined(VK_KHR_acceleration_structure)
     PFN_vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateAccelerationStructureKHR(
@@ -3227,6 +3203,12 @@ struct VKIT_API DeviceTable
                                                           const VkHostImageLayoutTransitionInfo *pTransitions) const;
 #endif
 
+#if defined(VKSC_VERSION_1_0)
+    PFN_vkGetCommandPoolMemoryConsumption vkGetCommandPoolMemoryConsumption = VK_NULL_HANDLE;
+    void GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer,
+                                         VkCommandPoolMemoryConsumption *pConsumption) const;
+#endif
+
 #if defined(VK_KHR_video_queue)
     PFN_vkCreateVideoSessionKHR vkCreateVideoSessionKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateVideoSessionKHR(VkDevice device,
@@ -3435,12 +3417,6 @@ struct VKIT_API DeviceTable
 #if defined(VK_EXT_pageable_device_local_memory)
     PFN_vkSetDeviceMemoryPriorityEXT vkSetDeviceMemoryPriorityEXT = VK_NULL_HANDLE;
     void SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) const;
-#endif
-
-#if defined(VK_KHR_present_wait2)
-    PFN_vkWaitForPresent2KHR vkWaitForPresent2KHR = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult WaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain,
-                                                       const VkPresentWait2InfoKHR *pPresentWait2Info) const;
 #endif
 
 #if defined(VK_KHR_present_wait)
@@ -3716,10 +3692,10 @@ struct VKIT_API DeviceTable
     void CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT *pDepthBiasInfo) const;
 #endif
 
-#if defined(VK_KHR_swapchain_maintenance1)
-    PFN_vkReleaseSwapchainImagesKHR vkReleaseSwapchainImagesKHR = VK_NULL_HANDLE;
+#if defined(VK_EXT_swapchain_maintenance1)
+    PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult
-    ReleaseSwapchainImagesKHR(VkDevice device, const VkReleaseSwapchainImagesInfoKHR *pReleaseInfo) const;
+    ReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const;
 #endif
 
 #if defined(VKIT_API_VERSION_1_4)
@@ -3928,7 +3904,7 @@ struct VKIT_API DeviceTable
 
 #if defined(VK_QCOM_tile_shading)
     PFN_vkCmdDispatchTileQCOM vkCmdDispatchTileQCOM = VK_NULL_HANDLE;
-    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM *pDispatchTileInfo) const;
+    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) const;
 #endif
 
 #if defined(VK_QCOM_tile_shading)
@@ -3960,132 +3936,6 @@ struct VKIT_API DeviceTable
     PFN_vkGetExternalComputeQueueDataNV vkGetExternalComputeQueueDataNV = VK_NULL_HANDLE;
     void GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue,
                                        VkExternalComputeQueueDataParamsNV *params, void *pData) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkCreateTensorARM vkCreateTensorARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult CreateTensorARM(VkDevice device, const VkTensorCreateInfoARM *pCreateInfo,
-                                                    const VkAllocationCallbacks *pAllocator,
-                                                    VkTensorARM *pTensor) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkDestroyTensorARM vkDestroyTensorARM = VK_NULL_HANDLE;
-    void DestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks *pAllocator) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkCreateTensorViewARM vkCreateTensorViewARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult CreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkTensorViewARM *pView) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkDestroyTensorViewARM vkDestroyTensorViewARM = VK_NULL_HANDLE;
-    void DestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView,
-                              const VkAllocationCallbacks *pAllocator) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkGetTensorMemoryRequirementsARM vkGetTensorMemoryRequirementsARM = VK_NULL_HANDLE;
-    void GetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM *pInfo,
-                                        VkMemoryRequirements2 *pMemoryRequirements) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkBindTensorMemoryARM vkBindTensorMemoryARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult BindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount,
-                                                        const VkBindTensorMemoryInfoARM *pBindInfos) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkGetDeviceTensorMemoryRequirementsARM vkGetDeviceTensorMemoryRequirementsARM = VK_NULL_HANDLE;
-    void GetDeviceTensorMemoryRequirementsARM(VkDevice device, const VkDeviceTensorMemoryRequirementsARM *pInfo,
-                                              VkMemoryRequirements2 *pMemoryRequirements) const;
-#endif
-
-#if defined(VK_ARM_tensors)
-    PFN_vkCmdCopyTensorARM vkCmdCopyTensorARM = VK_NULL_HANDLE;
-    void CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM *pCopyTensorInfo) const;
-#endif
-
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-    PFN_vkGetTensorOpaqueCaptureDescriptorDataARM vkGetTensorOpaqueCaptureDescriptorDataARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetTensorOpaqueCaptureDescriptorDataARM(
-        VkDevice device, const VkTensorCaptureDescriptorDataInfoARM *pInfo, void *pData) const;
-#endif
-
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-    PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM vkGetTensorViewOpaqueCaptureDescriptorDataARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetTensorViewOpaqueCaptureDescriptorDataARM(
-        VkDevice device, const VkTensorViewCaptureDescriptorDataInfoARM *pInfo, void *pData) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkCreateDataGraphPipelinesARM vkCreateDataGraphPipelinesARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult CreateDataGraphPipelinesARM(VkDevice device,
-                                                                VkDeferredOperationKHR deferredOperation,
-                                                                VkPipelineCache pipelineCache, uint32_t createInfoCount,
-                                                                const VkDataGraphPipelineCreateInfoARM *pCreateInfos,
-                                                                const VkAllocationCallbacks *pAllocator,
-                                                                VkPipeline *pPipelines) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkCreateDataGraphPipelineSessionARM vkCreateDataGraphPipelineSessionARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult CreateDataGraphPipelineSessionARM(
-        VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM *pCreateInfo,
-        const VkAllocationCallbacks *pAllocator, VkDataGraphPipelineSessionARM *pSession) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM vkGetDataGraphPipelineSessionBindPointRequirementsARM =
-        VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelineSessionBindPointRequirementsARM(
-        VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM *pInfo,
-        uint32_t *pBindPointRequirementCount,
-        VkDataGraphPipelineSessionBindPointRequirementARM *pBindPointRequirements) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM vkGetDataGraphPipelineSessionMemoryRequirementsARM =
-        VK_NULL_HANDLE;
-    void GetDataGraphPipelineSessionMemoryRequirementsARM(
-        VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM *pInfo,
-        VkMemoryRequirements2 *pMemoryRequirements) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkBindDataGraphPipelineSessionMemoryARM vkBindDataGraphPipelineSessionMemoryARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult BindDataGraphPipelineSessionMemoryARM(
-        VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM *pBindInfos) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkDestroyDataGraphPipelineSessionARM vkDestroyDataGraphPipelineSessionARM = VK_NULL_HANDLE;
-    void DestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session,
-                                            const VkAllocationCallbacks *pAllocator) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkCmdDispatchDataGraphARM vkCmdDispatchDataGraphARM = VK_NULL_HANDLE;
-    void CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
-                                 const VkDataGraphPipelineDispatchInfoARM *pInfo) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetDataGraphPipelineAvailablePropertiesARM vkGetDataGraphPipelineAvailablePropertiesARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelineAvailablePropertiesARM(
-        VkDevice device, const VkDataGraphPipelineInfoARM *pPipelineInfo, uint32_t *pPropertiesCount,
-        VkDataGraphPipelinePropertyARM *pProperties) const;
-#endif
-
-#if defined(VK_ARM_data_graph)
-    PFN_vkGetDataGraphPipelinePropertiesARM vkGetDataGraphPipelinePropertiesARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelinePropertiesARM(
-        VkDevice device, const VkDataGraphPipelineInfoARM *pPipelineInfo, uint32_t propertiesCount,
-        VkDataGraphPipelinePropertyQueryResultARM *pProperties) const;
 #endif
 
 #if defined(VK_EXT_host_query_reset)
@@ -4570,12 +4420,6 @@ struct VKIT_API DeviceTable
     PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT = VK_NULL_HANDLE;
     void GetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2EXT *pSubresource,
                                        VkSubresourceLayout2EXT *pLayout) const;
-#endif
-
-#if defined(VK_EXT_swapchain_maintenance1)
-    PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult
-    ReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const;
 #endif
 
 #if defined(VK_KHR_maintenance5)

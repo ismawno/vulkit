@@ -136,10 +136,6 @@ InstanceTable InstanceTable::Create(const VkInstance p_Instance)
     table.vkCreateAndroidSurfaceKHR =
         reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateAndroidSurfaceKHR"));
 #endif
-#if defined(VK_OHOS_surface)
-    table.vkCreateSurfaceOHOS =
-        reinterpret_cast<PFN_vkCreateSurfaceOHOS>(GetInstanceProcAddr(p_Instance, "vkCreateSurfaceOHOS"));
-#endif
 #if defined(VK_KHR_display)
     table.vkGetPhysicalDeviceDisplayPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"));
@@ -502,21 +498,6 @@ InstanceTable InstanceTable::Create(const VkInstance p_Instance)
     table.vkGetPhysicalDeviceCooperativeVectorPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV>(
             GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkGetPhysicalDeviceExternalTensorPropertiesARM =
-        reinterpret_cast<PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalTensorPropertiesARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM =
-        reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM =
-        reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(
@@ -1704,6 +1685,10 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdSetLineStipple =
         reinterpret_cast<PFN_vkCmdSetLineStipple>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStipple"));
 #endif
+#if defined(VKSC_VERSION_1_0)
+    table.vkGetFaultData =
+        reinterpret_cast<PFN_vkGetFaultData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFaultData"));
+#endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCreateAccelerationStructureKHR = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureKHR"));
@@ -2088,6 +2073,10 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkTransitionImageLayout = reinterpret_cast<PFN_vkTransitionImageLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayout"));
 #endif
+#if defined(VKSC_VERSION_1_0)
+    table.vkGetCommandPoolMemoryConsumption = reinterpret_cast<PFN_vkGetCommandPoolMemoryConsumption>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCommandPoolMemoryConsumption"));
+#endif
 #if defined(VK_KHR_video_queue)
     table.vkCreateVideoSessionKHR = reinterpret_cast<PFN_vkCreateVideoSessionKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionKHR"));
@@ -2228,10 +2217,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_EXT_pageable_device_local_memory)
     table.vkSetDeviceMemoryPriorityEXT = reinterpret_cast<PFN_vkSetDeviceMemoryPriorityEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDeviceMemoryPriorityEXT"));
-#endif
-#if defined(VK_KHR_present_wait2)
-    table.vkWaitForPresent2KHR =
-        reinterpret_cast<PFN_vkWaitForPresent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresent2KHR"));
 #endif
 #if defined(VK_KHR_present_wait)
     table.vkWaitForPresentKHR =
@@ -2416,9 +2401,9 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdSetDepthBias2EXT = reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias2EXT"));
 #endif
-#if defined(VK_KHR_swapchain_maintenance1)
-    table.vkReleaseSwapchainImagesKHR = reinterpret_cast<PFN_vkReleaseSwapchainImagesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesKHR"));
+#if defined(VK_EXT_swapchain_maintenance1)
+    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetDeviceImageSubresourceLayout = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayout>(
@@ -2576,86 +2561,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_NV_external_compute_queue)
     table.vkGetExternalComputeQueueDataNV = reinterpret_cast<PFN_vkGetExternalComputeQueueDataNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExternalComputeQueueDataNV"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkCreateTensorARM =
-        reinterpret_cast<PFN_vkCreateTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkDestroyTensorARM =
-        reinterpret_cast<PFN_vkDestroyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkCreateTensorViewARM = reinterpret_cast<PFN_vkCreateTensorViewARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorViewARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkDestroyTensorViewARM = reinterpret_cast<PFN_vkDestroyTensorViewARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorViewARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkGetTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetTensorMemoryRequirementsARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorMemoryRequirementsARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkBindTensorMemoryARM = reinterpret_cast<PFN_vkBindTensorMemoryARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindTensorMemoryARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkGetDeviceTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetDeviceTensorMemoryRequirementsARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceTensorMemoryRequirementsARM"));
-#endif
-#if defined(VK_ARM_tensors)
-    table.vkCmdCopyTensorARM =
-        reinterpret_cast<PFN_vkCmdCopyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyTensorARM"));
-#endif
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-    table.vkGetTensorOpaqueCaptureDescriptorDataARM = reinterpret_cast<PFN_vkGetTensorOpaqueCaptureDescriptorDataARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorOpaqueCaptureDescriptorDataARM"));
-#endif
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-    table.vkGetTensorViewOpaqueCaptureDescriptorDataARM =
-        reinterpret_cast<PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorViewOpaqueCaptureDescriptorDataARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkCreateDataGraphPipelinesARM = reinterpret_cast<PFN_vkCreateDataGraphPipelinesARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelinesARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkCreateDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkCreateDataGraphPipelineSessionARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelineSessionARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetDataGraphPipelineSessionBindPointRequirementsARM =
-        reinterpret_cast<PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionBindPointRequirementsARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetDataGraphPipelineSessionMemoryRequirementsARM =
-        reinterpret_cast<PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionMemoryRequirementsARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkBindDataGraphPipelineSessionMemoryARM = reinterpret_cast<PFN_vkBindDataGraphPipelineSessionMemoryARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindDataGraphPipelineSessionMemoryARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkDestroyDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkDestroyDataGraphPipelineSessionARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDataGraphPipelineSessionARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkCmdDispatchDataGraphARM = reinterpret_cast<PFN_vkCmdDispatchDataGraphARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchDataGraphARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetDataGraphPipelineAvailablePropertiesARM =
-        reinterpret_cast<PFN_vkGetDataGraphPipelineAvailablePropertiesARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineAvailablePropertiesARM"));
-#endif
-#if defined(VK_ARM_data_graph)
-    table.vkGetDataGraphPipelinePropertiesARM = reinterpret_cast<PFN_vkGetDataGraphPipelinePropertiesARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelinePropertiesARM"));
 #endif
 #if defined(VK_EXT_host_query_reset)
     table.vkResetQueryPoolEXT =
@@ -2984,10 +2889,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkGetImageSubresourceLayout2EXT = reinterpret_cast<PFN_vkGetImageSubresourceLayout2EXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2EXT"));
 #endif
-#if defined(VK_EXT_swapchain_maintenance1)
-    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
-#endif
 #if defined(VK_KHR_maintenance5)
     table.vkGetDeviceImageSubresourceLayoutKHR = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayoutKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayoutKHR"));
@@ -3184,18 +3085,6 @@ VkResult InstanceTable::CreateAndroidSurfaceKHR(VkInstance instance, const VkAnd
     return fn(instance, pCreateInfo, pAllocator, pSurface);
 #    else
     return this->vkCreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-#    endif
-}
-#endif
-#if defined(VK_OHOS_surface)
-VkResult InstanceTable::CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS *pCreateInfo,
-                                          const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *pSurface) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCreateSurfaceOHOS fn = validateFunction("vkCreateSurfaceOHOS", this->vkCreateSurfaceOHOS);
-    return fn(instance, pCreateInfo, pAllocator, pSurface);
-#    else
-    return this->vkCreateSurfaceOHOS(instance, pCreateInfo, pAllocator, pSurface);
 #    endif
 }
 #endif
@@ -4345,54 +4234,6 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeVectorPropertiesNV(
     return fn(physicalDevice, pPropertyCount, pProperties);
 #    else
     return this->vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, pProperties);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void InstanceTable::GetPhysicalDeviceExternalTensorPropertiesARM(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM *pExternalTensorInfo,
-    VkExternalTensorPropertiesARM *pExternalTensorProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM fn = validateFunction(
-        "vkGetPhysicalDeviceExternalTensorPropertiesARM", this->vkGetPhysicalDeviceExternalTensorPropertiesARM);
-    fn(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
-#    else
-    this->vkGetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo,
-                                                         pExternalTensorProperties);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pQueueFamilyDataGraphPropertyCount,
-    VkQueueFamilyDataGraphPropertiesARM *pQueueFamilyDataGraphProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM fn =
-        validateFunction("vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM",
-                         this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM);
-    return fn(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
-#    else
-    return this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
-        physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-void InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
-    VkPhysicalDevice physicalDevice,
-    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM *pQueueFamilyDataGraphProcessingEngineInfo,
-    VkQueueFamilyDataGraphProcessingEnginePropertiesARM *pQueueFamilyDataGraphProcessingEngineProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM fn =
-        validateFunction("vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM",
-                         this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM);
-    fn(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
-#    else
-    this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
-        physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
 #    endif
 }
 #endif
@@ -8688,6 +8529,18 @@ void DeviceTable::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t line
 #    endif
 }
 #endif
+#if defined(VKSC_VERSION_1_0)
+VkResult DeviceTable::GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior,
+                                   VkBool32 *pUnrecordedFaults, uint32_t *pFaultCount, VkFaultData *pFaults) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetFaultData fn = validateFunction("vkGetFaultData", this->vkGetFaultData);
+    return fn(device, faultQueryBehavior, pUnrecordedFaults, pFaultCount, pFaults);
+#    else
+    return this->vkGetFaultData(device, faultQueryBehavior, pUnrecordedFaults, pFaultCount, pFaults);
+#    endif
+}
+#endif
 #if defined(VK_KHR_acceleration_structure)
 VkResult DeviceTable::CreateAccelerationStructureKHR(VkDevice device,
                                                      const VkAccelerationStructureCreateInfoKHR *pCreateInfo,
@@ -9827,6 +9680,20 @@ VkResult DeviceTable::TransitionImageLayout(VkDevice device, uint32_t transition
 #    endif
 }
 #endif
+#if defined(VKSC_VERSION_1_0)
+void DeviceTable::GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool,
+                                                  VkCommandBuffer commandBuffer,
+                                                  VkCommandPoolMemoryConsumption *pConsumption) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetCommandPoolMemoryConsumption fn =
+        validateFunction("vkGetCommandPoolMemoryConsumption", this->vkGetCommandPoolMemoryConsumption);
+    fn(device, commandPool, commandBuffer, pConsumption);
+#    else
+    this->vkGetCommandPoolMemoryConsumption(device, commandPool, commandBuffer, pConsumption);
+#    endif
+}
+#endif
 #if defined(VK_KHR_video_queue)
 VkResult DeviceTable::CreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR *pCreateInfo,
                                             const VkAllocationCallbacks *pAllocator,
@@ -10272,18 +10139,6 @@ void DeviceTable::SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory mem
     fn(device, memory, priority);
 #    else
     this->vkSetDeviceMemoryPriorityEXT(device, memory, priority);
-#    endif
-}
-#endif
-#if defined(VK_KHR_present_wait2)
-VkResult DeviceTable::WaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain,
-                                         const VkPresentWait2InfoKHR *pPresentWait2Info) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkWaitForPresent2KHR fn = validateFunction("vkWaitForPresent2KHR", this->vkWaitForPresent2KHR);
-    return fn(device, swapchain, pPresentWait2Info);
-#    else
-    return this->vkWaitForPresent2KHR(device, swapchain, pPresentWait2Info);
 #    endif
 }
 #endif
@@ -10856,16 +10711,16 @@ void DeviceTable::CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDep
 #    endif
 }
 #endif
-#if defined(VK_KHR_swapchain_maintenance1)
-VkResult DeviceTable::ReleaseSwapchainImagesKHR(VkDevice device,
-                                                const VkReleaseSwapchainImagesInfoKHR *pReleaseInfo) const
+#if defined(VK_EXT_swapchain_maintenance1)
+VkResult DeviceTable::ReleaseSwapchainImagesEXT(VkDevice device,
+                                                const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkReleaseSwapchainImagesKHR fn =
-        validateFunction("vkReleaseSwapchainImagesKHR", this->vkReleaseSwapchainImagesKHR);
+    static PFN_vkReleaseSwapchainImagesEXT fn =
+        validateFunction("vkReleaseSwapchainImagesEXT", this->vkReleaseSwapchainImagesEXT);
     return fn(device, pReleaseInfo);
 #    else
-    return this->vkReleaseSwapchainImagesKHR(device, pReleaseInfo);
+    return this->vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
 #    endif
 }
 #endif
@@ -11290,14 +11145,13 @@ void DeviceTable::CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuf
 }
 #endif
 #if defined(VK_QCOM_tile_shading)
-void DeviceTable::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
-                                      const VkDispatchTileInfoQCOM *pDispatchTileInfo) const
+void DeviceTable::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDispatchTileQCOM fn = validateFunction("vkCmdDispatchTileQCOM", this->vkCmdDispatchTileQCOM);
-    fn(commandBuffer, pDispatchTileInfo);
+    fn(commandBuffer);
 #    else
-    this->vkCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
+    this->vkCmdDispatchTileQCOM(commandBuffer);
 #    endif
 }
 #endif
@@ -11365,262 +11219,6 @@ void DeviceTable::GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externa
     fn(externalQueue, params, pData);
 #    else
     this->vkGetExternalComputeQueueDataNV(externalQueue, params, pData);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-VkResult DeviceTable::CreateTensorARM(VkDevice device, const VkTensorCreateInfoARM *pCreateInfo,
-                                      const VkAllocationCallbacks *pAllocator, VkTensorARM *pTensor) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCreateTensorARM fn = validateFunction("vkCreateTensorARM", this->vkCreateTensorARM);
-    return fn(device, pCreateInfo, pAllocator, pTensor);
-#    else
-    return this->vkCreateTensorARM(device, pCreateInfo, pAllocator, pTensor);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void DeviceTable::DestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks *pAllocator) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkDestroyTensorARM fn = validateFunction("vkDestroyTensorARM", this->vkDestroyTensorARM);
-    fn(device, tensor, pAllocator);
-#    else
-    this->vkDestroyTensorARM(device, tensor, pAllocator);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-VkResult DeviceTable::CreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM *pCreateInfo,
-                                          const VkAllocationCallbacks *pAllocator, VkTensorViewARM *pView) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCreateTensorViewARM fn = validateFunction("vkCreateTensorViewARM", this->vkCreateTensorViewARM);
-    return fn(device, pCreateInfo, pAllocator, pView);
-#    else
-    return this->vkCreateTensorViewARM(device, pCreateInfo, pAllocator, pView);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void DeviceTable::DestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView,
-                                       const VkAllocationCallbacks *pAllocator) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkDestroyTensorViewARM fn = validateFunction("vkDestroyTensorViewARM", this->vkDestroyTensorViewARM);
-    fn(device, tensorView, pAllocator);
-#    else
-    this->vkDestroyTensorViewARM(device, tensorView, pAllocator);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void DeviceTable::GetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM *pInfo,
-                                                 VkMemoryRequirements2 *pMemoryRequirements) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetTensorMemoryRequirementsARM fn =
-        validateFunction("vkGetTensorMemoryRequirementsARM", this->vkGetTensorMemoryRequirementsARM);
-    fn(device, pInfo, pMemoryRequirements);
-#    else
-    this->vkGetTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-VkResult DeviceTable::BindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount,
-                                          const VkBindTensorMemoryInfoARM *pBindInfos) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkBindTensorMemoryARM fn = validateFunction("vkBindTensorMemoryARM", this->vkBindTensorMemoryARM);
-    return fn(device, bindInfoCount, pBindInfos);
-#    else
-    return this->vkBindTensorMemoryARM(device, bindInfoCount, pBindInfos);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void DeviceTable::GetDeviceTensorMemoryRequirementsARM(VkDevice device,
-                                                       const VkDeviceTensorMemoryRequirementsARM *pInfo,
-                                                       VkMemoryRequirements2 *pMemoryRequirements) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDeviceTensorMemoryRequirementsARM fn =
-        validateFunction("vkGetDeviceTensorMemoryRequirementsARM", this->vkGetDeviceTensorMemoryRequirementsARM);
-    fn(device, pInfo, pMemoryRequirements);
-#    else
-    this->vkGetDeviceTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
-#    endif
-}
-#endif
-#if defined(VK_ARM_tensors)
-void DeviceTable::CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM *pCopyTensorInfo) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdCopyTensorARM fn = validateFunction("vkCmdCopyTensorARM", this->vkCmdCopyTensorARM);
-    fn(commandBuffer, pCopyTensorInfo);
-#    else
-    this->vkCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
-#    endif
-}
-#endif
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-VkResult DeviceTable::GetTensorOpaqueCaptureDescriptorDataARM(VkDevice device,
-                                                              const VkTensorCaptureDescriptorDataInfoARM *pInfo,
-                                                              void *pData) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetTensorOpaqueCaptureDescriptorDataARM fn =
-        validateFunction("vkGetTensorOpaqueCaptureDescriptorDataARM", this->vkGetTensorOpaqueCaptureDescriptorDataARM);
-    return fn(device, pInfo, pData);
-#    else
-    return this->vkGetTensorOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
-#    endif
-}
-#endif
-#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
-VkResult DeviceTable::GetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice device,
-                                                                  const VkTensorViewCaptureDescriptorDataInfoARM *pInfo,
-                                                                  void *pData) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM fn = validateFunction(
-        "vkGetTensorViewOpaqueCaptureDescriptorDataARM", this->vkGetTensorViewOpaqueCaptureDescriptorDataARM);
-    return fn(device, pInfo, pData);
-#    else
-    return this->vkGetTensorViewOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::CreateDataGraphPipelinesARM(VkDevice device, VkDeferredOperationKHR deferredOperation,
-                                                  VkPipelineCache pipelineCache, uint32_t createInfoCount,
-                                                  const VkDataGraphPipelineCreateInfoARM *pCreateInfos,
-                                                  const VkAllocationCallbacks *pAllocator, VkPipeline *pPipelines) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCreateDataGraphPipelinesARM fn =
-        validateFunction("vkCreateDataGraphPipelinesARM", this->vkCreateDataGraphPipelinesARM);
-    return fn(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-#    else
-    return this->vkCreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos,
-                                               pAllocator, pPipelines);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::CreateDataGraphPipelineSessionARM(VkDevice device,
-                                                        const VkDataGraphPipelineSessionCreateInfoARM *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator,
-                                                        VkDataGraphPipelineSessionARM *pSession) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCreateDataGraphPipelineSessionARM fn =
-        validateFunction("vkCreateDataGraphPipelineSessionARM", this->vkCreateDataGraphPipelineSessionARM);
-    return fn(device, pCreateInfo, pAllocator, pSession);
-#    else
-    return this->vkCreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::GetDataGraphPipelineSessionBindPointRequirementsARM(
-    VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM *pInfo,
-    uint32_t *pBindPointRequirementCount,
-    VkDataGraphPipelineSessionBindPointRequirementARM *pBindPointRequirements) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM fn =
-        validateFunction("vkGetDataGraphPipelineSessionBindPointRequirementsARM",
-                         this->vkGetDataGraphPipelineSessionBindPointRequirementsARM);
-    return fn(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
-#    else
-    return this->vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount,
-                                                                       pBindPointRequirements);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-void DeviceTable::GetDataGraphPipelineSessionMemoryRequirementsARM(
-    VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM *pInfo,
-    VkMemoryRequirements2 *pMemoryRequirements) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM fn = validateFunction(
-        "vkGetDataGraphPipelineSessionMemoryRequirementsARM", this->vkGetDataGraphPipelineSessionMemoryRequirementsARM);
-    fn(device, pInfo, pMemoryRequirements);
-#    else
-    this->vkGetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::BindDataGraphPipelineSessionMemoryARM(
-    VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM *pBindInfos) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkBindDataGraphPipelineSessionMemoryARM fn =
-        validateFunction("vkBindDataGraphPipelineSessionMemoryARM", this->vkBindDataGraphPipelineSessionMemoryARM);
-    return fn(device, bindInfoCount, pBindInfos);
-#    else
-    return this->vkBindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-void DeviceTable::DestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session,
-                                                     const VkAllocationCallbacks *pAllocator) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkDestroyDataGraphPipelineSessionARM fn =
-        validateFunction("vkDestroyDataGraphPipelineSessionARM", this->vkDestroyDataGraphPipelineSessionARM);
-    fn(device, session, pAllocator);
-#    else
-    this->vkDestroyDataGraphPipelineSessionARM(device, session, pAllocator);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-void DeviceTable::CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
-                                          const VkDataGraphPipelineDispatchInfoARM *pInfo) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdDispatchDataGraphARM fn =
-        validateFunction("vkCmdDispatchDataGraphARM", this->vkCmdDispatchDataGraphARM);
-    fn(commandBuffer, session, pInfo);
-#    else
-    this->vkCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::GetDataGraphPipelineAvailablePropertiesARM(VkDevice device,
-                                                                 const VkDataGraphPipelineInfoARM *pPipelineInfo,
-                                                                 uint32_t *pPropertiesCount,
-                                                                 VkDataGraphPipelinePropertyARM *pProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDataGraphPipelineAvailablePropertiesARM fn = validateFunction(
-        "vkGetDataGraphPipelineAvailablePropertiesARM", this->vkGetDataGraphPipelineAvailablePropertiesARM);
-    return fn(device, pPipelineInfo, pPropertiesCount, pProperties);
-#    else
-    return this->vkGetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
-#    endif
-}
-#endif
-#if defined(VK_ARM_data_graph)
-VkResult DeviceTable::GetDataGraphPipelinePropertiesARM(VkDevice device,
-                                                        const VkDataGraphPipelineInfoARM *pPipelineInfo,
-                                                        uint32_t propertiesCount,
-                                                        VkDataGraphPipelinePropertyQueryResultARM *pProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetDataGraphPipelinePropertiesARM fn =
-        validateFunction("vkGetDataGraphPipelinePropertiesARM", this->vkGetDataGraphPipelinePropertiesARM);
-    return fn(device, pPipelineInfo, propertiesCount, pProperties);
-#    else
-    return this->vkGetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
 #    endif
 }
 #endif
@@ -12651,19 +12249,6 @@ void DeviceTable::GetImageSubresourceLayout2EXT(VkDevice device, VkImage image,
     fn(device, image, pSubresource, pLayout);
 #    else
     this->vkGetImageSubresourceLayout2EXT(device, image, pSubresource, pLayout);
-#    endif
-}
-#endif
-#if defined(VK_EXT_swapchain_maintenance1)
-VkResult DeviceTable::ReleaseSwapchainImagesEXT(VkDevice device,
-                                                const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkReleaseSwapchainImagesEXT fn =
-        validateFunction("vkReleaseSwapchainImagesEXT", this->vkReleaseSwapchainImagesEXT);
-    return fn(device, pReleaseInfo);
-#    else
-    return this->vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
 #    endif
 }
 #endif
