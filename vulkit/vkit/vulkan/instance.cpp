@@ -1,7 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/instance.hpp"
-#include "tkit/utils/logging.hpp"
+#include "tkit/utils/debug.hpp"
 
 namespace VKit
 {
@@ -46,7 +46,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
                                                            const VkDebugUtilsMessengerCallbackDataEXT *p_CallbackData,
                                                            void *)
 {
-    TKIT_ERROR("<{}: {}> {}", toString(p_Severity), toString(p_MessageType), p_CallbackData->pMessage);
+    TKIT_FATAL("<{}: {}> {}", toString(p_Severity), toString(p_MessageType), p_CallbackData->pMessage);
     return VK_FALSE;
 }
 #endif

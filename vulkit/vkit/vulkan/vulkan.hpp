@@ -57,25 +57,31 @@
 #    define VKIT_API_VERSION_VARIANT(p_Version) VK_VERSION_VARIANT(p_Version)
 #endif
 
+#ifdef TKIT_ENABLE_INFO_MACROS
+#    define VKIT_LOG_RESULT_INFO(result) TKIT_LOG_INFO_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#else
+#    define VKIT_LOG_RESULT_INFO(result)
+#endif
+
+#ifdef TKIT_ENABLE_WARNING_MACROS
+#    define VKIT_LOG_RESULT_WARNING(result) TKIT_LOG_WARNING_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#else
+#    define VKIT_LOG_RESULT_WARNING(result)
+#endif
+
+#ifdef TKIT_ENABLE_ERROR_MACROS
+#    define VKIT_LOG_RESULT_ERROR(result) TKIT_LOG_ERROR_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#else
+#    define VKIT_LOG_RESULT_ERROR(result)
+#endif
+
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_RESULT(result) TKIT_ASSERT(result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_ASSERT_RESULT(result)
 #endif
 
-#ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT(result) TKIT_LOG_INFO_IF(!result, "[VULKIT] {}", result.GetError().ToString())
-#else
-#    define VKIT_LOG_RESULT(result)
-#endif
-
-#ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_WARN_RESULT(result) TKIT_LOG_WARNING_IF(!result, "[VULKIT] {}", result.GetError().ToString())
-#else
-#    define VKIT_WARN_RESULT(result)
-#endif
-
-#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKIT_FORMAT(__VA_ARGS__))
+#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKit::Format(__VA_ARGS__))
 
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)                                                     \

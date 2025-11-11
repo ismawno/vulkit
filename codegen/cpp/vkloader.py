@@ -61,7 +61,6 @@ def parse_arguments() -> Namespace:
         default=None,
         help="The path where a small .txt will be exported alongside the generated code with information about when/by which extension a function/type was added. If not provided, the timeline will not be exported.",
     )
-    parser.add_argument("--sdk-version", type=str, default="v1.4.313", help="The version of the vulkan sdk to use.")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -217,7 +216,7 @@ class Function:
 def download_vk_xml() -> Path:
     import urllib.request
 
-    url = f"https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/refs/tags/{args.sdk_version}/xml/vk.xml"
+    url = "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/refs/heads/main/xml/vk.xml"
 
     vendor = rpath / "vendor"
     vendor.mkdir(exist_ok=True)
@@ -284,6 +283,8 @@ def ncheck_text(param: ET.Element | None, /) -> str:
 
 dispatchables: set[str] = set()
 for h in root.findall("types/type[@category='handle']"):
+    if not check_api(h):
+        continue
     text = "".join(h.itertext())
     if "VK_DEFINE_HANDLE" in text:
         hname = h.get("name") or ncheck_text(h.find("name"))
@@ -294,6 +295,8 @@ functions: dict[str, Function] = {}
 
 def parse_commands(root: ET.Element, /, *, alias_sweep: bool) -> None:
     for command in root.findall("commands/command"):
+        if not check_api(command):
+            continue
 
         alias = command.get("alias")
         if alias_sweep:
@@ -363,6 +366,8 @@ type_aliases: dict[str, list[str]] = {}
 
 def parse_types(root: ET.Element, lookup: str, /, *, alias_sweep: bool) -> None:
     for tp in root.findall(lookup):
+        if not check_api(tp):
+            continue
 
         alias = tp.get("alias")
 
@@ -404,10 +409,16 @@ Convoy.log(f"Found <bold>{len(functions)}</bold> {vulkan_api} functions in the v
 
 
 for feature in root.findall("feature"):
+    if not check_api(feature):
+        continue
     version = Convoy.ncheck(feature.get("name"))
 
     for require in feature.findall("require"):
+        if not check_api(require):
+            continue
         for command in require.findall("command"):
+            if not check_api(command):
+                continue
             fname = Convoy.ncheck(command.get("name"))
             fn = functions[fname]
             if fn.available_since is not None:
@@ -426,6 +437,8 @@ for feature in root.findall("feature"):
             )
 
         for tp in require.findall("type"):
+            if not check_api(tp):
+                continue
             tpname = Convoy.ncheck(tp.get("name"))
             t = types[tpname]
             if t.available_since is not None:
@@ -559,7 +572,7 @@ cpp = CPPGenerator()
 cpp.disclaimer("vkloader.py")
 cpp.include("vkit/core/pch.hpp", quotes=True)
 cpp.include("vkit/vulkan/loader.hpp", quotes=True)
-cpp.include("tkit/utils/logging.hpp", quotes=True)
+cpp.include("tkit/utils/debug.hpp", quotes=True)
 cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
 cpp.include("dlfcn.h")
 cpp("#elif defined(TKIT_OS_WINDOWS)", indent=0)

@@ -1,5 +1,5 @@
-#include "tkit/utils/logging.hpp"
 #include "vkit/core/pch.hpp"
+#include "tkit/utils/logging.hpp"
 #include "vkit/vulkan/vulkan.hpp"
 #include "vkit/core/alias.hpp"
 
@@ -8,7 +8,7 @@ namespace VKit
 
 template <String MessageType> std::string ErrorInfo<MessageType>::ToString() const
 {
-    return TKIT_FORMAT("VkResult: '{}' - Message: '{}'", VkResultToString(ErrorCode), Message);
+    return TKit::Format("VkResult: '{}' - Message: '{}'", VkResultToString(ErrorCode), Message);
 }
 
 template class VKIT_API ErrorInfo<const char *>;
