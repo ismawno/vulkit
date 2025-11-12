@@ -48,19 +48,19 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
     switch (p_Severity)
     {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        TKIT_LOG_DEBUG("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_DEBUG("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        TKIT_FATAL("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_FATAL("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        TKIT_LOG_WARNING("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_WARNING("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     default:
-        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     }
     return VK_FALSE;
