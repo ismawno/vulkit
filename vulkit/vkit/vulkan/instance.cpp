@@ -5,22 +5,22 @@
 
 namespace VKit
 {
-static const char *toString(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
-{
-    switch (p_Severity)
-    {
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        return "VERBOSE";
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        return "ERROR";
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        return "WARNING";
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        return "INFO";
-    default:
-        return "UNKNOWN";
-    }
-}
+// static const char *toString(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
+// {
+//     switch (p_Severity)
+//     {
+//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+//         return "VERBOSE";
+//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+//         return "ERROR";
+//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+//         return "WARNING";
+//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+//         return "INFO";
+//     default:
+//         return "UNKNOWN";
+//     }
+// }
 static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
 {
     if (p_MessageType == 7)
