@@ -28,6 +28,7 @@
           vulkan-headers
           vulkan-tools
           vulkan-memory-allocator
+          vulkan-validation-layers
           spirv-tools
           shaderc
         ];

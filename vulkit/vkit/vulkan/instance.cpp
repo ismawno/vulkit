@@ -5,7 +5,6 @@
 
 namespace VKit
 {
-#ifdef TKIT_ENABLE_ASSERTS
 static const char *toString(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
 {
     switch (p_Severity)
@@ -46,10 +45,26 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
                                                            const VkDebugUtilsMessengerCallbackDataEXT *p_CallbackData,
                                                            void *)
 {
-    TKIT_FATAL("<{}: {}> {}", toString(p_Severity), toString(p_MessageType), p_CallbackData->pMessage);
+    switch (p_Severity)
+    {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+        TKIT_LOG_DEBUG("<{}> {}", toString(p_MessageType), p_CallbackData->pMessage);
+        break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+        TKIT_FATAL("<{}> {}", toString(p_MessageType), p_CallbackData->pMessage);
+        break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+        TKIT_LOG_WARNING("<{}> {}", toString(p_MessageType), p_CallbackData->pMessage);
+        break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+        TKIT_LOG_INFO("<{}> {}", toString(p_MessageType), p_CallbackData->pMessage);
+        break;
+    default:
+        TKIT_LOG_INFO("<{}> {}", toString(p_MessageType), p_CallbackData->pMessage);
+        break;
+    }
     return VK_FALSE;
 }
-#endif
 
 static bool contains(const TKit::Span<const char *const> p_Extensions, const char *p_Extension)
 {
@@ -202,15 +217,14 @@ FormattedResult<Instance> Instance::Builder::Build() const
     {
         msgInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         msgInfo.messageSeverity =
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+
         msgInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
                               VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
                               VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-#ifdef TKIT_ENABLE_ASSERTS
+
         msgInfo.pfnUserCallback = m_DebugCallback ? m_DebugCallback : defaultDebugCallback;
-#else
-        msgInfo.pfnUserCallback = m_DebugCallback;
-#endif
         msgInfo.pUserData = m_DebugMessengerUserData;
     }
 
