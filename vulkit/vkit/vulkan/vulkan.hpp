@@ -57,19 +57,25 @@
 #    define VKIT_API_VERSION_VARIANT(p_Version) VK_VERSION_VARIANT(p_Version)
 #endif
 
-#ifdef TKIT_ENABLE_INFO_MACROS
+#ifdef TKIT_ENABLE_DEBUG_LOGS
+#    define VKIT_LOG_RESULT_DEBUG(result) TKIT_LOG_DEBUG_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#else
+#    define VKIT_LOG_RESULT_DEBUG(result)
+#endif
+
+#ifdef TKIT_ENABLE_INFO_LOGS
 #    define VKIT_LOG_RESULT_INFO(result) TKIT_LOG_INFO_IF(!result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_LOG_RESULT_INFO(result)
 #endif
 
-#ifdef TKIT_ENABLE_WARNING_MACROS
+#ifdef TKIT_ENABLE_WARNING_LOGS
 #    define VKIT_LOG_RESULT_WARNING(result) TKIT_LOG_WARNING_IF(!result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_LOG_RESULT_WARNING(result)
 #endif
 
-#ifdef TKIT_ENABLE_ERROR_MACROS
+#ifdef TKIT_ENABLE_ERROR_LOGS
 #    define VKIT_LOG_RESULT_ERROR(result) TKIT_LOG_ERROR_IF(!result, "[VULKIT] {}", result.GetError().ToString())
 #else
 #    define VKIT_LOG_RESULT_ERROR(result)
