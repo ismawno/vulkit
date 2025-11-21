@@ -15,83 +15,117 @@ void Load(void *p_Library);
 void Load(HMODULE p_Library);
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkCreateInstance vkCreateInstance;
 VKIT_API VKIT_LOADER_NO_DISCARD VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
                                                         const VkAllocationCallbacks *pAllocator, VkInstance *pInstance);
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 VKIT_API VKIT_LOADER_NO_DISCARD PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName);
+#endif
 
 #if defined(VKIT_API_VERSION_1_1)
 extern PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion;
 VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceVersion(uint32_t *pApiVersion);
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
 VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
                                                                           VkLayerProperties *pProperties);
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
 VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceExtensionProperties(const char *pLayerName,
                                                                               uint32_t *pPropertyCount,
                                                                               VkExtensionProperties *pProperties);
+#endif
 
 struct VKIT_API InstanceTable
 {
     static InstanceTable Create(VkInstance p_Instance);
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyInstance vkDestroyInstance = VK_NULL_HANDLE;
     void DestroyInstance(VkInstance instance, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult EnumeratePhysicalDevices(VkInstance instance, uint32_t *pPhysicalDeviceCount,
                                                              VkPhysicalDevice *pPhysicalDevices) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char *pName) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties *pProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t *pQueueFamilyPropertyCount,
                                                 VkQueueFamilyProperties *pQueueFamilyProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice,
                                            VkPhysicalDeviceMemoryProperties *pMemoryProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceFeatures vkGetPhysicalDeviceFeatures = VK_NULL_HANDLE;
     void GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures *pFeatures) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
                                            VkFormatProperties *pFormatProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceImageFormatProperties vkGetPhysicalDeviceImageFormatProperties = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetPhysicalDeviceImageFormatProperties(
         VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling,
         VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties *pImageFormatProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateDevice vkCreateDevice = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo,
                                                  const VkAllocationCallbacks *pAllocator, VkDevice *pDevice) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkEnumerateDeviceLayerProperties vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
                                                                    uint32_t *pPropertyCount,
                                                                    VkLayerProperties *pProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
                                                                        const char *pLayerName, uint32_t *pPropertyCount,
                                                                        VkExtensionProperties *pProperties) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPhysicalDeviceSparseImageFormatProperties vkGetPhysicalDeviceSparseImageFormatProperties = VK_NULL_HANDLE;
     void GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
                                                       VkImageType type, VkSampleCountFlagBits samples,
                                                       VkImageUsageFlags usage, VkImageTiling tiling,
                                                       uint32_t *pPropertyCount,
                                                       VkSparseImageFormatProperties *pProperties) const;
+#endif
 
 #if defined(VK_KHR_android_surface)
     PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR = VK_NULL_HANDLE;
@@ -99,6 +133,13 @@ struct VKIT_API InstanceTable
                                                             const VkAndroidSurfaceCreateInfoKHR *pCreateInfo,
                                                             const VkAllocationCallbacks *pAllocator,
                                                             VkSurfaceKHR *pSurface) const;
+#endif
+
+#if defined(VK_OHOS_surface)
+    PFN_vkCreateSurfaceOHOS vkCreateSurfaceOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS *pCreateInfo,
+                                                      const VkAllocationCallbacks *pAllocator,
+                                                      VkSurfaceKHR *pSurface) const;
 #endif
 
 #if defined(VK_KHR_display)
@@ -692,6 +733,38 @@ struct VKIT_API InstanceTable
         VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount, VkCooperativeVectorPropertiesNV *pProperties) const;
 #endif
 
+#if defined(VK_ARM_tensors)
+    PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM vkGetPhysicalDeviceExternalTensorPropertiesARM = VK_NULL_HANDLE;
+    void GetPhysicalDeviceExternalTensorPropertiesARM(VkPhysicalDevice physicalDevice,
+                                                      const VkPhysicalDeviceExternalTensorInfoARM *pExternalTensorInfo,
+                                                      VkExternalTensorPropertiesARM *pExternalTensorProperties) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM =
+        VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+        VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pQueueFamilyDataGraphPropertyCount,
+        VkQueueFamilyDataGraphPropertiesARM *pQueueFamilyDataGraphProperties) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM
+        vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM = VK_NULL_HANDLE;
+    void GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+        VkPhysicalDevice physicalDevice,
+        const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM *pQueueFamilyDataGraphProcessingEngineInfo,
+        VkQueueFamilyDataGraphProcessingEnginePropertiesARM *pQueueFamilyDataGraphProcessingEngineProperties) const;
+#endif
+
+#if defined(VK_ARM_performance_counters_by_region)
+    PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM
+        vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+        VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pCounterCount,
+        VkPerformanceCounterARM *pCounters, VkPerformanceCounterDescriptionARM *pCounterDescriptions) const;
+#endif
+
 #if defined(VK_KHR_get_physical_device_properties2)
     PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR = VK_NULL_HANDLE;
     void GetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2KHR *pFeatures) const;
@@ -784,188 +857,284 @@ struct VKIT_API InstanceTable
 struct VKIT_API DeviceTable
 {
     static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyDevice vkDestroyDevice = VK_NULL_HANDLE;
     void DestroyDevice(VkDevice device, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetDeviceQueue vkGetDeviceQueue = VK_NULL_HANDLE;
     void GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue *pQueue) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkQueueSubmit vkQueueSubmit = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo *pSubmits,
                                                 VkFence fence) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkQueueWaitIdle vkQueueWaitIdle = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult QueueWaitIdle(VkQueue queue) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDeviceWaitIdle vkDeviceWaitIdle = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult DeviceWaitIdle(VkDevice device) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkAllocateMemory vkAllocateMemory = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult AllocateMemory(VkDevice device, const VkMemoryAllocateInfo *pAllocateInfo,
                                                    const VkAllocationCallbacks *pAllocator,
                                                    VkDeviceMemory *pMemory) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkFreeMemory vkFreeMemory = VK_NULL_HANDLE;
     void FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkMapMemory vkMapMemory = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset,
                                               VkDeviceSize size, VkMemoryMapFlags flags, void **ppData) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkUnmapMemory vkUnmapMemory = VK_NULL_HANDLE;
     void UnmapMemory(VkDevice device, VkDeviceMemory memory) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
                                                             const VkMappedMemoryRange *pMemoryRanges) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult InvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
                                                                  const VkMappedMemoryRange *pMemoryRanges) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetDeviceMemoryCommitment vkGetDeviceMemoryCommitment = VK_NULL_HANDLE;
     void GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize *pCommittedMemoryInBytes) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements = VK_NULL_HANDLE;
     void GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements *pMemoryRequirements) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkBindBufferMemory vkBindBufferMemory = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory,
                                                      VkDeviceSize memoryOffset) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements = VK_NULL_HANDLE;
     void GetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements *pMemoryRequirements) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkBindImageMemory vkBindImageMemory = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult BindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory,
                                                     VkDeviceSize memoryOffset) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetImageSparseMemoryRequirements vkGetImageSparseMemoryRequirements = VK_NULL_HANDLE;
     void GetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t *pSparseMemoryRequirementCount,
                                           VkSparseImageMemoryRequirements *pSparseMemoryRequirements) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkQueueBindSparse vkQueueBindSparse = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
                                                     const VkBindSparseInfo *pBindInfo, VkFence fence) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateFence vkCreateFence = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateFence(VkDevice device, const VkFenceCreateInfo *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator, VkFence *pFence) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyFence vkDestroyFence = VK_NULL_HANDLE;
     void DestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkResetFences vkResetFences = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult ResetFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetFenceStatus vkGetFenceStatus = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetFenceStatus(VkDevice device, VkFence fence) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkWaitForFences vkWaitForFences = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences,
                                                   VkBool32 waitAll, uint64_t timeout) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateSemaphore vkCreateSemaphore = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo *pCreateInfo,
                                                     const VkAllocationCallbacks *pAllocator,
                                                     VkSemaphore *pSemaphore) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroySemaphore vkDestroySemaphore = VK_NULL_HANDLE;
     void DestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateEvent vkCreateEvent = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateEvent(VkDevice device, const VkEventCreateInfo *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator, VkEvent *pEvent) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyEvent vkDestroyEvent = VK_NULL_HANDLE;
     void DestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetEventStatus vkGetEventStatus = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetEventStatus(VkDevice device, VkEvent event) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkSetEvent vkSetEvent = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult SetEvent(VkDevice device, VkEvent event) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkResetEvent vkResetEvent = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult ResetEvent(VkDevice device, VkEvent event) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateQueryPool vkCreateQueryPool = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo *pCreateInfo,
                                                     const VkAllocationCallbacks *pAllocator,
                                                     VkQueryPool *pQueryPool) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyQueryPool vkDestroyQueryPool = VK_NULL_HANDLE;
     void DestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetQueryPoolResults vkGetQueryPoolResults = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                                         uint32_t queryCount, size_t dataSize, void *pData,
                                                         VkDeviceSize stride, VkQueryResultFlags flags) const;
+#endif
 
 #if defined(VKIT_API_VERSION_1_2)
     PFN_vkResetQueryPool vkResetQueryPool = VK_NULL_HANDLE;
     void ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateBuffer vkCreateBuffer = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateBuffer(VkDevice device, const VkBufferCreateInfo *pCreateInfo,
                                                  const VkAllocationCallbacks *pAllocator, VkBuffer *pBuffer) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyBuffer vkDestroyBuffer = VK_NULL_HANDLE;
     void DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateBufferView vkCreateBufferView = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateBufferView(VkDevice device, const VkBufferViewCreateInfo *pCreateInfo,
                                                      const VkAllocationCallbacks *pAllocator,
                                                      VkBufferView *pView) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyBufferView vkDestroyBufferView = VK_NULL_HANDLE;
     void DestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateImage vkCreateImage = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateImage(VkDevice device, const VkImageCreateInfo *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator, VkImage *pImage) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyImage vkDestroyImage = VK_NULL_HANDLE;
     void DestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = VK_NULL_HANDLE;
     void GetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource *pSubresource,
                                    VkSubresourceLayout *pLayout) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateImageView vkCreateImageView = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateImageView(VkDevice device, const VkImageViewCreateInfo *pCreateInfo,
                                                     const VkAllocationCallbacks *pAllocator, VkImageView *pView) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyImageView vkDestroyImageView = VK_NULL_HANDLE;
     void DestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateShaderModule vkCreateShaderModule = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *pCreateInfo,
                                                        const VkAllocationCallbacks *pAllocator,
                                                        VkShaderModule *pShaderModule) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyShaderModule vkDestroyShaderModule = VK_NULL_HANDLE;
     void DestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
                              const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreatePipelineCache vkCreatePipelineCache = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo *pCreateInfo,
                                                         const VkAllocationCallbacks *pAllocator,
                                                         VkPipelineCache *pPipelineCache) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyPipelineCache vkDestroyPipelineCache = VK_NULL_HANDLE;
     void DestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache,
                               const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetPipelineCacheData vkGetPipelineCacheData = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult GetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache,
                                                          size_t *pDataSize, void *pData) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkMergePipelineCaches vkMergePipelineCaches = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult MergePipelineCaches(VkDevice device, VkPipelineCache dstCache,
                                                         uint32_t srcCacheCount,
                                                         const VkPipelineCache *pSrcCaches) const;
+#endif
 
 #if defined(VK_KHR_pipeline_binary)
     PFN_vkCreatePipelineBinariesKHR vkCreatePipelineBinariesKHR = VK_NULL_HANDLE;
@@ -1003,19 +1172,23 @@ struct VKIT_API DeviceTable
                                                                    const VkAllocationCallbacks *pAllocator) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
                                                             uint32_t createInfoCount,
                                                             const VkGraphicsPipelineCreateInfo *pCreateInfos,
                                                             const VkAllocationCallbacks *pAllocator,
                                                             VkPipeline *pPipelines) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateComputePipelines vkCreateComputePipelines = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
                                                            uint32_t createInfoCount,
                                                            const VkComputePipelineCreateInfo *pCreateInfos,
                                                            const VkAllocationCallbacks *pAllocator,
                                                            VkPipeline *pPipelines) const;
+#endif
 
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI =
@@ -1025,81 +1198,117 @@ struct VKIT_API DeviceTable
                                                                                   VkExtent2D *pMaxWorkgroupSize) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyPipeline vkDestroyPipeline = VK_NULL_HANDLE;
     void DestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreatePipelineLayout vkCreatePipelineLayout = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo *pCreateInfo,
                                                          const VkAllocationCallbacks *pAllocator,
                                                          VkPipelineLayout *pPipelineLayout) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = VK_NULL_HANDLE;
     void DestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout,
                                const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateSampler vkCreateSampler = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateSampler(VkDevice device, const VkSamplerCreateInfo *pCreateInfo,
                                                   const VkAllocationCallbacks *pAllocator, VkSampler *pSampler) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroySampler vkDestroySampler = VK_NULL_HANDLE;
     void DestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateDescriptorSetLayout(VkDevice device,
                                                               const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
                                                               const VkAllocationCallbacks *pAllocator,
                                                               VkDescriptorSetLayout *pSetLayout) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = VK_NULL_HANDLE;
     void DestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout,
                                     const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateDescriptorPool vkCreateDescriptorPool = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo *pCreateInfo,
                                                          const VkAllocationCallbacks *pAllocator,
                                                          VkDescriptorPool *pDescriptorPool) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool = VK_NULL_HANDLE;
     void DestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
                                const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkResetDescriptorPool vkResetDescriptorPool = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult ResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
                                                         VkDescriptorPoolResetFlags flags) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult AllocateDescriptorSets(VkDevice device,
                                                            const VkDescriptorSetAllocateInfo *pAllocateInfo,
                                                            VkDescriptorSet *pDescriptorSets) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkFreeDescriptorSets vkFreeDescriptorSets = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult FreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool,
                                                        uint32_t descriptorSetCount,
                                                        const VkDescriptorSet *pDescriptorSets) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets = VK_NULL_HANDLE;
     void UpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount,
                               const VkWriteDescriptorSet *pDescriptorWrites, uint32_t descriptorCopyCount,
                               const VkCopyDescriptorSet *pDescriptorCopies) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateFramebuffer vkCreateFramebuffer = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo *pCreateInfo,
                                                       const VkAllocationCallbacks *pAllocator,
                                                       VkFramebuffer *pFramebuffer) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyFramebuffer vkDestroyFramebuffer = VK_NULL_HANDLE;
     void DestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateRenderPass vkCreateRenderPass = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreateInfo,
                                                      const VkAllocationCallbacks *pAllocator,
                                                      VkRenderPass *pRenderPass) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyRenderPass vkDestroyRenderPass = VK_NULL_HANDLE;
     void DestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkGetRenderAreaGranularity vkGetRenderAreaGranularity = VK_NULL_HANDLE;
     void GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D *pGranularity) const;
+#endif
 
 #if defined(VKIT_API_VERSION_1_4)
     PFN_vkGetRenderingAreaGranularity vkGetRenderingAreaGranularity = VK_NULL_HANDLE;
@@ -1107,99 +1316,145 @@ struct VKIT_API DeviceTable
                                      VkExtent2D *pGranularity) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCreateCommandPool vkCreateCommandPool = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo *pCreateInfo,
                                                       const VkAllocationCallbacks *pAllocator,
                                                       VkCommandPool *pCommandPool) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyCommandPool vkDestroyCommandPool = VK_NULL_HANDLE;
     void DestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks *pAllocator) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkResetCommandPool vkResetCommandPool = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult ResetCommandPool(VkDevice device, VkCommandPool commandPool,
                                                      VkCommandPoolResetFlags flags) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult AllocateCommandBuffers(VkDevice device,
                                                            const VkCommandBufferAllocateInfo *pAllocateInfo,
                                                            VkCommandBuffer *pCommandBuffers) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers = VK_NULL_HANDLE;
     void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
                             const VkCommandBuffer *pCommandBuffers) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkBeginCommandBuffer vkBeginCommandBuffer = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult BeginCommandBuffer(VkCommandBuffer commandBuffer,
                                                        const VkCommandBufferBeginInfo *pBeginInfo) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkEndCommandBuffer vkEndCommandBuffer = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult EndCommandBuffer(VkCommandBuffer commandBuffer) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkResetCommandBuffer vkResetCommandBuffer = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult ResetCommandBuffer(VkCommandBuffer commandBuffer,
                                                        VkCommandBufferResetFlags flags) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBindPipeline vkCmdBindPipeline = VK_NULL_HANDLE;
     void CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                          VkPipeline pipeline) const;
+#endif
 
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
     PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT vkCmdSetAttachmentFeedbackLoopEnableEXT = VK_NULL_HANDLE;
     void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetViewport vkCmdSetViewport = VK_NULL_HANDLE;
     void CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
                         const VkViewport *pViewports) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetScissor vkCmdSetScissor = VK_NULL_HANDLE;
     void CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount,
                        const VkRect2D *pScissors) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetLineWidth vkCmdSetLineWidth = VK_NULL_HANDLE;
     void CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetDepthBias vkCmdSetDepthBias = VK_NULL_HANDLE;
     void CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp,
                          float depthBiasSlopeFactor) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetBlendConstants vkCmdSetBlendConstants = VK_NULL_HANDLE;
     void CmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetDepthBounds vkCmdSetDepthBounds = VK_NULL_HANDLE;
     void CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetStencilCompareMask vkCmdSetStencilCompareMask = VK_NULL_HANDLE;
     void CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                   uint32_t compareMask) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetStencilWriteMask vkCmdSetStencilWriteMask = VK_NULL_HANDLE;
     void CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetStencilReference vkCmdSetStencilReference = VK_NULL_HANDLE;
     void CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets = VK_NULL_HANDLE;
     void CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
                                const VkDescriptorSet *pDescriptorSets, uint32_t dynamicOffsetCount,
                                const uint32_t *pDynamicOffsets) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer = VK_NULL_HANDLE;
     void CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                             VkIndexType indexType) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers = VK_NULL_HANDLE;
     void CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
                               const VkBuffer *pBuffers, const VkDeviceSize *pOffsets) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDraw vkCmdDraw = VK_NULL_HANDLE;
     void CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex,
                  uint32_t firstInstance) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDrawIndexed vkCmdDrawIndexed = VK_NULL_HANDLE;
     void CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex,
                         int32_t vertexOffset, uint32_t firstInstance) const;
+#endif
 
 #if defined(VK_EXT_multi_draw)
     PFN_vkCmdDrawMultiEXT vkCmdDrawMultiEXT = VK_NULL_HANDLE;
@@ -1214,20 +1469,28 @@ struct VKIT_API DeviceTable
                                 uint32_t firstInstance, uint32_t stride, const int32_t *pVertexOffset) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDrawIndirect vkCmdDrawIndirect = VK_NULL_HANDLE;
     void CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount,
                          uint32_t stride) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect = VK_NULL_HANDLE;
     void CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount,
                                 uint32_t stride) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDispatch vkCmdDispatch = VK_NULL_HANDLE;
     void CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
                      uint32_t groupCountZ) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect = VK_NULL_HANDLE;
     void CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) const;
+#endif
 
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     PFN_vkCmdSubpassShadingHUAWEI vkCmdSubpassShadingHUAWEI = VK_NULL_HANDLE;
@@ -1251,32 +1514,48 @@ struct VKIT_API DeviceTable
                                            VkPipeline pipeline) const;
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdCopyBuffer vkCmdCopyBuffer = VK_NULL_HANDLE;
     void CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount,
                        const VkBufferCopy *pRegions) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdCopyImage vkCmdCopyImage = VK_NULL_HANDLE;
     void CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
                       VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy *pRegions) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBlitImage vkCmdBlitImage = VK_NULL_HANDLE;
     void CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
                       VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit *pRegions,
                       VkFilter filter) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = VK_NULL_HANDLE;
     void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
                               VkImageLayout dstImageLayout, uint32_t regionCount,
                               const VkBufferImageCopy *pRegions) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer = VK_NULL_HANDLE;
     void CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                               VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy *pRegions) const;
+#endif
 
 #if defined(VK_NV_copy_memory_indirect)
     PFN_vkCmdCopyMemoryIndirectNV vkCmdCopyMemoryIndirectNV = VK_NULL_HANDLE;
     void CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount,
                                  uint32_t stride) const;
+#endif
+
+#if defined(VK_KHR_copy_memory_indirect)
+    PFN_vkCmdCopyMemoryIndirectKHR vkCmdCopyMemoryIndirectKHR = VK_NULL_HANDLE;
+    void CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                  const VkCopyMemoryIndirectInfoKHR *pCopyMemoryIndirectInfo) const;
 #endif
 
 #if defined(VK_NV_copy_memory_indirect)
@@ -1287,60 +1566,90 @@ struct VKIT_API DeviceTable
                                         const VkImageSubresourceLayers *pImageSubresources) const;
 #endif
 
+#if defined(VK_KHR_copy_memory_indirect)
+    PFN_vkCmdCopyMemoryToImageIndirectKHR vkCmdCopyMemoryToImageIndirectKHR = VK_NULL_HANDLE;
+    void CmdCopyMemoryToImageIndirectKHR(
+        VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR *pCopyMemoryToImageIndirectInfo) const;
+#endif
+
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer = VK_NULL_HANDLE;
     void CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
                          VkDeviceSize dataSize, const void *pData) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdFillBuffer vkCmdFillBuffer = VK_NULL_HANDLE;
     void CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size,
                        uint32_t data) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdClearColorImage vkCmdClearColorImage = VK_NULL_HANDLE;
     void CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
                             const VkClearColorValue *pColor, uint32_t rangeCount,
                             const VkImageSubresourceRange *pRanges) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage = VK_NULL_HANDLE;
     void CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
                                    const VkClearDepthStencilValue *pDepthStencil, uint32_t rangeCount,
                                    const VkImageSubresourceRange *pRanges) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdClearAttachments vkCmdClearAttachments = VK_NULL_HANDLE;
     void CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
                              const VkClearAttachment *pAttachments, uint32_t rectCount,
                              const VkClearRect *pRects) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdResolveImage vkCmdResolveImage = VK_NULL_HANDLE;
     void CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                          VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                          const VkImageResolve *pRegions) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdSetEvent vkCmdSetEvent = VK_NULL_HANDLE;
     void CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdResetEvent vkCmdResetEvent = VK_NULL_HANDLE;
     void CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdWaitEvents vkCmdWaitEvents = VK_NULL_HANDLE;
     void CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
                        VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
                        uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
                        uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier *pBufferMemoryBarriers,
                        uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier *pImageMemoryBarriers) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier = VK_NULL_HANDLE;
     void CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
                             VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
                             uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
                             uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier *pBufferMemoryBarriers,
                             uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier *pImageMemoryBarriers) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBeginQuery vkCmdBeginQuery = VK_NULL_HANDLE;
     void CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
                        VkQueryControlFlags flags) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdEndQuery vkCmdEndQuery = VK_NULL_HANDLE;
     void CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) const;
+#endif
 
 #if defined(VK_EXT_conditional_rendering)
     PFN_vkCmdBeginConditionalRenderingEXT vkCmdBeginConditionalRenderingEXT = VK_NULL_HANDLE;
@@ -1353,36 +1662,58 @@ struct VKIT_API DeviceTable
     void CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) const;
 #endif
 
+#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
+    PFN_vkCmdBeginCustomResolveEXT vkCmdBeginCustomResolveEXT = VK_NULL_HANDLE;
+    void CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                  const VkBeginCustomResolveInfoEXT *pBeginCustomResolveInfo) const;
+#endif
+
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdResetQueryPool vkCmdResetQueryPool = VK_NULL_HANDLE;
     void CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
                            uint32_t queryCount) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp = VK_NULL_HANDLE;
     void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
                            uint32_t query) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdCopyQueryPoolResults vkCmdCopyQueryPoolResults = VK_NULL_HANDLE;
     void CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
                                  uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride,
                                  VkQueryResultFlags flags) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdPushConstants vkCmdPushConstants = VK_NULL_HANDLE;
     void CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
                           uint32_t offset, uint32_t size, const void *pValues) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass = VK_NULL_HANDLE;
     void CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo *pRenderPassBegin,
                             VkSubpassContents contents) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdNextSubpass vkCmdNextSubpass = VK_NULL_HANDLE;
     void CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdEndRenderPass vkCmdEndRenderPass = VK_NULL_HANDLE;
     void CmdEndRenderPass(VkCommandBuffer commandBuffer) const;
+#endif
 
+#if defined(VKIT_API_VERSION_1_0)
     PFN_vkCmdExecuteCommands vkCmdExecuteCommands = VK_NULL_HANDLE;
     void CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
                             const VkCommandBuffer *pCommandBuffers) const;
+#endif
 
 #if defined(VK_KHR_display_swapchain)
     PFN_vkCreateSharedSwapchainsKHR vkCreateSharedSwapchainsKHR = VK_NULL_HANDLE;
@@ -2250,7 +2581,8 @@ struct VKIT_API DeviceTable
                                     uint32_t drawCount, uint32_t stride) const;
 #endif
 
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     PFN_vkCmdDrawMeshTasksIndirectCountNV vkCmdDrawMeshTasksIndirectCountNV = VK_NULL_HANDLE;
     void CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                          VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
@@ -2269,7 +2601,8 @@ struct VKIT_API DeviceTable
                                      uint32_t drawCount, uint32_t stride) const;
 #endif
 
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     PFN_vkCmdDrawMeshTasksIndirectCountEXT vkCmdDrawMeshTasksIndirectCountEXT = VK_NULL_HANDLE;
     void CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                           VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
@@ -2657,13 +2990,6 @@ struct VKIT_API DeviceTable
     PFN_vkCmdSetLineStipple vkCmdSetLineStipple = VK_NULL_HANDLE;
     void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
                            uint16_t lineStipplePattern) const;
-#endif
-
-#if defined(VKSC_VERSION_1_0)
-    PFN_vkGetFaultData vkGetFaultData = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior,
-                                                 VkBool32 *pUnrecordedFaults, uint32_t *pFaultCount,
-                                                 VkFaultData *pFaults) const;
 #endif
 
 #if defined(VK_KHR_acceleration_structure)
@@ -3203,12 +3529,6 @@ struct VKIT_API DeviceTable
                                                           const VkHostImageLayoutTransitionInfo *pTransitions) const;
 #endif
 
-#if defined(VKSC_VERSION_1_0)
-    PFN_vkGetCommandPoolMemoryConsumption vkGetCommandPoolMemoryConsumption = VK_NULL_HANDLE;
-    void GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer,
-                                         VkCommandPoolMemoryConsumption *pConsumption) const;
-#endif
-
 #if defined(VK_KHR_video_queue)
     PFN_vkCreateVideoSessionKHR vkCreateVideoSessionKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateVideoSessionKHR(VkDevice device,
@@ -3316,6 +3636,21 @@ struct VKIT_API DeviceTable
         VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV *pBuildInfo) const;
 #endif
 
+#if defined(VK_EXT_memory_decompression)
+    PFN_vkCmdDecompressMemoryEXT vkCmdDecompressMemoryEXT = VK_NULL_HANDLE;
+    void CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                const VkDecompressMemoryInfoEXT *pDecompressMemoryInfoEXT) const;
+#endif
+
+#if defined(VK_EXT_memory_decompression)
+    PFN_vkCmdDecompressMemoryIndirectCountEXT vkCmdDecompressMemoryIndirectCountEXT = VK_NULL_HANDLE;
+    void CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                             VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                             VkDeviceAddress indirectCommandsAddress,
+                                             VkDeviceAddress indirectCommandsCountAddress,
+                                             uint32_t maxDecompressionCount, uint32_t stride) const;
+#endif
+
 #if defined(VK_NVX_binary_import)
     PFN_vkCreateCuModuleNVX vkCreateCuModuleNVX = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX *pCreateInfo,
@@ -3419,6 +3754,12 @@ struct VKIT_API DeviceTable
     void SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) const;
 #endif
 
+#if defined(VK_KHR_present_wait2)
+    PFN_vkWaitForPresent2KHR vkWaitForPresent2KHR = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult WaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain,
+                                                       const VkPresentWait2InfoKHR *pPresentWait2Info) const;
+#endif
+
 #if defined(VK_KHR_present_wait)
     PFN_vkWaitForPresentKHR vkWaitForPresentKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId,
@@ -3504,9 +3845,9 @@ struct VKIT_API DeviceTable
     void CmdEndRendering(VkCommandBuffer commandBuffer) const;
 #endif
 
-#if defined(VK_EXT_fragment_density_map_offset)
-    PFN_vkCmdEndRendering2EXT vkCmdEndRendering2EXT = VK_NULL_HANDLE;
-    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT *pRenderingEndInfo) const;
+#if defined(VK_KHR_maintenance10)
+    PFN_vkCmdEndRendering2KHR vkCmdEndRendering2KHR = VK_NULL_HANDLE;
+    void CmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR *pRenderingEndInfo) const;
 #endif
 
 #if defined(VK_VALVE_descriptor_set_host_mapping)
@@ -3692,10 +4033,10 @@ struct VKIT_API DeviceTable
     void CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT *pDepthBiasInfo) const;
 #endif
 
-#if defined(VK_EXT_swapchain_maintenance1)
-    PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT = VK_NULL_HANDLE;
+#if defined(VK_KHR_swapchain_maintenance1)
+    PFN_vkReleaseSwapchainImagesKHR vkReleaseSwapchainImagesKHR = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult
-    ReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const;
+    ReleaseSwapchainImagesKHR(VkDevice device, const VkReleaseSwapchainImagesInfoKHR *pReleaseInfo) const;
 #endif
 
 #if defined(VKIT_API_VERSION_1_4)
@@ -3904,7 +4245,7 @@ struct VKIT_API DeviceTable
 
 #if defined(VK_QCOM_tile_shading)
     PFN_vkCmdDispatchTileQCOM vkCmdDispatchTileQCOM = VK_NULL_HANDLE;
-    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) const;
+    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM *pDispatchTileInfo) const;
 #endif
 
 #if defined(VK_QCOM_tile_shading)
@@ -3936,6 +4277,165 @@ struct VKIT_API DeviceTable
     PFN_vkGetExternalComputeQueueDataNV vkGetExternalComputeQueueDataNV = VK_NULL_HANDLE;
     void GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue,
                                        VkExternalComputeQueueDataParamsNV *params, void *pData) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkCreateTensorARM vkCreateTensorARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult CreateTensorARM(VkDevice device, const VkTensorCreateInfoARM *pCreateInfo,
+                                                    const VkAllocationCallbacks *pAllocator,
+                                                    VkTensorARM *pTensor) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkDestroyTensorARM vkDestroyTensorARM = VK_NULL_HANDLE;
+    void DestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks *pAllocator) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkCreateTensorViewARM vkCreateTensorViewARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult CreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM *pCreateInfo,
+                                                        const VkAllocationCallbacks *pAllocator,
+                                                        VkTensorViewARM *pView) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkDestroyTensorViewARM vkDestroyTensorViewARM = VK_NULL_HANDLE;
+    void DestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView,
+                              const VkAllocationCallbacks *pAllocator) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkGetTensorMemoryRequirementsARM vkGetTensorMemoryRequirementsARM = VK_NULL_HANDLE;
+    void GetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM *pInfo,
+                                        VkMemoryRequirements2 *pMemoryRequirements) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkBindTensorMemoryARM vkBindTensorMemoryARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult BindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount,
+                                                        const VkBindTensorMemoryInfoARM *pBindInfos) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkGetDeviceTensorMemoryRequirementsARM vkGetDeviceTensorMemoryRequirementsARM = VK_NULL_HANDLE;
+    void GetDeviceTensorMemoryRequirementsARM(VkDevice device, const VkDeviceTensorMemoryRequirementsARM *pInfo,
+                                              VkMemoryRequirements2 *pMemoryRequirements) const;
+#endif
+
+#if defined(VK_ARM_tensors)
+    PFN_vkCmdCopyTensorARM vkCmdCopyTensorARM = VK_NULL_HANDLE;
+    void CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM *pCopyTensorInfo) const;
+#endif
+
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+    PFN_vkGetTensorOpaqueCaptureDescriptorDataARM vkGetTensorOpaqueCaptureDescriptorDataARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetTensorOpaqueCaptureDescriptorDataARM(
+        VkDevice device, const VkTensorCaptureDescriptorDataInfoARM *pInfo, void *pData) const;
+#endif
+
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+    PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM vkGetTensorViewOpaqueCaptureDescriptorDataARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetTensorViewOpaqueCaptureDescriptorDataARM(
+        VkDevice device, const VkTensorViewCaptureDescriptorDataInfoARM *pInfo, void *pData) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkCreateDataGraphPipelinesARM vkCreateDataGraphPipelinesARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult CreateDataGraphPipelinesARM(VkDevice device,
+                                                                VkDeferredOperationKHR deferredOperation,
+                                                                VkPipelineCache pipelineCache, uint32_t createInfoCount,
+                                                                const VkDataGraphPipelineCreateInfoARM *pCreateInfos,
+                                                                const VkAllocationCallbacks *pAllocator,
+                                                                VkPipeline *pPipelines) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkCreateDataGraphPipelineSessionARM vkCreateDataGraphPipelineSessionARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult CreateDataGraphPipelineSessionARM(
+        VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM *pCreateInfo,
+        const VkAllocationCallbacks *pAllocator, VkDataGraphPipelineSessionARM *pSession) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM vkGetDataGraphPipelineSessionBindPointRequirementsARM =
+        VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelineSessionBindPointRequirementsARM(
+        VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM *pInfo,
+        uint32_t *pBindPointRequirementCount,
+        VkDataGraphPipelineSessionBindPointRequirementARM *pBindPointRequirements) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM vkGetDataGraphPipelineSessionMemoryRequirementsARM =
+        VK_NULL_HANDLE;
+    void GetDataGraphPipelineSessionMemoryRequirementsARM(
+        VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM *pInfo,
+        VkMemoryRequirements2 *pMemoryRequirements) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkBindDataGraphPipelineSessionMemoryARM vkBindDataGraphPipelineSessionMemoryARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult BindDataGraphPipelineSessionMemoryARM(
+        VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM *pBindInfos) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkDestroyDataGraphPipelineSessionARM vkDestroyDataGraphPipelineSessionARM = VK_NULL_HANDLE;
+    void DestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session,
+                                            const VkAllocationCallbacks *pAllocator) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkCmdDispatchDataGraphARM vkCmdDispatchDataGraphARM = VK_NULL_HANDLE;
+    void CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                 const VkDataGraphPipelineDispatchInfoARM *pInfo) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetDataGraphPipelineAvailablePropertiesARM vkGetDataGraphPipelineAvailablePropertiesARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelineAvailablePropertiesARM(
+        VkDevice device, const VkDataGraphPipelineInfoARM *pPipelineInfo, uint32_t *pPropertiesCount,
+        VkDataGraphPipelinePropertyARM *pProperties) const;
+#endif
+
+#if defined(VK_ARM_data_graph)
+    PFN_vkGetDataGraphPipelinePropertiesARM vkGetDataGraphPipelinePropertiesARM = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetDataGraphPipelinePropertiesARM(
+        VkDevice device, const VkDataGraphPipelineInfoARM *pPipelineInfo, uint32_t propertiesCount,
+        VkDataGraphPipelinePropertyQueryResultARM *pProperties) const;
+#endif
+
+#if defined(VK_OHOS_external_memory)
+    PFN_vkGetNativeBufferPropertiesOHOS vkGetNativeBufferPropertiesOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer *buffer,
+                                                                  VkNativeBufferPropertiesOHOS *pProperties) const;
+#endif
+
+#if defined(VK_OHOS_external_memory)
+    PFN_vkGetMemoryNativeBufferOHOS vkGetMemoryNativeBufferOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetMemoryNativeBufferOHOS(VkDevice device,
+                                                              const VkMemoryGetNativeBufferInfoOHOS *pInfo,
+                                                              struct OH_NativeBuffer **pBuffer) const;
+#endif
+
+#if defined(VK_OHOS_native_buffer)
+    PFN_vkGetSwapchainGrallocUsageOHOS vkGetSwapchainGrallocUsageOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format,
+                                                                 VkImageUsageFlags imageUsage,
+                                                                 uint64_t *grallocUsage) const;
+#endif
+
+#if defined(VK_OHOS_native_buffer)
+    PFN_vkAcquireImageOHOS vkAcquireImageOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd,
+                                                     VkSemaphore semaphore, VkFence fence) const;
+#endif
+
+#if defined(VK_OHOS_native_buffer)
+    PFN_vkQueueSignalReleaseImageOHOS vkQueueSignalReleaseImageOHOS = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
+                                                                const VkSemaphore *pWaitSemaphores, VkImage image,
+                                                                int32_t *pNativeFenceFd) const;
 #endif
 
 #if defined(VK_EXT_host_query_reset)
@@ -4405,6 +4905,11 @@ struct VKIT_API DeviceTable
     void CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfoKHR *pRenderingInfo) const;
 #endif
 
+#if defined(VK_EXT_fragment_density_map_offset)
+    PFN_vkCmdEndRendering2EXT vkCmdEndRendering2EXT = VK_NULL_HANDLE;
+    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT *pRenderingEndInfo) const;
+#endif
+
 #if defined(VK_KHR_dynamic_rendering)
     PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR = VK_NULL_HANDLE;
     void CmdEndRenderingKHR(VkCommandBuffer commandBuffer) const;
@@ -4420,6 +4925,12 @@ struct VKIT_API DeviceTable
     PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT = VK_NULL_HANDLE;
     void GetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2EXT *pSubresource,
                                        VkSubresourceLayout2EXT *pLayout) const;
+#endif
+
+#if defined(VK_EXT_swapchain_maintenance1)
+    PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT = VK_NULL_HANDLE;
+    VKIT_LOADER_NO_DISCARD VkResult
+    ReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const;
 #endif
 
 #if defined(VK_KHR_maintenance5)

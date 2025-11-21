@@ -58,33 +58,43 @@
 #endif
 
 #ifdef TKIT_ENABLE_DEBUG_LOGS
-#    define VKIT_LOG_RESULT_DEBUG(result) TKIT_LOG_DEBUG_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#    define VKIT_LOG_RESULT_DEBUG(p_Result)                                                                            \
+        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
 #else
-#    define VKIT_LOG_RESULT_DEBUG(result)
+#    define VKIT_LOG_RESULT_DEBUG(p_Result)
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT_INFO(result) TKIT_LOG_INFO_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#    define VKIT_LOG_RESULT_INFO(p_Result)                                                                             \
+        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
 #else
-#    define VKIT_LOG_RESULT_INFO(result)
+#    define VKIT_LOG_RESULT_INFO(p_Result)
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_LOG_RESULT_WARNING(result) TKIT_LOG_WARNING_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#    define VKIT_LOG_RESULT_WARNING(p_Result)                                                                          \
+        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
 #else
-#    define VKIT_LOG_RESULT_WARNING(result)
+#    define VKIT_LOG_RESULT_WARNING(p_Result)
 #endif
 
 #ifdef TKIT_ENABLE_ERROR_LOGS
-#    define VKIT_LOG_RESULT_ERROR(result) TKIT_LOG_ERROR_IF(!result, "[VULKIT] {}", result.GetError().ToString())
+#    define VKIT_LOG_RESULT_ERROR(p_Result)                                                                            \
+        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
 #else
-#    define VKIT_LOG_RESULT_ERROR(result)
+#    define VKIT_LOG_RESULT_ERROR(p_Result)
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_ASSERT_RESULT(result) TKIT_ASSERT(result, "[VULKIT] {}", result.GetError().ToString())
+#    define VKIT_ASSERT_RESULT(p_Result)                                                                               \
+        TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_ASSERT_SUCCESS(p_Expression, p_Message, ...)                                                          \
+        {                                                                                                              \
+            const VkResult __vkit_result = p_Expression;                                                               \
+            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), p_Message, __VA_ARGS__);                                    \
+        }
 #else
-#    define VKIT_ASSERT_RESULT(result)
+#    define VKIT_ASSERT_RESULT(p_Result)
 #endif
 
 #define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKit::Format(__VA_ARGS__))
@@ -181,5 +191,26 @@ class VKIT_API DeletionQueue
 };
 
 VKIT_API const char *VkResultToString(VkResult p_Result);
+
+template <typename T> bool IsSuccessful(const T &p_Result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return p_Result == VK_SUCCESS;
+    else
+        return p_Result.IsOk();
+}
+
+template <typename T> auto ResultToString(const T &p_Result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return VkResultToString(p_Result);
+    else
+    {
+        TKIT_ASSERT(!p_Result, "[VULKIT] Only unsuccessful results make sense to be stringified");
+        return p_Result.GetError().ToString();
+    }
+}
 
 } // namespace VKit

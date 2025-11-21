@@ -19,27 +19,31 @@ template <typename T> static T validateFunction(const char *p_Name, T &&p_Functi
 }
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
 PFN_vkCreateInstance vkCreateInstance = VK_NULL_HANDLE;
 VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo, const VkAllocationCallbacks *pAllocator,
                         VkInstance *pInstance)
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateInstance fn = validateFunction("vkCreateInstance", Vulkan::vkCreateInstance);
     return fn(pCreateInfo, pAllocator, pInstance);
-#else
+#    else
     return Vulkan::vkCreateInstance(pCreateInfo, pAllocator, pInstance);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = VK_NULL_HANDLE;
 PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName)
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetInstanceProcAddr fn = validateFunction("vkGetInstanceProcAddr", Vulkan::vkGetInstanceProcAddr);
     return fn(instance, pName);
-#else
+#    else
     return Vulkan::vkGetInstanceProcAddr(instance, pName);
-#endif
+#    endif
 }
+#endif
 #if defined(VKIT_API_VERSION_1_1)
 PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion = VK_NULL_HANDLE;
 VkResult EnumerateInstanceVersion(uint32_t *pApiVersion)
@@ -53,29 +57,33 @@ VkResult EnumerateInstanceVersion(uint32_t *pApiVersion)
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
 VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount, VkLayerProperties *pProperties)
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEnumerateInstanceLayerProperties fn =
         validateFunction("vkEnumerateInstanceLayerProperties", Vulkan::vkEnumerateInstanceLayerProperties);
     return fn(pPropertyCount, pProperties);
-#else
+#    else
     return Vulkan::vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
 VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *pPropertyCount,
                                               VkExtensionProperties *pProperties)
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEnumerateInstanceExtensionProperties fn =
         validateFunction("vkEnumerateInstanceExtensionProperties", Vulkan::vkEnumerateInstanceExtensionProperties);
     return fn(pLayerName, pPropertyCount, pProperties);
-#else
+#    else
     return Vulkan::vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
-#endif
+#    endif
 }
+#endif
 
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 void Load(void *p_Library)
@@ -91,50 +99,86 @@ void Load(HMODULE p_Library)
         reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
     Vulkan::vkCreateInstance =
         reinterpret_cast<PFN_vkCreateInstance>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance"));
+#endif
 #if defined(VKIT_API_VERSION_1_1)
     Vulkan::vkEnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
         GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     Vulkan::vkEnumerateInstanceLayerProperties = reinterpret_cast<PFN_vkEnumerateInstanceLayerProperties>(
         GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceLayerProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     Vulkan::vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(
         GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties"));
+#endif
 }
 
 InstanceTable InstanceTable::Create(const VkInstance p_Instance)
 {
     InstanceTable table{};
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyInstance =
         reinterpret_cast<PFN_vkDestroyInstance>(GetInstanceProcAddr(p_Instance, "vkDestroyInstance"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkEnumeratePhysicalDevices =
         reinterpret_cast<PFN_vkEnumeratePhysicalDevices>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDevices"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceProcAddr =
         reinterpret_cast<PFN_vkGetDeviceProcAddr>(GetInstanceProcAddr(p_Instance, "vkGetDeviceProcAddr"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceQueueFamilyProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceMemoryProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceFeatures = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(GetInstanceProcAddr(p_Instance, "vkCreateDevice"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkEnumerateDeviceLayerProperties = reinterpret_cast<PFN_vkEnumerateDeviceLayerProperties>(
         GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceLayerProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkEnumerateDeviceExtensionProperties = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(
         GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceExtensionProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceSparseImageFormatProperties =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties>(
             GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties"));
+#endif
 #if defined(VK_KHR_android_surface)
     table.vkCreateAndroidSurfaceKHR =
         reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateAndroidSurfaceKHR"));
+#endif
+#if defined(VK_OHOS_surface)
+    table.vkCreateSurfaceOHOS =
+        reinterpret_cast<PFN_vkCreateSurfaceOHOS>(GetInstanceProcAddr(p_Instance, "vkCreateSurfaceOHOS"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetPhysicalDeviceDisplayPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>(
@@ -499,6 +543,26 @@ InstanceTable InstanceTable::Create(const VkInstance p_Instance)
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV>(
             GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
 #endif
+#if defined(VK_ARM_tensors)
+    table.vkGetPhysicalDeviceExternalTensorPropertiesARM =
+        reinterpret_cast<PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM>(
+            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalTensorPropertiesARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM =
+        reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM>(
+            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM =
+        reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM>(
+            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM"));
+#endif
+#if defined(VK_ARM_performance_counters_by_region)
+    table.vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM =
+        reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM>(
+            GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM"));
+#endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2KHR"));
@@ -564,104 +628,200 @@ InstanceTable InstanceTable::Create(const VkInstance p_Instance)
 DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_InstanceFuncs)
 {
     DeviceTable table{};
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDevice =
         reinterpret_cast<PFN_vkDestroyDevice>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDevice"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceQueue =
         reinterpret_cast<PFN_vkGetDeviceQueue>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceQueue"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkQueueSubmit =
         reinterpret_cast<PFN_vkQueueSubmit>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkQueueWaitIdle =
         reinterpret_cast<PFN_vkQueueWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueWaitIdle"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDeviceWaitIdle =
         reinterpret_cast<PFN_vkDeviceWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDeviceWaitIdle"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateMemory =
         reinterpret_cast<PFN_vkAllocateMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkFreeMemory =
         reinterpret_cast<PFN_vkFreeMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkMapMemory = reinterpret_cast<PFN_vkMapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkUnmapMemory =
         reinterpret_cast<PFN_vkUnmapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkFlushMappedMemoryRanges = reinterpret_cast<PFN_vkFlushMappedMemoryRanges>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFlushMappedMemoryRanges"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkInvalidateMappedMemoryRanges = reinterpret_cast<PFN_vkInvalidateMappedMemoryRanges>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkInvalidateMappedMemoryRanges"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceMemoryCommitment = reinterpret_cast<PFN_vkGetDeviceMemoryCommitment>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryCommitment"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetBufferMemoryRequirements = reinterpret_cast<PFN_vkGetBufferMemoryRequirements>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkBindBufferMemory =
         reinterpret_cast<PFN_vkBindBufferMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageMemoryRequirements = reinterpret_cast<PFN_vkGetImageMemoryRequirements>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkBindImageMemory =
         reinterpret_cast<PFN_vkBindImageMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkQueueBindSparse =
         reinterpret_cast<PFN_vkQueueBindSparse>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueBindSparse"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateFence =
         reinterpret_cast<PFN_vkCreateFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFence"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyFence =
         reinterpret_cast<PFN_vkDestroyFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFence"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkResetFences =
         reinterpret_cast<PFN_vkResetFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetFences"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetFenceStatus =
         reinterpret_cast<PFN_vkGetFenceStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceStatus"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkWaitForFences =
         reinterpret_cast<PFN_vkWaitForFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForFences"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateSemaphore =
         reinterpret_cast<PFN_vkCreateSemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSemaphore"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroySemaphore =
         reinterpret_cast<PFN_vkDestroySemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySemaphore"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateEvent =
         reinterpret_cast<PFN_vkCreateEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyEvent =
         reinterpret_cast<PFN_vkDestroyEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetEventStatus =
         reinterpret_cast<PFN_vkGetEventStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetEventStatus"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkSetEvent = reinterpret_cast<PFN_vkSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkResetEvent =
         reinterpret_cast<PFN_vkResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateQueryPool =
         reinterpret_cast<PFN_vkCreateQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateQueryPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyQueryPool =
         reinterpret_cast<PFN_vkDestroyQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyQueryPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetQueryPoolResults = reinterpret_cast<PFN_vkGetQueryPoolResults>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueryPoolResults"));
+#endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkResetQueryPool =
         reinterpret_cast<PFN_vkResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPool"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateBuffer =
         reinterpret_cast<PFN_vkCreateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyBuffer =
         reinterpret_cast<PFN_vkDestroyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateBufferView =
         reinterpret_cast<PFN_vkCreateBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBufferView"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyBufferView =
         reinterpret_cast<PFN_vkDestroyBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBufferView"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateImage =
         reinterpret_cast<PFN_vkCreateImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyImage =
         reinterpret_cast<PFN_vkDestroyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageSubresourceLayout = reinterpret_cast<PFN_vkGetImageSubresourceLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateImageView =
         reinterpret_cast<PFN_vkCreateImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImageView"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyImageView =
         reinterpret_cast<PFN_vkDestroyImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImageView"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateShaderModule =
         reinterpret_cast<PFN_vkCreateShaderModule>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateShaderModule"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyShaderModule = reinterpret_cast<PFN_vkDestroyShaderModule>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyShaderModule"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreatePipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineCache"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyPipelineCache = reinterpret_cast<PFN_vkDestroyPipelineCache>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineCache"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetPipelineCacheData = reinterpret_cast<PFN_vkGetPipelineCacheData>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineCacheData"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkMergePipelineCaches = reinterpret_cast<PFN_vkMergePipelineCaches>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMergePipelineCaches"));
+#endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkCreatePipelineBinariesKHR = reinterpret_cast<PFN_vkCreatePipelineBinariesKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineBinariesKHR"));
@@ -682,104 +842,190 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkReleaseCapturedPipelineDataKHR = reinterpret_cast<PFN_vkReleaseCapturedPipelineDataKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseCapturedPipelineDataKHR"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateGraphicsPipelines = reinterpret_cast<PFN_vkCreateGraphicsPipelines>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateGraphicsPipelines"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateComputePipelines = reinterpret_cast<PFN_vkCreateComputePipelines>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateComputePipelines"));
+#endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     table.vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI =
         reinterpret_cast<PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI>(
             p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyPipeline =
         reinterpret_cast<PFN_vkDestroyPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipeline"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreatePipelineLayout = reinterpret_cast<PFN_vkCreatePipelineLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineLayout"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyPipelineLayout = reinterpret_cast<PFN_vkDestroyPipelineLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineLayout"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateSampler =
         reinterpret_cast<PFN_vkCreateSampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSampler"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroySampler =
         reinterpret_cast<PFN_vkDestroySampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySampler"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateDescriptorSetLayout = reinterpret_cast<PFN_vkCreateDescriptorSetLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorSetLayout"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDescriptorSetLayout = reinterpret_cast<PFN_vkDestroyDescriptorSetLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorSetLayout"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateDescriptorPool = reinterpret_cast<PFN_vkCreateDescriptorPool>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDescriptorPool = reinterpret_cast<PFN_vkDestroyDescriptorPool>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkResetDescriptorPool = reinterpret_cast<PFN_vkResetDescriptorPool>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetDescriptorPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateDescriptorSets = reinterpret_cast<PFN_vkAllocateDescriptorSets>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateDescriptorSets"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkFreeDescriptorSets =
         reinterpret_cast<PFN_vkFreeDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeDescriptorSets"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkUpdateDescriptorSets = reinterpret_cast<PFN_vkUpdateDescriptorSets>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSets"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateFramebuffer =
         reinterpret_cast<PFN_vkCreateFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFramebuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyFramebuffer =
         reinterpret_cast<PFN_vkDestroyFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFramebuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateRenderPass =
         reinterpret_cast<PFN_vkCreateRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyRenderPass =
         reinterpret_cast<PFN_vkDestroyRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyRenderPass"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkGetRenderAreaGranularity = reinterpret_cast<PFN_vkGetRenderAreaGranularity>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderAreaGranularity"));
+#endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetRenderingAreaGranularity = reinterpret_cast<PFN_vkGetRenderingAreaGranularity>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularity"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCreateCommandPool =
         reinterpret_cast<PFN_vkCreateCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCommandPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyCommandPool =
         reinterpret_cast<PFN_vkDestroyCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCommandPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkResetCommandPool =
         reinterpret_cast<PFN_vkResetCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateCommandBuffers = reinterpret_cast<PFN_vkAllocateCommandBuffers>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateCommandBuffers"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkFreeCommandBuffers =
         reinterpret_cast<PFN_vkFreeCommandBuffers>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeCommandBuffers"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkBeginCommandBuffer =
         reinterpret_cast<PFN_vkBeginCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBeginCommandBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkEndCommandBuffer =
         reinterpret_cast<PFN_vkEndCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkEndCommandBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkResetCommandBuffer =
         reinterpret_cast<PFN_vkResetCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindPipeline =
         reinterpret_cast<PFN_vkCmdBindPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindPipeline"));
+#endif
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
     table.vkCmdSetAttachmentFeedbackLoopEnableEXT = reinterpret_cast<PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAttachmentFeedbackLoopEnableEXT"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetViewport =
         reinterpret_cast<PFN_vkCmdSetViewport>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewport"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetScissor =
         reinterpret_cast<PFN_vkCmdSetScissor>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissor"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetLineWidth =
         reinterpret_cast<PFN_vkCmdSetLineWidth>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineWidth"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetDepthBias =
         reinterpret_cast<PFN_vkCmdSetDepthBias>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetBlendConstants = reinterpret_cast<PFN_vkCmdSetBlendConstants>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetBlendConstants"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetDepthBounds =
         reinterpret_cast<PFN_vkCmdSetDepthBounds>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBounds"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilCompareMask = reinterpret_cast<PFN_vkCmdSetStencilCompareMask>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilCompareMask"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilWriteMask = reinterpret_cast<PFN_vkCmdSetStencilWriteMask>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilWriteMask"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilReference = reinterpret_cast<PFN_vkCmdSetStencilReference>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilReference"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindDescriptorSets = reinterpret_cast<PFN_vkCmdBindDescriptorSets>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindIndexBuffer =
         reinterpret_cast<PFN_vkCmdBindIndexBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindVertexBuffers = reinterpret_cast<PFN_vkCmdBindVertexBuffers>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDraw = reinterpret_cast<PFN_vkCmdDraw>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDraw"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndexed =
         reinterpret_cast<PFN_vkCmdDrawIndexed>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexed"));
+#endif
 #if defined(VK_EXT_multi_draw)
     table.vkCmdDrawMultiEXT =
         reinterpret_cast<PFN_vkCmdDrawMultiEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiEXT"));
@@ -788,14 +1034,22 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdDrawMultiIndexedEXT = reinterpret_cast<PFN_vkCmdDrawMultiIndexedEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiIndexedEXT"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndirect =
         reinterpret_cast<PFN_vkCmdDrawIndirect>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirect"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndexedIndirect = reinterpret_cast<PFN_vkCmdDrawIndexedIndirect>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirect"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDispatch =
         reinterpret_cast<PFN_vkCmdDispatch>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatch"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDispatchIndirect = reinterpret_cast<PFN_vkCmdDispatchIndirect>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchIndirect"));
+#endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     table.vkCmdSubpassShadingHUAWEI = reinterpret_cast<PFN_vkCmdSubpassShadingHUAWEI>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSubpassShadingHUAWEI"));
@@ -812,48 +1066,90 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdUpdatePipelineIndirectBufferNV = reinterpret_cast<PFN_vkCmdUpdatePipelineIndirectBufferNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdatePipelineIndirectBufferNV"));
 #endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyBuffer =
         reinterpret_cast<PFN_vkCmdCopyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyImage =
         reinterpret_cast<PFN_vkCmdCopyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBlitImage =
         reinterpret_cast<PFN_vkCmdBlitImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyBufferToImage = reinterpret_cast<PFN_vkCmdCopyBufferToImage>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyImageToBuffer = reinterpret_cast<PFN_vkCmdCopyImageToBuffer>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer"));
+#endif
 #if defined(VK_NV_copy_memory_indirect)
     table.vkCmdCopyMemoryIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectNV"));
+#endif
+#if defined(VK_KHR_copy_memory_indirect)
+    table.vkCmdCopyMemoryIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectKHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectKHR"));
 #endif
 #if defined(VK_NV_copy_memory_indirect)
     table.vkCmdCopyMemoryToImageIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectNV"));
 #endif
+#if defined(VK_KHR_copy_memory_indirect)
+    table.vkCmdCopyMemoryToImageIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectKHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectKHR"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdUpdateBuffer =
         reinterpret_cast<PFN_vkCmdUpdateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdateBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdFillBuffer =
         reinterpret_cast<PFN_vkCmdFillBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdFillBuffer"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdClearColorImage =
         reinterpret_cast<PFN_vkCmdClearColorImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearColorImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdClearDepthStencilImage = reinterpret_cast<PFN_vkCmdClearDepthStencilImage>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearDepthStencilImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdClearAttachments = reinterpret_cast<PFN_vkCmdClearAttachments>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearAttachments"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResolveImage =
         reinterpret_cast<PFN_vkCmdResolveImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetEvent =
         reinterpret_cast<PFN_vkCmdSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResetEvent =
         reinterpret_cast<PFN_vkCmdResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdWaitEvents =
         reinterpret_cast<PFN_vkCmdWaitEvents>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdPipelineBarrier =
         reinterpret_cast<PFN_vkCmdPipelineBarrier>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBeginQuery =
         reinterpret_cast<PFN_vkCmdBeginQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginQuery"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdEndQuery =
         reinterpret_cast<PFN_vkCmdEndQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndQuery"));
+#endif
 #if defined(VK_EXT_conditional_rendering)
     table.vkCmdBeginConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdBeginConditionalRenderingEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginConditionalRenderingEXT"));
@@ -862,22 +1158,42 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdEndConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdEndConditionalRenderingEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndConditionalRenderingEXT"));
 #endif
+#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
+    table.vkCmdBeginCustomResolveEXT = reinterpret_cast<PFN_vkCmdBeginCustomResolveEXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginCustomResolveEXT"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResetQueryPool =
         reinterpret_cast<PFN_vkCmdResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetQueryPool"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdWriteTimestamp =
         reinterpret_cast<PFN_vkCmdWriteTimestamp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyQueryPoolResults = reinterpret_cast<PFN_vkCmdCopyQueryPoolResults>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyQueryPoolResults"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdPushConstants =
         reinterpret_cast<PFN_vkCmdPushConstants>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBeginRenderPass =
         reinterpret_cast<PFN_vkCmdBeginRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdNextSubpass =
         reinterpret_cast<PFN_vkCmdNextSubpass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdEndRenderPass =
         reinterpret_cast<PFN_vkCmdEndRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
     table.vkCmdExecuteCommands =
         reinterpret_cast<PFN_vkCmdExecuteCommands>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteCommands"));
+#endif
 #if defined(VK_KHR_display_swapchain)
     table.vkCreateSharedSwapchainsKHR = reinterpret_cast<PFN_vkCreateSharedSwapchainsKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSharedSwapchainsKHR"));
@@ -1432,7 +1748,8 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdDrawMeshTasksIndirectNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectNV"));
 #endif
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountNV"));
 #endif
@@ -1444,7 +1761,8 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdDrawMeshTasksIndirectEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectEXT"));
 #endif
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountEXT"));
 #endif
@@ -1684,10 +2002,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdSetLineStipple =
         reinterpret_cast<PFN_vkCmdSetLineStipple>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStipple"));
-#endif
-#if defined(VKSC_VERSION_1_0)
-    table.vkGetFaultData =
-        reinterpret_cast<PFN_vkGetFaultData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFaultData"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCreateAccelerationStructureKHR = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(
@@ -2073,10 +2387,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkTransitionImageLayout = reinterpret_cast<PFN_vkTransitionImageLayout>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayout"));
 #endif
-#if defined(VKSC_VERSION_1_0)
-    table.vkGetCommandPoolMemoryConsumption = reinterpret_cast<PFN_vkGetCommandPoolMemoryConsumption>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCommandPoolMemoryConsumption"));
-#endif
 #if defined(VK_KHR_video_queue)
     table.vkCreateVideoSessionKHR = reinterpret_cast<PFN_vkCreateVideoSessionKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionKHR"));
@@ -2146,6 +2456,14 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdBuildPartitionedAccelerationStructuresNV =
         reinterpret_cast<PFN_vkCmdBuildPartitionedAccelerationStructuresNV>(
             p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
+#endif
+#if defined(VK_EXT_memory_decompression)
+    table.vkCmdDecompressMemoryEXT = reinterpret_cast<PFN_vkCmdDecompressMemoryEXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryEXT"));
+#endif
+#if defined(VK_EXT_memory_decompression)
+    table.vkCmdDecompressMemoryIndirectCountEXT = reinterpret_cast<PFN_vkCmdDecompressMemoryIndirectCountEXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryIndirectCountEXT"));
 #endif
 #if defined(VK_NVX_binary_import)
     table.vkCreateCuModuleNVX =
@@ -2218,6 +2536,10 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkSetDeviceMemoryPriorityEXT = reinterpret_cast<PFN_vkSetDeviceMemoryPriorityEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDeviceMemoryPriorityEXT"));
 #endif
+#if defined(VK_KHR_present_wait2)
+    table.vkWaitForPresent2KHR =
+        reinterpret_cast<PFN_vkWaitForPresent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresent2KHR"));
+#endif
 #if defined(VK_KHR_present_wait)
     table.vkWaitForPresentKHR =
         reinterpret_cast<PFN_vkWaitForPresentKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresentKHR"));
@@ -2276,9 +2598,9 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdEndRendering =
         reinterpret_cast<PFN_vkCmdEndRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering"));
 #endif
-#if defined(VK_EXT_fragment_density_map_offset)
-    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
+#if defined(VK_KHR_maintenance10)
+    table.vkCmdEndRendering2KHR = reinterpret_cast<PFN_vkCmdEndRendering2KHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2KHR"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     table.vkGetDescriptorSetLayoutHostMappingInfoVALVE =
@@ -2401,9 +2723,9 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdSetDepthBias2EXT = reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias2EXT"));
 #endif
-#if defined(VK_EXT_swapchain_maintenance1)
-    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
+#if defined(VK_KHR_swapchain_maintenance1)
+    table.vkReleaseSwapchainImagesKHR = reinterpret_cast<PFN_vkReleaseSwapchainImagesKHR>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetDeviceImageSubresourceLayout = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayout>(
@@ -2561,6 +2883,106 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_NV_external_compute_queue)
     table.vkGetExternalComputeQueueDataNV = reinterpret_cast<PFN_vkGetExternalComputeQueueDataNV>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExternalComputeQueueDataNV"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkCreateTensorARM =
+        reinterpret_cast<PFN_vkCreateTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkDestroyTensorARM =
+        reinterpret_cast<PFN_vkDestroyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkCreateTensorViewARM = reinterpret_cast<PFN_vkCreateTensorViewARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorViewARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkDestroyTensorViewARM = reinterpret_cast<PFN_vkDestroyTensorViewARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorViewARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkGetTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetTensorMemoryRequirementsARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorMemoryRequirementsARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkBindTensorMemoryARM = reinterpret_cast<PFN_vkBindTensorMemoryARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindTensorMemoryARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkGetDeviceTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetDeviceTensorMemoryRequirementsARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceTensorMemoryRequirementsARM"));
+#endif
+#if defined(VK_ARM_tensors)
+    table.vkCmdCopyTensorARM =
+        reinterpret_cast<PFN_vkCmdCopyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyTensorARM"));
+#endif
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+    table.vkGetTensorOpaqueCaptureDescriptorDataARM = reinterpret_cast<PFN_vkGetTensorOpaqueCaptureDescriptorDataARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorOpaqueCaptureDescriptorDataARM"));
+#endif
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+    table.vkGetTensorViewOpaqueCaptureDescriptorDataARM =
+        reinterpret_cast<PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM>(
+            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorViewOpaqueCaptureDescriptorDataARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkCreateDataGraphPipelinesARM = reinterpret_cast<PFN_vkCreateDataGraphPipelinesARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelinesARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkCreateDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkCreateDataGraphPipelineSessionARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelineSessionARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetDataGraphPipelineSessionBindPointRequirementsARM =
+        reinterpret_cast<PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM>(
+            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionBindPointRequirementsARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetDataGraphPipelineSessionMemoryRequirementsARM =
+        reinterpret_cast<PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM>(
+            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionMemoryRequirementsARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkBindDataGraphPipelineSessionMemoryARM = reinterpret_cast<PFN_vkBindDataGraphPipelineSessionMemoryARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindDataGraphPipelineSessionMemoryARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkDestroyDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkDestroyDataGraphPipelineSessionARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDataGraphPipelineSessionARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkCmdDispatchDataGraphARM = reinterpret_cast<PFN_vkCmdDispatchDataGraphARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchDataGraphARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetDataGraphPipelineAvailablePropertiesARM =
+        reinterpret_cast<PFN_vkGetDataGraphPipelineAvailablePropertiesARM>(
+            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineAvailablePropertiesARM"));
+#endif
+#if defined(VK_ARM_data_graph)
+    table.vkGetDataGraphPipelinePropertiesARM = reinterpret_cast<PFN_vkGetDataGraphPipelinePropertiesARM>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelinePropertiesARM"));
+#endif
+#if defined(VK_OHOS_external_memory)
+    table.vkGetNativeBufferPropertiesOHOS = reinterpret_cast<PFN_vkGetNativeBufferPropertiesOHOS>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetNativeBufferPropertiesOHOS"));
+#endif
+#if defined(VK_OHOS_external_memory)
+    table.vkGetMemoryNativeBufferOHOS = reinterpret_cast<PFN_vkGetMemoryNativeBufferOHOS>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryNativeBufferOHOS"));
+#endif
+#if defined(VK_OHOS_native_buffer)
+    table.vkGetSwapchainGrallocUsageOHOS = reinterpret_cast<PFN_vkGetSwapchainGrallocUsageOHOS>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsageOHOS"));
+#endif
+#if defined(VK_OHOS_native_buffer)
+    table.vkAcquireImageOHOS =
+        reinterpret_cast<PFN_vkAcquireImageOHOS>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireImageOHOS"));
+#endif
+#if defined(VK_OHOS_native_buffer)
+    table.vkQueueSignalReleaseImageOHOS = reinterpret_cast<PFN_vkQueueSignalReleaseImageOHOS>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSignalReleaseImageOHOS"));
 #endif
 #if defined(VK_EXT_host_query_reset)
     table.vkResetQueryPoolEXT =
@@ -2877,6 +3299,10 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdBeginRenderingKHR = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderingKHR"));
 #endif
+#if defined(VK_EXT_fragment_density_map_offset)
+    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
+#endif
 #if defined(VK_KHR_dynamic_rendering)
     table.vkCmdEndRenderingKHR =
         reinterpret_cast<PFN_vkCmdEndRenderingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderingKHR"));
@@ -2888,6 +3314,10 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_EXT_host_image_copy) || defined(VK_EXT_image_compression_control)
     table.vkGetImageSubresourceLayout2EXT = reinterpret_cast<PFN_vkGetImageSubresourceLayout2EXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2EXT"));
+#endif
+#if defined(VK_EXT_swapchain_maintenance1)
+    table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
     table.vkGetDeviceImageSubresourceLayoutKHR = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayoutKHR>(
@@ -2928,153 +3358,179 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     return table;
 }
 
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::DestroyInstance(VkInstance instance, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyInstance fn = validateFunction("vkDestroyInstance", this->vkDestroyInstance);
     fn(instance, pAllocator);
-#else
+#    else
     this->vkDestroyInstance(instance, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult InstanceTable::EnumeratePhysicalDevices(VkInstance instance, uint32_t *pPhysicalDeviceCount,
                                                  VkPhysicalDevice *pPhysicalDevices) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEnumeratePhysicalDevices fn =
         validateFunction("vkEnumeratePhysicalDevices", this->vkEnumeratePhysicalDevices);
     return fn(instance, pPhysicalDeviceCount, pPhysicalDevices);
-#else
+#    else
     return this->vkEnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 PFN_vkVoidFunction InstanceTable::GetDeviceProcAddr(VkDevice device, const char *pName) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetDeviceProcAddr fn = validateFunction("vkGetDeviceProcAddr", this->vkGetDeviceProcAddr);
     return fn(device, pName);
-#else
+#    else
     return this->vkGetDeviceProcAddr(device, pName);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice,
                                                 VkPhysicalDeviceProperties *pProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceProperties fn =
         validateFunction("vkGetPhysicalDeviceProperties", this->vkGetPhysicalDeviceProperties);
     fn(physicalDevice, pProperties);
-#else
+#    else
     this->vkGetPhysicalDeviceProperties(physicalDevice, pProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice,
                                                            uint32_t *pQueueFamilyPropertyCount,
                                                            VkQueueFamilyProperties *pQueueFamilyProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceQueueFamilyProperties fn =
         validateFunction("vkGetPhysicalDeviceQueueFamilyProperties", this->vkGetPhysicalDeviceQueueFamilyProperties);
     fn(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
-#else
+#    else
     this->vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice,
                                                       VkPhysicalDeviceMemoryProperties *pMemoryProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceMemoryProperties fn =
         validateFunction("vkGetPhysicalDeviceMemoryProperties", this->vkGetPhysicalDeviceMemoryProperties);
     fn(physicalDevice, pMemoryProperties);
-#else
+#    else
     this->vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice,
                                               VkPhysicalDeviceFeatures *pFeatures) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceFeatures fn =
         validateFunction("vkGetPhysicalDeviceFeatures", this->vkGetPhysicalDeviceFeatures);
     fn(physicalDevice, pFeatures);
-#else
+#    else
     this->vkGetPhysicalDeviceFeatures(physicalDevice, pFeatures);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
                                                       VkFormatProperties *pFormatProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceFormatProperties fn =
         validateFunction("vkGetPhysicalDeviceFormatProperties", this->vkGetPhysicalDeviceFormatProperties);
     fn(physicalDevice, format, pFormatProperties);
-#else
+#    else
     this->vkGetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult InstanceTable::GetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
                                                                VkImageType type, VkImageTiling tiling,
                                                                VkImageUsageFlags usage, VkImageCreateFlags flags,
                                                                VkImageFormatProperties *pImageFormatProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceImageFormatProperties fn =
         validateFunction("vkGetPhysicalDeviceImageFormatProperties", this->vkGetPhysicalDeviceImageFormatProperties);
     return fn(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
-#else
+#    else
     return this->vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags,
                                                           pImageFormatProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult InstanceTable::CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo,
                                      const VkAllocationCallbacks *pAllocator, VkDevice *pDevice) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateDevice fn = validateFunction("vkCreateDevice", this->vkCreateDevice);
     return fn(physicalDevice, pCreateInfo, pAllocator, pDevice);
-#else
+#    else
     return this->vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult InstanceTable::EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t *pPropertyCount,
                                                        VkLayerProperties *pProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEnumerateDeviceLayerProperties fn =
         validateFunction("vkEnumerateDeviceLayerProperties", this->vkEnumerateDeviceLayerProperties);
     return fn(physicalDevice, pPropertyCount, pProperties);
-#else
+#    else
     return this->vkEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, pProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult InstanceTable::EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char *pLayerName,
                                                            uint32_t *pPropertyCount,
                                                            VkExtensionProperties *pProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEnumerateDeviceExtensionProperties fn =
         validateFunction("vkEnumerateDeviceExtensionProperties", this->vkEnumerateDeviceExtensionProperties);
     return fn(physicalDevice, pLayerName, pPropertyCount, pProperties);
-#else
+#    else
     return this->vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void InstanceTable::GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
                                                                  VkImageType type, VkSampleCountFlagBits samples,
                                                                  VkImageUsageFlags usage, VkImageTiling tiling,
                                                                  uint32_t *pPropertyCount,
                                                                  VkSparseImageFormatProperties *pProperties) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPhysicalDeviceSparseImageFormatProperties fn = validateFunction(
         "vkGetPhysicalDeviceSparseImageFormatProperties", this->vkGetPhysicalDeviceSparseImageFormatProperties);
     fn(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
-#else
+#    else
     this->vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling,
                                                          pPropertyCount, pProperties);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_KHR_android_surface)
 VkResult InstanceTable::CreateAndroidSurfaceKHR(VkInstance instance, const VkAndroidSurfaceCreateInfoKHR *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *pSurface) const
@@ -3085,6 +3541,18 @@ VkResult InstanceTable::CreateAndroidSurfaceKHR(VkInstance instance, const VkAnd
     return fn(instance, pCreateInfo, pAllocator, pSurface);
 #    else
     return this->vkCreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_surface)
+VkResult InstanceTable::CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS *pCreateInfo,
+                                          const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *pSurface) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCreateSurfaceOHOS fn = validateFunction("vkCreateSurfaceOHOS", this->vkCreateSurfaceOHOS);
+    return fn(instance, pCreateInfo, pAllocator, pSurface);
+#    else
+    return this->vkCreateSurfaceOHOS(instance, pCreateInfo, pAllocator, pSurface);
 #    endif
 }
 #endif
@@ -4237,6 +4705,70 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeVectorPropertiesNV(
 #    endif
 }
 #endif
+#if defined(VK_ARM_tensors)
+void InstanceTable::GetPhysicalDeviceExternalTensorPropertiesARM(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM *pExternalTensorInfo,
+    VkExternalTensorPropertiesARM *pExternalTensorProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM fn = validateFunction(
+        "vkGetPhysicalDeviceExternalTensorPropertiesARM", this->vkGetPhysicalDeviceExternalTensorPropertiesARM);
+    fn(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
+#    else
+    this->vkGetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo,
+                                                         pExternalTensorProperties);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM *pQueueFamilyDataGraphProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM fn =
+        validateFunction("vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM",
+                         this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM);
+    return fn(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
+#    else
+    return this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+        physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+void InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM *pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM *pQueueFamilyDataGraphProcessingEngineProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM fn =
+        validateFunction("vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM",
+                         this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM);
+    fn(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
+#    else
+    this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+        physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
+#    endif
+}
+#endif
+#if defined(VK_ARM_performance_counters_by_region)
+VkResult InstanceTable::EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pCounterCount,
+    VkPerformanceCounterARM *pCounters, VkPerformanceCounterDescriptionARM *pCounterDescriptions) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM fn =
+        validateFunction("vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM",
+                         this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM);
+    return fn(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
+#    else
+    return this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+        physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
+#    endif
+}
+#endif
 #if defined(VK_KHR_get_physical_device_properties2)
 void InstanceTable::GetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice,
                                                   VkPhysicalDeviceFeatures2KHR *pFeatures) const
@@ -4419,331 +4951,397 @@ VkResult InstanceTable::GetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice phys
 }
 #endif
 
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyDevice(VkDevice device, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyDevice fn = validateFunction("vkDestroyDevice", this->vkDestroyDevice);
     fn(device, pAllocator);
-#else
+#    else
     this->vkDestroyDevice(device, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue *pQueue) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetDeviceQueue fn = validateFunction("vkGetDeviceQueue", this->vkGetDeviceQueue);
     fn(device, queueFamilyIndex, queueIndex, pQueue);
-#else
+#    else
     this->vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo *pSubmits,
                                   VkFence fence) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkQueueSubmit fn = validateFunction("vkQueueSubmit", this->vkQueueSubmit);
     return fn(queue, submitCount, pSubmits, fence);
-#else
+#    else
     return this->vkQueueSubmit(queue, submitCount, pSubmits, fence);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::QueueWaitIdle(VkQueue queue) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkQueueWaitIdle fn = validateFunction("vkQueueWaitIdle", this->vkQueueWaitIdle);
     return fn(queue);
-#else
+#    else
     return this->vkQueueWaitIdle(queue);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::DeviceWaitIdle(VkDevice device) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDeviceWaitIdle fn = validateFunction("vkDeviceWaitIdle", this->vkDeviceWaitIdle);
     return fn(device);
-#else
+#    else
     return this->vkDeviceWaitIdle(device);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::AllocateMemory(VkDevice device, const VkMemoryAllocateInfo *pAllocateInfo,
                                      const VkAllocationCallbacks *pAllocator, VkDeviceMemory *pMemory) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkAllocateMemory fn = validateFunction("vkAllocateMemory", this->vkAllocateMemory);
     return fn(device, pAllocateInfo, pAllocator, pMemory);
-#else
+#    else
     return this->vkAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkFreeMemory fn = validateFunction("vkFreeMemory", this->vkFreeMemory);
     fn(device, memory, pAllocator);
-#else
+#    else
     this->vkFreeMemory(device, memory, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size,
                                 VkMemoryMapFlags flags, void **ppData) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkMapMemory fn = validateFunction("vkMapMemory", this->vkMapMemory);
     return fn(device, memory, offset, size, flags, ppData);
-#else
+#    else
     return this->vkMapMemory(device, memory, offset, size, flags, ppData);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::UnmapMemory(VkDevice device, VkDeviceMemory memory) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkUnmapMemory fn = validateFunction("vkUnmapMemory", this->vkUnmapMemory);
     fn(device, memory);
-#else
+#    else
     this->vkUnmapMemory(device, memory);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
                                               const VkMappedMemoryRange *pMemoryRanges) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkFlushMappedMemoryRanges fn =
         validateFunction("vkFlushMappedMemoryRanges", this->vkFlushMappedMemoryRanges);
     return fn(device, memoryRangeCount, pMemoryRanges);
-#else
+#    else
     return this->vkFlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::InvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
                                                    const VkMappedMemoryRange *pMemoryRanges) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkInvalidateMappedMemoryRanges fn =
         validateFunction("vkInvalidateMappedMemoryRanges", this->vkInvalidateMappedMemoryRanges);
     return fn(device, memoryRangeCount, pMemoryRanges);
-#else
+#    else
     return this->vkInvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory,
                                             VkDeviceSize *pCommittedMemoryInBytes) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetDeviceMemoryCommitment fn =
         validateFunction("vkGetDeviceMemoryCommitment", this->vkGetDeviceMemoryCommitment);
     fn(device, memory, pCommittedMemoryInBytes);
-#else
+#    else
     this->vkGetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer,
                                               VkMemoryRequirements *pMemoryRequirements) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetBufferMemoryRequirements fn =
         validateFunction("vkGetBufferMemoryRequirements", this->vkGetBufferMemoryRequirements);
     fn(device, buffer, pMemoryRequirements);
-#else
+#    else
     this->vkGetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory,
                                        VkDeviceSize memoryOffset) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkBindBufferMemory fn = validateFunction("vkBindBufferMemory", this->vkBindBufferMemory);
     return fn(device, buffer, memory, memoryOffset);
-#else
+#    else
     return this->vkBindBufferMemory(device, buffer, memory, memoryOffset);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetImageMemoryRequirements(VkDevice device, VkImage image,
                                              VkMemoryRequirements *pMemoryRequirements) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetImageMemoryRequirements fn =
         validateFunction("vkGetImageMemoryRequirements", this->vkGetImageMemoryRequirements);
     fn(device, image, pMemoryRequirements);
-#else
+#    else
     this->vkGetImageMemoryRequirements(device, image, pMemoryRequirements);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::BindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory,
                                       VkDeviceSize memoryOffset) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkBindImageMemory fn = validateFunction("vkBindImageMemory", this->vkBindImageMemory);
     return fn(device, image, memory, memoryOffset);
-#else
+#    else
     return this->vkBindImageMemory(device, image, memory, memoryOffset);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetImageSparseMemoryRequirements(VkDevice device, VkImage image,
                                                    uint32_t *pSparseMemoryRequirementCount,
                                                    VkSparseImageMemoryRequirements *pSparseMemoryRequirements) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetImageSparseMemoryRequirements fn =
         validateFunction("vkGetImageSparseMemoryRequirements", this->vkGetImageSparseMemoryRequirements);
     fn(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
-#else
+#    else
     this->vkGetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo *pBindInfo,
                                       VkFence fence) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkQueueBindSparse fn = validateFunction("vkQueueBindSparse", this->vkQueueBindSparse);
     return fn(queue, bindInfoCount, pBindInfo, fence);
-#else
+#    else
     return this->vkQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateFence(VkDevice device, const VkFenceCreateInfo *pCreateInfo,
                                   const VkAllocationCallbacks *pAllocator, VkFence *pFence) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateFence fn = validateFunction("vkCreateFence", this->vkCreateFence);
     return fn(device, pCreateInfo, pAllocator, pFence);
-#else
+#    else
     return this->vkCreateFence(device, pCreateInfo, pAllocator, pFence);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyFence fn = validateFunction("vkDestroyFence", this->vkDestroyFence);
     fn(device, fence, pAllocator);
-#else
+#    else
     this->vkDestroyFence(device, fence, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::ResetFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkResetFences fn = validateFunction("vkResetFences", this->vkResetFences);
     return fn(device, fenceCount, pFences);
-#else
+#    else
     return this->vkResetFences(device, fenceCount, pFences);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::GetFenceStatus(VkDevice device, VkFence fence) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetFenceStatus fn = validateFunction("vkGetFenceStatus", this->vkGetFenceStatus);
     return fn(device, fence);
-#else
+#    else
     return this->vkGetFenceStatus(device, fence);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences, VkBool32 waitAll,
                                     uint64_t timeout) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkWaitForFences fn = validateFunction("vkWaitForFences", this->vkWaitForFences);
     return fn(device, fenceCount, pFences, waitAll, timeout);
-#else
+#    else
     return this->vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo *pCreateInfo,
                                       const VkAllocationCallbacks *pAllocator, VkSemaphore *pSemaphore) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateSemaphore fn = validateFunction("vkCreateSemaphore", this->vkCreateSemaphore);
     return fn(device, pCreateInfo, pAllocator, pSemaphore);
-#else
+#    else
     return this->vkCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroySemaphore(VkDevice device, VkSemaphore semaphore,
                                    const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroySemaphore fn = validateFunction("vkDestroySemaphore", this->vkDestroySemaphore);
     fn(device, semaphore, pAllocator);
-#else
+#    else
     this->vkDestroySemaphore(device, semaphore, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateEvent(VkDevice device, const VkEventCreateInfo *pCreateInfo,
                                   const VkAllocationCallbacks *pAllocator, VkEvent *pEvent) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateEvent fn = validateFunction("vkCreateEvent", this->vkCreateEvent);
     return fn(device, pCreateInfo, pAllocator, pEvent);
-#else
+#    else
     return this->vkCreateEvent(device, pCreateInfo, pAllocator, pEvent);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyEvent fn = validateFunction("vkDestroyEvent", this->vkDestroyEvent);
     fn(device, event, pAllocator);
-#else
+#    else
     this->vkDestroyEvent(device, event, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::GetEventStatus(VkDevice device, VkEvent event) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetEventStatus fn = validateFunction("vkGetEventStatus", this->vkGetEventStatus);
     return fn(device, event);
-#else
+#    else
     return this->vkGetEventStatus(device, event);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::SetEvent(VkDevice device, VkEvent event) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkSetEvent fn = validateFunction("vkSetEvent", this->vkSetEvent);
     return fn(device, event);
-#else
+#    else
     return this->vkSetEvent(device, event);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::ResetEvent(VkDevice device, VkEvent event) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkResetEvent fn = validateFunction("vkResetEvent", this->vkResetEvent);
     return fn(device, event);
-#else
+#    else
     return this->vkResetEvent(device, event);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo *pCreateInfo,
                                       const VkAllocationCallbacks *pAllocator, VkQueryPool *pQueryPool) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateQueryPool fn = validateFunction("vkCreateQueryPool", this->vkCreateQueryPool);
     return fn(device, pCreateInfo, pAllocator, pQueryPool);
-#else
+#    else
     return this->vkCreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyQueryPool(VkDevice device, VkQueryPool queryPool,
                                    const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyQueryPool fn = validateFunction("vkDestroyQueryPool", this->vkDestroyQueryPool);
     fn(device, queryPool, pAllocator);
-#else
+#    else
     this->vkDestroyQueryPool(device, queryPool, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::GetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                           uint32_t queryCount, size_t dataSize, void *pData, VkDeviceSize stride,
                                           VkQueryResultFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetQueryPoolResults fn = validateFunction("vkGetQueryPoolResults", this->vkGetQueryPoolResults);
     return fn(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-#else
+#    else
     return this->vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-#endif
+#    endif
 }
+#endif
 #if defined(VKIT_API_VERSION_1_2)
 void DeviceTable::ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const
 {
@@ -4755,156 +5353,186 @@ void DeviceTable::ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateBuffer(VkDevice device, const VkBufferCreateInfo *pCreateInfo,
                                    const VkAllocationCallbacks *pAllocator, VkBuffer *pBuffer) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateBuffer fn = validateFunction("vkCreateBuffer", this->vkCreateBuffer);
     return fn(device, pCreateInfo, pAllocator, pBuffer);
-#else
+#    else
     return this->vkCreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyBuffer fn = validateFunction("vkDestroyBuffer", this->vkDestroyBuffer);
     fn(device, buffer, pAllocator);
-#else
+#    else
     this->vkDestroyBuffer(device, buffer, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateBufferView(VkDevice device, const VkBufferViewCreateInfo *pCreateInfo,
                                        const VkAllocationCallbacks *pAllocator, VkBufferView *pView) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateBufferView fn = validateFunction("vkCreateBufferView", this->vkCreateBufferView);
     return fn(device, pCreateInfo, pAllocator, pView);
-#else
+#    else
     return this->vkCreateBufferView(device, pCreateInfo, pAllocator, pView);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyBufferView(VkDevice device, VkBufferView bufferView,
                                     const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyBufferView fn = validateFunction("vkDestroyBufferView", this->vkDestroyBufferView);
     fn(device, bufferView, pAllocator);
-#else
+#    else
     this->vkDestroyBufferView(device, bufferView, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateImage(VkDevice device, const VkImageCreateInfo *pCreateInfo,
                                   const VkAllocationCallbacks *pAllocator, VkImage *pImage) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateImage fn = validateFunction("vkCreateImage", this->vkCreateImage);
     return fn(device, pCreateInfo, pAllocator, pImage);
-#else
+#    else
     return this->vkCreateImage(device, pCreateInfo, pAllocator, pImage);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyImage fn = validateFunction("vkDestroyImage", this->vkDestroyImage);
     fn(device, image, pAllocator);
-#else
+#    else
     this->vkDestroyImage(device, image, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource *pSubresource,
                                             VkSubresourceLayout *pLayout) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetImageSubresourceLayout fn =
         validateFunction("vkGetImageSubresourceLayout", this->vkGetImageSubresourceLayout);
     fn(device, image, pSubresource, pLayout);
-#else
+#    else
     this->vkGetImageSubresourceLayout(device, image, pSubresource, pLayout);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateImageView(VkDevice device, const VkImageViewCreateInfo *pCreateInfo,
                                       const VkAllocationCallbacks *pAllocator, VkImageView *pView) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateImageView fn = validateFunction("vkCreateImageView", this->vkCreateImageView);
     return fn(device, pCreateInfo, pAllocator, pView);
-#else
+#    else
     return this->vkCreateImageView(device, pCreateInfo, pAllocator, pView);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyImageView(VkDevice device, VkImageView imageView,
                                    const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyImageView fn = validateFunction("vkDestroyImageView", this->vkDestroyImageView);
     fn(device, imageView, pAllocator);
-#else
+#    else
     this->vkDestroyImageView(device, imageView, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo *pCreateInfo,
                                          const VkAllocationCallbacks *pAllocator, VkShaderModule *pShaderModule) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateShaderModule fn = validateFunction("vkCreateShaderModule", this->vkCreateShaderModule);
     return fn(device, pCreateInfo, pAllocator, pShaderModule);
-#else
+#    else
     return this->vkCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
                                       const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyShaderModule fn = validateFunction("vkDestroyShaderModule", this->vkDestroyShaderModule);
     fn(device, shaderModule, pAllocator);
-#else
+#    else
     this->vkDestroyShaderModule(device, shaderModule, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo *pCreateInfo,
                                           const VkAllocationCallbacks *pAllocator,
                                           VkPipelineCache *pPipelineCache) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreatePipelineCache fn = validateFunction("vkCreatePipelineCache", this->vkCreatePipelineCache);
     return fn(device, pCreateInfo, pAllocator, pPipelineCache);
-#else
+#    else
     return this->vkCreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache,
                                        const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyPipelineCache fn = validateFunction("vkDestroyPipelineCache", this->vkDestroyPipelineCache);
     fn(device, pipelineCache, pAllocator);
-#else
+#    else
     this->vkDestroyPipelineCache(device, pipelineCache, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::GetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t *pDataSize,
                                            void *pData) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetPipelineCacheData fn = validateFunction("vkGetPipelineCacheData", this->vkGetPipelineCacheData);
     return fn(device, pipelineCache, pDataSize, pData);
-#else
+#    else
     return this->vkGetPipelineCacheData(device, pipelineCache, pDataSize, pData);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::MergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount,
                                           const VkPipelineCache *pSrcCaches) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkMergePipelineCaches fn = validateFunction("vkMergePipelineCaches", this->vkMergePipelineCaches);
     return fn(device, dstCache, srcCacheCount, pSrcCaches);
-#else
+#    else
     return this->vkMergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_KHR_pipeline_binary)
 VkResult DeviceTable::CreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator,
@@ -4972,31 +5600,35 @@ VkResult DeviceTable::ReleaseCapturedPipelineDataKHR(VkDevice device, const VkRe
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
                                               const VkGraphicsPipelineCreateInfo *pCreateInfos,
                                               const VkAllocationCallbacks *pAllocator, VkPipeline *pPipelines) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateGraphicsPipelines fn =
         validateFunction("vkCreateGraphicsPipelines", this->vkCreateGraphicsPipelines);
     return fn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-#else
+#    else
     return this->vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator,
                                            pPipelines);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
                                              const VkComputePipelineCreateInfo *pCreateInfos,
                                              const VkAllocationCallbacks *pAllocator, VkPipeline *pPipelines) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateComputePipelines fn =
         validateFunction("vkCreateComputePipelines", this->vkCreateComputePipelines);
     return fn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-#else
+#    else
     return this->vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-#endif
+#    endif
 }
+#endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
 VkResult DeviceTable::GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass,
                                                                     VkExtent2D *pMaxWorkgroupSize) const
@@ -5010,192 +5642,228 @@ VkResult DeviceTable::GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice dev
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyPipeline fn = validateFunction("vkDestroyPipeline", this->vkDestroyPipeline);
     fn(device, pipeline, pAllocator);
-#else
+#    else
     this->vkDestroyPipeline(device, pipeline, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo *pCreateInfo,
                                            const VkAllocationCallbacks *pAllocator,
                                            VkPipelineLayout *pPipelineLayout) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreatePipelineLayout fn = validateFunction("vkCreatePipelineLayout", this->vkCreatePipelineLayout);
     return fn(device, pCreateInfo, pAllocator, pPipelineLayout);
-#else
+#    else
     return this->vkCreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout,
                                         const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyPipelineLayout fn = validateFunction("vkDestroyPipelineLayout", this->vkDestroyPipelineLayout);
     fn(device, pipelineLayout, pAllocator);
-#else
+#    else
     this->vkDestroyPipelineLayout(device, pipelineLayout, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateSampler(VkDevice device, const VkSamplerCreateInfo *pCreateInfo,
                                     const VkAllocationCallbacks *pAllocator, VkSampler *pSampler) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateSampler fn = validateFunction("vkCreateSampler", this->vkCreateSampler);
     return fn(device, pCreateInfo, pAllocator, pSampler);
-#else
+#    else
     return this->vkCreateSampler(device, pCreateInfo, pAllocator, pSampler);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroySampler fn = validateFunction("vkDestroySampler", this->vkDestroySampler);
     fn(device, sampler, pAllocator);
-#else
+#    else
     this->vkDestroySampler(device, sampler, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
                                                 const VkAllocationCallbacks *pAllocator,
                                                 VkDescriptorSetLayout *pSetLayout) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateDescriptorSetLayout fn =
         validateFunction("vkCreateDescriptorSetLayout", this->vkCreateDescriptorSetLayout);
     return fn(device, pCreateInfo, pAllocator, pSetLayout);
-#else
+#    else
     return this->vkCreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout,
                                              const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyDescriptorSetLayout fn =
         validateFunction("vkDestroyDescriptorSetLayout", this->vkDestroyDescriptorSetLayout);
     fn(device, descriptorSetLayout, pAllocator);
-#else
+#    else
     this->vkDestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo *pCreateInfo,
                                            const VkAllocationCallbacks *pAllocator,
                                            VkDescriptorPool *pDescriptorPool) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateDescriptorPool fn = validateFunction("vkCreateDescriptorPool", this->vkCreateDescriptorPool);
     return fn(device, pCreateInfo, pAllocator, pDescriptorPool);
-#else
+#    else
     return this->vkCreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
                                         const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyDescriptorPool fn = validateFunction("vkDestroyDescriptorPool", this->vkDestroyDescriptorPool);
     fn(device, descriptorPool, pAllocator);
-#else
+#    else
     this->vkDestroyDescriptorPool(device, descriptorPool, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::ResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool,
                                           VkDescriptorPoolResetFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkResetDescriptorPool fn = validateFunction("vkResetDescriptorPool", this->vkResetDescriptorPool);
     return fn(device, descriptorPool, flags);
-#else
+#    else
     return this->vkResetDescriptorPool(device, descriptorPool, flags);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::AllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo *pAllocateInfo,
                                              VkDescriptorSet *pDescriptorSets) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkAllocateDescriptorSets fn =
         validateFunction("vkAllocateDescriptorSets", this->vkAllocateDescriptorSets);
     return fn(device, pAllocateInfo, pDescriptorSets);
-#else
+#    else
     return this->vkAllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::FreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount,
                                          const VkDescriptorSet *pDescriptorSets) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkFreeDescriptorSets fn = validateFunction("vkFreeDescriptorSets", this->vkFreeDescriptorSets);
     return fn(device, descriptorPool, descriptorSetCount, pDescriptorSets);
-#else
+#    else
     return this->vkFreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::UpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount,
                                        const VkWriteDescriptorSet *pDescriptorWrites, uint32_t descriptorCopyCount,
                                        const VkCopyDescriptorSet *pDescriptorCopies) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkUpdateDescriptorSets fn = validateFunction("vkUpdateDescriptorSets", this->vkUpdateDescriptorSets);
     fn(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
-#else
+#    else
     this->vkUpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount,
                                  pDescriptorCopies);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo *pCreateInfo,
                                         const VkAllocationCallbacks *pAllocator, VkFramebuffer *pFramebuffer) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateFramebuffer fn = validateFunction("vkCreateFramebuffer", this->vkCreateFramebuffer);
     return fn(device, pCreateInfo, pAllocator, pFramebuffer);
-#else
+#    else
     return this->vkCreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer,
                                      const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyFramebuffer fn = validateFunction("vkDestroyFramebuffer", this->vkDestroyFramebuffer);
     fn(device, framebuffer, pAllocator);
-#else
+#    else
     this->vkDestroyFramebuffer(device, framebuffer, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateRenderPass(VkDevice device, const VkRenderPassCreateInfo *pCreateInfo,
                                        const VkAllocationCallbacks *pAllocator, VkRenderPass *pRenderPass) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateRenderPass fn = validateFunction("vkCreateRenderPass", this->vkCreateRenderPass);
     return fn(device, pCreateInfo, pAllocator, pRenderPass);
-#else
+#    else
     return this->vkCreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyRenderPass(VkDevice device, VkRenderPass renderPass,
                                     const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyRenderPass fn = validateFunction("vkDestroyRenderPass", this->vkDestroyRenderPass);
     fn(device, renderPass, pAllocator);
-#else
+#    else
     this->vkDestroyRenderPass(device, renderPass, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D *pGranularity) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkGetRenderAreaGranularity fn =
         validateFunction("vkGetRenderAreaGranularity", this->vkGetRenderAreaGranularity);
     fn(device, renderPass, pGranularity);
-#else
+#    else
     this->vkGetRenderAreaGranularity(device, renderPass, pGranularity);
-#endif
+#    endif
 }
+#endif
 #if defined(VKIT_API_VERSION_1_4)
 void DeviceTable::GetRenderingAreaGranularity(VkDevice device, const VkRenderingAreaInfo *pRenderingAreaInfo,
                                               VkExtent2D *pGranularity) const
@@ -5209,94 +5877,112 @@ void DeviceTable::GetRenderingAreaGranularity(VkDevice device, const VkRendering
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo *pCreateInfo,
                                         const VkAllocationCallbacks *pAllocator, VkCommandPool *pCommandPool) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCreateCommandPool fn = validateFunction("vkCreateCommandPool", this->vkCreateCommandPool);
     return fn(device, pCreateInfo, pAllocator, pCommandPool);
-#else
+#    else
     return this->vkCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::DestroyCommandPool(VkDevice device, VkCommandPool commandPool,
                                      const VkAllocationCallbacks *pAllocator) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkDestroyCommandPool fn = validateFunction("vkDestroyCommandPool", this->vkDestroyCommandPool);
     fn(device, commandPool, pAllocator);
-#else
+#    else
     this->vkDestroyCommandPool(device, commandPool, pAllocator);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::ResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkResetCommandPool fn = validateFunction("vkResetCommandPool", this->vkResetCommandPool);
     return fn(device, commandPool, flags);
-#else
+#    else
     return this->vkResetCommandPool(device, commandPool, flags);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo *pAllocateInfo,
                                              VkCommandBuffer *pCommandBuffers) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkAllocateCommandBuffers fn =
         validateFunction("vkAllocateCommandBuffers", this->vkAllocateCommandBuffers);
     return fn(device, pAllocateInfo, pCommandBuffers);
-#else
+#    else
     return this->vkAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
                                      const VkCommandBuffer *pCommandBuffers) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkFreeCommandBuffers fn = validateFunction("vkFreeCommandBuffers", this->vkFreeCommandBuffers);
     fn(device, commandPool, commandBufferCount, pCommandBuffers);
-#else
+#    else
     this->vkFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::BeginCommandBuffer(VkCommandBuffer commandBuffer,
                                          const VkCommandBufferBeginInfo *pBeginInfo) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkBeginCommandBuffer fn = validateFunction("vkBeginCommandBuffer", this->vkBeginCommandBuffer);
     return fn(commandBuffer, pBeginInfo);
-#else
+#    else
     return this->vkBeginCommandBuffer(commandBuffer, pBeginInfo);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::EndCommandBuffer(VkCommandBuffer commandBuffer) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkEndCommandBuffer fn = validateFunction("vkEndCommandBuffer", this->vkEndCommandBuffer);
     return fn(commandBuffer);
-#else
+#    else
     return this->vkEndCommandBuffer(commandBuffer);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 VkResult DeviceTable::ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkResetCommandBuffer fn = validateFunction("vkResetCommandBuffer", this->vkResetCommandBuffer);
     return fn(commandBuffer, flags);
-#else
+#    else
     return this->vkResetCommandBuffer(commandBuffer, flags);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                   VkPipeline pipeline) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBindPipeline fn = validateFunction("vkCmdBindPipeline", this->vkCmdBindPipeline);
     fn(commandBuffer, pipelineBindPoint, pipeline);
-#else
+#    else
     this->vkCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
 void DeviceTable::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                         VkImageAspectFlags aspectMask) const
@@ -5310,150 +5996,178 @@ void DeviceTable::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandB
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
                                  const VkViewport *pViewports) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetViewport fn = validateFunction("vkCmdSetViewport", this->vkCmdSetViewport);
     fn(commandBuffer, firstViewport, viewportCount, pViewports);
-#else
+#    else
     this->vkCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount,
                                 const VkRect2D *pScissors) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetScissor fn = validateFunction("vkCmdSetScissor", this->vkCmdSetScissor);
     fn(commandBuffer, firstScissor, scissorCount, pScissors);
-#else
+#    else
     this->vkCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetLineWidth fn = validateFunction("vkCmdSetLineWidth", this->vkCmdSetLineWidth);
     fn(commandBuffer, lineWidth);
-#else
+#    else
     this->vkCmdSetLineWidth(commandBuffer, lineWidth);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp,
                                   float depthBiasSlopeFactor) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetDepthBias fn = validateFunction("vkCmdSetDepthBias", this->vkCmdSetDepthBias);
     fn(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
-#else
+#    else
     this->vkCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetBlendConstants fn = validateFunction("vkCmdSetBlendConstants", this->vkCmdSetBlendConstants);
     fn(commandBuffer, blendConstants);
-#else
+#    else
     this->vkCmdSetBlendConstants(commandBuffer, blendConstants);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetDepthBounds fn = validateFunction("vkCmdSetDepthBounds", this->vkCmdSetDepthBounds);
     fn(commandBuffer, minDepthBounds, maxDepthBounds);
-#else
+#    else
     this->vkCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                            uint32_t compareMask) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetStencilCompareMask fn =
         validateFunction("vkCmdSetStencilCompareMask", this->vkCmdSetStencilCompareMask);
     fn(commandBuffer, faceMask, compareMask);
-#else
+#    else
     this->vkCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                          uint32_t writeMask) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetStencilWriteMask fn =
         validateFunction("vkCmdSetStencilWriteMask", this->vkCmdSetStencilWriteMask);
     fn(commandBuffer, faceMask, writeMask);
-#else
+#    else
     this->vkCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                          uint32_t reference) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetStencilReference fn =
         validateFunction("vkCmdSetStencilReference", this->vkCmdSetStencilReference);
     fn(commandBuffer, faceMask, reference);
-#else
+#    else
     this->vkCmdSetStencilReference(commandBuffer, faceMask, reference);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                         VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
                                         const VkDescriptorSet *pDescriptorSets, uint32_t dynamicOffsetCount,
                                         const uint32_t *pDynamicOffsets) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBindDescriptorSets fn = validateFunction("vkCmdBindDescriptorSets", this->vkCmdBindDescriptorSets);
     fn(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
        pDynamicOffsets);
-#else
+#    else
     this->vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
                                   pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                      VkIndexType indexType) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBindIndexBuffer fn = validateFunction("vkCmdBindIndexBuffer", this->vkCmdBindIndexBuffer);
     fn(commandBuffer, buffer, offset, indexType);
-#else
+#    else
     this->vkCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
                                        const VkBuffer *pBuffers, const VkDeviceSize *pOffsets) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBindVertexBuffers fn = validateFunction("vkCmdBindVertexBuffers", this->vkCmdBindVertexBuffers);
     fn(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
-#else
+#    else
     this->vkCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount,
                           uint32_t firstVertex, uint32_t firstInstance) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDraw fn = validateFunction("vkCmdDraw", this->vkCmdDraw);
     fn(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
-#else
+#    else
     this->vkCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount,
                                  uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDrawIndexed fn = validateFunction("vkCmdDrawIndexed", this->vkCmdDrawIndexed);
     fn(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-#else
+#    else
     this->vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_EXT_multi_draw)
 void DeviceTable::CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
                                   const VkMultiDrawInfoEXT *pVertexInfo, uint32_t instanceCount, uint32_t firstInstance,
@@ -5482,46 +6196,54 @@ void DeviceTable::CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                   uint32_t drawCount, uint32_t stride) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDrawIndirect fn = validateFunction("vkCmdDrawIndirect", this->vkCmdDrawIndirect);
     fn(commandBuffer, buffer, offset, drawCount, stride);
-#else
+#    else
     this->vkCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                          uint32_t drawCount, uint32_t stride) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDrawIndexedIndirect fn =
         validateFunction("vkCmdDrawIndexedIndirect", this->vkCmdDrawIndexedIndirect);
     fn(commandBuffer, buffer, offset, drawCount, stride);
-#else
+#    else
     this->vkCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
                               uint32_t groupCountZ) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDispatch fn = validateFunction("vkCmdDispatch", this->vkCmdDispatch);
     fn(commandBuffer, groupCountX, groupCountY, groupCountZ);
-#else
+#    else
     this->vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDispatchIndirect fn = validateFunction("vkCmdDispatchIndirect", this->vkCmdDispatchIndirect);
     fn(commandBuffer, buffer, offset);
-#else
+#    else
     this->vkCmdDispatchIndirect(commandBuffer, buffer, offset);
-#endif
+#    endif
 }
+#endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
 void DeviceTable::CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) const
 {
@@ -5572,61 +6294,71 @@ void DeviceTable::CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffe
 #    endif
 }
 #endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
                                 uint32_t regionCount, const VkBufferCopy *pRegions) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdCopyBuffer fn = validateFunction("vkCmdCopyBuffer", this->vkCmdCopyBuffer);
     fn(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-#else
+#    else
     this->vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                const VkImageCopy *pRegions) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdCopyImage fn = validateFunction("vkCmdCopyImage", this->vkCmdCopyImage);
     fn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-#else
+#    else
     this->vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                const VkImageBlit *pRegions, VkFilter filter) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBlitImage fn = validateFunction("vkCmdBlitImage", this->vkCmdBlitImage);
     fn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
-#else
+#    else
     this->vkCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions,
                          filter);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
                                        VkImageLayout dstImageLayout, uint32_t regionCount,
                                        const VkBufferImageCopy *pRegions) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdCopyBufferToImage fn = validateFunction("vkCmdCopyBufferToImage", this->vkCmdCopyBufferToImage);
     fn(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-#else
+#    else
     this->vkCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                        VkBuffer dstBuffer, uint32_t regionCount,
                                        const VkBufferImageCopy *pRegions) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdCopyImageToBuffer fn = validateFunction("vkCmdCopyImageToBuffer", this->vkCmdCopyImageToBuffer);
     fn(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-#else
+#    else
     this->vkCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_NV_copy_memory_indirect)
 void DeviceTable::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                           uint32_t copyCount, uint32_t stride) const
@@ -5637,6 +6369,19 @@ void DeviceTable::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDevic
     fn(commandBuffer, copyBufferAddress, copyCount, stride);
 #    else
     this->vkCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
+#    endif
+}
+#endif
+#if defined(VK_KHR_copy_memory_indirect)
+void DeviceTable::CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                           const VkCopyMemoryIndirectInfoKHR *pCopyMemoryIndirectInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdCopyMemoryIndirectKHR fn =
+        validateFunction("vkCmdCopyMemoryIndirectKHR", this->vkCmdCopyMemoryIndirectKHR);
+    fn(commandBuffer, pCopyMemoryIndirectInfo);
+#    else
+    this->vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
 #    endif
 }
 #endif
@@ -5656,89 +6401,119 @@ void DeviceTable::CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, 
 #    endif
 }
 #endif
+#if defined(VK_KHR_copy_memory_indirect)
+void DeviceTable::CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR *pCopyMemoryToImageIndirectInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdCopyMemoryToImageIndirectKHR fn =
+        validateFunction("vkCmdCopyMemoryToImageIndirectKHR", this->vkCmdCopyMemoryToImageIndirectKHR);
+    fn(commandBuffer, pCopyMemoryToImageIndirectInfo);
+#    else
+    this->vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+#    endif
+}
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
                                   VkDeviceSize dataSize, const void *pData) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdUpdateBuffer fn = validateFunction("vkCmdUpdateBuffer", this->vkCmdUpdateBuffer);
     fn(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-#else
+#    else
     this->vkCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
                                 VkDeviceSize size, uint32_t data) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdFillBuffer fn = validateFunction("vkCmdFillBuffer", this->vkCmdFillBuffer);
     fn(commandBuffer, dstBuffer, dstOffset, size, data);
-#else
+#    else
     this->vkCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
                                      const VkClearColorValue *pColor, uint32_t rangeCount,
                                      const VkImageSubresourceRange *pRanges) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdClearColorImage fn = validateFunction("vkCmdClearColorImage", this->vkCmdClearColorImage);
     fn(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-#else
+#    else
     this->vkCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
                                             const VkClearDepthStencilValue *pDepthStencil, uint32_t rangeCount,
                                             const VkImageSubresourceRange *pRanges) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdClearDepthStencilImage fn =
         validateFunction("vkCmdClearDepthStencilImage", this->vkCmdClearDepthStencilImage);
     fn(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
-#else
+#    else
     this->vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
                                       const VkClearAttachment *pAttachments, uint32_t rectCount,
                                       const VkClearRect *pRects) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdClearAttachments fn = validateFunction("vkCmdClearAttachments", this->vkCmdClearAttachments);
     fn(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
-#else
+#    else
     this->vkCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                   VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                   const VkImageResolve *pRegions) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdResolveImage fn = validateFunction("vkCmdResolveImage", this->vkCmdResolveImage);
     fn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-#else
+#    else
     this->vkCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdSetEvent fn = validateFunction("vkCmdSetEvent", this->vkCmdSetEvent);
     fn(commandBuffer, event, stageMask);
-#else
+#    else
     this->vkCmdSetEvent(commandBuffer, event, stageMask);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdResetEvent fn = validateFunction("vkCmdResetEvent", this->vkCmdResetEvent);
     fn(commandBuffer, event, stageMask);
-#else
+#    else
     this->vkCmdResetEvent(commandBuffer, event, stageMask);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
                                 VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
                                 uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
@@ -5746,16 +6521,18 @@ void DeviceTable::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCou
                                 uint32_t imageMemoryBarrierCount,
                                 const VkImageMemoryBarrier *pImageMemoryBarriers) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdWaitEvents fn = validateFunction("vkCmdWaitEvents", this->vkCmdWaitEvents);
     fn(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-#else
+#    else
     this->vkCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
                           pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
                           pImageMemoryBarriers);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
                                      VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
                                      uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
@@ -5764,35 +6541,40 @@ void DeviceTable::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineSt
                                      uint32_t imageMemoryBarrierCount,
                                      const VkImageMemoryBarrier *pImageMemoryBarriers) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdPipelineBarrier fn = validateFunction("vkCmdPipelineBarrier", this->vkCmdPipelineBarrier);
     fn(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-#else
+#    else
     this->vkCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
                                pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
                                imageMemoryBarrierCount, pImageMemoryBarriers);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
                                 VkQueryControlFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBeginQuery fn = validateFunction("vkCmdBeginQuery", this->vkCmdBeginQuery);
     fn(commandBuffer, queryPool, query, flags);
-#else
+#    else
     this->vkCmdBeginQuery(commandBuffer, queryPool, query, flags);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdEndQuery fn = validateFunction("vkCmdEndQuery", this->vkCmdEndQuery);
     fn(commandBuffer, queryPool, query);
-#else
+#    else
     this->vkCmdEndQuery(commandBuffer, queryPool, query);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_EXT_conditional_rendering)
 void DeviceTable::CmdBeginConditionalRenderingEXT(
     VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT *pConditionalRenderingBegin) const
@@ -5818,88 +6600,117 @@ void DeviceTable::CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) c
 #    endif
 }
 #endif
+#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
+void DeviceTable::CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                           const VkBeginCustomResolveInfoEXT *pBeginCustomResolveInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdBeginCustomResolveEXT fn =
+        validateFunction("vkCmdBeginCustomResolveEXT", this->vkCmdBeginCustomResolveEXT);
+    fn(commandBuffer, pBeginCustomResolveInfo);
+#    else
+    this->vkCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
+#    endif
+}
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
                                     uint32_t queryCount) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdResetQueryPool fn = validateFunction("vkCmdResetQueryPool", this->vkCmdResetQueryPool);
     fn(commandBuffer, queryPool, firstQuery, queryCount);
-#else
+#    else
     this->vkCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
                                     VkQueryPool queryPool, uint32_t query) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdWriteTimestamp fn = validateFunction("vkCmdWriteTimestamp", this->vkCmdWriteTimestamp);
     fn(commandBuffer, pipelineStage, queryPool, query);
-#else
+#    else
     this->vkCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
                                           uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
                                           VkDeviceSize stride, VkQueryResultFlags flags) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdCopyQueryPoolResults fn =
         validateFunction("vkCmdCopyQueryPoolResults", this->vkCmdCopyQueryPoolResults);
     fn(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
-#else
+#    else
     this->vkCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
                                     flags);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
                                    VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
                                    const void *pValues) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdPushConstants fn = validateFunction("vkCmdPushConstants", this->vkCmdPushConstants);
     fn(commandBuffer, layout, stageFlags, offset, size, pValues);
-#else
+#    else
     this->vkCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo *pRenderPassBegin,
                                      VkSubpassContents contents) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdBeginRenderPass fn = validateFunction("vkCmdBeginRenderPass", this->vkCmdBeginRenderPass);
     fn(commandBuffer, pRenderPassBegin, contents);
-#else
+#    else
     this->vkCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdNextSubpass fn = validateFunction("vkCmdNextSubpass", this->vkCmdNextSubpass);
     fn(commandBuffer, contents);
-#else
+#    else
     this->vkCmdNextSubpass(commandBuffer, contents);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdEndRenderPass(VkCommandBuffer commandBuffer) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdEndRenderPass fn = validateFunction("vkCmdEndRenderPass", this->vkCmdEndRenderPass);
     fn(commandBuffer);
-#else
+#    else
     this->vkCmdEndRenderPass(commandBuffer);
-#endif
+#    endif
 }
+#endif
+#if defined(VKIT_API_VERSION_1_0)
 void DeviceTable::CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
                                      const VkCommandBuffer *pCommandBuffers) const
 {
-#ifdef TKIT_ENABLE_ASSERTS
+#    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdExecuteCommands fn = validateFunction("vkCmdExecuteCommands", this->vkCmdExecuteCommands);
     fn(commandBuffer, commandBufferCount, pCommandBuffers);
-#else
+#    else
     this->vkCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-#endif
+#    endif
 }
+#endif
 #if defined(VK_KHR_display_swapchain)
 VkResult DeviceTable::CreateSharedSwapchainsKHR(VkDevice device, uint32_t swapchainCount,
                                                 const VkSwapchainCreateInfoKHR *pCreateInfos,
@@ -7687,7 +8498,8 @@ void DeviceTable::CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBu
 #    endif
 }
 #endif
-#if (defined(VK_NV_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_NV_mesh_shader) &&                                                                                     \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
 void DeviceTable::CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                                   VkBuffer countBuffer, VkDeviceSize countBufferOffset,
                                                   uint32_t maxDrawCount, uint32_t stride) const
@@ -7727,7 +8539,8 @@ void DeviceTable::CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkB
 #    endif
 }
 #endif
-#if (defined(VK_EXT_mesh_shader) && (defined(VK_KHR_draw_indirect_count) || defined(VKIT_API_VERSION_1_2)))
+#if (defined(VK_EXT_mesh_shader) &&                                                                                    \
+     (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
 void DeviceTable::CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                                    VkBuffer countBuffer, VkDeviceSize countBufferOffset,
                                                    uint32_t maxDrawCount, uint32_t stride) const
@@ -8526,18 +9339,6 @@ void DeviceTable::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t line
     fn(commandBuffer, lineStippleFactor, lineStipplePattern);
 #    else
     this->vkCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-#    endif
-}
-#endif
-#if defined(VKSC_VERSION_1_0)
-VkResult DeviceTable::GetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavior,
-                                   VkBool32 *pUnrecordedFaults, uint32_t *pFaultCount, VkFaultData *pFaults) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetFaultData fn = validateFunction("vkGetFaultData", this->vkGetFaultData);
-    return fn(device, faultQueryBehavior, pUnrecordedFaults, pFaultCount, pFaults);
-#    else
-    return this->vkGetFaultData(device, faultQueryBehavior, pUnrecordedFaults, pFaultCount, pFaults);
 #    endif
 }
 #endif
@@ -9680,20 +10481,6 @@ VkResult DeviceTable::TransitionImageLayout(VkDevice device, uint32_t transition
 #    endif
 }
 #endif
-#if defined(VKSC_VERSION_1_0)
-void DeviceTable::GetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool,
-                                                  VkCommandBuffer commandBuffer,
-                                                  VkCommandPoolMemoryConsumption *pConsumption) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetCommandPoolMemoryConsumption fn =
-        validateFunction("vkGetCommandPoolMemoryConsumption", this->vkGetCommandPoolMemoryConsumption);
-    fn(device, commandPool, commandBuffer, pConsumption);
-#    else
-    this->vkGetCommandPoolMemoryConsumption(device, commandPool, commandBuffer, pConsumption);
-#    endif
-}
-#endif
 #if defined(VK_KHR_video_queue)
 VkResult DeviceTable::CreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR *pCreateInfo,
                                             const VkAllocationCallbacks *pAllocator,
@@ -9921,6 +10708,37 @@ void DeviceTable::CmdBuildPartitionedAccelerationStructuresNV(
 #    endif
 }
 #endif
+#if defined(VK_EXT_memory_decompression)
+void DeviceTable::CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                         const VkDecompressMemoryInfoEXT *pDecompressMemoryInfoEXT) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdDecompressMemoryEXT fn =
+        validateFunction("vkCmdDecompressMemoryEXT", this->vkCmdDecompressMemoryEXT);
+    fn(commandBuffer, pDecompressMemoryInfoEXT);
+#    else
+    this->vkCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+#    endif
+}
+#endif
+#if defined(VK_EXT_memory_decompression)
+void DeviceTable::CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                      VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                      VkDeviceAddress indirectCommandsAddress,
+                                                      VkDeviceAddress indirectCommandsCountAddress,
+                                                      uint32_t maxDecompressionCount, uint32_t stride) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdDecompressMemoryIndirectCountEXT fn =
+        validateFunction("vkCmdDecompressMemoryIndirectCountEXT", this->vkCmdDecompressMemoryIndirectCountEXT);
+    fn(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount,
+       stride);
+#    else
+    this->vkCmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress,
+                                                indirectCommandsCountAddress, maxDecompressionCount, stride);
+#    endif
+}
+#endif
 #if defined(VK_NVX_binary_import)
 VkResult DeviceTable::CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX *pCreateInfo,
                                         const VkAllocationCallbacks *pAllocator, VkCuModuleNVX *pModule) const
@@ -10142,6 +10960,18 @@ void DeviceTable::SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory mem
 #    endif
 }
 #endif
+#if defined(VK_KHR_present_wait2)
+VkResult DeviceTable::WaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain,
+                                         const VkPresentWait2InfoKHR *pPresentWait2Info) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkWaitForPresent2KHR fn = validateFunction("vkWaitForPresent2KHR", this->vkWaitForPresent2KHR);
+    return fn(device, swapchain, pPresentWait2Info);
+#    else
+    return this->vkWaitForPresent2KHR(device, swapchain, pPresentWait2Info);
+#    endif
+}
+#endif
 #if defined(VK_KHR_present_wait)
 VkResult DeviceTable::WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId,
                                         uint64_t timeout) const
@@ -10316,15 +11146,15 @@ void DeviceTable::CmdEndRendering(VkCommandBuffer commandBuffer) const
 #    endif
 }
 #endif
-#if defined(VK_EXT_fragment_density_map_offset)
-void DeviceTable::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                      const VkRenderingEndInfoEXT *pRenderingEndInfo) const
+#if defined(VK_KHR_maintenance10)
+void DeviceTable::CmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                      const VkRenderingEndInfoKHR *pRenderingEndInfo) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdEndRendering2EXT fn = validateFunction("vkCmdEndRendering2EXT", this->vkCmdEndRendering2EXT);
+    static PFN_vkCmdEndRendering2KHR fn = validateFunction("vkCmdEndRendering2KHR", this->vkCmdEndRendering2KHR);
     fn(commandBuffer, pRenderingEndInfo);
 #    else
-    this->vkCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+    this->vkCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
 #    endif
 }
 #endif
@@ -10711,16 +11541,16 @@ void DeviceTable::CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDep
 #    endif
 }
 #endif
-#if defined(VK_EXT_swapchain_maintenance1)
-VkResult DeviceTable::ReleaseSwapchainImagesEXT(VkDevice device,
-                                                const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const
+#if defined(VK_KHR_swapchain_maintenance1)
+VkResult DeviceTable::ReleaseSwapchainImagesKHR(VkDevice device,
+                                                const VkReleaseSwapchainImagesInfoKHR *pReleaseInfo) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkReleaseSwapchainImagesEXT fn =
-        validateFunction("vkReleaseSwapchainImagesEXT", this->vkReleaseSwapchainImagesEXT);
+    static PFN_vkReleaseSwapchainImagesKHR fn =
+        validateFunction("vkReleaseSwapchainImagesKHR", this->vkReleaseSwapchainImagesKHR);
     return fn(device, pReleaseInfo);
 #    else
-    return this->vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
+    return this->vkReleaseSwapchainImagesKHR(device, pReleaseInfo);
 #    endif
 }
 #endif
@@ -11145,13 +11975,14 @@ void DeviceTable::CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuf
 }
 #endif
 #if defined(VK_QCOM_tile_shading)
-void DeviceTable::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) const
+void DeviceTable::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                      const VkDispatchTileInfoQCOM *pDispatchTileInfo) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
     static PFN_vkCmdDispatchTileQCOM fn = validateFunction("vkCmdDispatchTileQCOM", this->vkCmdDispatchTileQCOM);
-    fn(commandBuffer);
+    fn(commandBuffer, pDispatchTileInfo);
 #    else
-    this->vkCmdDispatchTileQCOM(commandBuffer);
+    this->vkCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 #    endif
 }
 #endif
@@ -11219,6 +12050,327 @@ void DeviceTable::GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externa
     fn(externalQueue, params, pData);
 #    else
     this->vkGetExternalComputeQueueDataNV(externalQueue, params, pData);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+VkResult DeviceTable::CreateTensorARM(VkDevice device, const VkTensorCreateInfoARM *pCreateInfo,
+                                      const VkAllocationCallbacks *pAllocator, VkTensorARM *pTensor) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCreateTensorARM fn = validateFunction("vkCreateTensorARM", this->vkCreateTensorARM);
+    return fn(device, pCreateInfo, pAllocator, pTensor);
+#    else
+    return this->vkCreateTensorARM(device, pCreateInfo, pAllocator, pTensor);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+void DeviceTable::DestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks *pAllocator) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkDestroyTensorARM fn = validateFunction("vkDestroyTensorARM", this->vkDestroyTensorARM);
+    fn(device, tensor, pAllocator);
+#    else
+    this->vkDestroyTensorARM(device, tensor, pAllocator);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+VkResult DeviceTable::CreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM *pCreateInfo,
+                                          const VkAllocationCallbacks *pAllocator, VkTensorViewARM *pView) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCreateTensorViewARM fn = validateFunction("vkCreateTensorViewARM", this->vkCreateTensorViewARM);
+    return fn(device, pCreateInfo, pAllocator, pView);
+#    else
+    return this->vkCreateTensorViewARM(device, pCreateInfo, pAllocator, pView);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+void DeviceTable::DestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView,
+                                       const VkAllocationCallbacks *pAllocator) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkDestroyTensorViewARM fn = validateFunction("vkDestroyTensorViewARM", this->vkDestroyTensorViewARM);
+    fn(device, tensorView, pAllocator);
+#    else
+    this->vkDestroyTensorViewARM(device, tensorView, pAllocator);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+void DeviceTable::GetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM *pInfo,
+                                                 VkMemoryRequirements2 *pMemoryRequirements) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetTensorMemoryRequirementsARM fn =
+        validateFunction("vkGetTensorMemoryRequirementsARM", this->vkGetTensorMemoryRequirementsARM);
+    fn(device, pInfo, pMemoryRequirements);
+#    else
+    this->vkGetTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+VkResult DeviceTable::BindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount,
+                                          const VkBindTensorMemoryInfoARM *pBindInfos) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkBindTensorMemoryARM fn = validateFunction("vkBindTensorMemoryARM", this->vkBindTensorMemoryARM);
+    return fn(device, bindInfoCount, pBindInfos);
+#    else
+    return this->vkBindTensorMemoryARM(device, bindInfoCount, pBindInfos);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+void DeviceTable::GetDeviceTensorMemoryRequirementsARM(VkDevice device,
+                                                       const VkDeviceTensorMemoryRequirementsARM *pInfo,
+                                                       VkMemoryRequirements2 *pMemoryRequirements) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDeviceTensorMemoryRequirementsARM fn =
+        validateFunction("vkGetDeviceTensorMemoryRequirementsARM", this->vkGetDeviceTensorMemoryRequirementsARM);
+    fn(device, pInfo, pMemoryRequirements);
+#    else
+    this->vkGetDeviceTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
+#    endif
+}
+#endif
+#if defined(VK_ARM_tensors)
+void DeviceTable::CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM *pCopyTensorInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdCopyTensorARM fn = validateFunction("vkCmdCopyTensorARM", this->vkCmdCopyTensorARM);
+    fn(commandBuffer, pCopyTensorInfo);
+#    else
+    this->vkCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+#    endif
+}
+#endif
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+VkResult DeviceTable::GetTensorOpaqueCaptureDescriptorDataARM(VkDevice device,
+                                                              const VkTensorCaptureDescriptorDataInfoARM *pInfo,
+                                                              void *pData) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetTensorOpaqueCaptureDescriptorDataARM fn =
+        validateFunction("vkGetTensorOpaqueCaptureDescriptorDataARM", this->vkGetTensorOpaqueCaptureDescriptorDataARM);
+    return fn(device, pInfo, pData);
+#    else
+    return this->vkGetTensorOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
+#    endif
+}
+#endif
+#if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
+VkResult DeviceTable::GetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice device,
+                                                                  const VkTensorViewCaptureDescriptorDataInfoARM *pInfo,
+                                                                  void *pData) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM fn = validateFunction(
+        "vkGetTensorViewOpaqueCaptureDescriptorDataARM", this->vkGetTensorViewOpaqueCaptureDescriptorDataARM);
+    return fn(device, pInfo, pData);
+#    else
+    return this->vkGetTensorViewOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::CreateDataGraphPipelinesARM(VkDevice device, VkDeferredOperationKHR deferredOperation,
+                                                  VkPipelineCache pipelineCache, uint32_t createInfoCount,
+                                                  const VkDataGraphPipelineCreateInfoARM *pCreateInfos,
+                                                  const VkAllocationCallbacks *pAllocator, VkPipeline *pPipelines) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCreateDataGraphPipelinesARM fn =
+        validateFunction("vkCreateDataGraphPipelinesARM", this->vkCreateDataGraphPipelinesARM);
+    return fn(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+#    else
+    return this->vkCreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos,
+                                               pAllocator, pPipelines);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::CreateDataGraphPipelineSessionARM(VkDevice device,
+                                                        const VkDataGraphPipelineSessionCreateInfoARM *pCreateInfo,
+                                                        const VkAllocationCallbacks *pAllocator,
+                                                        VkDataGraphPipelineSessionARM *pSession) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCreateDataGraphPipelineSessionARM fn =
+        validateFunction("vkCreateDataGraphPipelineSessionARM", this->vkCreateDataGraphPipelineSessionARM);
+    return fn(device, pCreateInfo, pAllocator, pSession);
+#    else
+    return this->vkCreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::GetDataGraphPipelineSessionBindPointRequirementsARM(
+    VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM *pInfo,
+    uint32_t *pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM *pBindPointRequirements) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM fn =
+        validateFunction("vkGetDataGraphPipelineSessionBindPointRequirementsARM",
+                         this->vkGetDataGraphPipelineSessionBindPointRequirementsARM);
+    return fn(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
+#    else
+    return this->vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount,
+                                                                       pBindPointRequirements);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+void DeviceTable::GetDataGraphPipelineSessionMemoryRequirementsARM(
+    VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM *pInfo,
+    VkMemoryRequirements2 *pMemoryRequirements) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM fn = validateFunction(
+        "vkGetDataGraphPipelineSessionMemoryRequirementsARM", this->vkGetDataGraphPipelineSessionMemoryRequirementsARM);
+    fn(device, pInfo, pMemoryRequirements);
+#    else
+    this->vkGetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::BindDataGraphPipelineSessionMemoryARM(
+    VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM *pBindInfos) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkBindDataGraphPipelineSessionMemoryARM fn =
+        validateFunction("vkBindDataGraphPipelineSessionMemoryARM", this->vkBindDataGraphPipelineSessionMemoryARM);
+    return fn(device, bindInfoCount, pBindInfos);
+#    else
+    return this->vkBindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+void DeviceTable::DestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session,
+                                                     const VkAllocationCallbacks *pAllocator) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkDestroyDataGraphPipelineSessionARM fn =
+        validateFunction("vkDestroyDataGraphPipelineSessionARM", this->vkDestroyDataGraphPipelineSessionARM);
+    fn(device, session, pAllocator);
+#    else
+    this->vkDestroyDataGraphPipelineSessionARM(device, session, pAllocator);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+void DeviceTable::CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                          const VkDataGraphPipelineDispatchInfoARM *pInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdDispatchDataGraphARM fn =
+        validateFunction("vkCmdDispatchDataGraphARM", this->vkCmdDispatchDataGraphARM);
+    fn(commandBuffer, session, pInfo);
+#    else
+    this->vkCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::GetDataGraphPipelineAvailablePropertiesARM(VkDevice device,
+                                                                 const VkDataGraphPipelineInfoARM *pPipelineInfo,
+                                                                 uint32_t *pPropertiesCount,
+                                                                 VkDataGraphPipelinePropertyARM *pProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDataGraphPipelineAvailablePropertiesARM fn = validateFunction(
+        "vkGetDataGraphPipelineAvailablePropertiesARM", this->vkGetDataGraphPipelineAvailablePropertiesARM);
+    return fn(device, pPipelineInfo, pPropertiesCount, pProperties);
+#    else
+    return this->vkGetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
+#    endif
+}
+#endif
+#if defined(VK_ARM_data_graph)
+VkResult DeviceTable::GetDataGraphPipelinePropertiesARM(VkDevice device,
+                                                        const VkDataGraphPipelineInfoARM *pPipelineInfo,
+                                                        uint32_t propertiesCount,
+                                                        VkDataGraphPipelinePropertyQueryResultARM *pProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetDataGraphPipelinePropertiesARM fn =
+        validateFunction("vkGetDataGraphPipelinePropertiesARM", this->vkGetDataGraphPipelinePropertiesARM);
+    return fn(device, pPipelineInfo, propertiesCount, pProperties);
+#    else
+    return this->vkGetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_external_memory)
+VkResult DeviceTable::GetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer *buffer,
+                                                    VkNativeBufferPropertiesOHOS *pProperties) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetNativeBufferPropertiesOHOS fn =
+        validateFunction("vkGetNativeBufferPropertiesOHOS", this->vkGetNativeBufferPropertiesOHOS);
+    return fn(device, buffer, pProperties);
+#    else
+    return this->vkGetNativeBufferPropertiesOHOS(device, buffer, pProperties);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_external_memory)
+VkResult DeviceTable::GetMemoryNativeBufferOHOS(VkDevice device, const VkMemoryGetNativeBufferInfoOHOS *pInfo,
+                                                struct OH_NativeBuffer **pBuffer) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetMemoryNativeBufferOHOS fn =
+        validateFunction("vkGetMemoryNativeBufferOHOS", this->vkGetMemoryNativeBufferOHOS);
+    return fn(device, pInfo, pBuffer);
+#    else
+    return this->vkGetMemoryNativeBufferOHOS(device, pInfo, pBuffer);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_native_buffer)
+VkResult DeviceTable::GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage,
+                                                   uint64_t *grallocUsage) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkGetSwapchainGrallocUsageOHOS fn =
+        validateFunction("vkGetSwapchainGrallocUsageOHOS", this->vkGetSwapchainGrallocUsageOHOS);
+    return fn(device, format, imageUsage, grallocUsage);
+#    else
+    return this->vkGetSwapchainGrallocUsageOHOS(device, format, imageUsage, grallocUsage);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_native_buffer)
+VkResult DeviceTable::AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd, VkSemaphore semaphore,
+                                       VkFence fence) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkAcquireImageOHOS fn = validateFunction("vkAcquireImageOHOS", this->vkAcquireImageOHOS);
+    return fn(device, image, nativeFenceFd, semaphore, fence);
+#    else
+    return this->vkAcquireImageOHOS(device, image, nativeFenceFd, semaphore, fence);
+#    endif
+}
+#endif
+#if defined(VK_OHOS_native_buffer)
+VkResult DeviceTable::QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
+                                                  const VkSemaphore *pWaitSemaphores, VkImage image,
+                                                  int32_t *pNativeFenceFd) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkQueueSignalReleaseImageOHOS fn =
+        validateFunction("vkQueueSignalReleaseImageOHOS", this->vkQueueSignalReleaseImageOHOS);
+    return fn(queue, waitSemaphoreCount, pWaitSemaphores, image, pNativeFenceFd);
+#    else
+    return this->vkQueueSignalReleaseImageOHOS(queue, waitSemaphoreCount, pWaitSemaphores, image, pNativeFenceFd);
 #    endif
 }
 #endif
@@ -12213,6 +13365,18 @@ void DeviceTable::CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRe
 #    endif
 }
 #endif
+#if defined(VK_EXT_fragment_density_map_offset)
+void DeviceTable::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                      const VkRenderingEndInfoEXT *pRenderingEndInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkCmdEndRendering2EXT fn = validateFunction("vkCmdEndRendering2EXT", this->vkCmdEndRendering2EXT);
+    fn(commandBuffer, pRenderingEndInfo);
+#    else
+    this->vkCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+#    endif
+}
+#endif
 #if defined(VK_KHR_dynamic_rendering)
 void DeviceTable::CmdEndRenderingKHR(VkCommandBuffer commandBuffer) const
 {
@@ -12249,6 +13413,19 @@ void DeviceTable::GetImageSubresourceLayout2EXT(VkDevice device, VkImage image,
     fn(device, image, pSubresource, pLayout);
 #    else
     this->vkGetImageSubresourceLayout2EXT(device, image, pSubresource, pLayout);
+#    endif
+}
+#endif
+#if defined(VK_EXT_swapchain_maintenance1)
+VkResult DeviceTable::ReleaseSwapchainImagesEXT(VkDevice device,
+                                                const VkReleaseSwapchainImagesInfoEXT *pReleaseInfo) const
+{
+#    ifdef TKIT_ENABLE_ASSERTS
+    static PFN_vkReleaseSwapchainImagesEXT fn =
+        validateFunction("vkReleaseSwapchainImagesEXT", this->vkReleaseSwapchainImagesEXT);
+    return fn(device, pReleaseInfo);
+#    else
+    return this->vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
 #    endif
 }
 #endif
