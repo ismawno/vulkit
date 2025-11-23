@@ -21,7 +21,7 @@ struct VKIT_API Core
      *
      * @return A `Result` indicating success or an error if initialization fails.
      */
-    static Result<> Initialize();
+    static Result<> Initialize(const char *p_LoaderPath = nullptr);
     static void Terminate();
 
     static bool IsExtensionSupported(const char *p_Name);

@@ -19,31 +19,42 @@ static void *s_Library = nullptr;
 static HMODULE s_Library = nullptr;
 #endif
 
-Result<> Core::Initialize()
+static void attempt(const char *p_LoaderPath)
+{
+    if (s_Library)
+        return;
+
+    TKIT_LOG_INFO("[VULKIT] Attempting to load vulkan library. Trying: {}", p_LoaderPath);
+#ifdef TKIT_OS_WINDOWS
+    s_Library = LoadLibraryA(p_LoaderPath);
+#else
+    s_Library = dlopen(p_LoaderPath, RTLD_NOW | RTLD_LOCAL);
+#endif
+
+    TKIT_LOG_INFO_IF(s_Library, "[VULKIT] Success");
+    TKIT_LOG_WARNING_IF(!s_Library, "[VULKIT] Failed");
+}
+
+Result<> Core::Initialize(const char *p_LoaderPath)
 {
     if (s_Library)
         return Result<>::Ok();
 
+    if (p_LoaderPath)
+        attempt(p_LoaderPath);
 #if defined(TKIT_OS_APPLE)
-    s_Library = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("@executable_path/../Frameworks/libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("@executable_path/../Frameworks/libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("@executable_path/../Frameworks/libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
+    attempt("libvulkan.dylib");
+    attempt("libvulkan.1.dylib");
+    attempt("libMoltenVK.dylib");
+    attempt("@executable_path/../Frameworks/libvulkan.dylib");
+    attempt("@executable_path/../Frameworks/libvulkan.1.dylib");
+    attempt("@executable_path/../Frameworks/libMoltenVK.dylib");
 #elif defined(TKIT_OS_LINUX)
-    s_Library = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
-    if (!s_Library)
-        s_Library = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
+    attempt("libvulkan.so");
+    attempt("libvulkan.so.1");
 #else
-    s_Library = LoadLibraryA("vulkan-1.dll");
-    if (!s_Library)
-        s_Library = LoadLibraryA("vulkan.dll");
+    attempt("vulkan-1.dll");
+    attempt("vulkan.dll");
 #endif
     if (!s_Library)
         return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Failed to load Vulkan library");
