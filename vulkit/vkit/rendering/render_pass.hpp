@@ -68,7 +68,7 @@ class VKIT_API RenderPass
 
         SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex,
                                            VkImageLayout p_Layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                           u32 p_ResolveIndex = UINT32_MAX);
+                                           u32 p_ResolveIndex = TKit::Limits<u32>::Max());
         SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex, u32 p_ResolveIndex);
 
         SubpassBuilder &AddInputAttachment(u32 p_AttachmentIndex, VkImageLayout p_Layout);

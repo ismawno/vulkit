@@ -118,6 +118,29 @@ namespace VKit
 template <typename T>
 concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::string>;
 
+VKIT_API const char *VkResultToString(VkResult p_Result);
+
+template <typename T> bool IsSuccessful(const T &p_Result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return p_Result == VK_SUCCESS;
+    else
+        return p_Result.IsOk();
+}
+
+template <typename T> auto ResultToString(const T &p_Result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return VkResultToString(p_Result);
+    else
+    {
+        TKIT_ASSERT(!p_Result, "[VULKIT] Only unsuccessful results make sense to be stringified");
+        return p_Result.GetError().ToString();
+    }
+}
+
 /**
  * @brief Represents an error in a Vulkan operation, including error type and message.
  *
@@ -144,6 +167,7 @@ template <String MessageType> class ErrorInfo
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) : ErrorCode(p_Error), Message(p_Message)
     {
+        TKIT_LOG_ERROR("[VULKIT] {}", ToString());
     }
 
     std::string ToString() const;
@@ -190,28 +214,5 @@ class VKIT_API DeletionQueue
   private:
     TKit::StaticArray1024<std::function<void()>> m_Deleters;
 };
-
-VKIT_API const char *VkResultToString(VkResult p_Result);
-
-template <typename T> bool IsSuccessful(const T &p_Result)
-{
-    using TT = std::remove_cvref_t<T>;
-    if constexpr (std::same_as<TT, VkResult>)
-        return p_Result == VK_SUCCESS;
-    else
-        return p_Result.IsOk();
-}
-
-template <typename T> auto ResultToString(const T &p_Result)
-{
-    using TT = std::remove_cvref_t<T>;
-    if constexpr (std::same_as<TT, VkResult>)
-        return VkResultToString(p_Result);
-    else
-    {
-        TKIT_ASSERT(!p_Result, "[VULKIT] Only unsuccessful results make sense to be stringified");
-        return p_Result.GetError().ToString();
-    }
-}
 
 } // namespace VKit

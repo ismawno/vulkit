@@ -8,11 +8,11 @@ namespace VKit
 {
 Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs)
 {
-    const Instance &instance = p_Device.GetInstance();
-    const PhysicalDevice &physicalDevice = p_Device.GetPhysicalDevice();
+    const Instance &instance = p_Device.GetInfo().Instance;
+    const PhysicalDevice &physicalDevice = p_Device.GetInfo().PhysicalDevice;
 
     const Vulkan::InstanceTable &itable = instance.GetInfo().Table;
-    const Vulkan::DeviceTable &dtable = p_Device.GetTable();
+    const Vulkan::DeviceTable &dtable = p_Device.GetInfo().Table;
 
     VmaVulkanFunctions functions{};
     functions.vkGetInstanceProcAddr = Vulkan::vkGetInstanceProcAddr;
@@ -34,7 +34,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     functions.vkCreateImage = dtable.vkCreateImage;
     functions.vkDestroyImage = dtable.vkDestroyImage;
     functions.vkCmdCopyBuffer = dtable.vkCmdCopyBuffer;
-    const u32 version = p_Device.GetPhysicalDevice().GetInfo().ApiVersion;
+    const u32 version = p_Device.GetInfo().PhysicalDevice.GetInfo().ApiVersion;
 #if VMA_DEDICATED_ALLOCATION || VMA_VULKAN_VERSION >= 1001000
     if (version >= VKIT_MAKE_VERSION(0, 1, 1, 0))
     {

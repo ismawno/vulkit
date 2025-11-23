@@ -262,7 +262,7 @@ RenderPass::SubpassBuilder::SubpassBuilder(RenderPass::Builder *p_Builder, const
     : m_Builder(p_Builder)
 {
     m_Description.pipelineBindPoint = p_BindPoint;
-    m_DepthStencilAttachment.attachment = UINT32_MAX;
+    m_DepthStencilAttachment.attachment = TKit::Limits<u32>::Max();
 }
 
 RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const u32 p_AttachmentIndex,
@@ -270,7 +270,7 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
                                                                            const u32 p_ResolveIndex)
 {
     m_ColorAttachments.Append(VkAttachmentReference{p_AttachmentIndex, p_Layout});
-    if (p_ResolveIndex != UINT32_MAX)
+    if (p_ResolveIndex != TKit::Limits<u32>::Max())
     {
         m_ResolveAttachments.Append(VkAttachmentReference{p_ResolveIndex, p_Layout});
         TKIT_ASSERT(m_ResolveAttachments.GetSize() == m_ColorAttachments.GetSize(),
@@ -315,7 +315,7 @@ RenderPass::Builder &RenderPass::SubpassBuilder::EndSubpass()
     m_Description.pPreserveAttachments = m_PreserveAttachments.IsEmpty() ? nullptr : m_PreserveAttachments.GetData();
     m_Description.pResolveAttachments = m_ResolveAttachments.IsEmpty() ? nullptr : m_ResolveAttachments.GetData();
     m_Description.pDepthStencilAttachment =
-        m_DepthStencilAttachment.attachment == UINT32_MAX ? nullptr : &m_DepthStencilAttachment;
+        m_DepthStencilAttachment.attachment == TKit::Limits<u32>::Max() ? nullptr : &m_DepthStencilAttachment;
 
     return *m_Builder;
 }

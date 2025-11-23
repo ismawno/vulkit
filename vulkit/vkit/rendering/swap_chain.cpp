@@ -35,13 +35,13 @@ Result<SwapChain> SwapChain::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateImageView, Result<SwapChain>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
 
-    const PhysicalDevice::Info &devInfo = m_Device->GetPhysicalDevice().GetInfo();
-    if (devInfo.GraphicsIndex == UINT32_MAX)
+    const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
+    if (devInfo.GraphicsIndex == TKit::Limits<u32>::Max())
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No graphics queue found");
-    if (devInfo.PresentIndex == UINT32_MAX)
+    if (devInfo.PresentIndex == TKit::Limits<u32>::Max())
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
-    const auto checkFlag = [this](const FlagBits p_Flag) -> bool { return m_Flags & p_Flag; };
+    const auto checkFlags = [this](const Flags p_Flags) -> bool { return m_Flags & p_Flags; };
 
     TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
     TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
@@ -70,8 +70,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
     };
 
     u32 imageCount = m_RequestedImages;
-    if (badImageCount(imageCount))
+    const char *err = badImageCount(imageCount);
+    if (err)
     {
+        TKIT_LOG_WARNING("[VULKIT] {}", err);
         if (m_RequiredImages == 0)
         {
             imageCount = mnic + 1;
@@ -99,8 +101,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     const VkPresentModeKHR presentMode = presentModeResult.GetValue();
 
     VkExtent2D extent;
-    if (support.Capabilities.currentExtent.width != UINT32_MAX &&
-        support.Capabilities.currentExtent.height != UINT32_MAX)
+    if (support.Capabilities.currentExtent.width != TKit::Limits<u32>::Max() &&
+        support.Capabilities.currentExtent.height != TKit::Limits<u32>::Max())
         extent = support.Capabilities.currentExtent;
     else
     {
@@ -138,7 +140,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     createInfo.preTransform = transform;
     createInfo.compositeAlpha = m_CompositeAlphaFlags;
     createInfo.presentMode = presentMode;
-    createInfo.clipped = checkFlag(Flag_Clipped);
+    createInfo.clipped = checkFlags(Flag_Clipped);
     createInfo.oldSwapchain = m_OldSwapChain;
     createInfo.flags = m_CreateFlags;
 
@@ -155,8 +157,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto earlyDestroy = [proxy, swapChain, &checkFlag, &info] {
-        if (checkFlag(Flag_CreateImageViews))
+    const auto earlyDestroy = [proxy, swapChain, &checkFlags, &info] {
+        if (checkFlags(Flag_CreateImageViews))
             for (const ImageData &data : info.ImageData)
                 if (data.ImageView)
                     proxy.Table->DestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
@@ -185,7 +187,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     for (u32 i = 0; i < imageCount; ++i)
     {
         info.ImageData[i].Image = images[i];
-        if (checkFlag(Flag_CreateImageViews))
+        if (checkFlags(Flag_CreateImageViews))
         {
             VkImageViewCreateInfo viewInfo{};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

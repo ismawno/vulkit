@@ -212,6 +212,7 @@ class VKIT_API PhysicalDevice
         Flags Flags;
 
         u32 ApiVersion;
+
         u32 GraphicsIndex;
         u32 ComputeIndex;
         u32 TransferIndex;

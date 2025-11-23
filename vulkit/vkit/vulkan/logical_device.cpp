@@ -3,21 +3,100 @@
 
 namespace VKit
 {
-Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                            const TKit::Span<const QueuePriorities> p_QueuePriorities)
+static u32 getIndex(const QueueType p_Type, const PhysicalDevice::Info &p_Info)
 {
-    const Instance::Info &instanceInfo = p_Instance.GetInfo();
-    PhysicalDevice::Info devInfo = p_PhysicalDevice.GetInfo();
+    switch (p_Type)
+    {
+    case QueueType::Graphics:
+        return p_Info.GraphicsIndex;
+    case QueueType::Compute:
+        return p_Info.ComputeIndex;
+    case QueueType::Transfer:
+        return p_Info.TransferIndex;
+    case QueueType::Present:
+        return p_Info.PresentIndex;
+    }
+    return TKit::Limits<u32>::Max();
+}
+
+LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
+{
+    return RequireQueue(getIndex(p_Type, m_PhysicalDevice->GetInfo()), p_Count, p_Priority);
+}
+LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
+{
+    return RequestQueue(getIndex(p_Type, m_PhysicalDevice->GetInfo()), p_Count, p_Priority);
+}
+
+LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
+{
+    TKIT_LOG_WARNING_IF(p_Count == 0, "[VULKIT] Requesting 0 queues...");
+    for (u32 i = 0; i < p_Count; ++i)
+        m_Priorities[p_Family].RequiredPriorities.Append(p_Priority);
+    return *this;
+}
+LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
+{
+    TKIT_LOG_WARNING_IF(p_Count == 0, "[VULKIT] Requesting 0 queues...");
+    for (u32 i = 0; i < p_Count; ++i)
+        m_Priorities[p_Family].RequiredPriorities.Append(p_Priority);
+    return *this;
+}
+
+FormattedResult<LogicalDevice> LogicalDevice::Builder::Build()
+{
+    const Instance::Info &instanceInfo = m_Instance->GetInfo();
+    PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
 
     TKit::StaticArray8<VkDeviceQueueCreateInfo> queueCreateInfos;
-    for (const QueuePriorities &priorities : p_QueuePriorities)
+    const TKit::StaticArray8<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
+
+    TKit::StaticArray8<TKit::StaticArray32<f32>> finalPriorities;
+
+    Info info{};
+    for (u32 index = 0; index < m_Priorities.GetSize(); ++index)
     {
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = priorities.Index;
-        queueCreateInfo.queueCount = priorities.Priorities.GetSize();
-        queueCreateInfo.pQueuePriorities = priorities.Priorities.GetData();
-        queueCreateInfos.Append(queueCreateInfo);
+        const QueuePriorities &priorities = m_Priorities[index];
+        const VkQueueFamilyProperties &family = families[index];
+
+        const u32 requiredCount = priorities.RequiredPriorities.GetSize();
+        const u32 requestedCount = priorities.RequestedPriorities.GetSize();
+        if (requiredCount > family.queueCount)
+            return FormattedResult<LogicalDevice>::Error(
+                VKIT_FORMAT_ERROR(VK_ERROR_NOT_PERMITTED,
+                                  "The required queue count for the family index {} exceeds its queue count. {} > {}",
+                                  index, requiredCount, family.queueCount));
+
+        TKit::StaticArray32<f32> &fp = finalPriorities.Append();
+
+        for (u32 i = 0; i < requiredCount; ++i)
+            fp.Append(priorities.RequiredPriorities[i]);
+
+        for (u32 i = 0; i < requestedCount; ++i)
+            fp.Append(priorities.RequestedPriorities[i]);
+
+        const u32 totalCount = requiredCount + requestedCount;
+        const u32 count = std::min(family.queueCount, totalCount);
+
+        TKIT_LOG_WARNING_IF(count < totalCount,
+                            "[VULKIT] Not all requested queues could be created for the family index {} as the "
+                            "combined queue count of {} surpasses the family's queue count of {}",
+                            index, totalCount, family.queueCount);
+
+        if (!fp.IsEmpty())
+        {
+            info.GraphicsCount += devInfo.GraphicsIndex == index;
+            info.ComputeCount += devInfo.ComputeIndex == index;
+            info.TransferCount += devInfo.TransferIndex == index;
+            info.PresentCount += devInfo.PresentIndex == index;
+
+            VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = index;
+            queueCreateInfo.queueCount = count;
+            queueCreateInfo.pQueuePriorities = fp.GetData();
+            queueCreateInfos.Append(queueCreateInfo);
+        }
     }
 
     TKit::StaticArray256<const char *> enabledExtensions;
@@ -32,8 +111,8 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
     const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                            "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
+        return FormattedResult<LogicalDevice>::Error(
+            VK_ERROR_EXTENSION_NOT_PRESENT, "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
@@ -114,40 +193,29 @@ Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const Ph
 
     const Vulkan::InstanceTable *itable = &instanceInfo.Table;
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkCreateDevice, Result<LogicalDevice>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkGetPhysicalDeviceFormatProperties, Result<LogicalDevice>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkCreateDevice, FormattedResult<LogicalDevice>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkGetPhysicalDeviceFormatProperties, FormattedResult<LogicalDevice>);
 
     VkDevice device;
     const VkResult result =
-        itable->CreateDevice(p_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
+        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
-        return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
+        return FormattedResult<LogicalDevice>::Error(result, "Failed to create the logical device");
 
-    const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, p_Instance.GetInfo().Table);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, Result<LogicalDevice>);
+    const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, FormattedResult<LogicalDevice>);
 
     if (!table.vkGetDeviceQueue)
     {
         table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
-        return Result<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
-                                                                          "vkGetDeviceQueue");
+        return FormattedResult<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
+                                                                                   "vkGetDeviceQueue");
     }
 
-    return Result<LogicalDevice>::Ok(p_Instance, p_PhysicalDevice, table, device);
-}
-
-Result<LogicalDevice> LogicalDevice::Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice)
-{
-    const u32 queueFamilyCount = p_PhysicalDevice.GetInfo().QueueFamilies.GetSize();
-    TKit::StaticArray8<QueuePriorities> queuePriorities;
-    for (u32 i = 0; i < queueFamilyCount; ++i)
-    {
-        QueuePriorities priorities;
-        priorities.Index = i;
-        priorities.Priorities.Resize(1, 1.0f);
-        queuePriorities.Append(priorities);
-    }
-    return Create(p_Instance, p_PhysicalDevice, queuePriorities);
+    info.Instance = *m_Instance;
+    info.PhysicalDevice = *m_PhysicalDevice;
+    info.Table = table;
+    return FormattedResult<LogicalDevice>::Ok(device, info);
 }
 
 static void destroy(const LogicalDevice::Proxy &p_Device)
@@ -183,7 +251,7 @@ void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
 #ifdef VK_KHR_surface
 Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR p_Surface) const
 {
-    return m_PhysicalDevice.QuerySwapChainSupport(m_Instance, p_Surface);
+    return m_Info.PhysicalDevice.QuerySwapChainSupport(m_Info.Instance, p_Surface);
 }
 #endif
 
@@ -191,12 +259,12 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
                                                     const VkImageTiling p_Tiling,
                                                     const VkFormatFeatureFlags p_Features) const
 {
-    const Vulkan::InstanceTable *table = &m_Instance.GetInfo().Table;
+    const Vulkan::InstanceTable *table = &m_Info.Instance.GetInfo().Table;
 
     for (const VkFormat format : p_Candidates)
     {
         VkFormatProperties props;
-        table->GetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &props);
+        table->GetPhysicalDeviceFormatProperties(m_Info.PhysicalDevice, format, &props);
 
         if (p_Tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & p_Features) == p_Features)
             return Result<VkFormat>::Ok(format);
@@ -210,34 +278,41 @@ LogicalDevice::Proxy LogicalDevice::CreateProxy() const
 {
     Proxy proxy;
     proxy.Device = m_Device;
-    proxy.AllocationCallbacks = m_Instance.GetInfo().AllocationCallbacks;
-    proxy.Table = &m_Table;
+    proxy.AllocationCallbacks = m_Info.Instance.GetInfo().AllocationCallbacks;
+    proxy.Table = &m_Info.Table;
     return proxy;
 }
 
-VkQueue LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
+Result<VkQueue> LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
 {
-    const PhysicalDevice::Info &info = m_PhysicalDevice.GetInfo();
-    switch (p_Type)
-    {
-    case QueueType::Graphics:
-        return GetQueue(info.GraphicsIndex, p_QueueIndex);
-    case QueueType::Compute:
-        return GetQueue(info.ComputeIndex, p_QueueIndex);
-    case QueueType::Transfer:
-        return GetQueue(info.TransferIndex, p_QueueIndex);
-    case QueueType::Present:
-        return GetQueue(info.PresentIndex, p_QueueIndex);
-    }
-
-    return VK_NULL_HANDLE;
+    const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
+    return GetQueue(getIndex(p_Type, info), p_QueueIndex);
 }
 
-VkQueue LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const
+Result<VkQueue> LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const
 {
+    const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
+
+    const TKit::Array4<u32> indices{info.GraphicsIndex, info.ComputeIndex, info.TransferIndex, info.PresentIndex};
+    const TKit::Array4<u32> counts{m_Info.GraphicsCount, m_Info.ComputeCount, m_Info.TransferCount,
+                                   m_Info.PresentCount};
+
+    bool known = false;
+    for (u32 i = 0; i < 4; ++i)
+    {
+        known |= indices[i] == p_FamilyIndex;
+        if (indices[i] == p_FamilyIndex && p_QueueIndex >= counts[i])
+            return Result<VkQueue>::Error(
+                VK_ERROR_NOT_PERMITTED,
+                "Failed to retrieve queue. Index exceeds queue count for the given family index. "
+                "Try to request more queues of this family when creating the logical device");
+    }
+    if (!known)
+        return Result<VkQueue>::Error(VK_ERROR_UNKNOWN, "Unknown family index");
+
     VkQueue queue;
-    m_Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
-    return queue;
+    m_Info.Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
+    return Result<VkQueue>::Ok(queue);
 }
 
 } // namespace VKit

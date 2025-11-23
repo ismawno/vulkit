@@ -3,24 +3,11 @@
 #include "vkit/vulkan/instance.hpp"
 #include "tkit/utils/debug.hpp"
 
+#define EXPAND_VERSION(p_Version)                                                                                      \
+    VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
+
 namespace VKit
 {
-// static const char *toString(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity)
-// {
-//     switch (p_Severity)
-//     {
-//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-//         return "VERBOSE";
-//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-//         return "ERROR";
-//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-//         return "WARNING";
-//     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-//         return "INFO";
-//     default:
-//         return "UNKNOWN";
-//     }
-// }
 static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
 {
     if (p_MessageType == 7)
@@ -98,6 +85,9 @@ FormattedResult<Instance> Instance::Builder::Build() const
     FormattedResult<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
     {
+        TKIT_LOG_WARNING("[VULKIT] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
+                         EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
+
         vresult = checkApiVersion(m_RequiredApiVersion, false);
         if (!vresult)
             return FormattedResult<Instance>::Error(vresult.GetError());
@@ -106,13 +96,13 @@ FormattedResult<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequiredExtensions)
         if (!Core::IsExtensionSupported(extension))
-            return FormattedResult<Instance>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT, "The extension {} is not suported", extension));
+            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
+                VK_ERROR_EXTENSION_NOT_PRESENT, "The required extension '{}' is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!Core::IsLayerSupported(layer))
             return FormattedResult<Instance>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The layer {} is not suported", layer));
+                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The required layer '{}' is not suported", layer));
 
     TKit::StaticArray64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
@@ -122,7 +112,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = Core::IsExtensionSupported(extension);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The extension {} is not suported", extension);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The requested extension '{}' is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.Append(extension);
     }
@@ -135,7 +125,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = Core::IsLayerSupported(layer);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The layer {} is not suported", layer);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The requested layer '{}' is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.Append(layer);
     }
@@ -150,6 +140,9 @@ FormattedResult<Instance> Instance::Builder::Build() const
             return FormattedResult<Instance>::Error(
                 VK_ERROR_LAYER_NOT_PRESENT,
                 "Validation layers (along with the debug utils extension) are not suported");
+
+        TKIT_LOG_WARNING_IF(!validationLayers && m_RequestValidationLayers,
+                            "[VULKIT] Validation layers (along with the debug utils extension) are not suported");
 
         if (validationLayers && !contains(extensions, "VK_EXT_debug_utils"))
             extensions.Append("VK_EXT_debug_utils");

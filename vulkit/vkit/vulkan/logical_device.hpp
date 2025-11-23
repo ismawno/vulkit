@@ -17,17 +17,6 @@
 
 namespace VKit
 {
-/**
- * @brief Defines the priorities for device queues.
- *
- * The amount of queues will be determined by the number of priorities provided.
- */
-struct VKIT_API QueuePriorities
-{
-    u32 Index;
-    TKit::StaticArray8<f32> Priorities;
-};
-
 enum class VKIT_API QueueType : u32
 {
     Graphics = 0,
@@ -59,6 +48,53 @@ class VKIT_API LogicalDevice
         {
             return Device != VK_NULL_HANDLE;
         }
+    };
+
+    /**
+     * @brief Defines the priorities for device queues.
+     *
+     * The amount of queues will be determined by the number of priorities provided.
+     */
+    struct QueuePriorities
+    {
+        TKit::StaticArray16<f32> RequiredPriorities;
+        TKit::StaticArray16<f32> RequestedPriorities;
+    };
+
+    class Builder
+    {
+      public:
+        Builder(const Instance *p_Instance, const PhysicalDevice *p_PhysicalDevice)
+            : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice),
+              m_Priorities(p_PhysicalDevice->GetInfo().QueueFamilies.GetSize())
+        {
+        }
+
+        Builder &RequireQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
+        Builder &RequestQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
+
+        Builder &RequireQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
+        Builder &RequestQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
+
+        FormattedResult<LogicalDevice> Build();
+
+      private:
+        const Instance *m_Instance;
+        const PhysicalDevice *m_PhysicalDevice;
+
+        TKit::StaticArray8<QueuePriorities> m_Priorities;
+    };
+
+    struct Info
+    {
+        Instance Instance;
+        PhysicalDevice PhysicalDevice;
+        Vulkan::DeviceTable Table;
+
+        u32 GraphicsCount = 0;
+        u32 ComputeCount = 0;
+        u32 TransferCount = 0;
+        u32 PresentCount = 0;
     };
 
     /**
@@ -94,23 +130,12 @@ class VKIT_API LogicalDevice
     static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice);
 
     LogicalDevice() = default;
-    LogicalDevice(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                  const Vulkan::DeviceTable &p_Table, const VkDevice p_Device)
-        : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice), m_Table(p_Table), m_Device(p_Device)
+    LogicalDevice(const VkDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
     {
     }
 
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
-
-    const Instance &GetInstance() const
-    {
-        return m_Instance;
-    }
-    const PhysicalDevice &GetPhysicalDevice() const
-    {
-        return m_PhysicalDevice;
-    }
 
     VkDevice GetHandle() const
     {
@@ -126,13 +151,14 @@ class VKIT_API LogicalDevice
     static void WaitIdle(const Proxy &p_Device);
     void WaitIdle() const;
 
-    VkQueue GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const;
-    VkQueue GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;
+    Result<VkQueue> GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const;
+    Result<VkQueue> GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;
 
     Proxy CreateProxy() const;
-    const Vulkan::DeviceTable &GetTable() const
+
+    const Info &GetInfo() const
     {
-        return m_Table;
+        return m_Info;
     }
 
     operator VkDevice() const
@@ -149,9 +175,7 @@ class VKIT_API LogicalDevice
     }
 
   private:
-    Instance m_Instance{};
-    PhysicalDevice m_PhysicalDevice{};
-    Vulkan::DeviceTable m_Table{};
     VkDevice m_Device = VK_NULL_HANDLE;
+    Info m_Info;
 };
 } // namespace VKit
