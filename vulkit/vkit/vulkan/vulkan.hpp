@@ -95,6 +95,7 @@
         }
 #else
 #    define VKIT_ASSERT_RESULT(p_Result)
+#    define VKIT_ASSERT_SUCCESS(p_Expression, p_Message, ...) p_Expression
 #endif
 
 #define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKit::Format(__VA_ARGS__))
