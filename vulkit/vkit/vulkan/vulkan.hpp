@@ -88,10 +88,10 @@
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_RESULT(p_Result)                                                                               \
         TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
-#    define VKIT_ASSERT_SUCCESS(p_Expression, p_Message, ...)                                                          \
+#    define VKIT_ASSERT_SUCCESS(p_Expression, ...)                                                                     \
         {                                                                                                              \
             const VkResult __vkit_result = p_Expression;                                                               \
-            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), p_Message, __VA_ARGS__);                                    \
+            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), __VA_ARGS__);                                               \
         }
 #else
 #    define VKIT_ASSERT_RESULT(p_Result)
