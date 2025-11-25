@@ -85,10 +85,10 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build()
 
         if (!fp.IsEmpty())
         {
-            info.GraphicsCount += devInfo.GraphicsIndex == index;
-            info.ComputeCount += devInfo.ComputeIndex == index;
-            info.TransferCount += devInfo.TransferIndex == index;
-            info.PresentCount += devInfo.PresentIndex == index;
+            info.GraphicsCount += (devInfo.GraphicsIndex == index) * fp.GetSize();
+            info.ComputeCount += (devInfo.ComputeIndex == index) * fp.GetSize();
+            info.TransferCount += (devInfo.TransferIndex == index) * fp.GetSize();
+            info.PresentCount += (devInfo.PresentIndex == index) * fp.GetSize();
 
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
