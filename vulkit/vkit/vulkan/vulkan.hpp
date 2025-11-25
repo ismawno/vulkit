@@ -167,7 +167,6 @@ template <String MessageType> class ErrorInfo
      */
     ErrorInfo(VkResult p_Error, const MessageType &p_Message) : ErrorCode(p_Error), Message(p_Message)
     {
-        TKIT_LOG_ERROR("[VULKIT] {}", ToString());
     }
 
     std::string ToString() const;
