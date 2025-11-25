@@ -57,7 +57,9 @@ Result<> Core::Initialize(const char *p_LoaderPath)
     attempt("vulkan.dll");
 #endif
     if (!s_Library)
-        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Failed to load Vulkan library");
+        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                               "Failed to load Vulkan library. All attempts have been exhausted. You may try "
+                               "specifying a custom path for the vulkan library");
 
     Vulkan::Load(s_Library);
 
