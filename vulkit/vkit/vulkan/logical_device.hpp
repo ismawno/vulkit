@@ -61,6 +61,12 @@ class VKIT_API LogicalDevice
         TKit::StaticArray16<f32> RequestedPriorities;
     };
 
+    /**
+     * @brief A utility for setting up and creating a Vulkan instance.
+     *
+     * Provides methods to request or require different queues with different prioritites.
+     *
+     */
     class Builder
     {
       public:
@@ -96,38 +102,6 @@ class VKIT_API LogicalDevice
         u32 TransferCount = 0;
         u32 PresentCount = 0;
     };
-
-    /**
-     * @brief Creates a Vulkan logical device with the specified settings.
-     *
-     * Configures the logical device using the provided physical device, queue priorities,
-     * and any required features or extensions. Ensures compatibility with both the
-     * Vulkan API and the physical device's capabilities.
-     *
-     * @param p_Instance The Vulkan instance associated with the logical device.
-     * @param p_PhysicalDevice The physical device to base the logical device on.
-     * @param p_QueuePriorities The queue priorities to assign to the device's queues.
-     *
-     * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
-     */
-    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice,
-                                        TKit::Span<const QueuePriorities> p_QueuePriorities);
-
-    /**
-     * @brief Creates a Vulkan logical device with the specified parameters.
-     *
-     * Configures the logical device using the given physical device, instance,
-     * and any required features or extensions. Ensures the configuration is compatible
-     * with the physical device and Vulkan API specifications.
-     *
-     * By default, the logical device will create one queue per type, each with a priority of 1.
-     *
-     * @param p_Instance The Vulkan instance associated with the logical device.
-     * @param p_PhysicalDevice The physical device to use for creating the logical device.
-     *
-     * @return A `Result` containing the created `LogicalDevice` or an error if the creation fails.
-     */
-    static Result<LogicalDevice> Create(const Instance &p_Instance, const PhysicalDevice &p_PhysicalDevice);
 
     LogicalDevice() = default;
     LogicalDevice(const VkDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
