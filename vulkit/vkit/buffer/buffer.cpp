@@ -89,7 +89,7 @@ void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
 
-    const u32 size = m_Info.InstanceAlignedSize * p_Index;
+    const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
     std::memcpy(data, p_Data, m_Info.InstanceSize);
 }
