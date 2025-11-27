@@ -6,6 +6,9 @@
 #else
 #    define VKIT_LOADER_NO_DISCARD
 #endif
+#ifdef TKIT_OS_WINDOWS
+#    include <windows.h>
+#endif
 namespace VKit::Vulkan
 {
 
@@ -755,14 +758,6 @@ struct VKIT_API InstanceTable
         VkPhysicalDevice physicalDevice,
         const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM *pQueueFamilyDataGraphProcessingEngineInfo,
         VkQueueFamilyDataGraphProcessingEnginePropertiesARM *pQueueFamilyDataGraphProcessingEngineProperties) const;
-#endif
-
-#if defined(VK_ARM_performance_counters_by_region)
-    PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM
-        vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
-        VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pCounterCount,
-        VkPerformanceCounterARM *pCounters, VkPerformanceCounterDescriptionARM *pCounterDescriptions) const;
 #endif
 
 #if defined(VK_KHR_get_physical_device_properties2)
@@ -1660,12 +1655,6 @@ struct VKIT_API DeviceTable
 #if defined(VK_EXT_conditional_rendering)
     PFN_vkCmdEndConditionalRenderingEXT vkCmdEndConditionalRenderingEXT = VK_NULL_HANDLE;
     void CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) const;
-#endif
-
-#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
-    PFN_vkCmdBeginCustomResolveEXT vkCmdBeginCustomResolveEXT = VK_NULL_HANDLE;
-    void CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
-                                  const VkBeginCustomResolveInfoEXT *pBeginCustomResolveInfo) const;
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)
@@ -3636,21 +3625,6 @@ struct VKIT_API DeviceTable
         VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV *pBuildInfo) const;
 #endif
 
-#if defined(VK_EXT_memory_decompression)
-    PFN_vkCmdDecompressMemoryEXT vkCmdDecompressMemoryEXT = VK_NULL_HANDLE;
-    void CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
-                                const VkDecompressMemoryInfoEXT *pDecompressMemoryInfoEXT) const;
-#endif
-
-#if defined(VK_EXT_memory_decompression)
-    PFN_vkCmdDecompressMemoryIndirectCountEXT vkCmdDecompressMemoryIndirectCountEXT = VK_NULL_HANDLE;
-    void CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
-                                             VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
-                                             VkDeviceAddress indirectCommandsAddress,
-                                             VkDeviceAddress indirectCommandsCountAddress,
-                                             uint32_t maxDecompressionCount, uint32_t stride) const;
-#endif
-
 #if defined(VK_NVX_binary_import)
     PFN_vkCreateCuModuleNVX vkCreateCuModuleNVX = VK_NULL_HANDLE;
     VKIT_LOADER_NO_DISCARD VkResult CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX *pCreateInfo,
@@ -3845,9 +3819,9 @@ struct VKIT_API DeviceTable
     void CmdEndRendering(VkCommandBuffer commandBuffer) const;
 #endif
 
-#if defined(VK_KHR_maintenance10)
-    PFN_vkCmdEndRendering2KHR vkCmdEndRendering2KHR = VK_NULL_HANDLE;
-    void CmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR *pRenderingEndInfo) const;
+#if defined(VK_EXT_fragment_density_map_offset)
+    PFN_vkCmdEndRendering2EXT vkCmdEndRendering2EXT = VK_NULL_HANDLE;
+    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT *pRenderingEndInfo) const;
 #endif
 
 #if defined(VK_VALVE_descriptor_set_host_mapping)
@@ -4405,39 +4379,6 @@ struct VKIT_API DeviceTable
         VkDataGraphPipelinePropertyQueryResultARM *pProperties) const;
 #endif
 
-#if defined(VK_OHOS_external_memory)
-    PFN_vkGetNativeBufferPropertiesOHOS vkGetNativeBufferPropertiesOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer *buffer,
-                                                                  VkNativeBufferPropertiesOHOS *pProperties) const;
-#endif
-
-#if defined(VK_OHOS_external_memory)
-    PFN_vkGetMemoryNativeBufferOHOS vkGetMemoryNativeBufferOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetMemoryNativeBufferOHOS(VkDevice device,
-                                                              const VkMemoryGetNativeBufferInfoOHOS *pInfo,
-                                                              struct OH_NativeBuffer **pBuffer) const;
-#endif
-
-#if defined(VK_OHOS_native_buffer)
-    PFN_vkGetSwapchainGrallocUsageOHOS vkGetSwapchainGrallocUsageOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format,
-                                                                 VkImageUsageFlags imageUsage,
-                                                                 uint64_t *grallocUsage) const;
-#endif
-
-#if defined(VK_OHOS_native_buffer)
-    PFN_vkAcquireImageOHOS vkAcquireImageOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd,
-                                                     VkSemaphore semaphore, VkFence fence) const;
-#endif
-
-#if defined(VK_OHOS_native_buffer)
-    PFN_vkQueueSignalReleaseImageOHOS vkQueueSignalReleaseImageOHOS = VK_NULL_HANDLE;
-    VKIT_LOADER_NO_DISCARD VkResult QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
-                                                                const VkSemaphore *pWaitSemaphores, VkImage image,
-                                                                int32_t *pNativeFenceFd) const;
-#endif
-
 #if defined(VK_EXT_host_query_reset)
     PFN_vkResetQueryPoolEXT vkResetQueryPoolEXT = VK_NULL_HANDLE;
     void ResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) const;
@@ -4903,11 +4844,6 @@ struct VKIT_API DeviceTable
 #if defined(VK_KHR_dynamic_rendering)
     PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR = VK_NULL_HANDLE;
     void CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfoKHR *pRenderingInfo) const;
-#endif
-
-#if defined(VK_EXT_fragment_density_map_offset)
-    PFN_vkCmdEndRendering2EXT vkCmdEndRendering2EXT = VK_NULL_HANDLE;
-    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT *pRenderingEndInfo) const;
 #endif
 
 #if defined(VK_KHR_dynamic_rendering)

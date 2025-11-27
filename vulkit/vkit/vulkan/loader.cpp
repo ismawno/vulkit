@@ -558,11 +558,6 @@ InstanceTable InstanceTable::Create(const VkInstance p_Instance)
         reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM>(
             GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM"));
 #endif
-#if defined(VK_ARM_performance_counters_by_region)
-    table.vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM =
-        reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM>(
-            GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM"));
-#endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(
         GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2KHR"));
@@ -1157,10 +1152,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_EXT_conditional_rendering)
     table.vkCmdEndConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdEndConditionalRenderingEXT>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndConditionalRenderingEXT"));
-#endif
-#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
-    table.vkCmdBeginCustomResolveEXT = reinterpret_cast<PFN_vkCmdBeginCustomResolveEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginCustomResolveEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResetQueryPool =
@@ -2457,14 +2448,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
         reinterpret_cast<PFN_vkCmdBuildPartitionedAccelerationStructuresNV>(
             p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
 #endif
-#if defined(VK_EXT_memory_decompression)
-    table.vkCmdDecompressMemoryEXT = reinterpret_cast<PFN_vkCmdDecompressMemoryEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryEXT"));
-#endif
-#if defined(VK_EXT_memory_decompression)
-    table.vkCmdDecompressMemoryIndirectCountEXT = reinterpret_cast<PFN_vkCmdDecompressMemoryIndirectCountEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryIndirectCountEXT"));
-#endif
 #if defined(VK_NVX_binary_import)
     table.vkCreateCuModuleNVX =
         reinterpret_cast<PFN_vkCreateCuModuleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCuModuleNVX"));
@@ -2598,9 +2581,9 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkCmdEndRendering =
         reinterpret_cast<PFN_vkCmdEndRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering"));
 #endif
-#if defined(VK_KHR_maintenance10)
-    table.vkCmdEndRendering2KHR = reinterpret_cast<PFN_vkCmdEndRendering2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2KHR"));
+#if defined(VK_EXT_fragment_density_map_offset)
+    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(
+        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     table.vkGetDescriptorSetLayoutHostMappingInfoVALVE =
@@ -2964,26 +2947,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
     table.vkGetDataGraphPipelinePropertiesARM = reinterpret_cast<PFN_vkGetDataGraphPipelinePropertiesARM>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelinePropertiesARM"));
 #endif
-#if defined(VK_OHOS_external_memory)
-    table.vkGetNativeBufferPropertiesOHOS = reinterpret_cast<PFN_vkGetNativeBufferPropertiesOHOS>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetNativeBufferPropertiesOHOS"));
-#endif
-#if defined(VK_OHOS_external_memory)
-    table.vkGetMemoryNativeBufferOHOS = reinterpret_cast<PFN_vkGetMemoryNativeBufferOHOS>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryNativeBufferOHOS"));
-#endif
-#if defined(VK_OHOS_native_buffer)
-    table.vkGetSwapchainGrallocUsageOHOS = reinterpret_cast<PFN_vkGetSwapchainGrallocUsageOHOS>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsageOHOS"));
-#endif
-#if defined(VK_OHOS_native_buffer)
-    table.vkAcquireImageOHOS =
-        reinterpret_cast<PFN_vkAcquireImageOHOS>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireImageOHOS"));
-#endif
-#if defined(VK_OHOS_native_buffer)
-    table.vkQueueSignalReleaseImageOHOS = reinterpret_cast<PFN_vkQueueSignalReleaseImageOHOS>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSignalReleaseImageOHOS"));
-#endif
 #if defined(VK_EXT_host_query_reset)
     table.vkResetQueryPoolEXT =
         reinterpret_cast<PFN_vkResetQueryPoolEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPoolEXT"));
@@ -3298,10 +3261,6 @@ DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_
 #if defined(VK_KHR_dynamic_rendering)
     table.vkCmdBeginRenderingKHR = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(
         p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderingKHR"));
-#endif
-#if defined(VK_EXT_fragment_density_map_offset)
-    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
 #endif
 #if defined(VK_KHR_dynamic_rendering)
     table.vkCmdEndRenderingKHR =
@@ -4750,22 +4709,6 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropert
 #    else
     this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
         physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
-#    endif
-}
-#endif
-#if defined(VK_ARM_performance_counters_by_region)
-VkResult InstanceTable::EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t *pCounterCount,
-    VkPerformanceCounterARM *pCounters, VkPerformanceCounterDescriptionARM *pCounterDescriptions) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM fn =
-        validateFunction("vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM",
-                         this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM);
-    return fn(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
-#    else
-    return this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
-        physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
 #    endif
 }
 #endif
@@ -6597,19 +6540,6 @@ void DeviceTable::CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) c
     fn(commandBuffer);
 #    else
     this->vkCmdEndConditionalRenderingEXT(commandBuffer);
-#    endif
-}
-#endif
-#if (defined(VK_EXT_custom_resolve) && (defined(VK_KHR_dynamic_rendering) || defined(VKIT_API_VERSION_1_3)))
-void DeviceTable::CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
-                                           const VkBeginCustomResolveInfoEXT *pBeginCustomResolveInfo) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdBeginCustomResolveEXT fn =
-        validateFunction("vkCmdBeginCustomResolveEXT", this->vkCmdBeginCustomResolveEXT);
-    fn(commandBuffer, pBeginCustomResolveInfo);
-#    else
-    this->vkCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 #    endif
 }
 #endif
@@ -10708,37 +10638,6 @@ void DeviceTable::CmdBuildPartitionedAccelerationStructuresNV(
 #    endif
 }
 #endif
-#if defined(VK_EXT_memory_decompression)
-void DeviceTable::CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
-                                         const VkDecompressMemoryInfoEXT *pDecompressMemoryInfoEXT) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdDecompressMemoryEXT fn =
-        validateFunction("vkCmdDecompressMemoryEXT", this->vkCmdDecompressMemoryEXT);
-    fn(commandBuffer, pDecompressMemoryInfoEXT);
-#    else
-    this->vkCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
-#    endif
-}
-#endif
-#if defined(VK_EXT_memory_decompression)
-void DeviceTable::CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
-                                                      VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
-                                                      VkDeviceAddress indirectCommandsAddress,
-                                                      VkDeviceAddress indirectCommandsCountAddress,
-                                                      uint32_t maxDecompressionCount, uint32_t stride) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdDecompressMemoryIndirectCountEXT fn =
-        validateFunction("vkCmdDecompressMemoryIndirectCountEXT", this->vkCmdDecompressMemoryIndirectCountEXT);
-    fn(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount,
-       stride);
-#    else
-    this->vkCmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress,
-                                                indirectCommandsCountAddress, maxDecompressionCount, stride);
-#    endif
-}
-#endif
 #if defined(VK_NVX_binary_import)
 VkResult DeviceTable::CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX *pCreateInfo,
                                         const VkAllocationCallbacks *pAllocator, VkCuModuleNVX *pModule) const
@@ -11146,15 +11045,15 @@ void DeviceTable::CmdEndRendering(VkCommandBuffer commandBuffer) const
 #    endif
 }
 #endif
-#if defined(VK_KHR_maintenance10)
-void DeviceTable::CmdEndRendering2KHR(VkCommandBuffer commandBuffer,
-                                      const VkRenderingEndInfoKHR *pRenderingEndInfo) const
+#if defined(VK_EXT_fragment_density_map_offset)
+void DeviceTable::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                      const VkRenderingEndInfoEXT *pRenderingEndInfo) const
 {
 #    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdEndRendering2KHR fn = validateFunction("vkCmdEndRendering2KHR", this->vkCmdEndRendering2KHR);
+    static PFN_vkCmdEndRendering2EXT fn = validateFunction("vkCmdEndRendering2EXT", this->vkCmdEndRendering2EXT);
     fn(commandBuffer, pRenderingEndInfo);
 #    else
-    this->vkCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
+    this->vkCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 #    endif
 }
 #endif
@@ -12309,71 +12208,6 @@ VkResult DeviceTable::GetDataGraphPipelinePropertiesARM(VkDevice device,
 #    endif
 }
 #endif
-#if defined(VK_OHOS_external_memory)
-VkResult DeviceTable::GetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer *buffer,
-                                                    VkNativeBufferPropertiesOHOS *pProperties) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetNativeBufferPropertiesOHOS fn =
-        validateFunction("vkGetNativeBufferPropertiesOHOS", this->vkGetNativeBufferPropertiesOHOS);
-    return fn(device, buffer, pProperties);
-#    else
-    return this->vkGetNativeBufferPropertiesOHOS(device, buffer, pProperties);
-#    endif
-}
-#endif
-#if defined(VK_OHOS_external_memory)
-VkResult DeviceTable::GetMemoryNativeBufferOHOS(VkDevice device, const VkMemoryGetNativeBufferInfoOHOS *pInfo,
-                                                struct OH_NativeBuffer **pBuffer) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetMemoryNativeBufferOHOS fn =
-        validateFunction("vkGetMemoryNativeBufferOHOS", this->vkGetMemoryNativeBufferOHOS);
-    return fn(device, pInfo, pBuffer);
-#    else
-    return this->vkGetMemoryNativeBufferOHOS(device, pInfo, pBuffer);
-#    endif
-}
-#endif
-#if defined(VK_OHOS_native_buffer)
-VkResult DeviceTable::GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage,
-                                                   uint64_t *grallocUsage) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkGetSwapchainGrallocUsageOHOS fn =
-        validateFunction("vkGetSwapchainGrallocUsageOHOS", this->vkGetSwapchainGrallocUsageOHOS);
-    return fn(device, format, imageUsage, grallocUsage);
-#    else
-    return this->vkGetSwapchainGrallocUsageOHOS(device, format, imageUsage, grallocUsage);
-#    endif
-}
-#endif
-#if defined(VK_OHOS_native_buffer)
-VkResult DeviceTable::AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd, VkSemaphore semaphore,
-                                       VkFence fence) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkAcquireImageOHOS fn = validateFunction("vkAcquireImageOHOS", this->vkAcquireImageOHOS);
-    return fn(device, image, nativeFenceFd, semaphore, fence);
-#    else
-    return this->vkAcquireImageOHOS(device, image, nativeFenceFd, semaphore, fence);
-#    endif
-}
-#endif
-#if defined(VK_OHOS_native_buffer)
-VkResult DeviceTable::QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
-                                                  const VkSemaphore *pWaitSemaphores, VkImage image,
-                                                  int32_t *pNativeFenceFd) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkQueueSignalReleaseImageOHOS fn =
-        validateFunction("vkQueueSignalReleaseImageOHOS", this->vkQueueSignalReleaseImageOHOS);
-    return fn(queue, waitSemaphoreCount, pWaitSemaphores, image, pNativeFenceFd);
-#    else
-    return this->vkQueueSignalReleaseImageOHOS(queue, waitSemaphoreCount, pWaitSemaphores, image, pNativeFenceFd);
-#    endif
-}
-#endif
 #if defined(VK_EXT_host_query_reset)
 void DeviceTable::ResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                     uint32_t queryCount) const
@@ -13362,18 +13196,6 @@ void DeviceTable::CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRe
     fn(commandBuffer, pRenderingInfo);
 #    else
     this->vkCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
-#    endif
-}
-#endif
-#if defined(VK_EXT_fragment_density_map_offset)
-void DeviceTable::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                      const VkRenderingEndInfoEXT *pRenderingEndInfo) const
-{
-#    ifdef TKIT_ENABLE_ASSERTS
-    static PFN_vkCmdEndRendering2EXT fn = validateFunction("vkCmdEndRendering2EXT", this->vkCmdEndRendering2EXT);
-    fn(commandBuffer, pRenderingEndInfo);
-#    else
-    this->vkCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 #    endif
 }
 #endif

@@ -522,6 +522,9 @@ hpp("#define VKIT_LOADER_NO_DISCARD [[nodiscard]]")
 hpp("#else")
 hpp("#define VKIT_LOADER_NO_DISCARD")
 hpp("#endif")
+hpp("#ifdef TKIT_OS_WINDOWS")
+hpp.include("windows.h")
+hpp("#endif")
 
 with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp.spacing()
