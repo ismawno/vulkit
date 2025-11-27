@@ -74,7 +74,7 @@ void Buffer::Unmap()
 void Buffer::Write(const void *p_Data)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    std::memcpy(m_Data, p_Data, m_Info.Size);
+    TKit::Memory::ForwardCopy(m_Data, p_Data, m_Info.Size);
 }
 
 void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset)
@@ -83,7 +83,7 @@ void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p
     TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
 
     std::byte *data = static_cast<std::byte *>(m_Data) + p_Offset;
-    std::memcpy(data, p_Data, p_Size);
+    TKit::Memory::ForwardCopy(data, p_Data, p_Size);
 }
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
@@ -91,7 +91,7 @@ void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
 
     const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
-    std::memcpy(data, p_Data, m_Info.InstanceSize);
+    TKit::Memory::ForwardCopy(data, p_Data, m_Info.InstanceSize);
 }
 
 void Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
