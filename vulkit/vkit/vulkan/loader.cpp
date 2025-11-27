@@ -5,7 +5,7 @@
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 #    include <dlfcn.h>
 #elif defined(TKIT_OS_WINDOWS)
-#    include <windows.h>
+#    include "tkit/core/windows.hpp"
 #else
 #    error "[VULKIT] Unsupported platform to load Vulkan library"
 #endif

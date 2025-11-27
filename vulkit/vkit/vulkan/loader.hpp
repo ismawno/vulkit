@@ -7,7 +7,7 @@
 #    define VKIT_LOADER_NO_DISCARD
 #endif
 #ifdef TKIT_OS_WINDOWS
-#    include <windows.h>
+#    include "tkit/core/windows.hpp"
 #endif
 namespace VKit::Vulkan
 {
