@@ -2,13 +2,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "tkit/utils/debug.hpp"
-#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
-#    include <dlfcn.h>
-#elif defined(TKIT_OS_WINDOWS)
-#    include "tkit/core/windows.hpp"
-#else
-#    error "[VULKIT] Unsupported platform to load Vulkan library"
-#endif
 namespace VKit::Vulkan
 {
 #ifdef TKIT_ENABLE_ASSERTS
@@ -84,34 +77,6 @@ VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *
 #    endif
 }
 #endif
-
-void Load(void *p_Library)
-{
-#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
-    Vulkan::vkGetInstanceProcAddr =
-        reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));
-#else
-    Vulkan::vkGetInstanceProcAddr =
-        reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));
-#endif
-
-#if defined(VKIT_API_VERSION_1_0)
-    Vulkan::vkCreateInstance =
-        reinterpret_cast<PFN_vkCreateInstance>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance"));
-#endif
-#if defined(VKIT_API_VERSION_1_1)
-    Vulkan::vkEnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
-        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"));
-#endif
-#if defined(VKIT_API_VERSION_1_0)
-    Vulkan::vkEnumerateInstanceLayerProperties = reinterpret_cast<PFN_vkEnumerateInstanceLayerProperties>(
-        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceLayerProperties"));
-#endif
-#if defined(VKIT_API_VERSION_1_0)
-    Vulkan::vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(
-        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties"));
-#endif
-}
 
 InstanceTable InstanceTable::Create(const VkInstance p_Instance)
 {
@@ -13360,4 +13325,42 @@ void DeviceTable::CmdSetRenderingInputAttachmentIndicesKHR(
 #    endif
 }
 #endif
+} // namespace VKit::Vulkan
+#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
+#    include <dlfcn.h>
+#elif defined(TKIT_OS_WINDOWS)
+#    include "tkit/core/windows.hpp"
+#else
+#    error "[VULKIT] Unsupported platform to load Vulkan library"
+#endif
+namespace VKit::Vulkan
+{
+
+void Load(void *p_Library)
+{
+#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
+    Vulkan::vkGetInstanceProcAddr =
+        reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));
+#else
+    Vulkan::vkGetInstanceProcAddr =
+        reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));
+#endif
+
+#if defined(VKIT_API_VERSION_1_0)
+    Vulkan::vkCreateInstance =
+        reinterpret_cast<PFN_vkCreateInstance>(GetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance"));
+#endif
+#if defined(VKIT_API_VERSION_1_1)
+    Vulkan::vkEnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
+        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
+    Vulkan::vkEnumerateInstanceLayerProperties = reinterpret_cast<PFN_vkEnumerateInstanceLayerProperties>(
+        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceLayerProperties"));
+#endif
+#if defined(VKIT_API_VERSION_1_0)
+    Vulkan::vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(
+        GetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties"));
+#endif
+}
 } // namespace VKit::Vulkan

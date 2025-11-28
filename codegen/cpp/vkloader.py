@@ -573,13 +573,6 @@ cpp.disclaimer("vkloader.py")
 cpp.include("vkit/core/pch.hpp", quotes=True)
 cpp.include("vkit/vulkan/loader.hpp", quotes=True)
 cpp.include("tkit/utils/debug.hpp", quotes=True)
-cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
-cpp.include("dlfcn.h")
-cpp("#elif defined(TKIT_OS_WINDOWS)", indent=0)
-cpp.include("tkit/core/windows.hpp", quotes=True)
-cpp("#else", indent=0)
-cpp('#error "[VULKIT] Unsupported platform to load Vulkan library"', indent=0)
-cpp("#endif", indent=0)
 
 with cpp.scope("namespace VKit::Vulkan", indent=0):
 
@@ -615,30 +608,6 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         guards = fn.parse_guards()
         guard_if_needed(cpp, codefn3, guards, fn)
 
-    cpp.spacing()
-    cpp("void Load(void *p_Library)")
-
-    with cpp.scope():
-        cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
-        cpp(
-            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));'
-        )
-        cpp("#else", indent=0)
-        cpp(
-            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));'
-        )
-        cpp("#endif", indent=0)
-
-        cpp.spacing()
-        for fn in functions.values():
-            if fn.name == "vkGetInstanceProcAddr" or fn.is_instance_function() or fn.is_device_function():
-                continue
-            guards = fn.parse_guards()
-            guard_if_needed(
-                cpp,
-                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
-                guards,
-            )
     cpp.spacing()
     with cpp.scope("InstanceTable InstanceTable::Create(const VkInstance p_Instance)"):
         cpp("InstanceTable table{};")
@@ -717,6 +686,40 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             fn,
             namespace="DeviceTable",
         )
+
+cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
+cpp.include("dlfcn.h")
+cpp("#elif defined(TKIT_OS_WINDOWS)", indent=0)
+cpp.include("tkit/core/windows.hpp", quotes=True)
+cpp("#else", indent=0)
+cpp('#error "[VULKIT] Unsupported platform to load Vulkan library"', indent=0)
+cpp("#endif", indent=0)
+
+with cpp.scope("namespace VKit::Vulkan", indent=0):
+    cpp.spacing()
+    cpp("void Load(void *p_Library)")
+
+    with cpp.scope():
+        cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
+        cpp(
+            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));'
+        )
+        cpp("#else", indent=0)
+        cpp(
+            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));'
+        )
+        cpp("#endif", indent=0)
+
+        cpp.spacing()
+        for fn in functions.values():
+            if fn.name == "vkGetInstanceProcAddr" or fn.is_instance_function() or fn.is_device_function():
+                continue
+            guards = fn.parse_guards()
+            guard_if_needed(
+                cpp,
+                f'Vulkan::{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(VK_NULL_HANDLE, "{fn.name}"));',
+                guards,
+            )
 
 hpp.write(output / "loader.hpp")
 cpp.write(output / "loader.cpp")

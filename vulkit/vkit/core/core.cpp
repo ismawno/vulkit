@@ -3,6 +3,42 @@
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
 
+namespace VKit
+{
+
+const VkExtensionProperties *Core::GetExtension(const char *p_Name)
+{
+    for (const VkExtensionProperties &extension : AvailableExtensions)
+        if (strcmp(p_Name, extension.extensionName) == 0)
+            return &extension;
+    return nullptr;
+}
+
+const VkLayerProperties *Core::GetLayer(const char *p_Name)
+{
+    for (const VkLayerProperties &layer : AvailableLayers)
+        if (strcmp(p_Name, layer.layerName) == 0)
+            return &layer;
+    return nullptr;
+}
+
+bool Core::IsExtensionSupported(const char *p_Name)
+{
+    for (const VkExtensionProperties &extension : AvailableExtensions)
+        if (strcmp(p_Name, extension.extensionName) == 0)
+            return true;
+    return false;
+}
+
+bool Core::IsLayerSupported(const char *p_Name)
+{
+    for (const VkLayerProperties &layer : AvailableLayers)
+        if (strcmp(p_Name, layer.layerName) == 0)
+            return true;
+    return false;
+}
+} // namespace VKit
+
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 #    include <dlfcn.h>
 #elif defined(TKIT_OS_WINDOWS)
@@ -13,12 +49,8 @@
 
 namespace VKit
 {
-#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
-static void *s_Library = nullptr;
-#else
-static HMODULE s_Library = nullptr;
-#endif
 
+static void *s_Library = nullptr;
 static void attempt(const char *p_LoaderPath)
 {
     if (s_Library)
@@ -89,7 +121,6 @@ Result<> Core::Initialize(const char *p_LoaderPath)
 
     return Result<>::Ok();
 }
-
 void Core::Terminate()
 {
     if (!s_Library)
@@ -101,37 +132,4 @@ void Core::Terminate()
 #endif
     s_Library = nullptr;
 }
-
-const VkExtensionProperties *Core::GetExtension(const char *p_Name)
-{
-    for (const VkExtensionProperties &extension : AvailableExtensions)
-        if (strcmp(p_Name, extension.extensionName) == 0)
-            return &extension;
-    return nullptr;
-}
-
-const VkLayerProperties *Core::GetLayer(const char *p_Name)
-{
-    for (const VkLayerProperties &layer : AvailableLayers)
-        if (strcmp(p_Name, layer.layerName) == 0)
-            return &layer;
-    return nullptr;
-}
-
-bool Core::IsExtensionSupported(const char *p_Name)
-{
-    for (const VkExtensionProperties &extension : AvailableExtensions)
-        if (strcmp(p_Name, extension.extensionName) == 0)
-            return true;
-    return false;
-}
-
-bool Core::IsLayerSupported(const char *p_Name)
-{
-    for (const VkLayerProperties &layer : AvailableLayers)
-        if (strcmp(p_Name, layer.layerName) == 0)
-            return true;
-    return false;
-}
-
 } // namespace VKit
