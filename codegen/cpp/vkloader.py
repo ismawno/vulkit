@@ -616,11 +616,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         guard_if_needed(cpp, codefn3, guards, fn)
 
     cpp.spacing()
-    cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
     cpp("void Load(void *p_Library)")
-    cpp("#else", indent=0)
-    cpp("void Load(HMODULE p_Library)")
-    cpp("#endif", indent=0)
 
     with cpp.scope():
         cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
