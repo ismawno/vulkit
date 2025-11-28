@@ -706,7 +706,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         )
         cpp("#else", indent=0)
         cpp(
-            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));'
+            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(reinterpret_cast<HMODULE>(p_Library), "vkGetInstanceProcAddr"));'
         )
         cpp("#endif", indent=0)
 

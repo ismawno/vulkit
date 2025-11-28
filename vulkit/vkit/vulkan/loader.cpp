@@ -13342,8 +13342,8 @@ void Load(void *p_Library)
     Vulkan::vkGetInstanceProcAddr =
         reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));
 #else
-    Vulkan::vkGetInstanceProcAddr =
-        reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(p_Library, "vkGetInstanceProcAddr"));
+    Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(
+        GetProcAddress(reinterpret_cast<HMODULE>(p_Library), "vkGetInstanceProcAddr"));
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)

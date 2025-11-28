@@ -49,7 +49,6 @@ bool Core::IsLayerSupported(const char *p_Name)
 
 namespace VKit
 {
-
 static void *s_Library = nullptr;
 static void attempt(const char *p_LoaderPath)
 {
@@ -58,7 +57,7 @@ static void attempt(const char *p_LoaderPath)
 
     TKIT_LOG_INFO("[VULKIT] Attempting to load vulkan library. Trying: {}", p_LoaderPath);
 #ifdef TKIT_OS_WINDOWS
-    s_Library = LoadLibraryA(p_LoaderPath);
+    s_Library = reinterpret_cast<void *>(LoadLibraryA(p_LoaderPath));
 #else
     s_Library = dlopen(p_LoaderPath, RTLD_NOW | RTLD_LOCAL);
 #endif
@@ -128,7 +127,7 @@ void Core::Terminate()
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
     dlclose(s_Library);
 #else
-    FreeLibrary(s_Library);
+    FreeLibrary(reinterpret_cast<HMODULE>(s_Library));
 #endif
     s_Library = nullptr;
 }
