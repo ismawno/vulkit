@@ -522,18 +522,11 @@ hpp("#define VKIT_LOADER_NO_DISCARD [[nodiscard]]")
 hpp("#else")
 hpp("#define VKIT_LOADER_NO_DISCARD")
 hpp("#endif")
-hpp("#ifdef TKIT_OS_WINDOWS")
-hpp.include("tkit/core/windows.hpp", quotes=True)
-hpp("#endif")
 
 with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp.spacing()
 
-    hpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
     hpp("void Load(void *p_Library);")
-    hpp("#else", indent=0)
-    hpp("void Load(HMODULE p_Library);")
-    hpp("#endif", indent=0)
     hpp.spacing()
 
     def codefn1(gen: CPPGenerator, fn: Function, /) -> None:
