@@ -2,7 +2,6 @@
 .vscode/
 .vs/
 *build*/
-setup/user-build.ini
 .venv/
 .DS_Store
 .cache/
@@ -10,9 +9,7 @@ setup/user-build.ini
 docs/html/
 docs/latex/
 __pycache__/
-reminders.txt
 timeline.txt
-codegen/vendor
 generate-vkit-loader.sh
 codegen/cpp/vendor/
 
