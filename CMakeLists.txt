@@ -68,6 +68,4 @@ set(VULKIT_ENABLE_SWAP_CHAIN
 
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Compiler flags, linker flags etcetera, those should all be handled when making
-# available the toolkit library through the global CMAKE flag variables
 add_subdirectory(vulkit)
