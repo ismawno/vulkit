@@ -14,14 +14,12 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType p_T
 
 LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
 {
-    TKIT_LOG_WARNING_IF(p_Count == 0, "[VULKIT] Requesting 0 queues...");
     for (u32 i = 0; i < p_Count; ++i)
         m_Priorities[p_Family].RequiredPriorities.Append(p_Priority);
     return *this;
 }
 LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
 {
-    TKIT_LOG_WARNING_IF(p_Count == 0, "[VULKIT] Requesting 0 queues...");
     for (u32 i = 0; i < p_Count; ++i)
         m_Priorities[p_Family].RequestedPriorities.Append(p_Priority);
     return *this;
