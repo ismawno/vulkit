@@ -587,10 +587,10 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     deviceInfo.AvailableExtensions = availableExtensions;
     deviceInfo.EnabledExtensions = enabledExtensions;
     deviceInfo.Flags = deviceFlags;
-    deviceInfo.GraphicsIndex = graphicsIndex;
-    deviceInfo.ComputeIndex = computeIndex;
-    deviceInfo.TransferIndex = transferIndex;
-    deviceInfo.PresentIndex = presentIndex;
+    deviceInfo.FamilyIndices[Queue_Graphics] = graphicsIndex;
+    deviceInfo.FamilyIndices[Queue_Compute] = computeIndex;
+    deviceInfo.FamilyIndices[Queue_Transfer] = transferIndex;
+    deviceInfo.FamilyIndices[Queue_Present] = presentIndex;
     deviceInfo.QueueFamilies = families;
     deviceInfo.Type = Type(properties.Core.deviceType);
     deviceInfo.AvailableFeatures = features;

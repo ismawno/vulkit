@@ -17,14 +17,6 @@
 
 namespace VKit
 {
-enum class VKIT_API QueueType : u32
-{
-    Graphics = 0,
-    Compute = 1,
-    Transfer = 2,
-    Present = 3
-};
-
 /**
  * @brief Represents a Vulkan logical device and its associated state.
  *
@@ -96,11 +88,7 @@ class VKIT_API LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-
-        u32 GraphicsCount = 0;
-        u32 ComputeCount = 0;
-        u32 TransferCount = 0;
-        u32 PresentCount = 0;
+        TKit::Array4<u32> QueueCounts;
     };
 
     LogicalDevice() = default;

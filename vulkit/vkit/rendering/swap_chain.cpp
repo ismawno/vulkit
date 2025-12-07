@@ -36,9 +36,9 @@ Result<SwapChain> SwapChain::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
 
     const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
-    if (devInfo.GraphicsIndex == TKit::Limits<u32>::Max())
+    if (devInfo.FamilyIndices[Queue_Graphics] == TKit::Limits<u32>::Max())
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No graphics queue found");
-    if (devInfo.PresentIndex == TKit::Limits<u32>::Max())
+    if (devInfo.FamilyIndices[Queue_Present] == TKit::Limits<u32>::Max())
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
     const auto checkFlags = [this](const Flags p_Flags) -> bool { return m_Flags & p_Flags; };
@@ -115,6 +115,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (transform == static_cast<VkSurfaceTransformFlagBitsKHR>(0))
         transform = support.Capabilities.currentTransform;
 
+    const TKit::Array<u32, 2> indices{devInfo.FamilyIndices[Queue_Graphics], devInfo.FamilyIndices[Queue_Present]};
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = m_Surface;
@@ -124,12 +125,11 @@ Result<SwapChain> SwapChain::Builder::Build() const
     createInfo.imageExtent = extent;
     createInfo.imageArrayLayers = m_ImageArrayLayers;
     createInfo.imageUsage = m_ImageUsage;
-    createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    if (devInfo.GraphicsIndex != devInfo.PresentIndex)
+    if (devInfo.FamilyIndices[Queue_Graphics] != devInfo.FamilyIndices[Queue_Present])
     {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = &devInfo.GraphicsIndex;
+        createInfo.pQueueFamilyIndices = indices.GetData();
     }
     else
     {

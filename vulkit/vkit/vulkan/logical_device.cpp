@@ -3,29 +3,13 @@
 
 namespace VKit
 {
-static u32 getIndex(const QueueType p_Type, const PhysicalDevice::Info &p_Info)
-{
-    switch (p_Type)
-    {
-    case QueueType::Graphics:
-        return p_Info.GraphicsIndex;
-    case QueueType::Compute:
-        return p_Info.ComputeIndex;
-    case QueueType::Transfer:
-        return p_Info.TransferIndex;
-    case QueueType::Present:
-        return p_Info.PresentIndex;
-    }
-    return TKit::Limits<u32>::Max();
-}
-
 LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
 {
-    return RequireQueue(getIndex(p_Type, m_PhysicalDevice->GetInfo()), p_Count, p_Priority);
+    return RequireQueue(m_PhysicalDevice->GetInfo().FamilyIndices[p_Type], p_Count, p_Priority);
 }
 LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
 {
-    return RequestQueue(getIndex(p_Type, m_PhysicalDevice->GetInfo()), p_Count, p_Priority);
+    return RequestQueue(m_PhysicalDevice->GetInfo().FamilyIndices[p_Type], p_Count, p_Priority);
 }
 
 LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
@@ -54,6 +38,9 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build()
     TKit::StaticArray8<TKit::StaticArray32<f32>> finalPriorities;
 
     Info info{};
+    for (u32 i = 0; i < 4; ++i)
+        info.QueueCounts[i] = 0;
+
     for (u32 index = 0; index < m_Priorities.GetSize(); ++index)
     {
         const QueuePriorities &priorities = m_Priorities[index];
@@ -85,10 +72,10 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build()
 
         if (!fp.IsEmpty())
         {
-            info.GraphicsCount += (devInfo.GraphicsIndex == index) * count;
-            info.ComputeCount += (devInfo.ComputeIndex == index) * count;
-            info.TransferCount += (devInfo.TransferIndex == index) * count;
-            info.PresentCount += (devInfo.PresentIndex == index) * count;
+            info.QueueCounts[Queue_Graphics] += (devInfo.FamilyIndices[Queue_Graphics] == index) * count;
+            info.QueueCounts[Queue_Compute] += (devInfo.FamilyIndices[Queue_Compute] == index) * count;
+            info.QueueCounts[Queue_Transfer] += (devInfo.FamilyIndices[Queue_Transfer] == index) * count;
+            info.QueueCounts[Queue_Present] += (devInfo.FamilyIndices[Queue_Present] == index) * count;
 
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -286,28 +273,25 @@ LogicalDevice::Proxy LogicalDevice::CreateProxy() const
 Result<VkQueue> LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
 {
     const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
-    return GetQueue(getIndex(p_Type, info), p_QueueIndex);
+    return GetQueue(info.FamilyIndices[p_Type], p_QueueIndex);
 }
 
 Result<VkQueue> LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const
 {
     const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
 
-    const TKit::Array4<u32> indices{info.GraphicsIndex, info.ComputeIndex, info.TransferIndex, info.PresentIndex};
-    const TKit::Array4<u32> counts{m_Info.GraphicsCount, m_Info.ComputeCount, m_Info.TransferCount,
-                                   m_Info.PresentCount};
-
-    bool known = false;
+    bool found = false;
     for (u32 i = 0; i < 4; ++i)
     {
-        known |= indices[i] == p_FamilyIndex;
-        if (indices[i] == p_FamilyIndex && p_QueueIndex >= counts[i])
+        const bool known = info.FamilyIndices[i] == p_FamilyIndex;
+        found |= known;
+        if (known && p_QueueIndex >= m_Info.QueueCounts[i])
             return Result<VkQueue>::Error(
                 VK_ERROR_NOT_PERMITTED,
                 "Failed to retrieve queue. Index exceeds queue count for the given family index. "
                 "Try to request more queues of this family when creating the logical device");
     }
-    if (!known)
+    if (!found)
         return Result<VkQueue>::Error(VK_ERROR_UNKNOWN, "Unknown family index");
 
     VkQueue queue;

@@ -10,6 +10,13 @@
 
 namespace VKit
 {
+enum QueueType : u32
+{
+    Queue_Graphics = 0,
+    Queue_Compute = 1,
+    Queue_Transfer = 2,
+    Queue_Present = 3,
+};
 /**
  * @brief Represents a Vulkan physical device and its features.
  *
@@ -213,10 +220,7 @@ class VKIT_API PhysicalDevice
 
         u32 ApiVersion;
 
-        u32 GraphicsIndex;
-        u32 ComputeIndex;
-        u32 TransferIndex;
-        u32 PresentIndex;
+        TKit::Array4<u32> FamilyIndices;
         TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
