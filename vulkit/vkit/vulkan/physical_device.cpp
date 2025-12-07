@@ -5,6 +5,21 @@
     VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
 namespace VKit
 {
+const char *ToString(const QueueType p_Type)
+{
+    switch (p_Type)
+    {
+    case Queue_Graphics:
+        return "Graphics";
+    case Queue_Compute:
+        return "Compute";
+    case Queue_Transfer:
+        return "Transfer";
+    case Queue_Present:
+        return "Present";
+    }
+    return "Unknown";
+}
 template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value)
 {
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();

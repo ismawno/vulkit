@@ -17,6 +17,7 @@ enum QueueType : u32
     Queue_Transfer = 2,
     Queue_Present = 3,
 };
+const char *ToString(QueueType p_Type);
 /**
  * @brief Represents a Vulkan physical device and its features.
  *
