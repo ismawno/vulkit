@@ -74,7 +74,7 @@ class DeviceLocalBuffer
 
         auto result2 = Buffer::Create(p_Device, stagingSpecs);
         if (!result2)
-            return Result<DeviceLocalBuffer>::Error(result2.GetError().ErrorCode, "Failed to create staging buffer");
+            return Result<DeviceLocalBuffer>::Error(result2.GetError(), "Failed to create staging buffer");
 
         Buffer &stagingBuffer = result2.GetValue();
         stagingBuffer.Write(p_Specs.Data.GetData());

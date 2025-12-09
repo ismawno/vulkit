@@ -31,7 +31,6 @@ class VKIT_API Buffer
      * the buffer, as the offsets used have to be aligned to a certain offset, provided by the device. If the buffer is
      * going to be operated on as a whole, this must be set to 1.
      */
-
     struct Specs
     {
         VmaAllocator Allocator = VK_NULL_HANDLE;
