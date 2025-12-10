@@ -68,13 +68,13 @@ class VKIT_API LogicalDevice
         {
         }
 
+        FormattedResult<LogicalDevice> Build() const;
+
         Builder &RequireQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
         Builder &RequestQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
 
         Builder &RequireQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
         Builder &RequestQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
-
-        FormattedResult<LogicalDevice> Build();
 
       private:
         const Instance *m_Instance;
@@ -110,8 +110,8 @@ class VKIT_API LogicalDevice
     Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
                                          VkFormatFeatureFlags p_Features) const;
 
-    static void WaitIdle(const Proxy &p_Device);
-    void WaitIdle() const;
+    static Result<> WaitIdle(const Proxy &p_Device);
+    Result<> WaitIdle() const;
 
     Result<VkQueue> GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const;
     Result<VkQueue> GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;

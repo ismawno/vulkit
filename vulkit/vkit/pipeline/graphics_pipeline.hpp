@@ -75,15 +75,12 @@ class VKIT_API GraphicsPipeline
          * @brief Builds the graphics pipeline based on the current settings.
          *
          * Creates the Vulkan graphics pipeline using the current configuration.
-         * This method is used to finalize the pipeline and prepare it for use.
          *
-         * Take into account that this method cannot be marked const because internal linkage must
-         * happen to create the pipeline. Still, the builder will be left in a valid state after the call.
+         * IMPORTANT: `Bake()` method must be called before calling `Build()` if changes were made to the builder.
          *
-         * @param p_Device The logical device proxy for Vulkan operations.
          * @return A `Result` containing the created `GraphicsPipeline` or an error if the creation fails.
          */
-        Result<GraphicsPipeline> Build();
+        Result<GraphicsPipeline> Build() const;
 
         /**
          * @brief Generates the `VkGraphicsPipelineCreateInfo` object.
@@ -95,6 +92,7 @@ class VKIT_API GraphicsPipeline
          */
         VkGraphicsPipelineCreateInfo CreatePipelineInfo();
 
+        Builder &Bake();
         Builder &SetBasePipeline(VkPipeline p_BasePipeline);
         Builder &SetBasePipelineIndex(i32 p_BasePipelineIndex);
         Builder &SetCache(VkPipelineCache p_Cache);

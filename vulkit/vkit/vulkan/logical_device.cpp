@@ -25,7 +25,7 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 p_Family,
     return *this;
 }
 
-FormattedResult<LogicalDevice> LogicalDevice::Builder::Build()
+FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
 {
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
@@ -214,23 +214,22 @@ void LogicalDevice::Destroy()
     m_Device = VK_NULL_HANDLE;
 }
 
-void LogicalDevice::WaitIdle(const Proxy &p_Device)
+Result<> LogicalDevice::WaitIdle(const Proxy &p_Device)
 {
-    TKIT_ASSERT_RETURNS(p_Device.Table->DeviceWaitIdle(p_Device), VK_SUCCESS,
-                        "[VULKIT] Failed to wait for the logical device to be idle");
+    const VkResult result = p_Device.Table->DeviceWaitIdle(p_Device);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to wait for device");
+    return Result<>::Ok();
 }
-void LogicalDevice::WaitIdle() const
+Result<> LogicalDevice::WaitIdle() const
 {
-    WaitIdle(*this);
+    return WaitIdle(*this);
 }
 
 void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
 {
     const Proxy proxy = CreateProxy();
-    p_Queue.Push([proxy] {
-        WaitIdle(proxy);
-        destroy(proxy);
-    });
+    p_Queue.Push([proxy] { destroy(proxy); });
 }
 
 #ifdef VK_KHR_surface

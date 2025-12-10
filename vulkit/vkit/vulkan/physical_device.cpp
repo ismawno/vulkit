@@ -159,7 +159,7 @@ PhysicalDevice::Features::Features()
     Next = nullptr;
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select()
+FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const
 {
     const auto result = Enumerate();
     if (!result)
@@ -615,10 +615,8 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
     return JudgeResult::Ok(p_Device, deviceInfo);
 }
 
-Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate()
+PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_Instance)
 {
-    using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
-
 #ifdef VKIT_API_VERSION_1_2
     m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
     m_RequiredFeatures.Vulkan12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
@@ -632,6 +630,11 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
 
     if (!(m_Instance->GetInfo().Flags & Instance::Flag_Headless))
         m_Flags |= Flag_RequirePresentQueue;
+}
+
+Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
+{
+    using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)

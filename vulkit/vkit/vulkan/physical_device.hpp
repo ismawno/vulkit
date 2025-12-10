@@ -115,9 +115,7 @@ class VKIT_API PhysicalDevice
             Flag_RequirePresentQueue = 1 << 9
         };
 
-        Selector(const Instance *p_Instance) : m_Instance(p_Instance)
-        {
-        }
+        Selector(const Instance *p_Instance);
 
         /**
          * @brief Selects the best matching physical device.
@@ -127,7 +125,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing the selected PhysicalDevice or an error.
          */
-        FormattedResult<PhysicalDevice> Select();
+        FormattedResult<PhysicalDevice> Select() const;
 
         /**
          * @brief Lists all available physical devices along with their evaluation results.
@@ -137,7 +135,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing an array of formatted results for each physical device.
          */
-        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate();
+        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(Type p_Type);

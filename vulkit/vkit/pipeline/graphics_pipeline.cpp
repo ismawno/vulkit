@@ -77,7 +77,7 @@ void GraphicsPipeline::Builder::initialize()
     m_VertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 }
 
-Result<GraphicsPipeline> GraphicsPipeline::Builder::Build()
+Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateGraphicsPipelines, Result<GraphicsPipeline>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipeline, Result<GraphicsPipeline>);
@@ -142,7 +142,7 @@ void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 }
 
-VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::Bake()
 {
     m_ColorBlendInfo.attachmentCount = m_ColorAttachments.GetSize();
     m_ColorBlendInfo.pAttachments = m_ColorAttachments.IsEmpty() ? nullptr : m_ColorAttachments.GetData();
@@ -156,7 +156,10 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()
         m_AttributeDescriptions.IsEmpty() ? nullptr : m_AttributeDescriptions.GetData();
     m_VertexInputInfo.pVertexBindingDescriptions =
         m_BindingDescriptions.IsEmpty() ? nullptr : m_BindingDescriptions.GetData();
+}
 
+VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()
+{
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = m_ShaderStages.GetSize();
