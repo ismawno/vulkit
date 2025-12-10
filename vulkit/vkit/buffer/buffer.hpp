@@ -24,21 +24,45 @@ class CommandPool;
 class VKIT_API Buffer
 {
   public:
-    /**
-     * @brief Specifications for creating a Vulkan buffer.
-     *
-     * @note: The `PerInstanceMinimumAlignment` is only needed when binding, flushing or invalidating specific parts of
-     * the buffer, as the offsets used have to be aligned to a certain offset, provided by the device. If the buffer is
-     * going to be operated on as a whole, this must be set to 1.
-     */
-    struct Specs
+    using Flags = u8;
+    enum FlagBits
     {
-        VmaAllocator Allocator = VK_NULL_HANDLE;
-        VkDeviceSize InstanceCount;
-        VkDeviceSize InstanceSize;
-        VkBufferUsageFlags Usage;
-        VmaAllocationCreateInfo AllocationInfo;
-        VkDeviceSize PerInstanceMinimumAlignment = 1;
+        Flag_None = 0,
+        Flag_DeviceLocal = 1 << 0,
+        Flag_HostVisible = 1 << 1,
+        Flag_Source = 1 << 2,
+        Flag_Destination = 1 << 3,
+        Flag_StagingBuffer = 1 << 4,
+        Flag_VertexBuffer = 1 << 4,
+        Flag_IndexBuffer = 1 << 5,
+        Flag_Mapped = 1 << 6,
+        Flag_RandomAccess = 1 << 7,
+    };
+
+    class Builder
+    {
+      public:
+        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, Flags p_Flags = 0);
+
+        Result<Buffer> Build() const;
+
+        Builder &SetSize(VkDeviceSize p_Size);
+        Builder &SetSize(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize);
+        template <typename T> Builder &SetSize(const VkDeviceSize p_InstanceCount)
+        {
+            return SetSize(p_InstanceCount, sizeof(T));
+        }
+        Builder &SetUsage(VkBufferUsageFlags p_Flags);
+        Builder &SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info);
+
+      private:
+        LogicalDevice::Proxy m_Device;
+        VmaAllocator m_Allocator;
+        VkDeviceSize m_InstanceCount = 0;
+        VkDeviceSize m_InstanceSize = 0;
+        VkBufferUsageFlags m_Usage = 0;
+        VmaAllocationCreateInfo m_AllocationInfo{};
+        VkDeviceSize m_PerInstanceMinimumAlignment = 1;
     };
 
     struct Info
@@ -52,16 +76,6 @@ class VKIT_API Buffer
         VkDeviceSize Size;
     };
 
-    /**
-     * @brief Creates a Vulkan buffer based on the provided specifications.
-     *
-     * Initializes the buffer with the specified size, usage, and memory allocation settings.
-     *
-     * @param p_Specs The specifications for the buffer.
-     * @return A `Result` containing the created `Buffer` or an error.
-     */
-    static Result<Buffer> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs);
-
     Buffer() = default;
 
     Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
@@ -72,7 +86,7 @@ class VKIT_API Buffer
     void Destroy();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
-    void Map();
+    Result<> Map();
     void Unmap();
 
     bool IsMapped() const
@@ -83,7 +97,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer, up to the buffer size.
      *
-     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
+     * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Data A pointer to the data to write.
      */
@@ -92,7 +106,7 @@ class VKIT_API Buffer
     /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
-     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
+     * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Size The size of the data to write.
@@ -101,14 +115,48 @@ class VKIT_API Buffer
     void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0);
 
     /**
+     * @brief Copies data from another buffer into this buffer.
+     *
+     * Records the copy into a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
+     * @param p_Source The source buffer to copy from.
+     * @param p_Size The amount of bytes to copy.
+     */
+    void Write(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, VkDeviceSize p_Size = VK_WHOLE_SIZE);
+
+    /**
+     * @brief Copies data from another buffer into this buffer.
+     *
+     * Uses a command pool and queue to perform the buffer-to-buffer copy operation.
+     *
+     * @param p_Pool The command pool to allocate the copy command.
+     * @param p_Queue The queue to submit the copy command.
+     * @param p_Source The source buffer to copy from.
+     * @param p_Size The amount of bytes to copy.
+     * @return A `Result` indicating success or failure.
+     */
+    Result<> Write(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, VkDeviceSize p_Size = VK_WHOLE_SIZE);
+
+    /**
      * @brief Writes data to the buffer at the specified index.
      *
-     * The buffer must be mapped before calling this method. It will automatically flush the memory if needed.
+     * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Index The index of the buffer instance to write to.
      * @param p_Data A pointer to the data to write.
      */
     void WriteAt(u32 p_Index, const void *p_Data);
+
+    void *GetData() const
+    {
+        return m_Data;
+    }
+    void *ReadAt(const u32 p_Index) const
+    {
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+    }
 
     /**
      * @brief Flushes a range of the buffer's memory to ensure visibility to the device.
@@ -118,7 +166,7 @@ class VKIT_API Buffer
      * @param p_Size The size of the memory range to flush (default: entire buffer).
      * @param p_Offset The offset within the buffer to start flushing (default: 0).
      */
-    void Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    Result<> Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
 
     /**
      * @brief Flushes a range of the buffer's memory at the specified index.
@@ -127,10 +175,10 @@ class VKIT_API Buffer
      *
      * @param p_Index The index of the buffer instance to flush.
      */
-    void FlushAt(u32 p_Index);
+    Result<> FlushAt(u32 p_Index);
 
-    void Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
-    void InvalidateAt(u32 p_Index);
+    Result<> Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    Result<> InvalidateAt(u32 p_Index);
 
     /**
      * @brief Binds the buffer as an index buffer to a command buffer.
@@ -181,28 +229,6 @@ class VKIT_API Buffer
 
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
     VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const;
-
-    void *GetData() const
-    {
-        return m_Data;
-    }
-    void *ReadAt(const u32 p_Index) const
-    {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
-    }
-
-    /**
-     * @brief Copies data from another buffer into this buffer.
-     *
-     * Uses a command pool and queue to perform the buffer-to-buffer copy operation.
-     *
-     * @param p_Source The source buffer to copy from.
-     * @param p_Pool The command pool to allocate the copy command.
-     * @param p_Queue The queue to submit the copy command.
-     * @return A `Result` indicating success or failure.
-     */
-    Result<> DeviceCopy(const Buffer &p_Source, CommandPool &p_Pool, VkQueue p_Queue);
 
     const LogicalDevice::Proxy &GetDevice() const
     {
