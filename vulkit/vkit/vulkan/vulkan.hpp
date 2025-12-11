@@ -58,43 +58,69 @@
 #endif
 
 #ifdef TKIT_ENABLE_DEBUG_LOGS
-#    define VKIT_LOG_RESULT_DEBUG(...) VKit::Detail::Debug(__VA_ARGS__)
-#    define VKIT_LOG_EXPRESSION_RESULT_DEBUG(...) VKit::Detail::Debug(__VA_ARGS__)
+#    define VKIT_LOG_RESULT_DEBUG(p_Result)                                                                            \
+        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression)                                                                    \
+        {                                                                                                              \
+            const auto __vkit_result = p_Expression;                                                                   \
+            TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
+        }
 #else
-#    define VKIT_LOG_RESULT_DEBUG(p_Result, ...)
-#    define VKIT_LOG_EXPRESSION_RESULT_DEBUG(p_Expression, ...) p_Expression
+#    define VKIT_LOG_RESULT_DEBUG(p_Result)
+#    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression) p_Expression
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT_INFO(...) VKit::Detail::Info(__VA_ARGS__)
-#    define VKIT_LOG_EXPRESSION_INFO(...) VKit::Detail::Info(__VA_ARGS__)
+#    define VKIT_LOG_RESULT_INFO(p_Result)                                                                             \
+        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_LOG_EXPRESSION_INFO(p_Expression)                                                                     \
+        {                                                                                                              \
+            const auto __vkit_result = p_Expression;                                                                   \
+            TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));  \
+        }
 #else
-#    define VKIT_LOG_RESULT_INFO(p_Result, ...)
-#    define VKIT_LOG_EXPRESSION_INFO(p_Expression, ...) p_Expression
+#    define VKIT_LOG_RESULT_INFO(p_Result)
+#    define VKIT_LOG_EXPRESSION_INFO(p_Expression) p_Expression
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_LOG_RESULT_WARNING(...) VKit::Detail::Warning(__VA_ARGS__)
-#    define VKIT_LOG_EXPRESSION_WARNING(...) VKit::Detail::Warning(__VA_ARGS__)
+#    define VKIT_LOG_RESULT_WARNING(p_Result)                                                                          \
+        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_LOG_EXPRESSION_WARNING(p_Expression)                                                                  \
+        {                                                                                                              \
+            const auto __vkit_result = p_Expression;                                                                   \
+            TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}",                                     \
+                                VKit::ResultToString(__vkit_result));                                                  \
+        }
 #else
-#    define VKIT_LOG_RESULT_WARNING(p_Result, ...)
-#    define VKIT_LOG_EXPRESSION_WARNING(p_Expression, ...) p_Expression
+#    define VKIT_LOG_RESULT_WARNING(p_Result)
+#    define VKIT_LOG_EXPRESSION_WARNING(p_Expression) p_Expression
 #endif
 
 #ifdef TKIT_ENABLE_ERROR_LOGS
-#    define VKIT_LOG_RESULT_ERROR(...) VKit::Detail::Error(__VA_ARGS__)
-#    define VKIT_LOG_EXPRESSION_ERROR(...) VKit::Detail::Error(__VA_ARGS__)
+#    define VKIT_LOG_RESULT_ERROR(p_Result)                                                                            \
+        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_LOG_EXPRESSION_ERROR(p_Expression)                                                                    \
+        {                                                                                                              \
+            const auto __vkit_result = p_Expression;                                                                   \
+            TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
+        }
 #else
-#    define VKIT_LOG_RESULT_ERROR(p_Result, ...)
-#    define VKIT_LOG_EXPRESSION_ERROR(p_Expression, ...) p_Expression
+#    define VKIT_LOG_RESULT_ERROR(p_Result)
+#    define VKIT_LOG_EXPRESSION_ERROR(p_Expression) p_Expression
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_ASSERT_RESULT(...) VKit::Detail::Assert(__VA_ARGS__)
-#    define VKIT_ASSERT_EXPRESSION(...) VKit::Detail::Assert(__VA_ARGS__)
+#    define VKIT_ASSERT_RESULT(p_Result)                                                                               \
+        TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+#    define VKIT_ASSERT_EXPRESSION(p_Expression)                                                                       \
+        {                                                                                                              \
+            const auto __vkit_result = p_Expression;                                                                   \
+            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));        \
+        }
 #else
-#    define VKIT_ASSERT_RESULT(p_Result, ...)
-#    define VKIT_ASSERT_EXPRESSION(p_Expression, ...) p_Expression
+#    define VKIT_ASSERT_RESULT(p_Result)
+#    define VKIT_ASSERT_EXPRESSION(p_Expression, p_Message, ...) p_Expression
 #endif
 
 #define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKit::Format(__VA_ARGS__))
@@ -191,49 +217,6 @@ template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result)
     return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue())
                     : FormattedResult<T>::Error(p_Result.GetError().ErrorCode, p_Result.GetError().Message);
 }
-
-namespace Detail
-{
-#ifdef TKIT_ENABLE_DEBUG_LOGS
-template <typename T, String MessageType> void Debug(const TKit::Result<T, ErrorInfo<MessageType>> &p_Result)
-{
-    TKIT_LOG_DEBUG_IF(!p_Result, "{}", p_Result.GetError().ToString());
-}
-void Debug(VkResult p_Result, const char *p_Message = nullptr);
-#endif
-
-#ifdef TKIT_ENABLE_INFO_LOGS
-template <typename T, String MessageType> void Info(const TKit::Result<T, ErrorInfo<MessageType>> &p_Result)
-{
-    TKIT_LOG_INFO_IF(!p_Result, "{}", p_Result.GetError().ToString());
-}
-void Info(VkResult p_Result, const char *p_Message = nullptr);
-#endif
-
-#ifdef TKIT_ENABLE_WARNING_LOGS
-template <typename T, String MessageType> void Warning(const TKit::Result<T, ErrorInfo<MessageType>> &p_Result)
-{
-    TKIT_LOG_WARNING_IF(!p_Result, "{}", p_Result.GetError().ToString());
-}
-void Warning(VkResult p_Result, const char *p_Message = nullptr);
-#endif
-
-#ifdef TKIT_ENABLE_ERROR_LOGS
-template <typename T, String MessageType> void Error(const TKit::Result<T, ErrorInfo<MessageType>> &p_Result)
-{
-    TKIT_LOG_ERROR_IF(!p_Result, "{}", p_Result.GetError().ToString());
-}
-void Error(VkResult p_Result, const char *p_Message = nullptr);
-#endif
-
-#ifdef TKIT_ENABLE_ASSERTS
-template <typename T, String MessageType> void Assert(const TKit::Result<T, ErrorInfo<MessageType>> &p_Result)
-{
-    TKIT_ASSERT(p_Result, "{}", p_Result.GetError().ToString());
-}
-void Assert(VkResult p_Result, const char *p_Message = nullptr);
-#endif
-} // namespace Detail
 
 /**
  * @brief Manages deferred deletion of Vulkan resources.

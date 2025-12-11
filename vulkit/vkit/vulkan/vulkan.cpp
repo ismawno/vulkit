@@ -35,41 +35,6 @@ FormattedError ToFormatted(const Error &p_Error)
     return FormattedError{p_Error.ErrorCode, p_Error.Message};
 }
 
-#ifdef TKIT_ENABLE_DEBUG_LOGS
-void Detail::Debug(const VkResult p_Result, const char *p_Message)
-{
-    TKIT_LOG_DEBUG_IF(p_Result != VK_SUCCESS, "{}", formatMessage(p_Result, p_Message));
-}
-#endif
-
-#ifdef TKIT_ENABLE_INFO_LOGS
-void Detail::Info(const VkResult p_Result, const char *p_Message)
-{
-    TKIT_LOG_INFO_IF(p_Result != VK_SUCCESS, "{}", formatMessage(p_Result, p_Message));
-}
-#endif
-
-#ifdef TKIT_ENABLE_WARNING_LOGS
-void Detail::Warning(const VkResult p_Result, const char *p_Message)
-{
-    TKIT_LOG_WARNING_IF(p_Result != VK_SUCCESS, "{}", formatMessage(p_Result, p_Message));
-}
-#endif
-
-#ifdef TKIT_ENABLE_ERROR_LOGS
-void Detail::Error(const VkResult p_Result, const char *p_Message)
-{
-    TKIT_LOG_ERROR_IF(p_Result != VK_SUCCESS, "{}", formatMessage(p_Result, p_Message));
-}
-#endif
-
-#ifdef TKIT_ENABLE_ASSERTS
-void Detail::Assert(const VkResult p_Result, const char *p_Message)
-{
-    TKIT_ASSERT(p_Result == VK_SUCCESS, "{}", formatMessage(p_Result, p_Message));
-}
-#endif
-
 const char *VkResultToString(const VkResult p_Result)
 {
     switch (p_Result)
