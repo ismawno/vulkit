@@ -139,23 +139,7 @@ const auto result =
 VKIT_ASSERT_RESULT(result);
 ```
 
-Once all of the render pass specification has been declared, it is possible to create the underlying resources as follows:
-
-```cpp
-const VKit::SwapChain::Info &info = m_SwapChain.GetInfo();
-const auto result =
-    m_RenderPass.CreateResources(info.Extent, [this, &info](const VKit::ImageHouse &p_ImageHouse,
-                                                            const u32 p_ImageIndex, const u32 p_AttachmentIndex) {
-        if (p_AttachmentIndex == 0)
-            return p_ImageHouse.CreateImage(info.ImageData[p_ImageIndex].ImageView);
-
-        const VKit::RenderPass::Attachment &attachment = m_RenderPass.GetAttachment(p_AttachmentIndex);
-        return p_ImageHouse.CreateImage(attachment.Description.format, info.Extent, attachment.Flags);
-    });
-VKIT_ASSERT_RESULT(result);
-```
-
-The result encapsulates a struct of type RenderPass::Resource, which the user is responsible for freeing. Even though this simplifies Vulkan's render pass interaction, it is still recommended to use dynamic rendering.
+Once all of the render pass specification has been declared, it is possible to create the underlying resources with further `RenderPass` utilities. Even though this simplifies Vulkan's render pass interaction, it is still recommended to use dynamic rendering.
 
 ### Other Abstractions
 

@@ -22,7 +22,7 @@ class VKIT_API RenderPass
     struct Attachment
     {
         VkAttachmentDescription Description{};
-        AttachmentFlags Flags;
+        Image::Flags Flags;
     };
 
     class Builder;
@@ -31,7 +31,7 @@ class VKIT_API RenderPass
     class AttachmentBuilder
     {
       public:
-        AttachmentBuilder(Builder *p_Builder, AttachmentFlags p_Flags);
+        AttachmentBuilder(Builder *p_Builder, Image::Flags p_Flags);
 
         AttachmentBuilder &SetLoadOperation(VkAttachmentLoadOp p_Operation,
                                             VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
@@ -128,7 +128,7 @@ class VKIT_API RenderPass
 
         Result<RenderPass> Build() const;
 
-        AttachmentBuilder &BeginAttachment(AttachmentFlags p_Flags);
+        AttachmentBuilder &BeginAttachment(Image::Flags p_Flags);
 
         SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint);
         DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass);
@@ -166,7 +166,7 @@ class VKIT_API RenderPass
         VkImageView GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
         {
             const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
-            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].ImageView;
+            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].GetInfo().ImageView;
         }
         VkFramebuffer GetFrameBuffer(const u32 p_ImageIndex) const
         {
@@ -176,7 +176,6 @@ class VKIT_API RenderPass
       private:
         void destroy() const;
 
-        ImageHouse m_ImageHouse;
         TKit::StaticArray128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
         TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
@@ -205,7 +204,7 @@ class VKIT_API RenderPass
      * Populates frame buffers and associated images based on the provided extent and a user-defined image creation
      * callback. The `RenderPass` class provides many high-level options for `ImageData` struct creation, including the
      * case where the underlying resource is directly provided by a `SwapChain` image. See the
-     * `ImageHouse::CreateImage()` methods for more.
+     * `ImageFactory::CreateImage()` methods for more.
      *
      * @tparam F The type of the callback function used for creating image data.
      * @param p_Extent The dimensions of the frame buffer.
@@ -217,20 +216,7 @@ class VKIT_API RenderPass
     template <typename F>
     Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData, u32 p_FrameBufferLayers = 1)
     {
-        if (m_Info.ImageCount == 0)
-            return Result<Resources>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                            "Image count must be greater than 0 to create resources");
-        if (!m_Info.Allocator)
-            return Result<Resources>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                            "An allocator must be set to create resources");
-
         Resources resources;
-        const auto result = ImageHouse::Create(m_Device, m_Info.Allocator);
-        if (!result)
-            return Result<Resources>::Error(result.GetError());
-
-        resources.m_ImageHouse = result.GetValue();
-
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateFramebuffer, Result<Resources>);
 
         TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.GetSize(), VK_NULL_HANDLE};
@@ -238,7 +224,7 @@ class VKIT_API RenderPass
         {
             for (u32 j = 0; j < attachments.GetSize(); ++j)
             {
-                const auto imresult = std::forward<F>(p_CreateImageData)(resources.m_ImageHouse, i, j);
+                const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
                 if (!imresult)
                 {
                     resources.Destroy();
@@ -247,7 +233,7 @@ class VKIT_API RenderPass
 
                 const Image &imageData = imresult.GetValue();
                 resources.m_Images.Append(imageData);
-                attachments[j] = imageData.ImageView;
+                attachments[j] = imageData.GetInfo().ImageView;
             }
             VkFramebufferCreateInfo frameBufferInfo{};
             frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

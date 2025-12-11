@@ -100,9 +100,9 @@ void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
 void RenderPass::Resources::destroy() const
 {
     for (const Image &image : m_Images)
-        m_ImageHouse.DestroyImage(image);
+        m_ImageFactory.DestroyImage(image);
 
-    const LogicalDevice::Proxy &device = m_ImageHouse.GetDevice();
+    const LogicalDevice::Proxy &device = m_ImageFactory.GetDevice();
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
         device.Table->DestroyFramebuffer(device, frameBuffer, device.AllocationCallbacks);
 }
