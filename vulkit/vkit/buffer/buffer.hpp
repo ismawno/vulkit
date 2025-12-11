@@ -6,6 +6,7 @@
 
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/vulkan/allocator.hpp"
+#include "vkit/buffer/utils.hpp"
 #include "tkit/container/span.hpp"
 
 #include <vulkan/vulkan.h>
@@ -15,6 +16,7 @@
 namespace VKit
 {
 class CommandPool;
+
 /**
  * @brief Manages a Vulkan buffer and its associated memory.
  *
@@ -54,6 +56,7 @@ class VKIT_API Buffer
         }
         Builder &SetUsage(VkBufferUsageFlags p_Flags);
         Builder &SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info);
+        Builder &SetPerInstanceMinimumAlignment(VkDeviceSize p_Alignment);
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -95,24 +98,14 @@ class VKIT_API Buffer
     }
 
     /**
-     * @brief Writes data to the buffer, up to the buffer size.
-     *
-     * The buffer must be mapped and host visible to call this method.
-     *
-     * @param p_Data A pointer to the data to write.
-     */
-    void Write(const void *p_Data);
-
-    /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
      * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Data A pointer to the data to write.
-     * @param p_Size The size of the data to write.
-     * @param p_Offset The offset within the buffer to start writing.
+     * @param p_Info Information about the range of the copy.
      */
-    void Write(const void *p_Data, VkDeviceSize p_Size, VkDeviceSize p_Offset = 0);
+    void Write(const void *p_Data, BufferCopy p_Info = {});
 
     /**
      * @brief Copies data from another buffer into this buffer.
@@ -121,9 +114,9 @@ class VKIT_API Buffer
      *
      * @param p_CommandBuffer The command buffer to which the copy will be recorded.
      * @param p_Source The source buffer to copy from.
-     * @param p_Size The amount of bytes to copy.
+     * @param p_Info Information about the range of the copy.
      */
-    void Write(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, VkDeviceSize p_Size = VK_WHOLE_SIZE);
+    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info);
 
     /**
      * @brief Copies data from another buffer into this buffer.
@@ -133,10 +126,22 @@ class VKIT_API Buffer
      * @param p_Pool The command pool to allocate the copy command.
      * @param p_Queue The queue to submit the copy command.
      * @param p_Source The source buffer to copy from.
-     * @param p_Size The amount of bytes to copy.
+     * @param p_Info Information about the range of the copy.
      * @return A `Result` indicating success or failure.
      */
-    Result<> Write(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, VkDeviceSize p_Size = VK_WHOLE_SIZE);
+    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info);
+
+    /**
+     * @brief Uploads host data to the buffer, offsetted and up to the specified size, which must not exceed the
+     * buffer's.
+     *
+     * This method is designed to be used for device local buffers.
+     *
+     * @param p_Data A pointer to the data to write.
+     * @param p_Info Information about the range of the copy.
+     * @return A `Result` indicating success or failure.
+     */
+    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const void *p_Data, const BufferCopy &p_Info);
 
     /**
      * @brief Writes data to the buffer at the specified index.

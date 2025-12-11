@@ -64,6 +64,10 @@ Result<Buffer> Buffer::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<Buffer>);
 
+    if (m_InstanceCount == 0 || m_InstanceSize == 0)
+        return Result<Buffer>::Error(VK_ERROR_INITIALIZATION_FAILED,
+                                     "The buffer instance count and size must be greater than 0");
+
     Info info{};
     info.Allocator = m_Allocator;
     info.InstanceSize = m_InstanceSize;
@@ -114,6 +118,11 @@ Buffer::Builder &Buffer::Builder::SetAllocationCreateInfo(const VmaAllocationCre
     m_AllocationInfo = p_Info;
     return *this;
 }
+Buffer::Builder &Buffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceSize p_Alignment)
+{
+    m_PerInstanceMinimumAlignment = p_Alignment;
+    return *this;
+}
 
 void Buffer::Destroy()
 {
@@ -146,42 +155,57 @@ void Buffer::Unmap()
     m_Data = nullptr;
 }
 
-void Buffer::Write(const void *p_Data)
+void Buffer::Write(const void *p_Data, BufferCopy p_Info)
 {
+    if (p_Info.Size == VK_WHOLE_SIZE)
+        p_Info.Size = m_Info.Size;
+
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKit::Memory::ForwardCopy(m_Data, p_Data, m_Info.Size);
+    TKIT_ASSERT(m_Info.Size >= p_Info.Size + p_Info.DstOffset, "[VULKIT] Buffer slice is smaller than the data size");
+
+    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Info.DstOffset;
+    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
+    TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
 }
 
-void Buffer::Write(const void *p_Data, VkDeviceSize p_Size, const VkDeviceSize p_Offset)
+Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
+                                const BufferCopy &p_Info)
 {
-    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKIT_ASSERT(m_Info.Size >= p_Size + p_Offset, "[VULKIT] Buffer slice is smaller than the data size");
+    auto bres =
+        Buffer::Builder(m_Device, m_Info.Allocator, Flag_Mapped | Flag_StagingBuffer).SetSize(p_Info.Size).Build();
+    if (!bres)
+        return Result<>::Error(bres.GetError());
 
-    std::byte *data = static_cast<std::byte *>(m_Data) + p_Offset;
-    TKit::Memory::ForwardCopy(data, p_Data, p_Size);
+    Buffer &staging = bres.GetValue();
+    staging.Write(p_Data, p_Info);
+    staging.Flush();
+
+    const auto cres = CopyFromBuffer(p_Pool, p_Queue, staging, p_Info);
+    staging.Destroy();
+    return cres;
 }
 
-void Buffer::Write(const VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const VkDeviceSize p_Size)
+void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info)
 {
     VkBufferCopy copy{};
-    copy.dstOffset = 0;
-    copy.srcOffset = 0;
-    copy.size = p_Size == VK_WHOLE_SIZE ? m_Info.Size : p_Size;
+    copy.dstOffset = p_Info.DstOffset;
+    copy.srcOffset = p_Info.SrcOffset;
+    copy.size = p_Info.Size;
 
     TKIT_ASSERT(p_Source.GetInfo().Size >= copy.size, "[ONYX] Specified size exceeds source buffer size");
     TKIT_ASSERT(m_Info.Size >= copy.size, "[ONYX] Specified size exceeds destination buffer size");
     m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
 }
 
-Result<> Buffer::Write(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const VkDeviceSize p_Size)
+Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info)
 {
-    const auto result1 = p_Pool.BeginSingleTimeCommands();
-    if (!result1)
-        return Result<>::Error(result1.GetError());
+    const auto cres = p_Pool.BeginSingleTimeCommands();
+    if (!cres)
+        return Result<>::Error(cres.GetError());
 
-    const VkCommandBuffer commandBuffer = result1.GetValue();
-    Write(commandBuffer, p_Source, p_Size);
-    return p_Pool.EndSingleTimeCommands(commandBuffer, p_Queue);
+    const VkCommandBuffer cmd = cres.GetValue();
+    CopyFromBuffer(cmd, p_Source, p_Info);
+    return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
 void Buffer::WriteAt(const u32 p_Index, const void *p_Data)

@@ -109,7 +109,10 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
 {
     VkResult result = m_Device.Table->EndCommandBuffer(p_CommandBuffer);
     if (result != VK_SUCCESS)
+    {
+        Deallocate(p_CommandBuffer);
         return Result<>::Error(result, "Failed to end command buffer");
+    }
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -118,13 +121,16 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
 
     result = m_Device.Table->QueueSubmit(p_Queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (result != VK_SUCCESS)
+    {
+        Deallocate(p_CommandBuffer);
         return Result<>::Error(result, "Failed to submit command buffer");
+    }
 
     result = m_Device.Table->QueueWaitIdle(p_Queue);
+    Deallocate(p_CommandBuffer);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to wait for queue to idle");
 
-    Deallocate(p_CommandBuffer);
     return Result<>::Ok();
 }
 
