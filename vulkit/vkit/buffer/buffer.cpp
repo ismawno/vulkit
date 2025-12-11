@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/buffer/buffer.hpp"
 #include "vkit/rendering/command_pool.hpp"
+#include "vkit/rendering/image.hpp"
 
 namespace VKit
 {
@@ -63,10 +64,6 @@ Result<Buffer> Buffer::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindVertexBuffers, Result<Buffer>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<Buffer>);
-
-    if (m_InstanceCount == 0 || m_InstanceSize == 0)
-        return Result<Buffer>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                     "The buffer instance count and size must be greater than 0");
 
     Info info{};
     info.Allocator = m_Allocator;
@@ -158,7 +155,7 @@ void Buffer::Unmap()
 void Buffer::Write(const void *p_Data, BufferCopy p_Info)
 {
     if (p_Info.Size == VK_WHOLE_SIZE)
-        p_Info.Size = m_Info.Size;
+        p_Info.Size = m_Info.Size - p_Info.DstOffset;
 
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= p_Info.Size + p_Info.DstOffset, "[VULKIT] Buffer slice is smaller than the data size");
@@ -168,21 +165,13 @@ void Buffer::Write(const void *p_Data, BufferCopy p_Info)
     TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
 }
 
-Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
-                                const BufferCopy &p_Info)
+void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
-    auto bres =
-        Buffer::Builder(m_Device, m_Info.Allocator, Flag_Mapped | Flag_StagingBuffer).SetSize(p_Info.Size).Build();
-    if (!bres)
-        return Result<>::Error(bres.GetError());
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
 
-    Buffer &staging = bres.GetValue();
-    staging.Write(p_Data, p_Info);
-    staging.Flush();
-
-    const auto cres = CopyFromBuffer(p_Pool, p_Queue, staging, p_Info);
-    staging.Destroy();
-    return cres;
+    const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
+    std::byte *data = static_cast<std::byte *>(m_Data) + size;
+    TKit::Memory::ForwardCopy(data, p_Data, m_Info.InstanceSize);
 }
 
 void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info)
@@ -196,6 +185,47 @@ void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer 
     TKIT_ASSERT(m_Info.Size >= copy.size, "[ONYX] Specified size exceeds destination buffer size");
     m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
 }
+void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info)
+{
+    const VkOffset3D &off = p_Info.ImageOffset;
+    const VkExtent3D &ext = p_Info.Extent;
+    const Image::Info &info = p_Source.GetInfo();
+
+    VkBufferImageCopy copy;
+    copy.bufferImageHeight = p_Info.BufferImageHeight;
+    copy.bufferOffset = p_Info.BufferOffset;
+    copy.imageOffset = off;
+    copy.bufferRowLength = p_Info.BufferRowLength;
+    copy.imageSubresource = p_Info.Subresource;
+    if (copy.imageSubresource.aspectMask == VK_IMAGE_ASPECT_NONE)
+        copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(p_Source.GetInfo().Flags);
+
+    VkExtent3D &cext = copy.imageExtent;
+    cext.width = ext.width == TKit::Limits<u32>::Max() ? (info.Width - off.x) : ext.width;
+    cext.height = ext.height == TKit::Limits<u32>::Max() ? (info.Height - off.y) : ext.height;
+    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (info.Depth - off.z) : ext.depth;
+
+    // i know this is so futile, validation layers would already catch this but well...
+    TKIT_ASSERT(cext.width <= info.Width - off.x, "[ONYX] Specified width exceeds source image width");
+    TKIT_ASSERT(cext.height <= info.Height - off.y, "[ONYX] Specified height exceeds source image height");
+    TKIT_ASSERT(cext.depth <= info.Depth - off.z, "[ONYX] Specified depth exceeds source image depth");
+    TKIT_ASSERT(m_Info.Size - p_Info.BufferOffset >= p_Source.GetSize(p_Info.BufferRowLength, p_Info.BufferImageHeight),
+                "[ONYX] Buffer is not large enough to fit image");
+
+    m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, 1, &copy);
+}
+
+Result<> Buffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source,
+                               const BufferImageCopy &p_Info)
+{
+    const auto cres = p_Pool.BeginSingleTimeCommands();
+    if (!cres)
+        return Result<>::Error(cres.GetError());
+
+    const VkCommandBuffer cmd = cres.GetValue();
+    CopyFromImage(cmd, p_Source, p_Info);
+    return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
+}
 
 Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info)
 {
@@ -208,13 +238,23 @@ Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buff
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
-void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
+Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
+                                const BufferCopy &p_Info)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+    const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (m_Info.Size - p_Info.DstOffset) : p_Info.Size;
 
-    const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
-    std::byte *data = static_cast<std::byte *>(m_Data) + size;
-    TKit::Memory::ForwardCopy(data, p_Data, m_Info.InstanceSize);
+    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Flag_Mapped | Flag_StagingBuffer).SetSize(size).Build();
+    if (!bres)
+        return Result<>::Error(bres.GetError());
+
+    Buffer &staging = bres.GetValue();
+    staging.Write(p_Data, {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = 0});
+    staging.Flush();
+
+    const auto cres =
+        CopyFromBuffer(p_Pool, p_Queue, staging, {.Size = size, .SrcOffset = 0, .DstOffset = p_Info.DstOffset});
+    staging.Destroy();
+    return cres;
 }
 
 Result<> Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)

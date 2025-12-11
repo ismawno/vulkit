@@ -9,13 +9,10 @@
 #include "vkit/buffer/utils.hpp"
 #include "tkit/container/span.hpp"
 
-#include <vulkan/vulkan.h>
-
-// User may not use mutable buffer methods if the buffer is not/cannot be mapped
-
 namespace VKit
 {
 class CommandPool;
+class Image;
 
 /**
  * @brief Manages a Vulkan buffer and its associated memory.
@@ -97,6 +94,12 @@ class VKIT_API Buffer
         return m_Data != nullptr;
     }
 
+    void *ReadAt(const u32 p_Index) const
+    {
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+    }
+
     /**
      * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
      *
@@ -106,6 +109,16 @@ class VKIT_API Buffer
      * @param p_Info Information about the range of the copy.
      */
     void Write(const void *p_Data, BufferCopy p_Info = {});
+
+    /**
+     * @brief Writes data to the buffer at the specified index.
+     *
+     * The buffer must be mapped and host visible to call this method.
+     *
+     * @param p_Index The index of the buffer instance to write to.
+     * @param p_Data A pointer to the data to write.
+     */
+    void WriteAt(u32 p_Index, const void *p_Data);
 
     /**
      * @brief Copies data from another buffer into this buffer.
@@ -129,7 +142,32 @@ class VKIT_API Buffer
      * @param p_Info Information about the range of the copy.
      * @return A `Result` indicating success or failure.
      */
-    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info);
+    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source,
+                            const BufferCopy &p_Info = {});
+
+    /**
+     * @brief Copies data from an image into this buffer.
+     *
+     * Records the copy into a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
+     * @param p_Source The source image to copy from.
+     * @param p_Info Information about the range of the copy.
+     */
+    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info);
+
+    /**
+     * @brief Copies data from an image into this buffer.
+     *
+     * Records the copy into a command buffer.
+     *
+     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
+     * @param p_Source The source image to copy from.
+     * @param p_Info Information about the range of the copy.
+     * @return A `Result` indicating success or failure.
+     */
+    Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source,
+                           const BufferImageCopy &p_Info = {});
 
     /**
      * @brief Uploads host data to the buffer, offsetted and up to the specified size, which must not exceed the
@@ -137,30 +175,17 @@ class VKIT_API Buffer
      *
      * This method is designed to be used for device local buffers.
      *
+     * @param p_Pool The command pool to allocate the copy command.
+     * @param p_Queue The queue to submit the copy command.
      * @param p_Data A pointer to the data to write.
      * @param p_Info Information about the range of the copy.
      * @return A `Result` indicating success or failure.
      */
-    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const void *p_Data, const BufferCopy &p_Info);
-
-    /**
-     * @brief Writes data to the buffer at the specified index.
-     *
-     * The buffer must be mapped and host visible to call this method.
-     *
-     * @param p_Index The index of the buffer instance to write to.
-     * @param p_Data A pointer to the data to write.
-     */
-    void WriteAt(u32 p_Index, const void *p_Data);
+    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const void *p_Data, const BufferCopy &p_Info = {});
 
     void *GetData() const
     {
         return m_Data;
-    }
-    void *ReadAt(const u32 p_Index) const
-    {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
 
     /**
