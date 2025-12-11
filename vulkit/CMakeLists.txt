@@ -21,7 +21,7 @@ if(VULKIT_ENABLE_ALLOCATOR)
 endif()
 
 if(VULKIT_ENABLE_BUFFER)
-  list(APPEND SOURCES vkit/buffer/buffer.cpp)
+  list(APPEND SOURCES vkit/resource/buffer.cpp)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
@@ -55,7 +55,7 @@ if(VULKIT_ENABLE_COMMAND_POOL)
 endif()
 
 if(VULKIT_ENABLE_IMAGE)
-  list(APPEND SOURCES vkit/rendering/image.cpp)
+  list(APPEND SOURCES vkit/resource/image.cpp)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)

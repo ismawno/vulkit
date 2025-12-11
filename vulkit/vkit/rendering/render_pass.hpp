@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_RENDER_PASS"
 #endif
 
-#include "vkit/rendering/image.hpp"
+#include "vkit/resource/image.hpp"
 #include "tkit/container/static_array.hpp"
 
 namespace VKit
