@@ -64,6 +64,7 @@ Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocato
         m_Usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
     else if (p_Flags & Flag_StorageBuffer)
         m_Usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    m_Flags = p_Flags;
 }
 
 Result<Buffer> Buffer::Builder::Build() const
@@ -72,12 +73,13 @@ Result<Buffer> Buffer::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<Buffer>);
 
-    Info info{};
+    Info info;
     info.Allocator = m_Allocator;
     info.InstanceSize = m_InstanceSize;
     info.InstanceCount = m_InstanceCount;
     info.InstanceAlignedSize = alignedSize(m_InstanceSize, m_PerInstanceMinimumAlignment);
     info.Size = info.InstanceAlignedSize * m_InstanceCount;
+    info.Flags = m_Flags;
 
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

@@ -64,6 +64,7 @@ class VKIT_API Buffer
         VkBufferUsageFlags m_Usage = 0;
         VmaAllocationCreateInfo m_AllocationInfo{};
         VkDeviceSize m_PerInstanceMinimumAlignment = 1;
+        Flags m_Flags;
     };
 
     struct Info
@@ -75,6 +76,7 @@ class VKIT_API Buffer
         VkDeviceSize InstanceCount;
         VkDeviceSize InstanceAlignedSize;
         VkDeviceSize Size;
+        Flags Flags;
     };
 
     Buffer() = default;
