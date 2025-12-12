@@ -131,14 +131,14 @@ class VKIT_API SwapChain
         VkImageUsageFlags ImageUsage;
 
         PhysicalDevice::SwapChainSupportDetails SupportDetails;
-        TKit::StaticArray8<Image> Images;
 
         Flags Flags;
     };
 
     SwapChain() = default;
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const Info &p_Info)
-        : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Info(p_Info)
+    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain,
+              const TKit::StaticArray8<Image> &p_Images, const Info &p_Info)
+        : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
     {
     }
 
@@ -153,6 +153,20 @@ class VKIT_API SwapChain
     {
         return m_SwapChain;
     }
+
+    const Image &GetImage(const u32 p_Index) const
+    {
+        return m_Images[p_Index];
+    }
+    Image &GetImage(const u32 p_Index)
+    {
+        return m_Images[p_Index];
+    }
+    u32 GetImageCount() const
+    {
+        return m_Images.GetSize();
+    }
+
     const Info &GetInfo() const
     {
         return m_Info;
@@ -171,6 +185,7 @@ class VKIT_API SwapChain
 
     LogicalDevice::Proxy m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
+    TKit::StaticArray8<Image> m_Images;
     Info m_Info;
 };
 } // namespace VKit

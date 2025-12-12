@@ -149,6 +149,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<SwapChain>::Error(result, "Failed to create the swap chain");
 
+    TKit::StaticArray8<Image> finalImages;
     SwapChain::Info info{};
     info.Extent = extent;
     info.SurfaceFormat = surfaceFormat;
@@ -157,9 +158,9 @@ Result<SwapChain> SwapChain::Builder::Build() const
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto earlyDestroy = [proxy, swapChain, &checkFlags, &info] {
+    const auto earlyDestroy = [proxy, swapChain, &checkFlags, &finalImages] {
         if (checkFlags(Flag_CreateImageViews))
-            for (Image &image : info.Images)
+            for (Image &image : finalImages)
                 image.DestroyImageView();
 
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
@@ -182,7 +183,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images");
     }
 
-    info.Images.Resize(imageCount);
+    finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
     {
         Image::Info iminfo = Image::FromSwapChain(surfaceFormat.format, extent);
@@ -210,10 +211,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
                 return Result<SwapChain>::Error(result, "Failed to create the image view");
             }
         }
-        info.Images[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
+        finalImages[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
     }
 
-    return Result<SwapChain>::Ok(proxy, swapChain, info);
+    return Result<SwapChain>::Ok(proxy, swapChain, finalImages, info);
 }
 
 void SwapChain::destroy() const
@@ -221,7 +222,7 @@ void SwapChain::destroy() const
     TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
 
     if (m_Info.Flags & Flag_HasImageViews)
-        for (Image image : m_Info.Images)
+        for (Image image : m_Images)
             image.DestroyImageView();
 
     m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
