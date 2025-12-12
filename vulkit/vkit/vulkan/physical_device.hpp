@@ -215,7 +215,6 @@ class VKIT_API PhysicalDevice
     struct Info
     {
         Type Type;
-        Flags Flags;
 
         u32 ApiVersion;
 
@@ -230,6 +229,7 @@ class VKIT_API PhysicalDevice
         Features AvailableFeatures{};
 
         Properties Properties{};
+        Flags Flags;
     };
 
     PhysicalDevice() = default;

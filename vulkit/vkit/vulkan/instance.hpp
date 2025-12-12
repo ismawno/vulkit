@@ -153,10 +153,10 @@ class VKIT_API Instance
         u32 EngineVersion;
         u32 ApiVersion;
 
-        Flags Flags;
-
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;
+
+        Flags Flags;
     };
 
     Instance() = default;

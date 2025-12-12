@@ -6,6 +6,7 @@
 #endif
 
 #include "vkit/vulkan/logical_device.hpp"
+#include "vkit/resource/image.hpp"
 
 namespace VKit
 {
@@ -121,12 +122,6 @@ class VKIT_API SwapChain
         Flag_HasImageViews = 1 << 1
     };
 
-    struct ImageData
-    {
-        VkImage Image;
-        VkImageView ImageView = VK_NULL_HANDLE;
-    };
-
     struct Info
     {
         VkSurfaceFormatKHR SurfaceFormat;
@@ -135,10 +130,10 @@ class VKIT_API SwapChain
         VkExtent2D Extent;
         VkImageUsageFlags ImageUsage;
 
-        Flags Flags;
-
         PhysicalDevice::SwapChainSupportDetails SupportDetails;
-        TKit::StaticArray8<ImageData> ImageData;
+        TKit::StaticArray8<Image> Images;
+
+        Flags Flags;
     };
 
     SwapChain() = default;

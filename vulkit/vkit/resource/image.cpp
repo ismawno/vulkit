@@ -78,6 +78,22 @@ Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator
     m_ViewInfo.format = VK_FORMAT_UNDEFINED;
     m_ViewInfo.subresourceRange = createRange(m_ImageInfo, p_Flags);
 }
+
+Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent, const VkImageView p_ImageView,
+                                 const Flags p_Flags)
+{
+    Info info;
+    info.Allocation = VK_NULL_HANDLE;
+    info.Allocator = VK_NULL_HANDLE;
+    info.Width = p_Extent.width;
+    info.Height = p_Extent.height;
+    info.Depth = 1;
+    info.Format = p_Format;
+    info.ImageView = p_ImageView;
+    info.Flags = p_Flags;
+    return info;
+}
+
 Result<Image> Image::Builder::Build() const
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateImageView, Result<Image>);
@@ -400,8 +416,8 @@ VkDeviceSize Image::GetSize(const u32 p_BufferRowLength, const u32 p_BufferImage
 
 void Image::destroy() const
 {
-    TKIT_ASSERT(m_Info.Allocation, "[ONYX] Attempting to destroy an image with no allocation");
-    vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
+    if (m_Info.Allocation)
+        vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
     if (m_Info.ImageView)
         m_Device.Table->DestroyImageView(m_Device, m_Info.ImageView, m_Device.AllocationCallbacks);
 }
@@ -411,6 +427,12 @@ void Image::Destroy()
     m_Image = VK_NULL_HANDLE;
     m_Info = {};
     m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+}
+void Image::DestroyImageView()
+{
+    if (m_Info.ImageView)
+        m_Device.Table->DestroyImageView(m_Device, m_Info.ImageView, m_Device.AllocationCallbacks);
+    m_Info.ImageView = VK_NULL_HANDLE;
 }
 void Image::SubmitForDeletion(DeletionQueue &p_Queue) const
 {

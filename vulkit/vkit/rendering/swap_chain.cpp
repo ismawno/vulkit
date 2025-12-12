@@ -159,9 +159,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
 
     const auto earlyDestroy = [proxy, swapChain, &checkFlags, &info] {
         if (checkFlags(Flag_CreateImageViews))
-            for (const ImageData &data : info.ImageData)
-                if (data.ImageView)
-                    proxy.Table->DestroyImageView(proxy, data.ImageView, proxy.AllocationCallbacks);
+            for (Image &image : info.Images)
+                image.DestroyImageView();
 
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
     };
@@ -183,10 +182,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images");
     }
 
-    info.ImageData.Resize(imageCount);
+    info.Images.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
     {
-        info.ImageData[i].Image = images[i];
+        Image::Info iminfo = Image::FromSwapChain(surfaceFormat.format, extent);
         if (checkFlags(Flag_CreateImageViews))
         {
             VkImageViewCreateInfo viewInfo{};
@@ -204,14 +203,14 @@ Result<SwapChain> SwapChain::Builder::Build() const
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            result =
-                proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &info.ImageData[i].ImageView);
+            result = proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &iminfo.ImageView);
             if (result != VK_SUCCESS)
             {
                 earlyDestroy();
                 return Result<SwapChain>::Error(result, "Failed to create the image view");
             }
         }
+        info.Images[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
     }
 
     return Result<SwapChain>::Ok(proxy, swapChain, info);
@@ -222,8 +221,8 @@ void SwapChain::destroy() const
     TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
 
     if (m_Info.Flags & Flag_HasImageViews)
-        for (const ImageData &data : m_Info.ImageData)
-            m_Device.Table->DestroyImageView(m_Device, data.ImageView, m_Device.AllocationCallbacks);
+        for (Image image : m_Info.Images)
+            image.DestroyImageView();
 
     m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
 }

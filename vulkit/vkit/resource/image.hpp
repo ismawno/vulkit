@@ -99,6 +99,9 @@ class Image
         VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
     };
 
+    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent, VkImageView p_ImageView = VK_NULL_HANDLE,
+                              Flags p_Flags = Flag_ColorAttachment);
+
     Image() = default;
     Image(const LogicalDevice::Proxy &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info)
         : m_Device(p_Device), m_Image(p_Image), m_Layout(p_Layout), m_Info(p_Info)
@@ -182,6 +185,7 @@ class Image
     static VkDeviceSize GetBytesPerPixel(VkFormat p_Format);
 
     void Destroy();
+    void DestroyImageView();
     void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     operator VkImage() const
