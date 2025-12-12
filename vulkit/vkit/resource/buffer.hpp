@@ -113,6 +113,13 @@ class VKIT_API Buffer
      */
     void Write(const void *p_Data, BufferCopy p_Info = {});
 
+    /**
+     * @brief Writes data to the buffer from a span.
+     *
+     * The buffer must be mapped and host visible to call this method.
+     *
+     * @param p_Data A pointer to the data to write.
+     */
     template <typename T> void Write(const TKit::Span<const T> p_Data)
     {
         Write(p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T)});
@@ -189,7 +196,19 @@ class VKIT_API Buffer
      * @param p_Info Information about the range of the copy.
      * @return A `Result` indicating success or failure.
      */
+
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const void *p_Data, const BufferCopy &p_Info = {});
+    /**
+     * @brief Writes data to the buffer from a span.
+     *
+     * The buffer must be mapped and host visible to call this method.
+     *
+     * @param p_Data A pointer to the data to write.
+     */
+    template <typename T> Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<T> p_Data)
+    {
+        UploadFromHost(p_Pool, p_Queue, p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T)});
+    }
 
     void *GetData() const
     {
