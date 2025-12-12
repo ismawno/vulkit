@@ -119,10 +119,13 @@ class VKIT_API Buffer
      * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Data A pointer to the data to write.
+     * @param p_Offsets Write offsets.
      */
-    template <typename T> void Write(const TKit::Span<const T> p_Data)
+    template <typename T> void Write(const TKit::Span<const T> p_Data, const Offsets &p_Offsets)
     {
-        Write(p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T)});
+        Write(
+            p_Data.GetData(),
+            {.Size = p_Data.GetSize() * sizeof(T), .SrcOffset = p_Offsets.SrcOffset, .DstOffset = p_Offsets.DstOffset});
     }
 
     /**
@@ -204,11 +207,15 @@ class VKIT_API Buffer
      * The buffer must be mapped and host visible to call this method.
      *
      * @param p_Data A pointer to the data to write.
+     * @param p_Offsets Write offsets.
      */
     template <typename T>
-    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data)
+    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
+                            const Offsets &p_Offsets)
     {
-        UploadFromHost(p_Pool, p_Queue, p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T)});
+        UploadFromHost(
+            p_Pool, p_Queue, p_Data.GetData(),
+            {.Size = p_Data.GetSize() * sizeof(T), .SrcOffset = p_Offsets.SrcOffset, .DstOffset = p_Offsets.DstOffset});
     }
 
     void *GetData() const

@@ -5,6 +5,11 @@
 #include <vulkan/vulkan.h>
 namespace VKit
 {
+struct Offsets
+{
+    VkDeviceSize SrcOffset = 0;
+    VkDeviceSize DstOffset = 0;
+};
 // reinventing the wheel here for the sake of defaults
 struct BufferCopy
 {
