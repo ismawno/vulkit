@@ -205,7 +205,8 @@ class VKIT_API Buffer
      *
      * @param p_Data A pointer to the data to write.
      */
-    template <typename T> Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<T> p_Data)
+    template <typename T>
+    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data)
     {
         UploadFromHost(p_Pool, p_Queue, p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T)});
     }
