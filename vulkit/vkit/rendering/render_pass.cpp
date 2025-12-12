@@ -21,21 +21,21 @@ Result<RenderPass> RenderPass::Builder::Build() const
         TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
         if (formats.IsEmpty())
         {
-            if (attachment.m_Attachment.Flags & AttachmentFlag_Color)
+            if (attachment.m_Attachment.Flags & Image::Flag_ColorAttachment)
                 formats.Append(VK_FORMAT_B8G8R8A8_SRGB);
-            else if ((attachment.m_Attachment.Flags & AttachmentFlag_Depth) &&
-                     (attachment.m_Attachment.Flags & AttachmentFlag_Stencil))
+            else if ((attachment.m_Attachment.Flags & Image::Flag_DepthAttachment) &&
+                     (attachment.m_Attachment.Flags & Image::Flag_StencilAttachment))
                 formats.Append(VK_FORMAT_D32_SFLOAT_S8_UINT);
-            else if (attachment.m_Attachment.Flags & AttachmentFlag_Depth)
+            else if (attachment.m_Attachment.Flags & Image::Flag_DepthAttachment)
                 formats.Append(VK_FORMAT_D32_SFLOAT);
-            else if (attachment.m_Attachment.Flags & AttachmentFlag_Stencil)
+            else if (attachment.m_Attachment.Flags & Image::Flag_StencilAttachment)
                 formats.Append(VK_FORMAT_S8_UINT);
         }
         VkFormatFeatureFlags flags = 0;
-        if (attachment.m_Attachment.Flags & AttachmentFlag_Color)
+        if (attachment.m_Attachment.Flags & Image::Flag_ColorAttachment)
             flags = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
-        else if ((attachment.m_Attachment.Flags & AttachmentFlag_Depth) ||
-                 (attachment.m_Attachment.Flags & AttachmentFlag_Stencil))
+        else if ((attachment.m_Attachment.Flags & Image::Flag_DepthAttachment) ||
+                 (attachment.m_Attachment.Flags & Image::Flag_StencilAttachment))
             flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
         const auto result = m_Device->FindSupportedFormat(formats, VK_IMAGE_TILING_OPTIMAL, flags);
@@ -99,12 +99,11 @@ void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
 
 void RenderPass::Resources::destroy() const
 {
-    for (const Image &image : m_Images)
-        m_ImageFactory.DestroyImage(image);
+    for (Image image : m_Images)
+        image.Destroy();
 
-    const LogicalDevice::Proxy &device = m_ImageFactory.GetDevice();
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
-        device.Table->DestroyFramebuffer(device, frameBuffer, device.AllocationCallbacks);
+        m_Device.Table->DestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
 }
 void RenderPass::Resources::Destroy()
 {
@@ -118,7 +117,7 @@ void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const
     p_Queue.Push([resources] { resources.destroy(); });
 }
 
-RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const AttachmentFlags p_Flags)
+RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const Image::Flags p_Flags)
 {
     return m_Attachments.Append(this, p_Flags);
 }
@@ -152,13 +151,13 @@ RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFl
     return *this;
 }
 
-RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const AttachmentFlags p_Flags)
+RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const Image::Flags p_Flags)
     : m_Builder(p_Builder)
 {
     TKIT_ASSERT(p_Flags, "[VULKIT] Attachment must have at least one type flag");
-    TKIT_ASSERT(!((p_Flags & AttachmentFlag_Color) && (p_Flags & AttachmentFlag_Depth)),
+    TKIT_ASSERT(!((p_Flags & Image::Flag_ColorAttachment) && (p_Flags & Image::Flag_DepthAttachment)),
                 "[VULKIT] Attachment must be color or depth, not both");
-    TKIT_ASSERT(!((p_Flags & AttachmentFlag_Color) && (p_Flags & AttachmentFlag_Stencil)),
+    TKIT_ASSERT(!((p_Flags & Image::Flag_ColorAttachment) && (p_Flags & Image::Flag_StencilAttachment)),
                 "[VULKIT] Attachment must be color or stencil, not both");
 
     m_Attachment.Description.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -171,17 +170,17 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
     m_Attachment.Description.flags = 0;
     m_Attachment.Flags = p_Flags;
 
-    if (p_Flags & AttachmentFlag_Color)
+    if (p_Flags & Image::Flag_ColorAttachment)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     }
-    if (p_Flags & AttachmentFlag_Depth)
+    if (p_Flags & Image::Flag_DepthAttachment)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     }
-    if (p_Flags & AttachmentFlag_Stencil)
+    if (p_Flags & Image::Flag_StencilAttachment)
     {
         m_Attachment.Description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

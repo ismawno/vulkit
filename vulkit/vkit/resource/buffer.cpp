@@ -14,16 +14,21 @@ Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocato
     : m_Device(p_Device), m_Allocator(p_Allocator)
 {
 #ifdef TKIT_ENABLE_ASSERTS
-    const auto exclusive = [p_Flags](const Flags p_Flags1, const Flags p_Flags2, const char *p_Message) {
-        TKIT_ASSERT(!((p_Flags & p_Flags1) && (p_Flags & p_Flags2)), "{}", p_Message);
+    const auto incompatible = [p_Flags](const FlagBits p_Flags1, const std::initializer_list<FlagBits> p_Flags2,
+                                        const char *p_Message) {
+        for (const FlagBits flag : p_Flags2)
+            TKIT_ASSERT(!((p_Flags & p_Flags1) && (p_Flags & flag)), "{}", p_Message);
+    };
+    const auto exclusive = [p_Flags](const std::initializer_list<FlagBits> p_Excl, const char *p_Message) {
+        for (const FlagBits flag1 : p_Excl)
+            for (const FlagBits flag2 : p_Excl)
+                TKIT_ASSERT(flag1 == flag2 || !((p_Flags & flag1) && (p_Flags & flag2)), "{}", p_Message);
     };
 
-    exclusive(Flag_DeviceLocal, Flag_HostVisible, "[ONYX] A device local buffer cannot be host visible");
-    exclusive(Flag_DeviceLocal, Flag_Mapped, "[ONYX] A device local buffer cannot be mapped");
-    exclusive(Flag_DeviceLocal, Flag_RandomAccess, "[ONYX] A device local buffer cannot be randomly accessed");
-    exclusive(Flag_VertexBuffer, Flag_IndexBuffer, "[ONYX] A vertex buffer cannot be an index buffer");
-    exclusive(Flag_VertexBuffer, Flag_StagingBuffer, "[ONYX] A vertex buffer cannot be a staging buffer");
-    exclusive(Flag_IndexBuffer, Flag_StagingBuffer, "[ONYX] An index buffer cannot be a staging buffer");
+    incompatible(Flag_DeviceLocal, {Flag_HostVisible, Flag_Mapped, Flag_RandomAccess},
+                 "[ONYX] A device local buffer cannot be host visible");
+    exclusive({Flag_VertexBuffer, Flag_IndexBuffer, Flag_StagingBuffer, Flag_StorageBuffer},
+              "[ONYX] A buffer may only have one purpose");
 #endif
     m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
     m_AllocationInfo.requiredFlags = 0;
@@ -57,6 +62,8 @@ Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocato
         m_Usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     else if (p_Flags & Flag_IndexBuffer)
         m_Usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    else if (p_Flags & Flag_StorageBuffer)
+        m_Usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 }
 
 Result<Buffer> Buffer::Builder::Build() const

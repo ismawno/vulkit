@@ -105,7 +105,7 @@ Result<Image> Image::Builder::Build() const
     info.Flags = m_Flags;
 
     if (m_ViewInfo.format == VK_FORMAT_UNDEFINED)
-        return Result<Image>::Ok(*m_Device, image, m_ImageInfo.initialLayout, info);
+        return Result<Image>::Ok(m_Device, image, m_ImageInfo.initialLayout, info);
 
     VkImageViewCreateInfo vinfo = m_ViewInfo;
     vinfo.image = image;
@@ -116,7 +116,7 @@ Result<Image> Image::Builder::Build() const
         vmaDestroyImage(m_Allocator, image, allocation);
         return Result<Image>::Error(result, "Failed to create image view");
     }
-    return Result<Image>::Ok(*m_Device, image, m_ImageInfo.initialLayout, info);
+    return Result<Image>::Ok(m_Device, image, m_ImageInfo.initialLayout, info);
 }
 
 void Image::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,

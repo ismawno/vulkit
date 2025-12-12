@@ -88,9 +88,12 @@ class VKIT_API GraphicsPipeline
          * Constructs the Vulkan graphics pipeline creation info based on the specs.
          * This is used internally during pipeline creation.
          *
+         * IMPORTANT: `Bake()` method must be called before calling this method to ensure a consistent state and avoid
+         * dangling references. Builder must be kept alive while the info struct is active.
+         *
          * @return A `VkGraphicsPipelineCreateInfo` that represents the current pipeline configuration.
          */
-        VkGraphicsPipelineCreateInfo CreatePipelineInfo();
+        VkGraphicsPipelineCreateInfo CreatePipelineInfo() const;
 
         Builder &Bake();
         Builder &SetBasePipeline(VkPipeline p_BasePipeline);

@@ -6,7 +6,7 @@
 
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/vulkan/allocator.hpp"
-#include "vkit/buffer/utils.hpp"
+#include "vkit/resource/utils.hpp"
 #include "tkit/container/span.hpp"
 
 namespace VKit
@@ -23,7 +23,7 @@ class Image;
 class VKIT_API Buffer
 {
   public:
-    using Flags = u8;
+    using Flags = u16;
     enum FlagBits
     {
         Flag_None = 0,
@@ -34,8 +34,9 @@ class VKIT_API Buffer
         Flag_StagingBuffer = 1 << 4,
         Flag_VertexBuffer = 1 << 4,
         Flag_IndexBuffer = 1 << 5,
-        Flag_Mapped = 1 << 6,
-        Flag_RandomAccess = 1 << 7,
+        Flag_StorageBuffer = 1 << 6,
+        Flag_Mapped = 1 << 7,
+        Flag_RandomAccess = 1 << 8,
     };
 
     class Builder

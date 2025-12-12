@@ -156,9 +156,10 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::Bake()
         m_AttributeDescriptions.IsEmpty() ? nullptr : m_AttributeDescriptions.GetData();
     m_VertexInputInfo.pVertexBindingDescriptions =
         m_BindingDescriptions.IsEmpty() ? nullptr : m_BindingDescriptions.GetData();
+    return *this;
 }
 
-VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo()
+VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() const
 {
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;

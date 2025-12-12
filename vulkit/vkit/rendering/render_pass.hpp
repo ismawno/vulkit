@@ -176,6 +176,7 @@ class VKIT_API RenderPass
       private:
         void destroy() const;
 
+        LogicalDevice::Proxy m_Device;
         TKit::StaticArray128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
         TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
@@ -217,6 +218,7 @@ class VKIT_API RenderPass
     Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData, u32 p_FrameBufferLayers = 1)
     {
         Resources resources;
+        resources.m_Device = m_Device;
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateFramebuffer, Result<Resources>);
 
         TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.GetSize(), VK_NULL_HANDLE};

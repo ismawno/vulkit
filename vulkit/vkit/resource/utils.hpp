@@ -1,3 +1,5 @@
+#pragma once
+
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/limits.hpp"
 #include <vulkan/vulkan.h>

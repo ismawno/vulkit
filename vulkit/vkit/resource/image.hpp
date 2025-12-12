@@ -6,7 +6,7 @@
 
 #include "vkit/vulkan/logical_device.hpp"
 #include "vkit/vulkan/allocator.hpp"
-#include "vkit/buffer/utils.hpp"
+#include "vkit/resource/utils.hpp"
 
 namespace VKit
 {
