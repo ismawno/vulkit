@@ -146,11 +146,11 @@ Result<Image> Image::Builder::Build() const
 
 Result<VkImageView> Image::CreateImageView(const VkImageViewCreateInfo &p_Info)
 {
-    VkImageView view;
-    const VkResult result = m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &view);
+    const VkResult result =
+        m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &m_ImageView);
     if (result != VK_SUCCESS)
         return Result<VkImageView>::Error(result, "Failed to create image view");
-    return Result<VkImageView>::Ok(view);
+    return Result<VkImageView>::Ok(m_ImageView);
 }
 
 void Image::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,

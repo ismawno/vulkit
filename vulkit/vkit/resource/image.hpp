@@ -63,8 +63,8 @@ class Image
       private:
         LogicalDevice::Proxy m_Device;
         VmaAllocator m_Allocator;
-        VkImageCreateInfo m_ImageInfo;
-        VkImageViewCreateInfo m_ViewInfo;
+        VkImageCreateInfo m_ImageInfo{};
+        VkImageViewCreateInfo m_ViewInfo{};
         Flags m_Flags;
     };
 
