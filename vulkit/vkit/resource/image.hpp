@@ -16,7 +16,7 @@ class Image
 {
   public:
     using Flags = u8;
-    enum FlagBits
+    enum FlagBits : Flags
     {
         Flag_None = 0,
         Flag_ColorAttachment = 1 << 0,

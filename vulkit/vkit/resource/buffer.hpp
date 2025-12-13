@@ -24,7 +24,7 @@ class VKIT_API Buffer
 {
   public:
     using Flags = u16;
-    enum FlagBits
+    enum FlagBits : Flags
     {
         Flag_None = 0,
         Flag_DeviceLocal = 1 << 0,
