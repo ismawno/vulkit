@@ -35,8 +35,8 @@ class VKIT_API Buffer
         Flag_VertexBuffer = 1 << 5,
         Flag_IndexBuffer = 1 << 6,
         Flag_StorageBuffer = 1 << 7,
-        Flag_Mapped = 1 << 8,
-        Flag_RandomAccess = 1 << 9,
+        Flag_HostMapped = 1 << 8,
+        Flag_HostRandomAccess = 1 << 9,
     };
 
     class Builder

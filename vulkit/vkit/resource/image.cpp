@@ -271,7 +271,7 @@ Result<> Image::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const
     TKIT_ASSERT(size == p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels,
                 "[VULKIT] When uploading host-side image, both images must match in size");
 
-    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Buffer::Flag_Mapped | Buffer::Flag_StagingBuffer)
+    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Buffer::Flag_HostMapped | Buffer::Flag_StagingBuffer)
                     .SetSize(size)
                     .Build();
     if (!bres)

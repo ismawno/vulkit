@@ -13,28 +13,11 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
 Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator, Flags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator)
 {
-#ifdef TKIT_ENABLE_ASSERTS
-    const auto incompatible = [p_Flags](const FlagBits p_Flags1, const std::initializer_list<FlagBits> p_Flags2,
-                                        const char *p_Message) {
-        for (const FlagBits flag : p_Flags2)
-            TKIT_ASSERT(!((p_Flags & p_Flags1) && (p_Flags & flag)), "{}", p_Message);
-    };
-    const auto exclusive = [p_Flags](const std::initializer_list<FlagBits> p_Excl, const char *p_Message) {
-        for (const FlagBits flag1 : p_Excl)
-            for (const FlagBits flag2 : p_Excl)
-                TKIT_ASSERT(flag1 == flag2 || !((p_Flags & flag1) && (p_Flags & flag2)), "{}", p_Message);
-    };
-
-    incompatible(Flag_DeviceLocal, {Flag_HostVisible, Flag_Mapped, Flag_RandomAccess},
-                 "[ONYX] A device local buffer cannot be host visible");
-    exclusive({Flag_VertexBuffer, Flag_IndexBuffer, Flag_StagingBuffer, Flag_StorageBuffer},
-              "[ONYX] A buffer may only have one purpose");
-#endif
     m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
     m_AllocationInfo.requiredFlags = 0;
     m_AllocationInfo.preferredFlags = 0;
     m_AllocationInfo.flags = 0;
-    if ((p_Flags & Flag_Mapped) || (p_Flags & Flag_RandomAccess))
+    if ((p_Flags & Flag_HostMapped) || (p_Flags & Flag_HostRandomAccess))
         p_Flags |= Flag_HostVisible;
 
     if (p_Flags & Flag_StagingBuffer)
@@ -51,18 +34,22 @@ Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocato
     if (p_Flags & Flag_HostVisible)
     {
         m_AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-        if (p_Flags & Flag_RandomAccess)
+        if (p_Flags & Flag_HostRandomAccess)
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         else
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-        if (p_Flags & Flag_Mapped)
+        if (p_Flags & Flag_HostMapped)
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_MAPPED_BIT;
     }
+    if (p_Flags & Flag_Source)
+        m_Usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    if (p_Flags & Flag_Destination)
+        m_Usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
     if (p_Flags & Flag_VertexBuffer)
         m_Usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    else if (p_Flags & Flag_IndexBuffer)
+    if (p_Flags & Flag_IndexBuffer)
         m_Usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-    else if (p_Flags & Flag_StorageBuffer)
+    if (p_Flags & Flag_StorageBuffer)
         m_Usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     m_Flags = p_Flags;
 }
@@ -247,7 +234,7 @@ Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, cons
 {
     const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (m_Info.Size - p_Info.DstOffset) : p_Info.Size;
 
-    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Flag_Mapped | Flag_StagingBuffer).SetSize(size).Build();
+    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Flag_HostMapped | Flag_StagingBuffer).SetSize(size).Build();
     if (!bres)
         return Result<>::Error(bres.GetError());
 
