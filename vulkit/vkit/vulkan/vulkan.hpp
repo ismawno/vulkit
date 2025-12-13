@@ -223,6 +223,9 @@ template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result)
  *
  * Allows users to enqueue resource cleanup operations, which can be flushed
  * in bulk to ensure proper resource management.
+ *
+ * Important: Submitted objects are not allowed to be destroyed manually. They must be alive until the queue is flushed,
+ * and once it is, dangling handles are completely unusable/reusable unless completely overwritten.
  */
 class VKIT_API DeletionQueue
 {
@@ -232,7 +235,7 @@ class VKIT_API DeletionQueue
 
     template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object)
     {
-        p_Object.SubmitForDeletion(*this);
+        Push([=]() { p_Object.Destroy(); });
     }
 
   private:

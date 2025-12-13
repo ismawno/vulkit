@@ -126,17 +126,12 @@ Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TK
 
 void GraphicsPipeline::Destroy()
 {
-    TKIT_ASSERT(m_Pipeline, "[VULKIT] The graphics pipeline is a NULL handle");
-    m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
-    m_Pipeline = VK_NULL_HANDLE;
+    if (m_Pipeline)
+    {
+        m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
+        m_Pipeline = VK_NULL_HANDLE;
+    }
 }
-void GraphicsPipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkPipeline pipeline = m_Pipeline;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
-}
-
 void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
 {
     m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);

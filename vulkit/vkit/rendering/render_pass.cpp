@@ -80,43 +80,25 @@ Result<RenderPass> RenderPass::Builder::Build() const
     return Result<RenderPass>::Ok(proxy, renderPass, info);
 }
 
-void RenderPass::destroy() const
-{
-    TKIT_ASSERT(m_RenderPass, "[VULKIT] Render pass is already destroyed");
-    m_Device.Table->DestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
-}
-
 void RenderPass::Destroy()
 {
-    destroy();
-    m_RenderPass = VK_NULL_HANDLE;
+    if (m_RenderPass)
+    {
+        m_Device.Table->DestroyRenderPass(m_Device, m_RenderPass, m_Device.AllocationCallbacks);
+        m_RenderPass = VK_NULL_HANDLE;
+    }
 }
-void RenderPass::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const RenderPass renderPass = *this;
-    p_Queue.Push([renderPass] { renderPass.destroy(); });
-}
-
-void RenderPass::Resources::destroy() const
+void RenderPass::Resources::Destroy()
 {
     for (Image image : m_Images)
         image.Destroy();
 
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
         m_Device.Table->DestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
-}
-void RenderPass::Resources::Destroy()
-{
-    destroy();
+
     m_Images.Clear();
     m_FrameBuffers.Clear();
 }
-void RenderPass::Resources::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const Resources resources = *this;
-    p_Queue.Push([resources] { resources.destroy(); });
-}
-
 RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const Image::Flags p_Flags)
 {
     return m_Attachments.Append(this, p_Flags);

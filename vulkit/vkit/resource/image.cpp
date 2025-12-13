@@ -51,6 +51,19 @@ Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator
                      p_Format, p_Flags)
 {
 }
+
+static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, const VkImageViewType p_Type,
+                                                        const VkImageSubresourceRange &p_Range)
+{
+    VkImageViewCreateInfo info;
+    info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    info.image = p_Image;
+    info.viewType = p_Type;
+    info.format = VK_FORMAT_UNDEFINED;
+    info.subresourceRange = p_Range;
+    return info;
+}
+
 Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
                         const VkExtent3D &p_Extent, const VkFormat p_Format, const Flags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
@@ -76,15 +89,11 @@ Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator
     if (p_Flags & Flag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
-    m_ViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    m_ViewInfo.image = VK_NULL_HANDLE;
-    m_ViewInfo.viewType = getImageViewType(m_ImageInfo.imageType);
-    m_ViewInfo.format = VK_FORMAT_UNDEFINED;
-    m_ViewInfo.subresourceRange = createRange(m_ImageInfo, p_Flags);
+    m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
+                                            createRange(m_ImageInfo, p_Flags));
 }
 
-Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent, const VkImageView p_ImageView,
-                                 const Flags p_Flags)
+Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent, const Flags p_Flags)
 {
     Info info;
     info.Allocation = VK_NULL_HANDLE;
@@ -93,7 +102,6 @@ Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Ex
     info.Height = p_Extent.height;
     info.Depth = 1;
     info.Format = p_Format;
-    info.ImageView = p_ImageView;
     info.Flags = p_Flags;
     return info;
 }
@@ -110,33 +118,39 @@ Result<Image> Image::Builder::Build() const
     VkImage image;
     VmaAllocation allocation;
 
-    VkResult result = vmaCreateImage(m_Allocator, &m_ImageInfo, &allocInfo, &image, &allocation, nullptr);
+    const VkResult result = vmaCreateImage(m_Allocator, &m_ImageInfo, &allocInfo, &image, &allocation, nullptr);
     if (result != VK_SUCCESS)
         return Result<Image>::Error(result, "Failed to create image");
 
     Info info;
     info.Allocator = m_Allocator;
     info.Allocation = allocation;
-    info.ImageView = VK_NULL_HANDLE;
     info.Format = m_ImageInfo.format;
     info.Width = m_ImageInfo.extent.width;
     info.Height = m_ImageInfo.extent.height;
     info.Depth = m_ImageInfo.extent.depth;
     info.Flags = m_Flags;
 
+    Image img{m_Device, image, m_ImageInfo.initialLayout, info};
     if (m_ViewInfo.format == VK_FORMAT_UNDEFINED)
-        return Result<Image>::Ok(m_Device, image, m_ImageInfo.initialLayout, info);
+        return Result<Image>::Ok(img);
 
     VkImageViewCreateInfo vinfo = m_ViewInfo;
     vinfo.image = image;
+    const auto vres = img.CreateImageView(vinfo);
+    if (!vres)
+        return Result<Image>::Error(vres.GetError());
 
-    result = m_Device.Table->CreateImageView(m_Device, &vinfo, m_Device.AllocationCallbacks, &info.ImageView);
+    return Result<Image>::Ok(img);
+}
+
+Result<VkImageView> Image::CreateImageView(const VkImageViewCreateInfo &p_Info)
+{
+    VkImageView view;
+    const VkResult result = m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &view);
     if (result != VK_SUCCESS)
-    {
-        vmaDestroyImage(m_Allocator, image, allocation);
-        return Result<Image>::Error(result, "Failed to create image view");
-    }
-    return Result<Image>::Ok(m_Device, image, m_ImageInfo.initialLayout, info);
+        return Result<VkImageView>::Error(result, "Failed to create image view");
+    return Result<VkImageView>::Ok(view);
 }
 
 void Image::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,
@@ -418,32 +432,20 @@ VkDeviceSize Image::GetSize(const u32 p_BufferRowLength, const u32 p_BufferImage
     return m_Info.Width * ppixel + (m_Info.Height - 1) * rowStride + (m_Info.Depth - 1) * sliceStride;
 }
 
-void Image::destroy() const
-{
-    if (m_Info.Allocation)
-        vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
-    if (m_Info.ImageView)
-        m_Device.Table->DestroyImageView(m_Device, m_Info.ImageView, m_Device.AllocationCallbacks);
-}
 void Image::Destroy()
 {
-    destroy();
-    m_Image = VK_NULL_HANDLE;
+    DestroyImageView();
+    if (m_Image && m_Info.Allocation)
+        vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
     m_Info = {};
     m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 }
 void Image::DestroyImageView()
 {
-    if (m_Info.ImageView)
-        m_Device.Table->DestroyImageView(m_Device, m_Info.ImageView, m_Device.AllocationCallbacks);
-    m_Info.ImageView = VK_NULL_HANDLE;
+    if (m_ImageView)
+        m_Device.Table->DestroyImageView(m_Device, m_ImageView, m_Device.AllocationCallbacks);
+    m_ImageView = VK_NULL_HANDLE;
 }
-void Image::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const Image image = *this;
-    p_Queue.Push([=]() { image.destroy(); });
-}
-
 Image::Builder &Image::Builder::SetImageType(const VkImageType p_Type)
 {
     m_ImageInfo.imageType = p_Type;
@@ -511,19 +513,19 @@ Image::Builder &Image::Builder::SetImageCreateInfo(const VkImageCreateInfo &p_In
     return *this;
 }
 
-Image::Builder &Image::Builder::CreateImageView()
+Image::Builder &Image::Builder::WithImageView()
 {
     m_ViewInfo.format = m_ImageInfo.format;
     return *this;
 }
-Image::Builder &Image::Builder::CreateImageView(const VkImageViewCreateInfo &p_Info)
+Image::Builder &Image::Builder::WithImageView(const VkImageViewCreateInfo &p_Info)
 {
     TKIT_ASSERT(!p_Info.image, "[ONYX] The image must be set to null when passing a image view create info because it "
                                "will be replaced with the newly created image");
     m_ViewInfo = p_Info;
     return *this;
 }
-Image::Builder &Image::Builder::CreateImageView(const VkImageSubresourceRange &p_Range)
+Image::Builder &Image::Builder::WithImageView(const VkImageSubresourceRange &p_Range)
 {
     m_ViewInfo.format = m_ImageInfo.format;
     m_ViewInfo.subresourceRange = p_Range;

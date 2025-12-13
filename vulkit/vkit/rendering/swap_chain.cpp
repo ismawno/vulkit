@@ -187,6 +187,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     for (u32 i = 0; i < imageCount; ++i)
     {
         Image::Info iminfo = Image::FromSwapChain(surfaceFormat.format, extent);
+        VkImageView view = VK_NULL_HANDLE;
         if (checkFlags(Flag_CreateImageViews))
         {
             VkImageViewCreateInfo viewInfo{};
@@ -204,41 +205,32 @@ Result<SwapChain> SwapChain::Builder::Build() const
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            result = proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &iminfo.ImageView);
+            result = proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &view);
             if (result != VK_SUCCESS)
             {
                 earlyDestroy();
                 return Result<SwapChain>::Error(result, "Failed to create the image view");
             }
         }
-        finalImages[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
+        finalImages[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};
     }
 
     return Result<SwapChain>::Ok(proxy, swapChain, finalImages, info);
 }
 
-void SwapChain::destroy() const
-{
-    TKIT_ASSERT(m_SwapChain, "[VULKIT] The swap chain is a NULL handle");
-
-    if (m_Info.Flags & Flag_HasImageViews)
-        for (Image image : m_Images)
-            image.DestroyImageView();
-
-    m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
-}
-
 void SwapChain::Destroy()
 {
-    destroy();
-    m_SwapChain = VK_NULL_HANDLE;
-}
-void SwapChain::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const SwapChain swapChain = *this;
-    p_Queue.Push([swapChain] { swapChain.destroy(); }); // That is stupid...
-}
+    for (Image image : m_Images)
+        image.DestroyImageView();
 
+    m_Images.Clear();
+
+    if (m_SwapChain)
+    {
+        m_Device.Table->DestroySwapchainKHR(m_Device, m_SwapChain, m_Device.AllocationCallbacks);
+        m_SwapChain = VK_NULL_HANDLE;
+    }
+}
 SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format)
 {
     m_SurfaceFormats.Insert(m_SurfaceFormats.begin(), p_Format);

@@ -143,7 +143,6 @@ class VKIT_API SwapChain
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     const LogicalDevice::Proxy &GetDevice() const
     {
@@ -181,8 +180,6 @@ class VKIT_API SwapChain
     }
 
   private:
-    void destroy() const;
-
     LogicalDevice::Proxy m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
     TKit::StaticArray8<Image> m_Images;

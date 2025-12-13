@@ -72,7 +72,6 @@ class VKIT_API PipelineLayout
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     const Info &GetInfo() const
     {

@@ -56,9 +56,9 @@ class Image
         Builder &SetUsage(VkImageUsageFlags p_Flags);
         Builder &SetImageCreateInfo(const VkImageCreateInfo &p_Info);
 
-        Builder &CreateImageView();
-        Builder &CreateImageView(const VkImageViewCreateInfo &p_Info);
-        Builder &CreateImageView(const VkImageSubresourceRange &p_Range);
+        Builder &WithImageView();
+        Builder &WithImageView(const VkImageViewCreateInfo &p_Info);
+        Builder &WithImageView(const VkImageSubresourceRange &p_Range);
 
       private:
         LogicalDevice::Proxy m_Device;
@@ -81,7 +81,6 @@ class Image
     {
         VmaAllocator Allocator;
         VmaAllocation Allocation;
-        VkImageView ImageView;
         VkFormat Format;
         u32 Width;
         u32 Height;
@@ -101,14 +100,18 @@ class Image
         VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
     };
 
-    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent, VkImageView p_ImageView = VK_NULL_HANDLE,
-                              Flags p_Flags = Flag_ColorAttachment);
+    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent, Flags p_Flags = Flag_ColorAttachment);
 
     Image() = default;
-    Image(const LogicalDevice::Proxy &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info)
-        : m_Device(p_Device), m_Image(p_Image), m_Layout(p_Layout), m_Info(p_Info)
+    Image(const LogicalDevice::Proxy &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
+          const VkImageView p_ImageView = VK_NULL_HANDLE)
+        : m_Device(p_Device), m_Image(p_Image), m_ImageView(p_ImageView), m_Layout(p_Layout), m_Info(p_Info)
     {
     }
+
+    Result<VkImageView> CreateImageView();
+    Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &p_Info);
+    Result<VkImageView> CreateImageView(const VkImageSubresourceRange &p_Range);
 
     void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
 
@@ -188,7 +191,6 @@ class Image
 
     void Destroy();
     void DestroyImageView();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     operator VkImage() const
     {
@@ -207,6 +209,10 @@ class Image
     {
         return m_Image;
     }
+    VkImageView GetImageView() const
+    {
+        return m_ImageView;
+    }
     VkImageLayout GetLayout() const
     {
         return m_Layout;
@@ -217,10 +223,9 @@ class Image
     }
 
   private:
-    void destroy() const;
-
     LogicalDevice::Proxy m_Device{};
     VkImage m_Image = VK_NULL_HANDLE;
+    VkImageView m_ImageView = VK_NULL_HANDLE;
     VkImageLayout m_Layout;
     Info m_Info;
 };

@@ -168,7 +168,6 @@ class VKIT_API Instance
     bool IsLayerEnabled(const char *p_Layer) const;
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     VkInstance GetHandle() const
     {

@@ -67,7 +67,6 @@ class VKIT_API Shader
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     const LogicalDevice::Proxy &GetDevice() const
     {

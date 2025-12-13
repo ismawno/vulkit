@@ -203,15 +203,13 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
     return FormattedResult<LogicalDevice>::Ok(device, info);
 }
 
-static void destroy(const LogicalDevice::Proxy &p_Device)
-{
-    p_Device.Table->DestroyDevice(p_Device, p_Device.AllocationCallbacks);
-}
-
 void LogicalDevice::Destroy()
 {
-    destroy(CreateProxy());
-    m_Device = VK_NULL_HANDLE;
+    if (m_Device)
+    {
+        m_Info.Table.DestroyDevice(m_Device, m_Info.Instance.GetInfo().AllocationCallbacks);
+        m_Device = VK_NULL_HANDLE;
+    }
 }
 
 Result<> LogicalDevice::WaitIdle(const Proxy &p_Device)
@@ -224,12 +222,6 @@ Result<> LogicalDevice::WaitIdle(const Proxy &p_Device)
 Result<> LogicalDevice::WaitIdle() const
 {
     return WaitIdle(*this);
-}
-
-void LogicalDevice::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const Proxy proxy = CreateProxy();
-    p_Queue.Push([proxy] { destroy(proxy); });
 }
 
 #ifdef VK_KHR_surface

@@ -69,7 +69,6 @@ class VKIT_API DescriptorSetLayout
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const
     {

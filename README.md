@@ -61,7 +61,7 @@ const VKit::Instance &instance = result.GetValue();
 // Rest of the code...
 ```
 
-The result object returned encapsulates a `VKit::Instance` object, which contains a `VkInstance` handle. Almost all Vulkit objects, including `VKit::Instance`, are simple, trivially copyable POD classes. This design means resource cleanup is entirely the user's responsibility. However, Vulkit minimizes the effort required by providing `Destroy()` and `SubmitForDeletion()` methods for all classes that manage Vulkan resources. Additionally, a `DeletionQueue` class is available for use with the `SubmitForDeletion()` method to streamline cleanup.
+The result object returned encapsulates a `VKit::Instance` object, which contains a `VkInstance` handle. Almost all Vulkit objects, including `VKit::Instance`, are simple, trivially copyable POD classes. This design means resource cleanup is entirely the user's responsibility. However, Vulkit minimizes the effort required by providing `Destroy()` methods for all classes that manage Vulkan resources. Additionally, a `DeletionQueue` class is available for use with the `SubmitForDeletion()` method to streamline cleanup that automatically picks up the `Destroy()` method of objects.
 
 You can create a headless Vulkan instance by calling `SetHeadless(true)` on the builder, which will exclude the necessary extensions for presentation.
 

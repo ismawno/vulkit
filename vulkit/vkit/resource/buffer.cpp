@@ -132,16 +132,11 @@ Buffer::Builder &Buffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceS
 
 void Buffer::Destroy()
 {
-    vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
-    m_Buffer = VK_NULL_HANDLE;
-}
-
-void Buffer::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VmaAllocator allocator = m_Info.Allocator;
-    const VkBuffer buffer = m_Buffer;
-    const VmaAllocation allocation = m_Info.Allocation;
-    p_Queue.Push([=] { vmaDestroyBuffer(allocator, buffer, allocation); });
+    if (m_Buffer)
+    {
+        vmaDestroyBuffer(m_Info.Allocator, m_Buffer, m_Info.Allocation);
+        m_Buffer = VK_NULL_HANDLE;
+    }
 }
 
 Result<> Buffer::Map()

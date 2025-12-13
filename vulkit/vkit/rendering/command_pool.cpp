@@ -31,17 +31,11 @@ Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, co
 
 void CommandPool::Destroy()
 {
-    TKIT_ASSERT(m_Pool, "[VULKIT] The command pool is a NULL handle");
-    m_Device.Table->DestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
-    m_Pool = VK_NULL_HANDLE;
-}
-
-void CommandPool::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const LogicalDevice::Proxy device = m_Device;
-    const VkCommandPool pool = m_Pool;
-    const VkAllocationCallbacks *alloc = m_Device.AllocationCallbacks;
-    p_Queue.Push([=] { device.Table->DestroyCommandPool(device, pool, alloc); });
+    if (m_Pool)
+    {
+        m_Device.Table->DestroyCommandPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
+        m_Pool = VK_NULL_HANDLE;
+    }
 }
 
 Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffers,

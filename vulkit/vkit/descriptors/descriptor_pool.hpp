@@ -71,7 +71,6 @@ class VKIT_API DescriptorPool
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     const Info &GetInfo() const
     {

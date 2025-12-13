@@ -313,27 +313,19 @@ bool Instance::IsLayerEnabled(const char *p_Layer) const
     return contains(m_Info.EnabledLayers, p_Layer);
 }
 
-static void destroy(const VkInstance p_Instance, const Instance::Info &p_Info)
-{
-    TKIT_ASSERT(p_Instance, "[VULKIT] The vulkan instance is null, which probably means it has already been destroyed");
-
-    if ((p_Info.Flags & Instance::Flag_HasValidationLayers) && p_Info.DebugMessenger)
-        p_Info.Table.DestroyDebugUtilsMessengerEXT(p_Instance, p_Info.DebugMessenger, p_Info.AllocationCallbacks);
-
-    p_Info.Table.DestroyInstance(p_Instance, p_Info.AllocationCallbacks);
-}
-
 void Instance::Destroy()
 {
-    destroy(m_Instance, m_Info);
-    m_Instance = VK_NULL_HANDLE;
-}
+    if (!m_Instance)
+        return;
 
-void Instance::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkInstance instance = m_Instance;
-    const Info info = m_Info;
-    p_Queue.Push([=] { destroy(instance, info); });
+    if ((m_Info.Flags & Instance::Flag_HasValidationLayers) && m_Info.DebugMessenger)
+    {
+        m_Info.Table.DestroyDebugUtilsMessengerEXT(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
+        m_Info.DebugMessenger = VK_NULL_HANDLE;
+    }
+
+    m_Info.Table.DestroyInstance(m_Instance, m_Info.AllocationCallbacks);
+    m_Instance = VK_NULL_HANDLE;
 }
 
 Instance::Proxy Instance::CreateProxy() const

@@ -240,7 +240,6 @@ class VKIT_API GraphicsPipeline
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Binds the graphics pipeline to a command buffer.

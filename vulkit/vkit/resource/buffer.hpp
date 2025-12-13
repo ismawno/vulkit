@@ -87,7 +87,6 @@ class VKIT_API Buffer
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     Result<> Map();
     void Unmap();

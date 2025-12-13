@@ -161,12 +161,11 @@ class VKIT_API RenderPass
     {
       public:
         void Destroy();
-        void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
         VkImageView GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
         {
             const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
-            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].GetInfo().ImageView;
+            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].GetImageView();
         }
         VkFramebuffer GetFrameBuffer(const u32 p_ImageIndex) const
         {
@@ -174,8 +173,6 @@ class VKIT_API RenderPass
         }
 
       private:
-        void destroy() const;
-
         LogicalDevice::Proxy m_Device;
         TKit::StaticArray128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
         TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
@@ -197,7 +194,6 @@ class VKIT_API RenderPass
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Creates resources for the render pass, including frame buffers and image data.
@@ -235,7 +231,7 @@ class VKIT_API RenderPass
 
                 const Image &imageData = imresult.GetValue();
                 resources.m_Images.Append(imageData);
-                attachments[j] = imageData.GetInfo().ImageView;
+                attachments[j] = imageData.GetImageView();
             }
             VkFramebufferCreateInfo frameBufferInfo{};
             frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -287,8 +283,6 @@ class VKIT_API RenderPass
     }
 
   private:
-    void destroy() const;
-
     LogicalDevice::Proxy m_Device{};
     VkRenderPass m_RenderPass = VK_NULL_HANDLE;
     Info m_Info;

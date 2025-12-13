@@ -42,7 +42,6 @@ class VKIT_API CommandPool
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Allocates a Vulkan command buffer from the pool.

@@ -75,16 +75,11 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
 
 void ComputePipeline::Destroy()
 {
-    TKIT_ASSERT(m_Pipeline, "[VULKIT] The compute pipeline is a NULL handle");
-    m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
-    m_Pipeline = VK_NULL_HANDLE;
-}
-
-void ComputePipeline::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkPipeline pipeline = m_Pipeline;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyPipeline(device, pipeline, device.AllocationCallbacks); });
+    if (m_Pipeline)
+    {
+        m_Device.Table->DestroyPipeline(m_Device, m_Pipeline, m_Device.AllocationCallbacks);
+        m_Pipeline = VK_NULL_HANDLE;
+    }
 }
 
 void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const

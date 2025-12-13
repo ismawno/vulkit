@@ -35,15 +35,11 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const
 
 void DescriptorPool::Destroy()
 {
-    TKIT_ASSERT(m_Pool, "[VULKIT] The descriptor pool is a NULL handle");
-    m_Device.Table->DestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
-    m_Pool = VK_NULL_HANDLE;
-}
-void DescriptorPool::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkDescriptorPool pool = m_Pool;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyDescriptorPool(device, pool, device.AllocationCallbacks); });
+    if (m_Pool)
+    {
+        m_Device.Table->DestroyDescriptorPool(m_Device, m_Pool, m_Device.AllocationCallbacks);
+        m_Pool = VK_NULL_HANDLE;
+    }
 }
 
 Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const

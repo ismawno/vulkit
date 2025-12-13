@@ -24,17 +24,12 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 
 void DescriptorSetLayout::Destroy()
 {
-    TKIT_ASSERT(m_Layout, "[VULKIT] The descriptor set layout is a NULL handle");
-    m_Device.Table->DestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
-    m_Layout = VK_NULL_HANDLE;
+    if (m_Layout)
+    {
+        m_Device.Table->DestroyDescriptorSetLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
+        m_Layout = VK_NULL_HANDLE;
+    }
 }
-void DescriptorSetLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkDescriptorSetLayout layout = m_Layout;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyDescriptorSetLayout(device, layout, device.AllocationCallbacks); });
-}
-
 DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,
                                                                        VkShaderStageFlags p_StageFlags, u32 p_Count)
 {

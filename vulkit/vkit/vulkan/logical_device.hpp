@@ -97,7 +97,6 @@ class VKIT_API LogicalDevice
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     VkDevice GetHandle() const
     {

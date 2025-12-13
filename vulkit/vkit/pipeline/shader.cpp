@@ -73,15 +73,10 @@ bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_
 
 void Shader::Destroy()
 {
-    TKIT_ASSERT(m_Module, "[VULKIT] The shader is a NULL handle");
-    m_Device.Table->DestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
-    m_Module = VK_NULL_HANDLE;
+    if (m_Module)
+    {
+        m_Device.Table->DestroyShaderModule(m_Device, m_Module, m_Device.AllocationCallbacks);
+        m_Module = VK_NULL_HANDLE;
+    }
 }
-void Shader::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkShaderModule module = m_Module;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyShaderModule(device, module, device.AllocationCallbacks); });
-}
-
 } // namespace VKit

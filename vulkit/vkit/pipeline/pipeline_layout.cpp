@@ -31,16 +31,11 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const
 
 void PipelineLayout::Destroy()
 {
-    TKIT_ASSERT(m_Layout, "[VULKIT] The pipeline layout is a NULL handle");
-    m_Device.Table->DestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
-    m_Layout = VK_NULL_HANDLE;
-}
-
-void PipelineLayout::SubmitForDeletion(DeletionQueue &p_Queue) const
-{
-    const VkPipelineLayout layout = m_Layout;
-    const LogicalDevice::Proxy device = m_Device;
-    p_Queue.Push([=] { device.Table->DestroyPipelineLayout(device, layout, device.AllocationCallbacks); });
+    if (m_Layout)
+    {
+        m_Device.Table->DestroyPipelineLayout(m_Device, m_Layout, m_Device.AllocationCallbacks);
+        m_Layout = VK_NULL_HANDLE;
+    }
 }
 
 PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout)
