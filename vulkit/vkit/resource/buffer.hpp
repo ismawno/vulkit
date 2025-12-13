@@ -212,7 +212,7 @@ class VKIT_API Buffer
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
                             const Offsets &p_Offsets = {})
     {
-        UploadFromHost(
+        return UploadFromHost(
             p_Pool, p_Queue, p_Data.GetData(),
             {.Size = p_Data.GetSize() * sizeof(T), .SrcOffset = p_Offsets.SrcOffset, .DstOffset = p_Offsets.DstOffset});
     }
