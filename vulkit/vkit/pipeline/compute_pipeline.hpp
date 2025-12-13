@@ -57,7 +57,6 @@ class VKIT_API ComputePipeline
     }
 
     void Destroy();
-    void SubmitForDeletion(DeletionQueue &p_Queue) const;
 
     /**
      * @brief Binds the compute pipeline to a command buffer.

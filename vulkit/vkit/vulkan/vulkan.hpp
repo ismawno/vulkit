@@ -235,7 +235,7 @@ class VKIT_API DeletionQueue
 
     template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object)
     {
-        Push([=]() { p_Object.Destroy(); });
+        Push([=]() mutable { p_Object.Destroy(); });
     }
 
   private:
