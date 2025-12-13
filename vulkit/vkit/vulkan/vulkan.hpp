@@ -233,7 +233,7 @@ class VKIT_API DeletionQueue
     void Push(std::function<void()> &&p_Deleter);
     void Flush();
 
-    template <typename VKitObject> void SubmitForDeletion(const VKitObject &p_Object)
+    template <typename VKitObject> void SubmitForDeletion(VKitObject p_Object)
     {
         Push([=]() mutable { p_Object.Destroy(); });
     }
