@@ -55,7 +55,7 @@ Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator
 static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, const VkImageViewType p_Type,
                                                         const VkImageSubresourceRange &p_Range)
 {
-    VkImageViewCreateInfo info;
+    VkImageViewCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     info.image = p_Image;
     info.viewType = p_Type;
