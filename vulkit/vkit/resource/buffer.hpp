@@ -32,11 +32,11 @@ class VKIT_API Buffer
         Flag_Source = 1 << 2,
         Flag_Destination = 1 << 3,
         Flag_StagingBuffer = 1 << 4,
-        Flag_VertexBuffer = 1 << 4,
-        Flag_IndexBuffer = 1 << 5,
-        Flag_StorageBuffer = 1 << 6,
-        Flag_Mapped = 1 << 7,
-        Flag_RandomAccess = 1 << 8,
+        Flag_VertexBuffer = 1 << 5,
+        Flag_IndexBuffer = 1 << 6,
+        Flag_StorageBuffer = 1 << 7,
+        Flag_Mapped = 1 << 8,
+        Flag_RandomAccess = 1 << 9,
     };
 
     class Builder
