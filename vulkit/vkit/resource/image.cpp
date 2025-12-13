@@ -47,13 +47,17 @@ static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, cons
 }
 Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
                         const VkExtent2D &p_Extent, const VkFormat p_Format, const Flags p_Flags)
+    : Image::Builder(p_Device, p_Allocator, VkExtent3D{.width = p_Extent.width, .height = p_Extent.height, .depth = 1},
+                     p_Format, p_Flags)
+{
+}
+Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
+                        const VkExtent3D &p_Extent, const VkFormat p_Format, const Flags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     m_ImageInfo.imageType = VK_IMAGE_TYPE_2D;
-    m_ImageInfo.extent.width = p_Extent.width;
-    m_ImageInfo.extent.height = p_Extent.height;
-    m_ImageInfo.extent.depth = 1;
+    m_ImageInfo.extent = p_Extent;
     m_ImageInfo.mipLevels = 1;
     m_ImageInfo.arrayLayers = 1;
     m_ImageInfo.format = p_Format;

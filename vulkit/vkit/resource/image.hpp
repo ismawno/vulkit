@@ -29,6 +29,8 @@ class Image
     class Builder
     {
       public:
+        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
+                VkFormat p_Format, Flags p_Flags = 0);
         Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
                 VkFormat p_Format, Flags p_Flags = 0);
 
