@@ -156,7 +156,8 @@ Result<VkImageView> Image::CreateImageView(const VkImageViewCreateInfo &p_Info)
 void Image::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,
                              const TransitionInfo &p_Info)
 {
-    TKIT_LOG_WARNING_IF(m_Layout == p_Layout, "[ONYX] Transitioning to a layout the image is already in");
+    if (m_Layout == p_Layout)
+        return;
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     barrier.oldLayout = m_Layout;
