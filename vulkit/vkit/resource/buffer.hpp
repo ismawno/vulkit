@@ -122,9 +122,9 @@ class VKIT_API Buffer
      */
     template <typename T> void Write(const TKit::Span<const T> p_Data, const Offsets &p_Offsets = {})
     {
-        Write(
-            p_Data.GetData(),
-            {.Size = p_Data.GetSize() * sizeof(T), .SrcOffset = p_Offsets.SrcOffset, .DstOffset = p_Offsets.DstOffset});
+        Write(p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T),
+                                 .SrcOffset = p_Offsets.SrcOffset * sizeof(T),
+                                 .DstOffset = p_Offsets.DstOffset * sizeof(T)});
     }
 
     /**
@@ -212,9 +212,10 @@ class VKIT_API Buffer
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
                             const Offsets &p_Offsets = {})
     {
-        return UploadFromHost(
-            p_Pool, p_Queue, p_Data.GetData(),
-            {.Size = p_Data.GetSize() * sizeof(T), .SrcOffset = p_Offsets.SrcOffset, .DstOffset = p_Offsets.DstOffset});
+        return UploadFromHost(p_Pool, p_Queue, p_Data.GetData(),
+                              {.Size = p_Data.GetSize() * sizeof(T),
+                               .SrcOffset = p_Offsets.SrcOffset * sizeof(T),
+                               .DstOffset = p_Offsets.DstOffset * sizeof(T)});
     }
 
     void *GetData() const
