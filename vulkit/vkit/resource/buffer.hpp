@@ -120,7 +120,7 @@ class VKIT_API Buffer
      * @param p_Data A pointer to the data to write.
      * @param p_Offsets Write offsets.
      */
-    template <typename T> void Write(const TKit::Span<const T> p_Data, const Offsets &p_Offsets)
+    template <typename T> void Write(const TKit::Span<const T> p_Data, const Offsets &p_Offsets = {})
     {
         Write(
             p_Data.GetData(),
@@ -210,7 +210,7 @@ class VKIT_API Buffer
      */
     template <typename T>
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
-                            const Offsets &p_Offsets)
+                            const Offsets &p_Offsets = {})
     {
         UploadFromHost(
             p_Pool, p_Queue, p_Data.GetData(),
