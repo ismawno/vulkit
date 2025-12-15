@@ -167,7 +167,21 @@ find_package(Vulkan QUIET)
 
 if(NOT VULKAN_FOUND)
   message(STATUS "VULKIT - Vulkan not found. Fetching headers...")
-  set(VULKAN_SDK_VERSION 1.4.321.0)
+  set(VULKAN_SDK_VERSION 1.4.328.0)
+
+  string(REPLACE "." ";" _vk_ver_list "${VULKAN_SDK_VERSION}")
+  list(GET _vk_ver_list 1 VK_VER_MINOR)
+
+  if(VK_VER_MINOR EQUAL 4)
+    set(SHADERC_VERSION v2025.3)
+
+  elseif(VK_VER_MINOR EQUAL 3)
+    set(SHADERC_VERSION v2024.1)
+
+  else()
+    message(FATAL_ERROR "Unsupported Vulkan SDK version: ${VULKAN_SDK_VERSION}")
+  endif()
+
   FetchContent_Declare(
     VulkanHeaders
     GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
@@ -259,7 +273,7 @@ if(NOT GLSLC_EXECUTABLE)
   FetchContent_Declare(
     shaderc
     GIT_REPOSITORY https://github.com/google/shaderc.git
-    GIT_TAG v2025.3
+    GIT_TAG ${SHADERC_VERSION}
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE)
 
