@@ -48,7 +48,7 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
         const u32 requestedCount = priorities.RequestedPriorities.GetSize();
         if (requiredCount > family.queueCount)
             return FormattedResult<LogicalDevice>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_NOT_PERMITTED,
+                VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
                                   "The required queue count for the family index {} exceeds its queue count. {} > {}",
                                   index, requiredCount, family.queueCount));
 
@@ -276,7 +276,7 @@ Result<VkQueue> LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_Que
         found |= known;
         if (known && p_QueueIndex >= m_Info.QueueCounts[i])
             return Result<VkQueue>::Error(
-                VK_ERROR_NOT_PERMITTED,
+                VK_ERROR_FEATURE_NOT_PRESENT,
                 "Failed to retrieve queue. Index exceeds queue count for the given family index. "
                 "Try to request more queues of this family when creating the logical device");
     }
