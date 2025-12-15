@@ -209,6 +209,13 @@ if(NOT GLSLC_EXECUTABLE)
     GIT_PROGRESS TRUE)
   FetchContent_MakeAvailable(spirv-headers)
 
+  set(SPIRV_HEADERS_ENABLE_TESTS
+      OFF
+      CACHE BOOL "" FORCE)
+  set(SPIRV_HEADERS_ENABLE_INSTALL
+      OFF
+      CACHE BOOL "" FORCE)
+
   FetchContent_Declare(
     spirv-tools
     GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
@@ -230,6 +237,7 @@ if(NOT GLSLC_EXECUTABLE)
       CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(spirv-tools)
+  tkit_configure_compile_link_options(SPIRV-Tools-static NO_EXCEPTIONS)
 
   FetchContent_Declare(
     glslang
@@ -238,10 +246,29 @@ if(NOT GLSLC_EXECUTABLE)
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE)
 
-  set(SKIP_GLSLANG_INSTALL
+  set(GLSLANG_ENABLE_INSTALL
+      OFF
+      CACHE BOOL "" FORCE)
+  set(GLSLANG_TESTS
+      OFF
+      CACHE BOOL "" FORCE)
+  set(ENABLE_SPIRV
       ON
       CACHE BOOL "" FORCE)
+  set(ENABLE_HLSL
+      ON
+      CACHE BOOL "" FORCE)
+  set(ENABLE_PRVREMAPPER
+      OFF
+      CACHE BOOL "" FORCE)
+  set(ENABLE_GLSLANG_BINARIES
+      OFF
+      CACHE BOOL "" FORCE)
+  set(ENABLE_GLSLANG_JS
+      OFF
+      CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(glslang)
+  tkit_configure_compile_link_options(glslang NO_EXCEPTIONS)
 
   FetchContent_Declare(
     shaderc
@@ -256,18 +283,19 @@ if(NOT GLSLC_EXECUTABLE)
   set(SHADERC_SKIP_INSTALL
       ON
       CACHE BOOL "" FORCE)
-  set(SHADERC_ENABLE_SHARED_CRT
-      OFF
-      CACHE BOOL "" FORCE)
-  set(SHADERC_ENABLE_SPIRV_TOOLS_INSTALL
-      ON
-      CACHE BOOL "" FORCE)
   set(SHADERC_SKIP_EXAMPLES
       ON
       CACHE BOOL "" FORCE)
+  set(SHADERC_SKIP_EXECUTABLES
+      OFF
+      CACHE BOOL "" FORCE)
+  set(SHADERC_ENABLE_SHARED_CRT
+      OFF
+      CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(shaderc)
+  tkit_configure_compile_link_options(glslc_exe NO_EXCEPTIONS)
 
-  set(GLSLC_EXECUTABLE ${shaderc_BINARY_DIR}/glslc)
+  set(GLSLC_EXECUTABLE $<TARGET_FILE:glslc_exe>)
 else()
   message(STATUS "VULKIT - GLSLC executable found")
 endif()
