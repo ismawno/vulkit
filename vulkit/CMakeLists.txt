@@ -242,6 +242,9 @@ if(NOT GLSLC_EXECUTABLE)
 
   FetchContent_MakeAvailable(spirv-tools)
   tkit_configure_compile_link_options(SPIRV-Tools-static NO_EXCEPTIONS)
+  if(MSVC)
+    target_compile_options(SPIRV-Tools-opt PRIVATE /Zc:__cplusplus)
+  endif()
 
   FetchContent_Declare(
     glslang
