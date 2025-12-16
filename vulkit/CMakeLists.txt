@@ -290,7 +290,7 @@ if(NOT GLSLC_EXECUTABLE)
       OFF
       CACHE BOOL "" FORCE)
   set(SHADERC_ENABLE_SHARED_CRT
-      OFF
+      ON
       CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(shaderc)
   tkit_configure_compile_link_options(glslc_exe NO_EXCEPTIONS NO_RTTI)
