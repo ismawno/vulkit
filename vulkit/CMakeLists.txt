@@ -237,7 +237,7 @@ if(NOT GLSLC_EXECUTABLE)
       ON
       CACHE BOOL "" FORCE)
   set(SPIRV_WERROR
-      FALSE
+      OFF
       CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(spirv-tools)
