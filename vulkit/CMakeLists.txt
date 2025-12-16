@@ -207,7 +207,6 @@ if(NOT GLSLC_EXECUTABLE)
     GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE)
-  FetchContent_MakeAvailable(spirv-headers)
 
   set(SPIRV_HEADERS_ENABLE_TESTS
       OFF
@@ -215,6 +214,8 @@ if(NOT GLSLC_EXECUTABLE)
   set(SPIRV_HEADERS_ENABLE_INSTALL
       OFF
       CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(spirv-headers)
 
   FetchContent_Declare(
     spirv-tools
@@ -234,6 +235,9 @@ if(NOT GLSLC_EXECUTABLE)
       CACHE BOOL "" FORCE)
   set(SKIP_SPIRV_TOOLS_INSTALL
       ON
+      CACHE BOOL "" FORCE)
+  set(SPIRV_WERROR
+      FALSE
       CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(spirv-tools)
