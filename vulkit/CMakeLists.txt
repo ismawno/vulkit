@@ -237,7 +237,7 @@ if(NOT GLSLC_EXECUTABLE)
       CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(spirv-tools)
-  tkit_configure_compile_link_options(SPIRV-Tools-static NO_EXCEPTIONS)
+  tkit_configure_compile_link_options(SPIRV-Tools-static NO_EXCEPTIONS NO_RTTI)
 
   FetchContent_Declare(
     glslang
@@ -268,7 +268,7 @@ if(NOT GLSLC_EXECUTABLE)
       OFF
       CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(glslang)
-  tkit_configure_compile_link_options(glslang NO_EXCEPTIONS)
+  tkit_configure_compile_link_options(glslang NO_EXCEPTIONS NO_RTTI)
 
   FetchContent_Declare(
     shaderc
@@ -293,7 +293,7 @@ if(NOT GLSLC_EXECUTABLE)
       OFF
       CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(shaderc)
-  tkit_configure_compile_link_options(glslc_exe NO_EXCEPTIONS)
+  tkit_configure_compile_link_options(glslc_exe NO_EXCEPTIONS NO_RTTI)
 
   set(GLSLC_EXECUTABLE $<TARGET_FILE:glslc_exe>)
 else()
