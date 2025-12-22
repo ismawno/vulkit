@@ -210,8 +210,7 @@ Result<> Buffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image
                                const BufferImageCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
-    if (!cres)
-        return Result<>::Error(cres.GetError());
+    TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
     CopyFromImage(cmd, p_Source, p_Info);
@@ -221,8 +220,7 @@ Result<> Buffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image
 Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
-    if (!cres)
-        return Result<>::Error(cres.GetError());
+    TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
     CopyFromBuffer(cmd, p_Source, p_Info);
@@ -235,8 +233,7 @@ Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, cons
     const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (m_Info.Size - p_Info.DstOffset) : p_Info.Size;
 
     auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Flag_HostMapped | Flag_StagingBuffer).SetSize(size).Build();
-    if (!bres)
-        return Result<>::Error(bres.GetError());
+    TKIT_RETURN_ON_ERROR(bres);
 
     Buffer &staging = bres.GetValue();
     staging.Write(p_Data, {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = 0});

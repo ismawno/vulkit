@@ -99,7 +99,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     if (result != VK_SUCCESS)
         return Result<VmaAllocator>::Error(result, "Failed to create VMA allocator");
 
-    return Result<VmaAllocator>::Ok(allocator);
+    return allocator;
 }
 void DestroyAllocator(const VmaAllocator p_Allocator)
 {

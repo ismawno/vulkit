@@ -139,7 +139,7 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
     if (result != VK_SUCCESS)
         return Res::Error(result, "Failed to get the present modes");
 
-    return Res::Ok(details);
+    return details;
 }
 #endif
 
@@ -163,7 +163,7 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const
 {
     const auto result = Enumerate();
     if (!result)
-        return FormattedResult<PhysicalDevice>::Error(result.GetError().ErrorCode, result.GetError().Message);
+        return ToFormatted(result);
 
     const auto &devices = result.GetValue();
     return devices[0];
@@ -676,7 +676,7 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     std::stable_partition(devices.begin(), devices.end(), [](const FormattedResult<PhysicalDevice> &p_Device) {
         return p_Device && (p_Device.GetValue().GetInfo().Flags & PhysicalDevice::Flag_Optimal);
     });
-    return EnumerateResult::Ok(devices);
+    return devices;
 }
 
 bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const

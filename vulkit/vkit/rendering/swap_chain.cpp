@@ -21,7 +21,7 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
     for (const VkPresentModeKHR &desired : p_Requested)
         for (const VkPresentModeKHR &supported : p_Supported)
             if (desired == supported)
-                return Result<VkPresentModeKHR>::Ok(desired);
+                return desired;
     return Result<VkPresentModeKHR>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED,
                                            "No desired present mode that is supported found");
 }
@@ -54,8 +54,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     }
 
     const auto suppResult = m_Device->QuerySwapChainSupport(m_Surface);
-    if (!suppResult)
-        return Result<SwapChain>::Error(suppResult.GetError());
+    TKIT_RETURN_ON_ERROR(suppResult);
 
     const PhysicalDevice::SwapChainSupportDetails &support = suppResult.GetValue();
 
@@ -90,12 +89,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
     }
 
     const auto surfFormatResult = selectFormat(imageFormats, support.Formats);
-    if (!surfFormatResult)
-        return Result<SwapChain>::Error(surfFormatResult.GetError());
+    TKIT_RETURN_ON_ERROR(surfFormatResult);
 
     const auto presentModeResult = selectPresentMode(presentModes, support.PresentModes);
-    if (!presentModeResult)
-        return Result<SwapChain>::Error(presentModeResult.GetError());
+    TKIT_RETURN_ON_ERROR(presentModeResult);
 
     const VkSurfaceFormatKHR surfaceFormat = surfFormatResult.GetValue();
     const VkPresentModeKHR presentMode = presentModeResult.GetValue();

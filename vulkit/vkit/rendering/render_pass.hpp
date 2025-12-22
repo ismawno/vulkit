@@ -226,7 +226,7 @@ class VKIT_API RenderPass
                 if (!imresult)
                 {
                     resources.Destroy();
-                    return Result<Resources>::Error(imresult.GetError());
+                    return imresult;
                 }
 
                 const Image &imageData = imresult.GetValue();
@@ -254,7 +254,7 @@ class VKIT_API RenderPass
             resources.m_FrameBuffers.Append(frameBuffer);
         }
 
-        return Result<Resources>::Ok(resources);
+        return resources;
     }
 
     const Attachment &GetAttachment(const u32 p_AttachmentIndex) const

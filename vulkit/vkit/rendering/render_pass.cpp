@@ -39,8 +39,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
             flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
         const auto result = m_Device->FindSupportedFormat(formats, VK_IMAGE_TILING_OPTIMAL, flags);
-        if (!result)
-            return Result<RenderPass>::Error(result.GetError());
+        TKIT_RETURN_ON_ERROR(result);
 
         Attachment att = attachment.m_Attachment;
         att.Description.format = result.GetValue();

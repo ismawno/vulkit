@@ -21,7 +21,7 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
     pipelineInfo.stage.module = p_Specs.ComputeShader;
     pipelineInfo.stage.pName = p_Specs.EntryPoint;
 
-    return Result<VkComputePipelineCreateInfo>::Ok(pipelineInfo);
+    return pipelineInfo;
 }
 
 Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
@@ -31,8 +31,7 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<ComputePipeline>);
 
     const auto presult = createPipelineInfo(p_Specs);
-    if (!presult)
-        return Result<ComputePipeline>::Error(presult.GetError());
+    TKIT_RETURN_ON_ERROR(presult);
 
     const VkComputePipelineCreateInfo &pipelineInfo = presult.GetValue();
 
@@ -55,8 +54,7 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
-        if (!result)
-            return Result<>::Error(result.GetError());
+        TKIT_RETURN_ON_ERROR(result);
         pipelineInfos.Append(result.GetValue());
     }
 

@@ -133,15 +133,15 @@ Result<Image> Image::Builder::Build() const
 
     Image img{m_Device, image, m_ImageInfo.initialLayout, info};
     if (m_ViewInfo.format == VK_FORMAT_UNDEFINED)
-        return Result<Image>::Ok(img);
+        return img;
 
     VkImageViewCreateInfo vinfo = m_ViewInfo;
     vinfo.image = image;
     const auto vres = img.CreateImageView(vinfo);
     if (!vres)
-        return Result<Image>::Error(vres.GetError());
+        return vres;
 
-    return Result<Image>::Ok(img);
+    return img;
 }
 
 Result<VkImageView> Image::CreateImageView(const VkImageViewCreateInfo &p_Info)
@@ -150,7 +150,7 @@ Result<VkImageView> Image::CreateImageView(const VkImageViewCreateInfo &p_Info)
         m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &m_ImageView);
     if (result != VK_SUCCESS)
         return Result<VkImageView>::Error(result, "Failed to create image view");
-    return Result<VkImageView>::Ok(m_ImageView);
+    return m_ImageView;
 }
 
 void Image::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,
@@ -240,8 +240,7 @@ void Image::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &
 Result<> Image::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source, const ImageCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
-    if (!cres)
-        return Result<>::Error(cres.GetError());
+    TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
     CopyFromImage(cmd, p_Source, p_Info);
@@ -252,8 +251,7 @@ Result<> Image::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffe
                                const BufferImageCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
-    if (!cres)
-        return Result<>::Error(cres.GetError());
+    TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
     CopyFromBuffer(cmd, p_Source, p_Info);
@@ -275,16 +273,14 @@ Result<> Image::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const
     auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Buffer::Flag_HostMapped | Buffer::Flag_StagingBuffer)
                     .SetSize(size)
                     .Build();
-    if (!bres)
-        return Result<>::Error(bres.GetError());
+    TKIT_RETURN_ON_ERROR(bres);
 
     Buffer &staging = bres.GetValue();
     staging.Write(p_Data.Data);
     staging.Flush();
 
     const auto cres = p_Pool.BeginSingleTimeCommands();
-    if (!cres)
-        return Result<>::Error(cres.GetError());
+    TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
 

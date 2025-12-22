@@ -243,9 +243,9 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
         table->GetPhysicalDeviceFormatProperties(m_Info.PhysicalDevice, format, &props);
 
         if (p_Tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & p_Features) == p_Features)
-            return Result<VkFormat>::Ok(format);
+            return format;
         if (p_Tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & p_Features) == p_Features)
-            return Result<VkFormat>::Ok(format);
+            return format;
     }
     return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
@@ -285,7 +285,7 @@ Result<VkQueue> LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_Que
 
     VkQueue queue;
     m_Info.Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
-    return Result<VkQueue>::Ok(queue);
+    return queue;
 }
 
 } // namespace VKit

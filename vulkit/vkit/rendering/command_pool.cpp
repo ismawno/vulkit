@@ -58,9 +58,8 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
     const TKit::Span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
 
     const Result<> result = Allocate(commandBuffers, p_Level);
-    if (result)
-        return Result<VkCommandBuffer>::Ok(commandBuffer);
-    return Result<VkCommandBuffer>::Error(result.GetError());
+    TKIT_RETURN_ON_ERROR(result);
+    return commandBuffer;
 }
 
 void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const
@@ -96,7 +95,7 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
     if (vkresult != VK_SUCCESS)
         return Result<VkCommandBuffer>::Error(vkresult, "Failed to begin command buffer");
 
-    return Result<VkCommandBuffer>::Ok(commandBuffer);
+    return commandBuffer;
 }
 
 Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffer, const VkQueue p_Queue) const

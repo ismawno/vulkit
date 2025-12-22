@@ -76,7 +76,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
                 VK_ERROR_INCOMPATIBLE_DRIVER,
                 "The vulkan instance version {} is not supported, the required version is {}", version, p_Version));
 
-        return FormattedResult<u32>::Ok(p_IsRequested ? p_Version : version);
+        return p_IsRequested ? p_Version : version;
     };
 
     TKIT_ASSERT(m_RequestedApiVersion >= m_RequiredApiVersion,
@@ -89,8 +89,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
                          EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
 
         vresult = checkApiVersion(m_RequiredApiVersion, false);
-        if (!vresult)
-            return FormattedResult<Instance>::Error(vresult.GetError());
+        TKIT_RETURN_ON_ERROR(vresult);
     }
     const u32 apiVersion = vresult.GetValue();
 
