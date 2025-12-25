@@ -68,7 +68,7 @@ class VKIT_API LogicalDevice
         {
         }
 
-        FormattedResult<LogicalDevice> Build() const;
+        Result<LogicalDevice> Build() const;
 
         Builder &RequireQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
         Builder &RequestQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);

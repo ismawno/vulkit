@@ -58,21 +58,21 @@ static bool contains(const TKit::Span<const char *const> p_Extensions, const cha
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
-FormattedResult<Instance> Instance::Builder::Build() const
+Result<Instance> Instance::Builder::Build() const
 {
-    const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> FormattedResult<u32> {
+    const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
 #ifdef VKIT_API_VERSION_1_1
-        VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceVersion, FormattedResult<u32>);
+        VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceVersion, Result<u32>);
 
         u32 version;
         const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
-            return FormattedResult<u32>::Error(result, "Failed to get the vulkan instance version");
+            return Result<u32>::Error(result, "Failed to get the vulkan instance version");
 #else
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
         if (version < p_Version)
-            return FormattedResult<u32>::Error(VKIT_FORMAT_ERROR(
+            return Result<u32>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_INCOMPATIBLE_DRIVER,
                 "The vulkan instance version {} is not supported, the required version is {}", version, p_Version));
 
@@ -82,7 +82,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
     TKIT_ASSERT(m_RequestedApiVersion >= m_RequiredApiVersion,
                 "[VULKIT] The requested api version must be greater than or equal to the required api version");
 
-    FormattedResult<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
+    Result<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
     {
         TKIT_LOG_WARNING("[VULKIT] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
@@ -95,12 +95,12 @@ FormattedResult<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequiredExtensions)
         if (!Core::IsExtensionSupported(extension))
-            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
+            return Result<Instance>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_EXTENSION_NOT_PRESENT, "The required extension '{}' is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!Core::IsLayerSupported(layer))
-            return FormattedResult<Instance>::Error(
+            return Result<Instance>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The required layer '{}' is not suported", layer));
 
     TKit::StaticArray64<const char *> extensions;
@@ -136,7 +136,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
             Core::IsExtensionSupported("VK_EXT_debug_utils") && Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
-            return FormattedResult<Instance>::Error(
+            return Result<Instance>::Error(
                 VK_ERROR_LAYER_NOT_PRESENT,
                 "Validation layers (along with the debug utils extension) are not suported");
 
@@ -172,8 +172,8 @@ FormattedResult<Instance> Instance::Builder::Build() const
             return true;
         };
 
-        const auto generateError = [](const char *p_Extension) -> FormattedResult<Instance> {
-            return FormattedResult<Instance>::Error(VKIT_FORMAT_ERROR(
+        const auto generateError = [](const char *p_Extension) -> Result<Instance> {
+            return Result<Instance>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_EXTENSION_NOT_PRESENT,
                 "The extension {}, required for windowing capabilities, is not suported", p_Extension));
         };
@@ -241,16 +241,16 @@ FormattedResult<Instance> Instance::Builder::Build() const
         instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
 
-    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkCreateInstance, FormattedResult<Instance>);
+    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkCreateInstance, Result<Instance>);
 
     VkInstance vkinstance;
     VkResult result = Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
-        return FormattedResult<Instance>::Error(result, "Failed to create the vulkan instance");
+        return Result<Instance>::Error(result, "Failed to create the vulkan instance");
 
     const Vulkan::InstanceTable table = Vulkan::InstanceTable::Create(vkinstance);
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyInstance, FormattedResult<Instance>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyInstance, Result<Instance>);
 
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
@@ -259,7 +259,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
         if (!table.vkCreateDebugUtilsMessengerEXT || !table.vkDestroyDebugUtilsMessengerEXT)
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return FormattedResult<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER,
+            return Result<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER,
                                                     "Failed to load Vulkan functions: "
                                                     "vkCreate/DestroyDebugUtilsMessengerEXT");
         }
@@ -267,14 +267,14 @@ FormattedResult<Instance> Instance::Builder::Build() const
         if (result != VK_SUCCESS)
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return FormattedResult<Instance>::Error(result, "Failed to create the debug messenger");
+            return Result<Instance>::Error(result, "Failed to create the debug messenger");
         }
     }
 #else
     if (validationLayers)
     {
         table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-        return FormattedResult<Instance>::Error(
+        return Result<Instance>::Error(
             VK_ERROR_LAYER_NOT_PRESENT, "Validation layers (along with the debug utils extension) are not suported");
     }
 #endif
@@ -300,7 +300,7 @@ FormattedResult<Instance> Instance::Builder::Build() const
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
                 "[VULKIT] The debug messenger must be available if validation layers are enabled");
 
-    return FormattedResult<Instance>::Ok(vkinstance, info);
+    return Result<Instance>::Ok(vkinstance, info);
 }
 
 bool Instance::IsExtensionEnabled(const char *p_Extension) const

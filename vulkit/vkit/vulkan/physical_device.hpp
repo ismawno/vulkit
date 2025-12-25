@@ -125,7 +125,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing the selected PhysicalDevice or an error.
          */
-        FormattedResult<PhysicalDevice> Select() const;
+        Result<PhysicalDevice> Select() const;
 
         /**
          * @brief Lists all available physical devices along with their evaluation results.
@@ -135,7 +135,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing an array of formatted results for each physical device.
          */
-        Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> Enumerate() const;
+        Result<TKit::StaticArray4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(Type p_Type);
@@ -166,7 +166,7 @@ class VKIT_API PhysicalDevice
 #endif
 
       private:
-        FormattedResult<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
+        Result<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;

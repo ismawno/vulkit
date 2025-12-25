@@ -123,7 +123,7 @@
 #    define VKIT_ASSERT_EXPRESSION(p_Expression) p_Expression
 #endif
 
-#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::ErrorInfo<std::string>(p_Result, TKit::Format(__VA_ARGS__))
+#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::Detail::Error(p_Result, TKit::Format(__VA_ARGS__))
 
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)                                                     \
@@ -140,9 +140,6 @@
 
 namespace VKit
 {
-template <typename T>
-concept String = std::is_same_v<T, const char *> || std::is_same_v<T, std::string>;
-
 VKIT_API const char *VkResultToString(VkResult p_Result);
 
 template <typename T> bool IsSuccessful(const T &p_Result)
@@ -165,32 +162,22 @@ template <typename T> auto ResultToString(const T &p_Result)
         return p_Result.GetError().ToString();
     }
 }
-
+namespace Detail
+{
 /**
  * @brief Represents an error in a Vulkan operation, including error type and message.
  *
  * This class encapsulates a non-success Vulkan result code (`VkResult`) and an optional message to provide
  * more context about the operation's outcome.
  *
- * Using the default constructor will create an uninitialized `ErrorInfo`. Make sure to instantiate it with the `Error`
- * function before using it.
- *
- * @tparam MessageType The type of the message, either `const char*` or `std::string`. The former is a cheap version,
- * when the message is a static string. The latter is used when explicit error message information can be provided based
- * on user input.
  */
-template <String MessageType> class ErrorInfo
+struct Error
 {
-  public:
-    ErrorInfo() = default;
-    /**
-     * @brief Creates an error result with the given Vulkan result code and message.
-     *
-     * @param p_Error The Vulkan result code indicating the error.
-     * @param p_Message A descriptive message providing details about the error.
-     * @return A `ErrorInfo` instance representing the error.
-     */
-    ErrorInfo(VkResult p_Error, const MessageType &p_Message) : ErrorCode(p_Error), Message(p_Message)
+    Error() = default;
+    Error(const VkResult p_Error, const std::string &p_Message) : ErrorCode(p_Error), FormattedMessage(p_Message)
+    {
+    }
+    Error(const VkResult p_Error, const char *p_Message) : ErrorCode(p_Error), CheapMessage(p_Message)
     {
     }
 
@@ -202,21 +189,12 @@ template <String MessageType> class ErrorInfo
     }
 
     VkResult ErrorCode{};
-    MessageType Message{};
+    const char *CheapMessage = nullptr;
+    std::string FormattedMessage{};
 };
+} // namespace Detail
 
-using Error = ErrorInfo<const char *>;
-using FormattedError = ErrorInfo<std::string>;
-
-template <typename T = void> using Result = TKit::Result<T, Error>;
-template <typename T = void> using FormattedResult = TKit::Result<T, FormattedError>;
-
-VKIT_API FormattedError ToFormatted(const Error &p_Result);
-template <typename T> FormattedResult<T> ToFormatted(const Result<T> &p_Result)
-{
-    return p_Result ? FormattedResult<T>::Ok(p_Result.GetValue())
-                    : FormattedResult<T>::Error(p_Result.GetError().ErrorCode, p_Result.GetError().Message);
-}
+template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 
 /**
  * @brief Manages deferred deletion of Vulkan resources.

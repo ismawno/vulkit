@@ -5,19 +5,17 @@
 
 namespace VKit
 {
+using namespace Detail;
 
-template <String T> static std::string formatMessage(const VkResult p_Result, const T &p_Message)
+template <typename T> static std::string formatMessage(const VkResult p_Result, const T &p_Message)
 {
     return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VkResultToString(p_Result), p_Message);
 }
 
-template <String MessageType> std::string ErrorInfo<MessageType>::ToString() const
+std::string Error::ToString() const
 {
-    return formatMessage(ErrorCode, Message);
+    return CheapMessage ? formatMessage(ErrorCode, CheapMessage) : formatMessage(ErrorCode, FormattedMessage);
 }
-
-template class VKIT_API ErrorInfo<const char *>;
-template class VKIT_API ErrorInfo<std::string>;
 
 void DeletionQueue::Push(std::function<void()> &&p_Deleter)
 {
@@ -28,11 +26,6 @@ void DeletionQueue::Flush()
     for (u32 i = m_Deleters.GetSize(); i > 0; --i)
         m_Deleters[i - 1]();
     m_Deleters.Clear();
-}
-
-FormattedError ToFormatted(const Error &p_Error)
-{
-    return FormattedError{p_Error.ErrorCode, p_Error.Message};
 }
 
 const char *VkResultToString(const VkResult p_Result)

@@ -25,7 +25,7 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 p_Family,
     return *this;
 }
 
-FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
+Result<LogicalDevice> LogicalDevice::Builder::Build() const
 {
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
@@ -47,7 +47,7 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
         const u32 requiredCount = priorities.RequiredPriorities.GetSize();
         const u32 requestedCount = priorities.RequestedPriorities.GetSize();
         if (requiredCount > family.queueCount)
-            return FormattedResult<LogicalDevice>::Error(
+            return Result<LogicalDevice>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
                                   "The required queue count for the family index {} exceeds its queue count. {} > {}",
                                   index, requiredCount, family.queueCount));
@@ -96,7 +96,7 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
     const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return FormattedResult<LogicalDevice>::Error(
+        return Result<LogicalDevice>::Error(
             VK_ERROR_EXTENSION_NOT_PRESENT, "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
@@ -178,29 +178,29 @@ FormattedResult<LogicalDevice> LogicalDevice::Builder::Build() const
 
     const Vulkan::InstanceTable *itable = &instanceInfo.Table;
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkCreateDevice, FormattedResult<LogicalDevice>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkGetPhysicalDeviceFormatProperties, FormattedResult<LogicalDevice>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkCreateDevice, Result<LogicalDevice>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkGetPhysicalDeviceFormatProperties, Result<LogicalDevice>);
 
     VkDevice device;
     const VkResult result =
         itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
-        return FormattedResult<LogicalDevice>::Error(result, "Failed to create the logical device");
+        return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
 
     const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, FormattedResult<LogicalDevice>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, Result<LogicalDevice>);
 
     if (!table.vkGetDeviceQueue)
     {
         table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
-        return FormattedResult<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
+        return Result<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
                                                                                    "vkGetDeviceQueue");
     }
 
     info.Instance = *m_Instance;
     info.PhysicalDevice = *m_PhysicalDevice;
     info.Table = table;
-    return FormattedResult<LogicalDevice>::Ok(device, info);
+    return Result<LogicalDevice>::Ok(device, info);
 }
 
 void LogicalDevice::Destroy()

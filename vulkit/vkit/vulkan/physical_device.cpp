@@ -159,19 +159,18 @@ PhysicalDevice::Features::Features()
     Next = nullptr;
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::Select() const
+Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
 {
     const auto result = Enumerate();
-    if (!result)
-        return ToFormatted(result);
+    TKIT_RETURN_ON_ERROR(result);
 
     const auto &devices = result.GetValue();
     return devices[0];
 }
 
-FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const
+Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const
 {
-    using JudgeResult = FormattedResult<PhysicalDevice>;
+    using JudgeResult = Result<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     const Vulkan::InstanceTable *table = &instanceInfo.Table;
 
@@ -403,8 +402,8 @@ FormattedResult<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPh
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceCapabilitiesKHR, JudgeResult);
         const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
         if (!qresult)
-            return JudgeResult::Error(
-                VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}", qresult.GetError().Message, name));
+            return JudgeResult::Error(VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}",
+                                                        qresult.GetError().CheapMessage, name));
     }
 #endif
 
@@ -632,9 +631,9 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_In
         m_Flags |= Flag_RequirePresentQueue;
 }
 
-Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
+Result<TKit::StaticArray4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
 {
-    using EnumerateResult = Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>>;
+    using EnumerateResult = Result<TKit::StaticArray4<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)
@@ -666,14 +665,14 @@ Result<TKit::StaticArray4<FormattedResult<PhysicalDevice>>> PhysicalDevice::Sele
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
 
-    TKit::StaticArray4<FormattedResult<PhysicalDevice>> devices;
+    TKit::StaticArray4<Result<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice);
         devices.Append(judgeResult);
     }
 
-    std::stable_partition(devices.begin(), devices.end(), [](const FormattedResult<PhysicalDevice> &p_Device) {
+    std::stable_partition(devices.begin(), devices.end(), [](const Result<PhysicalDevice> &p_Device) {
         return p_Device && (p_Device.GetValue().GetInfo().Flags & PhysicalDevice::Flag_Optimal);
     });
     return devices;

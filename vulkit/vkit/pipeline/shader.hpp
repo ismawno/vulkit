@@ -36,7 +36,7 @@ class VKIT_API Shader
      * @param p_BinaryPath The path to the precompiled shader binary.
      * @return A `Result` containing the created `Shader` or an error.
      */
-    static FormattedResult<Shader> Create(const LogicalDevice::Proxy &p_Device, std::string_view p_BinaryPath);
+    static Result<Shader> Create(const LogicalDevice::Proxy &p_Device, std::string_view p_BinaryPath);
 
     /**
      * @brief Compiles a shader source file into a binary file.

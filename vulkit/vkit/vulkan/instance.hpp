@@ -55,7 +55,7 @@ class VKIT_API Instance
          *
          * @return A `Result` containing the created `Instance` or an error.
          */
-        FormattedResult<Instance> Build() const;
+        Result<Instance> Build() const;
 
         Builder &SetApplicationName(const char *p_Name);
         Builder &SetEngineName(const char *p_Name);

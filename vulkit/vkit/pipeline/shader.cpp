@@ -11,15 +11,15 @@ namespace VKit
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_BinaryPath)
+Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_BinaryPath)
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, FormattedResult<Shader>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, FormattedResult<Shader>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, Result<Shader>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, Result<Shader>);
 
     std::ifstream file{p_BinaryPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
-        return FormattedResult<Shader>::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path {} not found", p_BinaryPath));
+        return Result<Shader>::Error(
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path '{}' not found", p_BinaryPath));
 
     const auto fileSize = file.tellg();
 
@@ -36,9 +36,9 @@ FormattedResult<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, con
     const VkResult result =
         p_Device.Table->CreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
     if (result != VK_SUCCESS)
-        return FormattedResult<Shader>::Error(result, "Failed to create shader module");
+        return Result<Shader>::Error(result, "Failed to create shader module");
 
-    return FormattedResult<Shader>::Ok(p_Device, module);
+    return Result<Shader>::Ok(p_Device, module);
 }
 
 TKIT_COMPILER_WARNING_IGNORE_POP()
