@@ -74,7 +74,8 @@ Result<Instance> Instance::Builder::Build() const
         if (version < p_Version)
             return Result<u32>::Error(VKIT_FORMAT_ERROR(
                 VK_ERROR_INCOMPATIBLE_DRIVER,
-                "The vulkan instance version {} is not supported, the required version is {}", version, p_Version));
+                "The vulkan instance version {}.{}.{} found is not supported. The required version is {}.{}.{}",
+                EXPAND_VERSION(version), EXPAND_VERSION(p_Version)));
 
         return p_IsRequested ? p_Version : version;
     };
@@ -95,8 +96,8 @@ Result<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequiredExtensions)
         if (!Core::IsExtensionSupported(extension))
-            return Result<Instance>::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_EXTENSION_NOT_PRESENT, "The required extension '{}' is not suported", extension));
+            return Result<Instance>::Error(VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                                             "The required extension '{}' is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!Core::IsLayerSupported(layer))
@@ -136,9 +137,8 @@ Result<Instance> Instance::Builder::Build() const
             Core::IsExtensionSupported("VK_EXT_debug_utils") && Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
-            return Result<Instance>::Error(
-                VK_ERROR_LAYER_NOT_PRESENT,
-                "Validation layers (along with the debug utils extension) are not suported");
+            return Result<Instance>::Error(VK_ERROR_LAYER_NOT_PRESENT,
+                                           "Validation layers (along with the debug utils extension) are not suported");
 
         TKIT_LOG_WARNING_IF(!validationLayers && m_RequestValidationLayers,
                             "[VULKIT] Validation layers (along with the debug utils extension) are not suported");
@@ -259,9 +259,8 @@ Result<Instance> Instance::Builder::Build() const
         if (!table.vkCreateDebugUtilsMessengerEXT || !table.vkDestroyDebugUtilsMessengerEXT)
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER,
-                                                    "Failed to load Vulkan functions: "
-                                                    "vkCreate/DestroyDebugUtilsMessengerEXT");
+            return Result<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan functions: "
+                                                                         "vkCreate/DestroyDebugUtilsMessengerEXT");
         }
         result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
@@ -274,8 +273,8 @@ Result<Instance> Instance::Builder::Build() const
     if (validationLayers)
     {
         table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-        return Result<Instance>::Error(
-            VK_ERROR_LAYER_NOT_PRESENT, "Validation layers (along with the debug utils extension) are not suported");
+        return Result<Instance>::Error(VK_ERROR_LAYER_NOT_PRESENT,
+                                       "Validation layers (along with the debug utils extension) are not suported");
     }
 #endif
 
