@@ -182,6 +182,10 @@ struct Error
     }
 
     std::string ToString() const;
+    std::string GetMessage() const
+    {
+        return CheapMessage ? CheapMessage : FormattedMessage;
+    }
 
     operator VkResult() const
     {

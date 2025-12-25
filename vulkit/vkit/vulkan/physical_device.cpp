@@ -403,7 +403,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
         if (!qresult)
             return JudgeResult::Error(VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}",
-                                                        qresult.GetError().CheapMessage, name));
+                                                        qresult.GetError().GetMessage(), name));
     }
 #endif
 
