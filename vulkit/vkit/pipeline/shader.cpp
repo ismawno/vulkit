@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <cstdlib>
 
+namespace fs = std::filesystem;
+
 namespace VKit
 {
 
@@ -43,21 +45,46 @@ Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::s
 
 TKIT_COMPILER_WARNING_IGNORE_POP()
 
-i32 Shader::Compile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath,
-                    const std::string_view p_Arguments)
+TKit::Result<void, i32> Shader::CompileFromFile(const std::string_view p_SourcePath,
+                                                const std::string_view p_BinaryPath, const std::string_view p_Arguments)
 {
-    namespace fs = std::filesystem;
     const fs::path binaryPath = p_BinaryPath;
 
     std::filesystem::create_directories(binaryPath.parent_path());
     const std::string compileCommand =
         VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + binaryPath.string();
-    return static_cast<i32>(std::system(compileCommand.c_str()));
+    const i32 code = static_cast<i32>(std::system(compileCommand.c_str()));
+    if (code == 0)
+        return TKit::Result<void, i32>::Ok();
+
+    return code;
+}
+
+Result<Shader> Shader::CompileFromFile(const LogicalDevice::Proxy &p_Device, const std::string_view p_SourcePath,
+                                       const std::string_view p_Arguments)
+{
+    const std::string spv = (fs::temp_directory_path() / "vkit-shader.spv").string();
+    const auto result = CompileFromFile(p_SourcePath, spv, p_Arguments);
+    if (!result)
+        return Result<Shader>::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
+                                                       "[VULKIT] Shader compilation failed with error code: {}",
+                                                       result.GetError()));
+    return Create(p_Device, spv);
+}
+
+Result<Shader> Shader::CompileFromSource(const LogicalDevice::Proxy &p_Device, const std::string_view p_SourceCode,
+                                         const std::string_view p_Arguments)
+{
+    const fs::path src = fs::temp_directory_path() / "vkit-shader.glsl";
+    std::ofstream file{src, std::ios::binary};
+    file.write(p_SourceCode.data(), p_SourceCode.size());
+    file.flush();
+
+    return CompileFromFile(p_Device, src.string(), p_Arguments);
 }
 
 bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath)
 {
-    namespace fs = std::filesystem;
     const fs::path sourcePath = p_SourcePath;
     const fs::path binaryPath = p_BinaryPath;
 

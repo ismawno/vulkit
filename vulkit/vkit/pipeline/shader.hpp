@@ -46,9 +46,33 @@ class VKIT_API Shader
      * @param p_SourcePath The path to the shader source file.
      * @param p_BinaryPath The path where the compiled binary will be saved.
      * @param p_Arguments Additional arguments to pass to the compiler.
-     * @return An integer status code (0 for success, non-zero for failure).
      */
-    static i32 Compile(std::string_view p_SourcePath, std::string_view p_BinaryPath, std::string_view p_Arguments = "");
+    static TKit::Result<void, i32> CompileFromFile(std::string_view p_SourcePath, std::string_view p_BinaryPath,
+                                                   std::string_view p_Arguments = "");
+
+    /**
+     * @brief Compiles a shader source file into a shader object directly.
+     *
+     * Invokes the Vulkan SDK shader compiler to compile the source code into SPIR-V format.
+     *
+     * @param p_SourcePath The path to the shader source file.
+     * @param p_Arguments Additional arguments to pass to the compiler.
+     * @return The shader object if everything went well.
+     */
+    static Result<Shader> CompileFromFile(const LogicalDevice::Proxy &p_Device, std::string_view p_SourcePath,
+                                          std::string_view p_Arguments = "");
+
+    /**
+     * @brief Compiles a shader source code into a shader object directly.
+     *
+     * Invokes the Vulkan SDK shader compiler to compile the source code into SPIR-V format.
+     *
+     * @param p_SourceCode The shader source code.
+     * @param p_Arguments Additional arguments to pass to the compiler.
+     * @return The shader object if everything went well.
+     */
+    static Result<Shader> CompileFromSource(const LogicalDevice::Proxy &p_Device, std::string_view p_SourceCode,
+                                            std::string_view p_Arguments = "");
 
     /**
      * @brief Determines if a shader source file must be compiled.
