@@ -229,8 +229,9 @@ class Image
     VkImageLayout m_Layout;
     Info m_Info;
 };
-namespace Detail
+} // namespace VKit
+
+namespace VKit::Detail
 {
 VkImageAspectFlags DeduceAspectMask(const Image::Flags p_Flags);
 }
-} // namespace VKit

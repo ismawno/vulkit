@@ -162,7 +162,8 @@ template <typename T> auto ResultToString(const T &p_Result)
         return p_Result.GetError().ToString();
     }
 }
-namespace Detail
+} // namespace VKit
+namespace VKit::Detail
 {
 /**
  * @brief Represents an error in a Vulkan operation, including error type and message.
@@ -196,8 +197,10 @@ struct Error
     const char *CheapMessage = nullptr;
     std::string FormattedMessage{};
 };
-} // namespace Detail
+} // namespace VKit::Detail
 
+namespace VKit
+{
 template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 
 /**
