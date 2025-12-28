@@ -199,9 +199,9 @@ void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p
         copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(p_Source.GetInfo().Flags);
 
     VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKit::Limits<u32>::Max() ? (width - off.x) : ext.width;
-    cext.height = ext.height == TKit::Limits<u32>::Max() ? (height - off.y) : ext.height;
-    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (depth - off.z) : ext.depth;
+    cext.width = ext.width == TKIT_U32_MAX ? (width - off.x) : ext.width;
+    cext.height = ext.height == TKIT_U32_MAX ? (height - off.y) : ext.height;
+    cext.depth = ext.depth == TKIT_U32_MAX ? (depth - off.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,

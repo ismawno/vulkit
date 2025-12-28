@@ -13,7 +13,7 @@ struct BufferCopy
     VkDeviceSize DstOffset = 0;
 };
 
-#define FULL TKit::Limits<u32>::Max()
+#define FULL TKIT_U32_MAX
 
 struct ImageCopy
 {

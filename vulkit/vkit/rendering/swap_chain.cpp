@@ -36,9 +36,9 @@ Result<SwapChain> SwapChain::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
 
     const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
-    if (devInfo.FamilyIndices[Queue_Graphics] == TKit::Limits<u32>::Max())
+    if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No graphics queue found");
-    if (devInfo.FamilyIndices[Queue_Present] == TKit::Limits<u32>::Max())
+    if (devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
     const auto checkFlags = [this](const Flags p_Flags) -> bool { return m_Flags & p_Flags; };
@@ -98,8 +98,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     const VkPresentModeKHR presentMode = presentModeResult.GetValue();
 
     VkExtent2D extent;
-    if (support.Capabilities.currentExtent.width != TKit::Limits<u32>::Max() &&
-        support.Capabilities.currentExtent.height != TKit::Limits<u32>::Max())
+    if (support.Capabilities.currentExtent.width != TKIT_U32_MAX &&
+        support.Capabilities.currentExtent.height != TKIT_U32_MAX)
         extent = support.Capabilities.currentExtent;
     else
     {

@@ -254,7 +254,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags)
                 return i;
 
-        return TKit::Limits<u32>::Max();
+        return TKIT_U32_MAX;
     };
     const auto dedicatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
                                                               const VkQueueFlags p_ForbiddenFlags) -> u32 {
@@ -263,11 +263,11 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
                 !(families[i].queueFlags & p_ForbiddenFlags))
                 return i;
 
-        return TKit::Limits<u32>::Max();
+        return TKIT_U32_MAX;
     };
     const auto separatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
                                                               const VkQueueFlags p_ForbiddenFlags) -> u32 {
-        u32 index = TKit::Limits<u32>::Max();
+        u32 index = TKIT_U32_MAX;
         for (u32 i = 0; i < familyCount; ++i)
             if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
                 !(families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT))
@@ -282,7 +282,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     const auto presentQueueIndex = [familyCount, p_Device, &table](const VkSurfaceKHR p_Surface) -> u32 {
         if (!p_Surface || !table->vkGetPhysicalDeviceSurfaceSupportKHR)
-            return TKit::Limits<u32>::Max();
+            return TKIT_U32_MAX;
 
         for (u32 i = 0; i < familyCount; ++i)
         {
@@ -291,7 +291,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             if (result == VK_SUCCESS && presentSupport == VK_TRUE)
                 return i;
         }
-        return TKit::Limits<u32>::Max();
+        return TKIT_U32_MAX;
     };
 #endif
 
@@ -316,49 +316,49 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     const u32 presentIndex = presentQueueIndex(m_Surface);
 #else
-    const u32 presentIndex = TKit::Limits<u32>::Max();
+    const u32 presentIndex = TKIT_U32_MAX;
 #endif
-    u32 computeIndex = TKit::Limits<u32>::Max();
-    u32 transferIndex = TKit::Limits<u32>::Max();
+    u32 computeIndex = TKIT_U32_MAX;
+    u32 transferIndex = TKIT_U32_MAX;
 
-    if (graphicsIndex != TKit::Limits<u32>::Max())
+    if (graphicsIndex != TKIT_U32_MAX)
         deviceFlags |= PhysicalDevice::Flag_HasGraphicsQueue;
-    if (presentIndex != TKit::Limits<u32>::Max())
+    if (presentIndex != TKIT_U32_MAX)
         deviceFlags |= PhysicalDevice::Flag_HasPresentQueue;
 
-    if (dedicatedCompute != TKit::Limits<u32>::Max())
+    if (dedicatedCompute != TKIT_U32_MAX)
     {
         computeIndex = dedicatedCompute;
         deviceFlags |= PhysicalDevice::Flag_HasDedicatedComputeQueue;
         deviceFlags |= PhysicalDevice::Flag_HasSeparateComputeQueue;
         deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
     }
-    else if (separateCompute != TKit::Limits<u32>::Max())
+    else if (separateCompute != TKIT_U32_MAX)
     {
         computeIndex = separateCompute;
         deviceFlags |= PhysicalDevice::Flag_HasSeparateComputeQueue;
         deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
     }
-    else if (computeCompatible != TKit::Limits<u32>::Max())
+    else if (computeCompatible != TKIT_U32_MAX)
     {
         computeIndex = computeCompatible;
         deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
     }
 
-    if (dedicatedTransfer != TKit::Limits<u32>::Max())
+    if (dedicatedTransfer != TKIT_U32_MAX)
     {
         transferIndex = dedicatedTransfer;
         deviceFlags |= PhysicalDevice::Flag_HasDedicatedTransferQueue;
         deviceFlags |= PhysicalDevice::Flag_HasSeparateTransferQueue;
         deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
     }
-    else if (separateTransfer != TKit::Limits<u32>::Max())
+    else if (separateTransfer != TKIT_U32_MAX)
     {
         transferIndex = separateTransfer;
         deviceFlags |= PhysicalDevice::Flag_HasSeparateTransferQueue;
         deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
     }
-    else if (transferCompatible != TKit::Limits<u32>::Max())
+    else if (transferCompatible != TKIT_U32_MAX)
     {
         transferIndex = transferCompatible;
         deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;

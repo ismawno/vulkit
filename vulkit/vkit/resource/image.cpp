@@ -191,11 +191,11 @@ void Image::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_
 
     VkExtent3D &cext = copy.extent;
     cext.width =
-        ext.width == TKit::Limits<u32>::Max() ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
+        ext.width == TKIT_U32_MAX ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
     cext.height =
-        ext.height == TKit::Limits<u32>::Max() ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
+        ext.height == TKIT_U32_MAX ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
     cext.depth =
-        ext.depth == TKit::Limits<u32>::Max() ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
+        ext.depth == TKIT_U32_MAX ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(cext.width <= info.Width - soff.x, "[VULKIT] Specified width exceeds source image width");
@@ -231,9 +231,9 @@ void Image::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &
         copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(m_Info.Flags);
 
     VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKit::Limits<u32>::Max() ? (width - off.x) : ext.width;
-    cext.height = ext.height == TKit::Limits<u32>::Max() ? (height - off.y) : ext.height;
-    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (depth - off.z) : ext.depth;
+    cext.width = ext.width == TKIT_U32_MAX ? (width - off.x) : ext.width;
+    cext.height = ext.height == TKIT_U32_MAX ? (height - off.y) : ext.height;
+    cext.depth = ext.depth == TKIT_U32_MAX ? (depth - off.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
