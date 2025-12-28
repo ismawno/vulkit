@@ -120,11 +120,13 @@ class VKIT_API Buffer
      * @param p_Data A pointer to the data to write.
      * @param p_Offsets Write offsets.
      */
-    template <typename T> void Write(const TKit::Span<const T> p_Data, const Offsets &p_Offsets = {})
+    template <typename T> void Write(const TKit::Span<const T> p_Data, const BufferCopy &p_Info = {})
     {
-        Write(p_Data.GetData(), {.Size = p_Data.GetSize() * sizeof(T),
-                                 .SrcOffset = p_Offsets.SrcOffset * sizeof(T),
-                                 .DstOffset = p_Offsets.DstOffset * sizeof(T)});
+        const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
+                                      ? (p_Data.GetSize() * sizeof(T) - p_Info.SrcOffset * sizeof(T))
+                                      : (p_Info.Size * sizeof(T));
+        Write(p_Data.GetData(),
+              {.Size = size, .SrcOffset = p_Info.SrcOffset * sizeof(T), .DstOffset = p_Info.DstOffset * sizeof(T)});
     }
 
     /**
