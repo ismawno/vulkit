@@ -2,9 +2,11 @@
 #include "vkit/resource/buffer.hpp"
 #include "vkit/rendering/command_pool.hpp"
 #include "vkit/resource/image.hpp"
+#include "tkit/math/math.hpp"
 
 namespace VKit
 {
+namespace Math = TKit::Math;
 static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_Alignment)
 {
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
@@ -172,8 +174,8 @@ void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer 
     copy.srcOffset = p_Info.SrcOffset;
     copy.size = p_Info.Size;
 
-    TKIT_ASSERT(p_Source.GetInfo().Size >= copy.size, "[ONYX] Specified size exceeds source buffer size");
-    TKIT_ASSERT(m_Info.Size >= copy.size, "[ONYX] Specified size exceeds destination buffer size");
+    TKIT_ASSERT(p_Source.GetInfo().Size >= copy.size, "[VULKIT] Specified size exceeds source buffer size");
+    TKIT_ASSERT(m_Info.Size >= copy.size, "[VULKIT] Specified size exceeds destination buffer size");
     m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
 }
 void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info)
@@ -181,28 +183,38 @@ void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p
     const VkOffset3D &off = p_Info.ImageOffset;
     const VkExtent3D &ext = p_Info.Extent;
     const Image::Info &info = p_Source.GetInfo();
+    const VkImageSubresourceLayers &subr = p_Info.Subresource;
+
+    const u32 width = Math::Max(1u, info.Width >> subr.mipLevel);
+    const u32 height = Math::Max(1u, info.Height >> subr.mipLevel);
+    const u32 depth = Math::Max(1u, info.Depth >> subr.mipLevel);
 
     VkBufferImageCopy copy;
     copy.bufferImageHeight = p_Info.BufferImageHeight;
     copy.bufferOffset = p_Info.BufferOffset;
     copy.imageOffset = off;
     copy.bufferRowLength = p_Info.BufferRowLength;
-    copy.imageSubresource = p_Info.Subresource;
+    copy.imageSubresource = subr;
     if (copy.imageSubresource.aspectMask == VK_IMAGE_ASPECT_NONE)
         copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(p_Source.GetInfo().Flags);
 
     VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKit::Limits<u32>::Max() ? (info.Width - off.x) : ext.width;
-    cext.height = ext.height == TKit::Limits<u32>::Max() ? (info.Height - off.y) : ext.height;
-    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (info.Depth - off.z) : ext.depth;
+    cext.width = ext.width == TKit::Limits<u32>::Max() ? (width - off.x) : ext.width;
+    cext.height = ext.height == TKit::Limits<u32>::Max() ? (height - off.y) : ext.height;
+    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (depth - off.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(cext.width <= info.Width - off.x, "[ONYX] Specified width exceeds source image width");
-    TKIT_ASSERT(cext.height <= info.Height - off.y, "[ONYX] Specified height exceeds source image height");
-    TKIT_ASSERT(cext.depth <= info.Depth - off.z, "[ONYX] Specified depth exceeds source image depth");
-    TKIT_ASSERT(m_Info.Size - p_Info.BufferOffset >= p_Source.GetSize(p_Info.BufferRowLength, p_Info.BufferImageHeight),
-                "[ONYX] Buffer is not large enough to fit image");
-
+    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
+                "[VULKIT] 3D images cannot have multiple layers and array images cannot have depth > 1");
+    TKIT_ASSERT(cext.width <= width - off.x, "[VULKIT] Specified width exceeds source image width");
+    TKIT_ASSERT(cext.height <= height - off.y, "[VULKIT] Specified height exceeds source image height");
+    TKIT_ASSERT(cext.depth <= depth - off.z, "[VULKIT] Specified depth exceeds source image depth");
+    TKIT_ASSERT(m_Info.Size - p_Info.BufferOffset >=
+                    p_Source.ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
+                                         p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0,
+                                         cext.depth) *
+                        subr.layerCount,
+                "[VULKIT] Buffer is not large enough to fit image");
     m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, 1, &copy);
 }
 

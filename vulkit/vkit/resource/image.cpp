@@ -2,9 +2,11 @@
 #include "vkit/resource/image.hpp"
 #include "vkit/resource/buffer.hpp"
 #include "vkit/rendering/command_pool.hpp"
+#include "tkit/math/math.hpp"
 
 namespace VKit
 {
+namespace Math = TKit::Math;
 static VkImageViewType getImageViewType(const VkImageType p_Type)
 {
     switch (p_Type)
@@ -189,20 +191,20 @@ void Image::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_
 
     VkExtent3D &cext = copy.extent;
     cext.width =
-        ext.width == TKit::Limits<u32>::Max() ? std::min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
+        ext.width == TKit::Limits<u32>::Max() ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
     cext.height =
-        ext.height == TKit::Limits<u32>::Max() ? std::min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
+        ext.height == TKit::Limits<u32>::Max() ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
     cext.depth =
-        ext.depth == TKit::Limits<u32>::Max() ? std::min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
+        ext.depth == TKit::Limits<u32>::Max() ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(cext.width <= info.Width - soff.x, "[ONYX] Specified width exceeds source image width");
-    TKIT_ASSERT(cext.height <= info.Height - soff.y, "[ONYX] Specified height exceeds source image height");
-    TKIT_ASSERT(cext.depth <= info.Depth - soff.z, "[ONYX] Specified depth exceeds source image depth");
+    TKIT_ASSERT(cext.width <= info.Width - soff.x, "[VULKIT] Specified width exceeds source image width");
+    TKIT_ASSERT(cext.height <= info.Height - soff.y, "[VULKIT] Specified height exceeds source image height");
+    TKIT_ASSERT(cext.depth <= info.Depth - soff.z, "[VULKIT] Specified depth exceeds source image depth");
 
-    TKIT_ASSERT(cext.width <= m_Info.Width - doff.x, "[ONYX] Specified width exceeds destination image width");
-    TKIT_ASSERT(cext.height <= m_Info.Height - doff.y, "[ONYX] Specified height exceeds destination image height");
-    TKIT_ASSERT(cext.depth <= m_Info.Depth - doff.z, "[ONYX] Specified depth exceeds destination image depth");
+    TKIT_ASSERT(cext.width <= m_Info.Width - doff.x, "[VULKIT] Specified width exceeds destination image width");
+    TKIT_ASSERT(cext.height <= m_Info.Height - doff.y, "[VULKIT] Specified height exceeds destination image height");
+    TKIT_ASSERT(cext.depth <= m_Info.Depth - doff.z, "[VULKIT] Specified depth exceeds destination image depth");
 
     m_Device.Table->CmdCopyImage(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Image, m_Layout, 1, &copy);
 }
@@ -212,28 +214,38 @@ void Image::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &
     const VkOffset3D &off = p_Info.ImageOffset;
     const VkExtent3D &ext = p_Info.Extent;
 
+    const Image::Info &info = m_Info;
+    const VkImageSubresourceLayers &subr = p_Info.Subresource;
+
+    const u32 width = Math::Max(1u, info.Width >> subr.mipLevel);
+    const u32 height = Math::Max(1u, info.Height >> subr.mipLevel);
+    const u32 depth = Math::Max(1u, info.Depth >> subr.mipLevel);
+
     VkBufferImageCopy copy;
     copy.bufferImageHeight = p_Info.BufferImageHeight;
     copy.bufferOffset = p_Info.BufferOffset;
     copy.imageOffset = off;
     copy.bufferRowLength = p_Info.BufferRowLength;
-    copy.imageSubresource = p_Info.Subresource;
+    copy.imageSubresource = subr;
     if (copy.imageSubresource.aspectMask == VK_IMAGE_ASPECT_NONE)
         copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(m_Info.Flags);
 
     VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKit::Limits<u32>::Max() ? (m_Info.Width - off.x) : ext.width;
-    cext.height = ext.height == TKit::Limits<u32>::Max() ? (m_Info.Height - off.y) : ext.height;
-    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (m_Info.Depth - off.z) : ext.depth;
+    cext.width = ext.width == TKit::Limits<u32>::Max() ? (width - off.x) : ext.width;
+    cext.height = ext.height == TKit::Limits<u32>::Max() ? (height - off.y) : ext.height;
+    cext.depth = ext.depth == TKit::Limits<u32>::Max() ? (depth - off.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(cext.width <= m_Info.Width - off.x, "[ONYX] Specified width exceeds destination image width");
-    TKIT_ASSERT(cext.height <= m_Info.Height - off.y, "[ONYX] Specified height exceeds destination image height");
-    TKIT_ASSERT(cext.depth <= m_Info.Depth - off.z, "[ONYX] Specified depth exceeds destination image depth");
+    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
+                "[VULKIT] 3D images cannot have multiple layers and array images cannot have depth > 1");
+    TKIT_ASSERT(cext.width <= width - off.x, "[VULKIT] Specified width exceeds source image width");
+    TKIT_ASSERT(cext.height <= height - off.y, "[VULKIT] Specified height exceeds source image height");
+    TKIT_ASSERT(cext.depth <= depth - off.z, "[VULKIT] Specified depth exceeds source image depth");
     TKIT_ASSERT(p_Source.GetInfo().Size - p_Info.BufferOffset >=
-                    GetSize(p_Info.BufferRowLength, p_Info.BufferImageHeight),
-                "[ONYX] Buffer is not large enough to fit image");
-
+                    ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
+                                p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
+                        subr.layerCount,
+                "[VULKIT] Buffer is not large enough to fit image");
     m_Device.Table->CmdCopyBufferToImage(p_CommandBuffer, p_Source, m_Image, m_Layout, 1, &copy);
 }
 
@@ -417,16 +429,29 @@ VkDeviceSize Image::GetBytesPerPixel(const VkFormat p_Format)
     return 0;
 }
 
-VkDeviceSize Image::GetSize(const u32 p_BufferRowLength, const u32 p_BufferImageHeight) const
+VkDeviceSize Image::ComputeSize(const u32 p_Width, const u32 p_Height, const u32 p_Mip, const u32 p_Depth) const
 {
-    const VkDeviceSize ppixel = GetBytesPerPixel();
-    const u32 rowTexels = p_BufferRowLength == 0 ? m_Info.Width : p_BufferRowLength;
-    const u32 imgTexels = p_BufferImageHeight == 0 ? m_Info.Height : p_BufferImageHeight;
+    return ComputeSize(m_Info.Format, p_Width, p_Height, p_Mip, p_Depth);
+}
+VkDeviceSize Image::ComputeSize(const u32 p_Mip) const
+{
+    return ComputeSize(m_Info.Format, m_Info.Width, m_Info.Height, p_Mip, m_Info.Depth);
+}
+VkDeviceSize Image::ComputeSize(const VkFormat p_Format, const u32 p_Width, const u32 p_Height, const u32 p_Mip,
+                                const u32 p_Depth)
+{
+    const u32 width = Math::Max(1u, p_Width >> p_Mip);
+    const u32 height = Math::Max(1u, p_Height >> p_Mip);
+    const u32 depth = Math::Max(1u, p_Depth >> p_Mip);
+
+    const VkDeviceSize ppixel = GetBytesPerPixel(p_Format);
+    const u32 rowTexels = width;
+    const u32 imgTexels = height;
 
     const VkDeviceSize rowStride = static_cast<VkDeviceSize>(rowTexels) * ppixel;
     const VkDeviceSize sliceStride = static_cast<VkDeviceSize>(imgTexels) * rowStride;
 
-    return m_Info.Width * ppixel + (m_Info.Height - 1) * rowStride + (m_Info.Depth - 1) * sliceStride;
+    return (width * ppixel + (height - 1) * rowStride + (depth - 1) * sliceStride);
 }
 
 void Image::Destroy()
@@ -517,8 +542,9 @@ Image::Builder &Image::Builder::WithImageView()
 }
 Image::Builder &Image::Builder::WithImageView(const VkImageViewCreateInfo &p_Info)
 {
-    TKIT_ASSERT(!p_Info.image, "[ONYX] The image must be set to null when passing a image view create info because it "
-                               "will be replaced with the newly created image");
+    TKIT_ASSERT(!p_Info.image,
+                "[VULKIT] The image must be set to null when passing a image view create info because it "
+                "will be replaced with the newly created image");
     m_ViewInfo = p_Info;
     return *this;
 }

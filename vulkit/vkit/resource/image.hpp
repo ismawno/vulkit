@@ -177,11 +177,9 @@ class Image
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostData &p_Data,
                             VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-    VkDeviceSize GetSize() const
-    {
-        return GetSize(m_Info.Width, m_Info.Height);
-    }
-    VkDeviceSize GetSize(u32 p_BufferRowLength, u32 p_BufferImageHeight) const;
+    VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;
+    VkDeviceSize ComputeSize(u32 p_Mip = 0) const;
+    static VkDeviceSize ComputeSize(VkFormat p_Format, u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1);
 
     VkDeviceSize GetBytesPerPixel() const
     {

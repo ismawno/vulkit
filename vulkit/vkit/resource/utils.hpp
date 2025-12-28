@@ -5,11 +5,6 @@
 #include <vulkan/vulkan.h>
 namespace VKit
 {
-struct Offsets
-{
-    VkDeviceSize SrcOffset = 0;
-    VkDeviceSize DstOffset = 0;
-};
 // reinventing the wheel here for the sake of defaults
 struct BufferCopy
 {
@@ -36,8 +31,8 @@ struct ImageCopy
 struct BufferImageCopy
 {
     VkDeviceSize BufferOffset = 0;
-    VkDeviceSize BufferRowLength = 0;
-    VkDeviceSize BufferImageHeight = 0;
+    u32 BufferRowLength = 0;
+    u32 BufferImageHeight = 0;
 
     // by setting none one is chosen automatically
     VkImageSubresourceLayers Subresource = {

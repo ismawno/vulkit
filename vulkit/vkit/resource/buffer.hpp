@@ -199,23 +199,27 @@ class VKIT_API Buffer
      * @return A `Result` indicating success or failure.
      */
 
-    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const void *p_Data, const BufferCopy &p_Info = {});
+    Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
+                            const BufferCopy &p_Info = {});
     /**
      * @brief Writes data to the buffer from a span.
      *
-     * The buffer must be mapped and host visible to call this method.
+     * The buffer must be mapped and host visible to call this method. Size units are in span objects, not bytes.
      *
      * @param p_Data A pointer to the data to write.
      * @param p_Offsets Write offsets.
      */
     template <typename T>
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
-                            const Offsets &p_Offsets = {})
+                            const BufferCopy &p_Info = {})
     {
-        return UploadFromHost(p_Pool, p_Queue, p_Data.GetData(),
-                              {.Size = p_Data.GetSize() * sizeof(T),
-                               .SrcOffset = p_Offsets.SrcOffset * sizeof(T),
-                               .DstOffset = p_Offsets.DstOffset * sizeof(T)});
+        const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
+                                      ? (p_Data.GetSize() * sizeof(T) - p_Info.SrcOffset * sizeof(T))
+                                      : (p_Info.Size * sizeof(T));
+
+        return UploadFromHost(
+            p_Pool, p_Queue, p_Data.GetData(),
+            {.Size = size, .SrcOffset = p_Info.SrcOffset * sizeof(T), .DstOffset = p_Info.DstOffset * sizeof(T)});
     }
 
     void *GetData() const
