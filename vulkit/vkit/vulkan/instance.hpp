@@ -127,7 +127,6 @@ class VKIT_API Instance
      */
     enum FlagBits : Flags
     {
-        Flag_None = 0,
         Flag_Headless = 1 << 0,
         Flag_HasValidationLayers = 1 << 1,
         Flag_Properties2Extension = 1 << 2

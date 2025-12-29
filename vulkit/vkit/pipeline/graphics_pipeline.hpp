@@ -61,7 +61,6 @@ class VKIT_API GraphicsPipeline
         using Flags = u8;
         enum FlagBits : Flags
         {
-            Flag_None = 0,
             Flag_StencilFront = 1 << 0,
             Flag_StencilBack = 1 << 1,
         };

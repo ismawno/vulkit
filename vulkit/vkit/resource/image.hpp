@@ -18,7 +18,6 @@ class Image
     using Flags = u8;
     enum FlagBits : Flags
     {
-        Flag_None = 0,
         Flag_ColorAttachment = 1 << 0,
         Flag_DepthAttachment = 1 << 1,
         Flag_StencilAttachment = 1 << 2,

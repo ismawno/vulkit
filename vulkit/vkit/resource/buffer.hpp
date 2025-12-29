@@ -26,7 +26,6 @@ class VKIT_API Buffer
     using Flags = u16;
     enum FlagBits : Flags
     {
-        Flag_None = 0,
         Flag_DeviceLocal = 1 << 0,
         Flag_HostVisible = 1 << 1,
         Flag_Source = 1 << 2,

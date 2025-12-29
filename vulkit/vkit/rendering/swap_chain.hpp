@@ -37,7 +37,6 @@ class VKIT_API SwapChain
          */
         enum FlagBits : Flags
         {
-            Flag_None = 0,
             Flag_Clipped = 1 << 0,
             Flag_CreateImageViews = 1 << 1
         };
@@ -117,7 +116,6 @@ class VKIT_API SwapChain
      */
     enum FlagBits : Flags
     {
-        Flag_None = 0,
         Flag_Clipped = 1 << 0,
         Flag_HasImageViews = 1 << 1
     };
@@ -136,8 +134,8 @@ class VKIT_API SwapChain
     };
 
     SwapChain() = default;
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain,
-              const TKit::Array8<Image> &p_Images, const Info &p_Info)
+    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const TKit::Array8<Image> &p_Images,
+              const Info &p_Info)
         : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
     {
     }
