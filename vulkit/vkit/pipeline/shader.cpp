@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/pipeline/shader.hpp"
+#include "vkit/core/limits.hpp"
 
 #include <fstream>
 #include <filesystem>
@@ -25,7 +26,7 @@ Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::s
 
     const auto fileSize = file.tellg();
 
-    TKit::StaticArray<char, VKIT_MAX_SHADER_SIZE> code(static_cast<u32>(fileSize));
+    TKit::Array<char, MaxShaderSize> code(static_cast<u32>(fileSize));
     file.seekg(0);
     file.read(code.GetData(), fileSize);
 

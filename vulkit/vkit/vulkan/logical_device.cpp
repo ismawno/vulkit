@@ -30,10 +30,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
 
-    TKit::StaticArray8<VkDeviceQueueCreateInfo> queueCreateInfos;
-    const TKit::StaticArray8<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
+    TKit::Array8<VkDeviceQueueCreateInfo> queueCreateInfos;
+    const TKit::Array8<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
 
-    TKit::StaticArray8<TKit::StaticArray32<f32>> finalPriorities;
+    TKit::Array8<TKit::Array32<f32>> finalPriorities;
 
     Info info{};
     for (u32 i = 0; i < 4; ++i)
@@ -52,7 +52,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
                                   "The required queue count for the family index {} exceeds its queue count. {} > {}",
                                   index, requiredCount, family.queueCount));
 
-        TKit::StaticArray32<f32> &fp = finalPriorities.Append();
+        TKit::Array32<f32> &fp = finalPriorities.Append();
 
         for (u32 i = 0; i < requiredCount; ++i)
             fp.Append(priorities.RequiredPriorities[i]);
@@ -84,7 +84,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         }
     }
 
-    TKit::StaticArray256<const char *> enabledExtensions;
+    TKit::Array256<const char *> enabledExtensions;
     for (const std::string &extension : devInfo.EnabledExtensions)
         enabledExtensions.Append(extension.c_str());
 

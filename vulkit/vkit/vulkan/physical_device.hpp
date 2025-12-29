@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PHYSICAL_DEVICE"
 #endif
 
-#include "tkit/container/static_array.hpp"
+#include "tkit/container/array.hpp"
 #include "vkit/vulkan/instance.hpp"
 
 namespace VKit
@@ -78,8 +78,8 @@ class VKIT_API PhysicalDevice
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
-        TKit::StaticArray128<VkSurfaceFormatKHR> Formats;
-        TKit::StaticArray8<VkPresentModeKHR> PresentModes;
+        TKit::Array128<VkSurfaceFormatKHR> Formats;
+        TKit::Array8<VkPresentModeKHR> PresentModes;
     };
 #endif
 
@@ -135,7 +135,7 @@ class VKIT_API PhysicalDevice
          *
          * @return A `Result` containing an array of formatted results for each physical device.
          */
-        Result<TKit::StaticArray4<Result<PhysicalDevice>>> Enumerate() const;
+        Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(Type p_Type);
@@ -184,8 +184,8 @@ class VKIT_API PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::StaticArray256<std::string> m_RequiredExtensions;
-        TKit::StaticArray256<std::string> m_RequestedExtensions;
+        TKit::Array256<std::string> m_RequiredExtensions;
+        TKit::Array256<std::string> m_RequestedExtensions;
 
         Features m_RequiredFeatures{};
     };
@@ -219,11 +219,11 @@ class VKIT_API PhysicalDevice
         u32 ApiVersion;
 
         TKit::FixedArray4<u32> FamilyIndices;
-        TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
+        TKit::Array8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::StaticArray256<std::string> EnabledExtensions;
-        TKit::StaticArray256<std::string> AvailableExtensions;
+        TKit::Array256<std::string> EnabledExtensions;
+        TKit::Array256<std::string> AvailableExtensions;
 
         Features EnabledFeatures{};
         Features AvailableFeatures{};

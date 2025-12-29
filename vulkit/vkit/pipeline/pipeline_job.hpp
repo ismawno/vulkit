@@ -92,8 +92,8 @@ template <Pipeline Pip> class IPipelineJob
     };
 
     VkPipelineLayout m_Layout = VK_NULL_HANDLE;
-    TKit::StaticArray8<VkDescriptorSet> m_DescriptorSets;
-    TKit::StaticArray4<PushDataInfo> m_PushData;
+    TKit::Array8<VkDescriptorSet> m_DescriptorSets;
+    TKit::Array4<PushDataInfo> m_PushData;
 };
 
 template <Pipeline Pip> class PipelineJob;

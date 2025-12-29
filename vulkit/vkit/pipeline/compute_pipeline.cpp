@@ -50,7 +50,7 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<>);
 
-    TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
+    TKit::Array32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
@@ -59,7 +59,7 @@ Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKi
     }
 
     const u32 count = p_Specs.GetSize();
-    TKit::StaticArray32<VkPipeline> pipelines{count};
+    TKit::Array32<VkPipeline> pipelines{count};
     const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
 

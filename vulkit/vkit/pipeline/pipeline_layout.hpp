@@ -54,15 +54,15 @@ class VKIT_API PipelineLayout
       private:
         LogicalDevice::Proxy m_Device;
 
-        TKit::StaticArray8<VkDescriptorSetLayout> m_DescriptorSetLayouts;
-        TKit::StaticArray4<VkPushConstantRange> m_PushConstantRanges;
+        TKit::Array8<VkDescriptorSetLayout> m_DescriptorSetLayouts;
+        TKit::Array4<VkPushConstantRange> m_PushConstantRanges;
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 
     struct Info
     {
-        TKit::StaticArray8<VkDescriptorSetLayout> DescriptorSetLayouts;
-        TKit::StaticArray4<VkPushConstantRange> PushConstantRanges;
+        TKit::Array8<VkDescriptorSetLayout> DescriptorSetLayouts;
+        TKit::Array4<VkPushConstantRange> PushConstantRanges;
     };
 
     PipelineLayout() = default;

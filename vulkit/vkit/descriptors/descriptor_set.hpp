@@ -72,7 +72,7 @@ class VKIT_API DescriptorSet
         LogicalDevice::Proxy m_Device;
         const DescriptorSetLayout *m_Layout;
 
-        TKit::StaticArray16<VkWriteDescriptorSet> m_Writes;
+        TKit::Array16<VkWriteDescriptorSet> m_Writes;
     };
 
     static Result<DescriptorSet> Create(const LogicalDevice::Proxy &p_Device, VkDescriptorSet p_Set);

@@ -205,16 +205,16 @@ class VKIT_API GraphicsPipeline
 
         u32 m_Subpass;
 
-        TKit::StaticArray128<VkDynamicState> m_DynamicStates;
-        TKit::StaticArray16<VkVertexInputBindingDescription> m_BindingDescriptions;
-        TKit::StaticArray16<VkVertexInputAttributeDescription> m_AttributeDescriptions;
-        TKit::StaticArray8<ColorAttachmentBuilder> m_ColorAttachmentBuilders;
+        TKit::Array128<VkDynamicState> m_DynamicStates;
+        TKit::Array16<VkVertexInputBindingDescription> m_BindingDescriptions;
+        TKit::Array16<VkVertexInputAttributeDescription> m_AttributeDescriptions;
+        TKit::Array8<ColorAttachmentBuilder> m_ColorAttachmentBuilders;
 
         // This array may sound redundant, but it is needed because this builder allows to generate a
         // PipelineCreateInfo, and so linked arrays to the create info must remain alive.
-        TKit::StaticArray8<VkPipelineColorBlendAttachmentState> m_ColorAttachments;
-        TKit::StaticArray4<VkPipelineShaderStageCreateInfo> m_ShaderStages;
-        TKit::StaticArray4<std::pair<VkViewport, VkRect2D>> m_Viewports;
+        TKit::Array8<VkPipelineColorBlendAttachmentState> m_ColorAttachments;
+        TKit::Array4<VkPipelineShaderStageCreateInfo> m_ShaderStages;
+        TKit::Array4<std::pair<VkViewport, VkRect2D>> m_Viewports;
 
         friend class ColorAttachmentBuilder;
     };

@@ -104,7 +104,7 @@ Result<Instance> Instance::Builder::Build() const
             return Result<Instance>::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The required layer '{}' is not suported", layer));
 
-    TKit::StaticArray64<const char *> extensions;
+    TKit::Array64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
         if (!contains(extensions, extension))
             extensions.Append(extension);
@@ -117,7 +117,7 @@ Result<Instance> Instance::Builder::Build() const
             extensions.Append(extension);
     }
 
-    TKit::StaticArray16<const char *> layers;
+    TKit::Array16<const char *> layers;
     for (const char *layer : m_RequiredLayers)
         if (!contains(layers, layer))
             layers.Append(layer);

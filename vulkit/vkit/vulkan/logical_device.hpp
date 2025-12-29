@@ -7,14 +7,6 @@
 
 #include "vkit/vulkan/physical_device.hpp"
 
-#ifndef VKIT_MAX_QUEUES_PER_FAMILY
-#    define VKIT_MAX_QUEUES_PER_FAMILY 4
-#endif
-
-#if VKIT_MAX_QUEUES_PER_FAMILY < 1
-#    error "[VULKIT] Maximum queues per family must be greater than 0"
-#endif
-
 namespace VKit
 {
 /**
@@ -49,8 +41,8 @@ class VKIT_API LogicalDevice
      */
     struct QueuePriorities
     {
-        TKit::StaticArray16<f32> RequiredPriorities;
-        TKit::StaticArray16<f32> RequestedPriorities;
+        TKit::Array16<f32> RequiredPriorities;
+        TKit::Array16<f32> RequestedPriorities;
     };
 
     /**
@@ -80,7 +72,7 @@ class VKIT_API LogicalDevice
         const Instance *m_Instance;
         const PhysicalDevice *m_PhysicalDevice;
 
-        TKit::StaticArray8<QueuePriorities> m_Priorities;
+        TKit::Array8<QueuePriorities> m_Priorities;
     };
 
     struct Info

@@ -30,7 +30,7 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
         offset += info.Size;
     }
 
-    TKit::StaticArray8<VkDescriptorSet> descriptorSets;
+    TKit::Array8<VkDescriptorSet> descriptorSets;
     for (const VkDescriptorSet set : m_DescriptorSets)
         if (set)
             descriptorSets.Append(set);

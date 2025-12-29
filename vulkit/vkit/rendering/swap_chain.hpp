@@ -98,8 +98,8 @@ class VKIT_API SwapChain
         u32 m_RequiredImages = 0; // Zero means no requirement
         u32 m_ImageArrayLayers = 1;
 
-        TKit::StaticArray16<VkSurfaceFormatKHR> m_SurfaceFormats;
-        TKit::StaticArray8<VkPresentModeKHR> m_PresentModes;
+        TKit::Array16<VkSurfaceFormatKHR> m_SurfaceFormats;
+        TKit::Array8<VkPresentModeKHR> m_PresentModes;
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -137,7 +137,7 @@ class VKIT_API SwapChain
 
     SwapChain() = default;
     SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain,
-              const TKit::StaticArray8<Image> &p_Images, const Info &p_Info)
+              const TKit::Array8<Image> &p_Images, const Info &p_Info)
         : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
     {
     }
@@ -182,7 +182,7 @@ class VKIT_API SwapChain
   private:
     LogicalDevice::Proxy m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
-    TKit::StaticArray8<Image> m_Images;
+    TKit::Array8<Image> m_Images;
     Info m_Info;
 };
 } // namespace VKit

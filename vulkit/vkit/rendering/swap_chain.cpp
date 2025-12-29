@@ -43,8 +43,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
 
     const auto checkFlags = [this](const Flags p_Flags) -> bool { return m_Flags & p_Flags; };
 
-    TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
-    TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
+    TKit::Array16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
+    TKit::Array8<VkPresentModeKHR> presentModes = m_PresentModes;
     if (imageFormats.IsEmpty())
         imageFormats.Append(VkSurfaceFormatKHR{VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
     if (presentModes.IsEmpty())
@@ -146,7 +146,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<SwapChain>::Error(result, "Failed to create the swap chain");
 
-    TKit::StaticArray8<Image> finalImages;
+    TKit::Array8<Image> finalImages;
     SwapChain::Info info{};
     info.Extent = extent;
     info.SurfaceFormat = surfaceFormat;
@@ -170,7 +170,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
         return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
     }
 
-    TKit::StaticArray8<VkImage> images;
+    TKit::Array8<VkImage> images;
     images.Resize(imageCount);
 
     result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData());

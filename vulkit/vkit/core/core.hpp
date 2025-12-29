@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vkit/vulkan/vulkan.hpp"
-#include "tkit/container/static_array.hpp"
+#include "tkit/container/array.hpp"
 
 namespace VKit
 {
@@ -30,8 +30,8 @@ struct VKIT_API Core
     static const VkExtensionProperties *GetExtension(const char *p_Name);
     static const VkLayerProperties *GetLayer(const char *p_Name);
 
-    static inline TKit::StaticArray64<VkExtensionProperties> AvailableExtensions{};
-    static inline TKit::StaticArray16<VkLayerProperties> AvailableLayers{};
+    static inline TKit::Array64<VkExtensionProperties> AvailableExtensions{};
+    static inline TKit::Array16<VkLayerProperties> AvailableLayers{};
 };
 
 } // namespace VKit
