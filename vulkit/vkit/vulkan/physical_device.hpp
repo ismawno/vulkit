@@ -218,7 +218,7 @@ class VKIT_API PhysicalDevice
 
         u32 ApiVersion;
 
-        TKit::Array4<u32> FamilyIndices;
+        TKit::FixedArray4<u32> FamilyIndices;
         TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated

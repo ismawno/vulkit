@@ -88,7 +88,7 @@ class VKIT_API LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-        TKit::Array4<u32> QueueCounts;
+        TKit::FixedArray4<u32> QueueCounts;
     };
 
     LogicalDevice() = default;

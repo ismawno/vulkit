@@ -190,12 +190,9 @@ void Image::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_
     copy.dstOffset = doff;
 
     VkExtent3D &cext = copy.extent;
-    cext.width =
-        ext.width == TKIT_U32_MAX ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
-    cext.height =
-        ext.height == TKIT_U32_MAX ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
-    cext.depth =
-        ext.depth == TKIT_U32_MAX ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
+    cext.width = ext.width == TKIT_U32_MAX ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
+    cext.height = ext.height == TKIT_U32_MAX ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
+    cext.depth = ext.depth == TKIT_U32_MAX ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(cext.width <= info.Width - soff.x, "[VULKIT] Specified width exceeds source image width");
@@ -276,7 +273,7 @@ Result<> Image::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const
     if (p_FinalLayout == VK_IMAGE_LAYOUT_UNDEFINED)
         p_FinalLayout = m_Layout;
 
-    const VkDeviceSize size = GetSize();
+    const VkDeviceSize size = ComputeSize();
     TKIT_ASSERT(p_Data.Channels == GetBytesPerPixel(),
                 "[VULKIT] The number of channels must match the bytes per pixel of the image");
     TKIT_ASSERT(size == p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels,

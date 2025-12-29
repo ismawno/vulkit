@@ -112,7 +112,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (transform == static_cast<VkSurfaceTransformFlagBitsKHR>(0))
         transform = support.Capabilities.currentTransform;
 
-    const TKit::Array<u32, 2> indices{devInfo.FamilyIndices[Queue_Graphics], devInfo.FamilyIndices[Queue_Present]};
+    const TKit::FixedArray<u32, 2> indices{devInfo.FamilyIndices[Queue_Graphics], devInfo.FamilyIndices[Queue_Present]};
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = m_Surface;
