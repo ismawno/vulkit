@@ -10,31 +10,13 @@
 
 namespace VKit
 {
-/**
- * @brief Represents a Vulkan swap chain and its associated resources.
- *
- * Manages the swap chain's images and, optionally, image views.
- */
 class VKIT_API SwapChain
 {
   public:
-    /**
-     * @brief Helps create and configure a Vulkan swap chain.
-     *
-     * Provides methods to specify swap chain parameters like surface format,
-     * present mode, image count, and flags. Supports both mandatory and optional requirements.
-     *
-     */
     class Builder
     {
       public:
         using Flags = u8;
-        /**
-         * @brief Flags for configuring swap chain creation.
-         *
-         * These flags define optional behaviors for the swap chain, such as creating image views.
-         *
-         */
         enum FlagBits : Flags
         {
             Flag_Clipped = 1 << 0,
@@ -45,13 +27,6 @@ class VKIT_API SwapChain
         {
         }
 
-        /**
-         * @brief Creates a swap chain based on the builder's configuration.
-         *
-         * Returns a swap chain object if the creation succeeds, or an error otherwise.
-         *
-         * @return A `Result` containing the created `SwapChain` or an error.
-         */
         Result<SwapChain> Build() const;
 
         Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format);
@@ -109,11 +84,6 @@ class VKIT_API SwapChain
     };
 
     using Flags = u8;
-    /**
-     * @brief Flags describing swap chain capabilities.
-     *
-     * Indicates features like whether the swap chain has image views.
-     */
     enum FlagBits : Flags
     {
         Flag_Clipped = 1 << 0,

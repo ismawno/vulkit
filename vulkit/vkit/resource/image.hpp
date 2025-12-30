@@ -114,65 +114,15 @@ class Image
 
     void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
 
-    /**
-     * @brief Copies data from another image into this image.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source image to copy from.
-     * @param p_Info Information about the range of the copy.
-     */
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const Image &p_Source, const ImageCopy &p_Info = {});
 
-    /**
-     * @brief Copies data from another image into this image.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source image to copy from.
-     * @param p_Info Information about the range of the copy.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source, const ImageCopy &p_Info = {});
 
-    /**
-     * @brief Copies data from a buffer into this image.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source buffer to copy from.
-     * @param p_Info Information about the range of the copy.
-     */
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferImageCopy &p_Info = {});
 
-    /**
-     * @brief Copies data from a buffer into this image.
-     *
-     * Uses a command pool and queue to perform the buffer-to-buffer copy operation.
-     *
-     * @param p_Pool The command pool to allocate the copy command.
-     * @param p_Queue The queue to submit the copy command.
-     * @param p_Source The source buffer to copy from.
-     * @param p_Info Information about the range of the copy.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source,
                             const BufferImageCopy &p_Info = {});
 
-    /**
-     * @brief Uploads host data to the buffer, offsetted and up to the specified size, which must not exceed the
-     * buffer's.
-     *
-     * This method is designed to be used for device local buffers.
-     *
-     * @param p_Pool The command pool to allocate the copy command.
-     * @param p_Queue The queue to submit the copy command.
-     * @param p_Data The host-side image.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostData &p_Data,
                             VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 

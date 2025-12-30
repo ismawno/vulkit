@@ -10,12 +10,6 @@
 
 namespace VKit
 {
-/**
- * @brief Represents a Vulkan render pass and its associated resources.
- *
- * Manages the configuration, creation, and destruction of Vulkan render passes, along with helper utilities for
- * attachments, subpasses, and dependencies. Also supports resource creation for associated frame buffers and images.
- */
 class VKIT_API RenderPass
 {
   public:
@@ -113,12 +107,6 @@ class VKIT_API RenderPass
     };
 
   public:
-    /**
-     * @brief A utility for constructing Vulkan render passes.
-     *
-     * Provides methods for configuring attachments, subpasses, and dependencies, while allowing fine-grained control
-     * over render pass creation flags and resource management.
-     */
     class Builder
     {
       public:
@@ -150,13 +138,6 @@ class VKIT_API RenderPass
         TKit::Array8<DependencyBuilder> m_Dependencies{};
     };
 
-    /**
-     * @brief Manages frame buffers and image views associated with a render pass.
-     *
-     * Can be created with the `CreateResources()` method, which generates frame buffers and image views for each
-     * attachment. The user is responsible for destroying the resources when they are no longer needed.
-     *
-     */
     class Resources
     {
       public:

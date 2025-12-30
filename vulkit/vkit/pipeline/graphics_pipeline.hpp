@@ -10,12 +10,6 @@
 
 namespace VKit
 {
-/**
- * @brief Represents a Vulkan graphics pipeline.
- *
- * Handles the creation, management, and binding of graphics pipelines, which are used
- * for rendering in Vulkan. Includes functionality for custom specifications and batch creation.
- */
 class VKIT_API GraphicsPipeline
 {
   public:
@@ -48,13 +42,6 @@ class VKIT_API GraphicsPipeline
     };
 
   public:
-    /**
-     * @brief Builder for creating a Vulkan graphics pipeline.
-     *
-     * Contains all the necessary settings for pipeline creation, including shaders,
-     * layout, render pass, and state settings. Provides utility methods for internal
-     * setup and pipeline creation.
-     */
     class Builder
     {
       public:
@@ -218,17 +205,6 @@ class VKIT_API GraphicsPipeline
         friend class ColorAttachmentBuilder;
     };
 
-    /**
-     * @brief Creates multiple graphics pipelines in a batch.
-     *
-     * Initializes multiple Vulkan graphics pipelines using the provided specifications
-     * and logical device.
-     *
-     * @param p_Device The logical device proxy for Vulkan operations.
-     * @param p_Specs A span of pipeline builders containing the specifications for each pipeline.
-     * @param p_Pipelines A span to store the created pipelines.
-     * @return A `Result` indicating success or failure for the batch operation.
-     */
     static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
                            TKit::Span<GraphicsPipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
@@ -240,13 +216,6 @@ class VKIT_API GraphicsPipeline
 
     void Destroy();
 
-    /**
-     * @brief Binds the graphics pipeline to a command buffer.
-     *
-     * Prepares the pipeline for rendering by binding it to the specified command buffer.
-     *
-     * @param p_CommandBuffer The Vulkan command buffer to bind the pipeline to.
-     */
     void Bind(VkCommandBuffer p_CommandBuffer) const;
 
     const LogicalDevice::Proxy &GetDevice() const

@@ -9,12 +9,6 @@
 
 namespace VKit
 {
-/**
- * @brief Represents a Vulkan logical device and its associated state.
- *
- * The logical device manages queues, resources, and interactions with a physical device.
- * It provides methods for resource allocation and command submission to the Vulkan API.
- */
 class VKIT_API LogicalDevice
 {
   public:
@@ -34,23 +28,12 @@ class VKIT_API LogicalDevice
         }
     };
 
-    /**
-     * @brief Defines the priorities for device queues.
-     *
-     * The amount of queues will be determined by the number of priorities provided.
-     */
     struct QueuePriorities
     {
         TKit::Array16<f32> RequiredPriorities;
         TKit::Array16<f32> RequestedPriorities;
     };
 
-    /**
-     * @brief A utility for setting up and creating a Vulkan instance.
-     *
-     * Provides methods to request or require different queues with different prioritites.
-     *
-     */
     class Builder
     {
       public:

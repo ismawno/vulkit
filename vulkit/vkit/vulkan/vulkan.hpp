@@ -165,13 +165,6 @@ template <typename T> auto ResultToString(const T &p_Result)
 } // namespace VKit
 namespace VKit::Detail
 {
-/**
- * @brief Represents an error in a Vulkan operation, including error type and message.
- *
- * This class encapsulates a non-success Vulkan result code (`VkResult`) and an optional message to provide
- * more context about the operation's outcome.
- *
- */
 struct Error
 {
     Error() = default;
@@ -203,15 +196,6 @@ namespace VKit
 {
 template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 
-/**
- * @brief Manages deferred deletion of Vulkan resources.
- *
- * Allows users to enqueue resource cleanup operations, which can be flushed
- * in bulk to ensure proper resource management.
- *
- * Important: Submitted objects are not allowed to be destroyed manually. They must be alive until the queue is flushed,
- * and once it is, dangling handles are completely unusable/reusable unless completely overwritten.
- */
 class VKIT_API DeletionQueue
 {
   public:

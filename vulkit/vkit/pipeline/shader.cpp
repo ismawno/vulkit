@@ -14,15 +14,15 @@ namespace VKit
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_BinaryPath)
+Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_SpirvPath)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, Result<Shader>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, Result<Shader>);
 
-    std::ifstream file{p_BinaryPath.data(), std::ios::ate | std::ios::binary};
+    std::ifstream file{p_SpirvPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return Result<Shader>::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path '{}' not found", p_BinaryPath));
+            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path '{}' not found", p_SpirvPath));
 
     const auto fileSize = file.tellg();
 
@@ -46,14 +46,14 @@ Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::s
 
 TKIT_COMPILER_WARNING_IGNORE_POP()
 
-TKit::Result<void, i32> Shader::CompileFromFile(const std::string_view p_SourcePath,
-                                                const std::string_view p_BinaryPath, const std::string_view p_Arguments)
+TKit::Result<void, i32> Shader::CompileFromFile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath,
+                                                const std::string_view p_Arguments)
 {
-    const fs::path binaryPath = p_BinaryPath;
+    const fs::path spvPath = p_SpirvPath;
 
-    std::filesystem::create_directories(binaryPath.parent_path());
+    std::filesystem::create_directories(spvPath.parent_path());
     const std::string compileCommand =
-        VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + binaryPath.string();
+        VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + spvPath.string();
     const i32 code = static_cast<i32>(std::system(compileCommand.c_str()));
     if (code == 0)
         return TKit::Result<void, i32>::Ok();
@@ -84,19 +84,19 @@ Result<Shader> Shader::CompileFromSource(const LogicalDevice::Proxy &p_Device, c
     return CompileFromFile(p_Device, src.string(), p_Arguments);
 }
 
-bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_BinaryPath)
+bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath)
 {
     const fs::path sourcePath = p_SourcePath;
-    const fs::path binaryPath = p_BinaryPath;
+    const fs::path spvPath = p_SpirvPath;
 
     TKIT_ASSERT(fs::exists(sourcePath), "[VULKIT] Source file does not exist");
 
-    if (!fs::exists(binaryPath))
+    if (!fs::exists(spvPath))
         return true;
 
     const auto sourceTime = fs::last_write_time(sourcePath);
-    const auto binaryTime = fs::last_write_time(binaryPath);
-    return sourceTime > binaryTime;
+    const auto spvTime = fs::last_write_time(spvPath);
+    return sourceTime > spvTime;
 }
 
 void Shader::Destroy()

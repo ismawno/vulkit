@@ -11,13 +11,6 @@ namespace VKit
 {
 class Buffer;
 
-/**
- * @brief Represents a Vulkan descriptor set.
- *
- * Manages the binding of resources to a descriptor set, providing methods for
- * binding buffers and images to the set. It is an extremely thin wrapper.
- *
- */
 class VKIT_API DescriptorSet
 {
   public:
@@ -29,43 +22,9 @@ class VKIT_API DescriptorSet
         {
         }
 
-        /**
-         * @brief Writes a buffer to a descriptor set binding.
-         *
-         * Binds a buffer resource to the specified binding in the descriptor set.
-         *
-         * @param p_Binding The binding index in the descriptor set layout.
-         * @param p_BufferInfo A pointer to the buffer descriptor info.
-         */
         void WriteBuffer(u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo);
-
-        /**
-         * @brief Writes a buffer to a descriptor set binding.
-         *
-         * Binds a buffer resource to the specified binding in the descriptor set.
-         *
-         * @param p_Binding The binding index in the descriptor set layout.
-         * @param p_Buffer A reference to the buffer to bind.
-         */
         void WriteBuffer(u32 p_Binding, const Buffer &p_Buffer);
-
-        /**
-         * @brief Writes an image to a descriptor set binding.
-         *
-         * Binds an image resource to the specified binding in the descriptor set.
-         *
-         * @param p_Binding The binding index in the descriptor set layout.
-         * @param p_ImageInfo A pointer to the image descriptor info.
-         */
         void WriteImage(u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo);
-
-        /**
-         * @brief Overwrites an existing descriptor set.
-         *
-         * Updates the specified descriptor set with the current binding information.
-         *
-         * @param p_Set The descriptor set to overwrite.
-         */
         void Overwrite(const VkDescriptorSet p_Set);
 
       private:

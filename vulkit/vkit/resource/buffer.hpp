@@ -14,12 +14,6 @@ namespace VKit
 class CommandPool;
 class Image;
 
-/**
- * @brief Manages a Vulkan buffer and its associated memory.
- *
- * Provides methods for buffer creation, memory mapping, data writing, flushing, and invalidation.
- * Supports descriptor info retrieval and buffer-to-buffer copy operations.
- */
 class VKIT_API Buffer
 {
   public:
@@ -101,24 +95,8 @@ class VKIT_API Buffer
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
 
-    /**
-     * @brief Writes data to the buffer, offsetted and up to the specified size, which must not exceed the buffer's.
-     *
-     * The buffer must be mapped and host visible to call this method.
-     *
-     * @param p_Data A pointer to the data to write.
-     * @param p_Info Information about the range of the copy.
-     */
     void Write(const void *p_Data, BufferCopy p_Info = {});
 
-    /**
-     * @brief Writes data to the buffer from a span.
-     *
-     * The buffer must be mapped and host visible to call this method.
-     *
-     * @param p_Data A pointer to the data to write.
-     * @param p_Offsets Write offsets.
-     */
     template <typename T> void Write(const TKit::Span<const T> p_Data, const BufferCopy &p_Info = {})
     {
         const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
@@ -128,88 +106,20 @@ class VKIT_API Buffer
               {.Size = size, .SrcOffset = p_Info.SrcOffset * sizeof(T), .DstOffset = p_Info.DstOffset * sizeof(T)});
     }
 
-    /**
-     * @brief Writes data to the buffer at the specified index.
-     *
-     * The buffer must be mapped and host visible to call this method.
-     *
-     * @param p_Index The index of the buffer instance to write to.
-     * @param p_Data A pointer to the data to write.
-     */
     void WriteAt(u32 p_Index, const void *p_Data);
 
-    /**
-     * @brief Copies data from another buffer into this buffer.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source buffer to copy from.
-     * @param p_Info Information about the range of the copy.
-     */
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info);
 
-    /**
-     * @brief Copies data from another buffer into this buffer.
-     *
-     * Uses a command pool and queue to perform the buffer-to-buffer copy operation.
-     *
-     * @param p_Pool The command pool to allocate the copy command.
-     * @param p_Queue The queue to submit the copy command.
-     * @param p_Source The source buffer to copy from.
-     * @param p_Info Information about the range of the copy.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source,
                             const BufferCopy &p_Info = {});
 
-    /**
-     * @brief Copies data from an image into this buffer.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source image to copy from.
-     * @param p_Info Information about the range of the copy.
-     */
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info);
 
-    /**
-     * @brief Copies data from an image into this buffer.
-     *
-     * Records the copy into a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to which the copy will be recorded.
-     * @param p_Source The source image to copy from.
-     * @param p_Info Information about the range of the copy.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source,
                            const BufferImageCopy &p_Info = {});
 
-    /**
-     * @brief Uploads host data to the buffer, offsetted and up to the specified size, which must not exceed the
-     * buffer's.
-     *
-     * This method is designed to be used for device local buffers.
-     *
-     * @param p_Pool The command pool to allocate the copy command.
-     * @param p_Queue The queue to submit the copy command.
-     * @param p_Data A pointer to the data to write.
-     * @param p_Info Information about the range of the copy.
-     * @return A `Result` indicating success or failure.
-     */
-
     Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
                             const BufferCopy &p_Info = {});
-    /**
-     * @brief Writes data to the buffer from a span.
-     *
-     * The buffer must be mapped and host visible to call this method. Size units are in span objects, not bytes.
-     *
-     * @param p_Data A pointer to the data to write.
-     * @param p_Offsets Write offsets.
-     */
     template <typename T>
     Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
                             const BufferCopy &p_Info = {})
@@ -228,36 +138,13 @@ class VKIT_API Buffer
         return m_Data;
     }
 
-    /**
-     * @brief Flushes a range of the buffer's memory to ensure visibility to the device.
-     *
-     * Ensures that any changes made to the buffer's mapped memory are visible to the GPU.
-     *
-     * @param p_Size The size of the memory range to flush (default: entire buffer).
-     * @param p_Offset The offset within the buffer to start flushing (default: 0).
-     */
     Result<> Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
 
-    /**
-     * @brief Flushes a range of the buffer's memory at the specified index.
-     *
-     * Ensures that any changes made to the buffer's mapped memory are visible to the GPU.
-     *
-     * @param p_Index The index of the buffer instance to flush.
-     */
     Result<> FlushAt(u32 p_Index);
 
     Result<> Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
     Result<> InvalidateAt(u32 p_Index);
 
-    /**
-     * @brief Binds the buffer as an index buffer to a command buffer.
-     *
-     * Automatically detects the index type (`u8`, `u16`, or `u32`) based on the buffer's template parameter.
-     *
-     * @param p_CommandBuffer The command buffer to bind the index buffer to.
-     * @param p_Offset The offset within the buffer (default: 0).
-     */
     template <typename Index> void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
@@ -269,32 +156,12 @@ class VKIT_API Buffer
         else if constexpr (std::is_same_v<Index, u32>)
             m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
     }
-    /**
-     * @brief Binds the buffer as a vertex buffer to a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
-     * @param p_Offset The offset within the buffer (default: 0).
-     */
     void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const;
 
-    /**
-     * @brief Binds multiple buffers as vertex buffers to a command buffer.
-     *
-     * @param p_Device The logical device to use for binding.
-     * @param p_CommandBuffer The command buffer to bind the vertex buffers to.
-     * @param p_Buffers A span containing the buffers to bind.
-     * @param p_Offsets A span containing the offsets within the buffers (default: 0).
-     */
     static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, VkCommandBuffer p_CommandBuffer,
                                    TKit::Span<const VkBuffer> p_Buffers, u32 p_FirstBinding = 0,
                                    TKit::Span<const VkDeviceSize> p_Offsets = {});
 
-    /**
-     * @brief Binds a buffer as a vertex buffer to a command buffer.
-     *
-     * @param p_CommandBuffer The command buffer to bind the vertex buffer to.
-     * @param p_Offset The offset within the buffer (default: 0).
-     */
     void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer, VkDeviceSize p_Offset = 0) const;
 
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;

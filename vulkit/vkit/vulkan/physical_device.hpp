@@ -18,16 +18,6 @@ enum QueueType : u32
     Queue_Present = 3,
 };
 const char *ToString(QueueType p_Type);
-/**
- * @brief Represents a Vulkan physical device and its features.
- *
- * Encapsulates the Vulkan physical device handle and provides access to its
- * features, properties, and queue support. Includes methods to query and
- * manage device-specific details.
- *
- * If the selected Vulkan API version does not support certain features (e.g.,
- * 1.1/1.2/1.3), the related properties and features will be ignored.
- */
 class VKIT_API PhysicalDevice
 {
   public:
@@ -83,23 +73,10 @@ class VKIT_API PhysicalDevice
     };
 #endif
 
-    /**
-     * @brief A helper class for selecting a Vulkan physical device.
-     *
-     * Allows you to define requirements such as supported extensions, memory
-     * capacity, queue capabilities, and device type. Evaluates available devices
-     * and selects the one that best matches the criteria.
-     */
     class Selector
     {
       public:
         using Flags = u16;
-        /**
-         * @brief Flags for specifying criteria when selecting a physical device.
-         *
-         * Used to filter devices based on required queue types, memory capabilities,
-         * and extension support.
-         */
         enum FlagBits : Flags
         {
             Flag_AnyType = 1 << 0,
@@ -116,24 +93,8 @@ class VKIT_API PhysicalDevice
 
         Selector(const Instance *p_Instance);
 
-        /**
-         * @brief Selects the best matching physical device.
-         *
-         * Based on the specified requirements and preferences, this method selects a
-         * Vulkan physical device and returns it. If no suitable device is found, an error is returned.
-         *
-         * @return A `Result` containing the selected PhysicalDevice or an error.
-         */
         Result<PhysicalDevice> Select() const;
 
-        /**
-         * @brief Lists all available physical devices along with their evaluation results.
-         *
-         * Enumerates all Vulkan physical devices and evaluates them based on the selector's
-         * criteria. Provides detailed results for each device.
-         *
-         * @return A `Result` containing an array of formatted results for each physical device.
-         */
         Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
@@ -240,15 +201,6 @@ class VKIT_API PhysicalDevice
 
     bool EnableFeatures(const Features &p_Features);
 
-    /**
-     * @brief Add a non-core feature that requires an extension to be supported and that is potentially not present
-     * in the user's current header version.
-     *
-     * The availability of such features will not be checked. It is up to you to provide the required support
-     * through extensions.
-     *
-     * @param p_Feature The feature, which must remain in scope until a logical device has been created.
-     */
     template <typename T> void EnableExtensionBoundFeature(T *p_Feature)
     {
         void *next = m_Info.EnabledFeatures.Next;

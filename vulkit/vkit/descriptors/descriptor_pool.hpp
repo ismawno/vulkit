@@ -13,21 +13,9 @@
 
 namespace VKit
 {
-/**
- * @brief Manages a Vulkan descriptor pool and its allocations.
- *
- * Handles the creation, allocation, and deallocation of descriptor sets.
- * Also supports resetting the pool for reallocation of resources.
- */
 class VKIT_API DescriptorPool
 {
   public:
-    /**
-     * @brief A utility for creating and configuring a Vulkan descriptor pool.
-     *
-     * Provides methods to specify the maximum number of sets, pool sizes, and creation flags.
-     * Supports fine-grained control over the pool's configuration.
-     */
     class Builder
     {
       public:
@@ -35,13 +23,6 @@ class VKIT_API DescriptorPool
         {
         }
 
-        /**
-         * @brief Creates a descriptor pool based on the builder's configuration.
-         *
-         * Returns a descriptor pool object if the creation succeeds, or an error otherwise.
-         *
-         * @return A `Result` containing the created `DescriptorPool` or an error.
-         */
         Result<DescriptorPool> Build() const;
 
         Builder &SetMaxSets(u32 p_MaxSets);
@@ -77,41 +58,9 @@ class VKIT_API DescriptorPool
         return m_Info;
     }
 
-    /**
-     * @brief Allocates a descriptor set from the pool.
-     *
-     * Creates a descriptor set using the specified layout.
-     *
-     * @param p_Layout The descriptor set layout to use for allocation.
-     * @return A `Result` containing the allocated descriptor set or an error.
-     */
     Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const;
-
-    /**
-     * @brief Deallocates one or more descriptor sets from the pool.
-     *
-     * Frees the specified descriptor sets, making their resources available for reallocation.
-     *
-     * @param p_Sets A span containing the descriptor sets to deallocate.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const;
-
-    /**
-     * @brief Deallocates a descriptor set from the pool.
-     *
-     * Frees the specified descriptor set, making its resources available for reallocation.
-     *
-     * @param p_Set The descriptor set to deallocate.
-     * @return A `Result` indicating success or failure.
-     */
     Result<> Deallocate(VkDescriptorSet p_Set) const;
-
-    /**
-     * @brief Resets the descriptor pool, making all resources available for reallocation.
-     *
-     * @return A `Result` indicating success or failure.
-     */
     Result<> Reset();
 
     const LogicalDevice::Proxy &GetDevice() const
