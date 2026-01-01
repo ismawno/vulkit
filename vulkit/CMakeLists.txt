@@ -9,15 +9,15 @@ if(VULKIT_ENABLE_INSTANCE)
 endif()
 
 if(VULKIT_ENABLE_PHYSICAL_DEVICE)
-  list(APPEND SOURCES vkit/vulkan/physical_device.cpp)
+  list(APPEND SOURCES vkit/device/physical_device.cpp)
 endif()
 
 if(VULKIT_ENABLE_LOGICAL_DEVICE)
-  list(APPEND SOURCES vkit/vulkan/logical_device.cpp)
+  list(APPEND SOURCES vkit/device/logical_device.cpp)
 endif()
 
 if(VULKIT_ENABLE_ALLOCATOR)
-  list(APPEND SOURCES vkit/vulkan/allocator.cpp)
+  list(APPEND SOURCES vkit/memory/allocator.cpp)
 endif()
 
 if(VULKIT_ENABLE_BUFFER)
@@ -25,33 +25,33 @@ if(VULKIT_ENABLE_BUFFER)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
-  list(APPEND SOURCES vkit/descriptors/descriptor_pool.cpp
-       vkit/descriptors/descriptor_set_layout.cpp
-       vkit/descriptors/descriptor_set.cpp)
+  list(APPEND SOURCES vkit/state/descriptor_pool.cpp
+       vkit/state/descriptor_set_layout.cpp
+       vkit/state/descriptor_set.cpp)
 endif()
 
 if(VULKIT_ENABLE_SHADERS)
-  list(APPEND SOURCES vkit/pipeline/shader.cpp)
+  list(APPEND SOURCES vkit/state/shader.cpp)
 endif()
 
 if(VULKIT_ENABLE_PIPELINE_LAYOUT)
-  list(APPEND SOURCES vkit/pipeline/pipeline_layout.cpp)
+  list(APPEND SOURCES vkit/state/pipeline_layout.cpp)
 endif()
 
 if(VULKIT_ENABLE_PIPELINE_JOB)
-  list(APPEND SOURCES vkit/pipeline/pipeline_job.cpp)
+  list(APPEND SOURCES vkit/state/pipeline_job.cpp)
 endif()
 
 if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
-  list(APPEND SOURCES vkit/pipeline/graphics_pipeline.cpp)
+  list(APPEND SOURCES vkit/state/graphics_pipeline.cpp)
 endif()
 
 if(VULKIT_ENABLE_COMPUTE_PIPELINE)
-  list(APPEND SOURCES vkit/pipeline/compute_pipeline.cpp)
+  list(APPEND SOURCES vkit/state/compute_pipeline.cpp)
 endif()
 
 if(VULKIT_ENABLE_COMMAND_POOL)
-  list(APPEND SOURCES vkit/rendering/command_pool.cpp)
+  list(APPEND SOURCES vkit/execution/command_pool.cpp)
 endif()
 
 if(VULKIT_ENABLE_IMAGE)
@@ -59,11 +59,11 @@ if(VULKIT_ENABLE_IMAGE)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)
-  list(APPEND SOURCES vkit/rendering/render_pass.cpp)
+  list(APPEND SOURCES vkit/state/render_pass.cpp)
 endif()
 
 if(VULKIT_ENABLE_SWAP_CHAIN)
-  list(APPEND SOURCES vkit/rendering/swap_chain.cpp)
+  list(APPEND SOURCES vkit/presentation/swap_chain.cpp)
 endif()
 
 add_library(vulkit STATIC ${SOURCES})

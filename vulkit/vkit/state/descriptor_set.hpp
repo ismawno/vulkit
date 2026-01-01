@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DESCRIPTORS"
 #endif
 
-#include "vkit/descriptors/descriptor_set_layout.hpp"
+#include "vkit/state/descriptor_set_layout.hpp"
 
 namespace VKit
 {

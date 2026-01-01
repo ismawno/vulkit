@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/rendering/swap_chain.hpp"
+#include "vkit/presentation/swap_chain.hpp"
 
 namespace VKit
 {

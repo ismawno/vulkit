@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/descriptors/descriptor_set.hpp"
-#include "vkit/descriptors/descriptor_pool.hpp"
+#include "vkit/state/descriptor_set.hpp"
+#include "vkit/state/descriptor_pool.hpp"
 
 namespace VKit
 {

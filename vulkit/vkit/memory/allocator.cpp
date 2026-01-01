@@ -2,7 +2,7 @@
 #define VMA_IMPLEMENTATION
 
 #include "vkit/core/pch.hpp"
-#include "vkit/vulkan/allocator.hpp"
+#include "vkit/memory/allocator.hpp"
 
 namespace VKit
 {

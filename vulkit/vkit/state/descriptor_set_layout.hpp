@@ -6,7 +6,7 @@
 #endif
 
 #include "vkit/core/api.hpp"
-#include "vkit/vulkan/logical_device.hpp"
+#include "vkit/device/logical_device.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit

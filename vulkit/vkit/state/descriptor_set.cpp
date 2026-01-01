@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/descriptors/descriptor_set.hpp"
+#include "vkit/state/descriptor_set.hpp"
 #include "vkit/resource/buffer.hpp"
 
 namespace VKit

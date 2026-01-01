@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/rendering/command_pool.hpp"
+#include "vkit/execution/command_pool.hpp"
 
 namespace VKit
 {

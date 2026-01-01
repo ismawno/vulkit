@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/vulkan/logical_device.hpp"
+#include "vkit/device/logical_device.hpp"
 
 namespace VKit
 {

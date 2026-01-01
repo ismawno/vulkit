@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/pipeline/graphics_pipeline.hpp"
+#include "vkit/state/graphics_pipeline.hpp"
 #include "tkit/utils/debug.hpp"
 
 namespace VKit

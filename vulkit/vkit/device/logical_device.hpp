@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_LOGICAL_DEVICE"
 #endif
 
-#include "vkit/vulkan/physical_device.hpp"
+#include "vkit/device/physical_device.hpp"
 
 namespace VKit
 {

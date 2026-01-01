@@ -6,8 +6,8 @@
 #endif
 
 #include "vkit/core/api.hpp"
-#include "vkit/vulkan/logical_device.hpp"
-#include "vkit/descriptors/descriptor_set.hpp"
+#include "vkit/device/logical_device.hpp"
+#include "vkit/state/descriptor_set.hpp"
 
 #include <vulkan/vulkan.h>
 

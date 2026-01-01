@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/pipeline/compute_pipeline.hpp"
+#include "vkit/state/compute_pipeline.hpp"
 
 namespace VKit
 {

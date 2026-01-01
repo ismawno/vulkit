@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/rendering/render_pass.hpp"
+#include "vkit/state/render_pass.hpp"
 
 namespace VKit
 {

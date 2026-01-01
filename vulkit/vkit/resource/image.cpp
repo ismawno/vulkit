@@ -1,7 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/resource/image.hpp"
 #include "vkit/resource/buffer.hpp"
-#include "vkit/rendering/command_pool.hpp"
+#include "vkit/execution/command_pool.hpp"
 #include "tkit/math/math.hpp"
 
 namespace VKit

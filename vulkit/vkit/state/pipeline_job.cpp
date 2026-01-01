@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/pipeline/pipeline_job.hpp"
-#include "vkit/descriptors/descriptor_set.hpp"
+#include "vkit/state/pipeline_job.hpp"
+#include "vkit/state/descriptor_set.hpp"
 
 namespace VKit::Detail
 {

@@ -90,7 +90,7 @@ There are many more options available for both the [instance.hpp](https://github
 
 ### Swap chain
 
-The [swap_chain.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/rendering/swap_chain.hpp) abstraction streamlines the process of creating a swap chain, which can otherwise be cumbersome due to the variety of formats and parameters. Vulkit uses the same builder pattern as instance and device handles:
+The [swap_chain.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/presentation/swap_chain.hpp) abstraction streamlines the process of creating a swap chain, which can otherwise be cumbersome due to the variety of formats and parameters. Vulkit uses the same builder pattern as instance and device handles:
 
 ```cpp
 const auto result =
@@ -107,7 +107,7 @@ VKIT_ASSERT_RESULT(result);
 
 ### Render pass
 
-The [render_pass.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/rendering/render_pass.hpp) abstraction simplifies the creation and management of Vulkan render passes, which can be complex due to the need to configure attachments, subpasses, and dependencies. Vulkit uses a flexible builder pattern to define render passes and provides utilities for managing associated resources like frame buffers and image views:
+The [render_pass.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/state/render_pass.hpp) abstraction simplifies the creation and management of Vulkan render passes, which can be complex due to the need to configure attachments, subpasses, and dependencies. Vulkit uses a flexible builder pattern to define render passes and provides utilities for managing associated resources like frame buffers and image views:
 
 ```cpp
 const auto result =
@@ -153,7 +153,7 @@ Vulkit provides many more abstractions, slightly simpler than the ones presented
 
 - [pipelines and shaders](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/pipeline): Offers abstractions for both graphics and compute pipelines. Additionally, a `Shader` class is provided, capable of compiling GLSL shaders into SPIR-V format by invoking the `glslc` compiler.
 
-- [pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/pipeline/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline.
+- [pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/state/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline.
 
 ## Dependencies and Third-Party Libraries
 

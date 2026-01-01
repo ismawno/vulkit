@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/pipeline/shader.hpp"
+#include "vkit/state/shader.hpp"
 #include "vkit/core/limits.hpp"
 
 #include <fstream>

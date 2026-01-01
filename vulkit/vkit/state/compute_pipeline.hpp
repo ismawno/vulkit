@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_COMPUTE_PIPELINE"
 #endif
 
-#include "vkit/vulkan/logical_device.hpp"
+#include "vkit/device/logical_device.hpp"
 
 namespace VKit
 {

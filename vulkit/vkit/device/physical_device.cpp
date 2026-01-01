@@ -1,5 +1,5 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/vulkan/physical_device.hpp"
+#include "vkit/device/physical_device.hpp"
 
 #define EXPAND_VERSION(p_Version)                                                                                      \
     VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
