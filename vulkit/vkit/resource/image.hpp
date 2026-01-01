@@ -12,26 +12,27 @@ namespace VKit
 {
 class CommandPool;
 class Buffer;
+
+using ImageFlags = u8;
+enum ImageFlagBits : ImageFlags
+{
+    ImageFlag_ColorAttachment = 1 << 0,
+    ImageFlag_DepthAttachment = 1 << 1,
+    ImageFlag_StencilAttachment = 1 << 2,
+    ImageFlag_InputAttachment = 1 << 3,
+    ImageFlag_Sampled = 1 << 4,
+    ImageFlag_ForceHostVisible = 1 << 5
+};
 class Image
 {
   public:
-    using Flags = u8;
-    enum FlagBits : Flags
-    {
-        Flag_ColorAttachment = 1 << 0,
-        Flag_DepthAttachment = 1 << 1,
-        Flag_StencilAttachment = 1 << 2,
-        Flag_InputAttachment = 1 << 3,
-        Flag_Sampled = 1 << 4,
-        Flag_ForceHostVisible = 1 << 5
-    };
     class Builder
     {
       public:
         Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
-                VkFormat p_Format, Flags p_Flags = 0);
+                VkFormat p_Format, ImageFlags p_Flags = 0);
         Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
-                VkFormat p_Format, Flags p_Flags = 0);
+                VkFormat p_Format, ImageFlags p_Flags = 0);
 
         /**
          * @brief Creates a vulkan image with the provided specification.
@@ -64,7 +65,7 @@ class Image
         VmaAllocator m_Allocator;
         VkImageCreateInfo m_ImageInfo{};
         VkImageViewCreateInfo m_ViewInfo{};
-        Flags m_Flags;
+        ImageFlags m_Flags;
     };
 
     struct HostData
@@ -84,7 +85,7 @@ class Image
         u32 Width;
         u32 Height;
         u32 Depth;
-        Flags Flags;
+        ImageFlags Flags;
     };
 
     struct TransitionInfo
@@ -99,7 +100,8 @@ class Image
         VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
     };
 
-    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent, Flags p_Flags = Flag_ColorAttachment);
+    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent,
+                              ImageFlags p_Flags = ImageFlag_ColorAttachment);
 
     Image() = default;
     Image(const LogicalDevice::Proxy &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
@@ -180,5 +182,5 @@ class Image
 
 namespace VKit::Detail
 {
-VkImageAspectFlags DeduceAspectMask(const Image::Flags p_Flags);
+VkImageAspectFlags DeduceAspectMask(const ImageFlags p_Flags);
 }

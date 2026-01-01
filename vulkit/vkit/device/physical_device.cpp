@@ -232,13 +232,13 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             fullySuitable = false;
         }
 
-    Flags flags = m_Flags;
-    const auto checkFlags = [&flags](const Flags p_Flags) -> bool { return flags & p_Flags; };
+    DeviceSelectorFlags flags = m_Flags;
+    const auto checkFlags = [&flags](const DeviceSelectorFlags p_Flags) -> bool { return flags & p_Flags; };
 
-    if (checkFlags(Flag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
+    if (checkFlags(DeviceSelectorFlag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
         enabledExtensions.Append("VK_KHR_portability_subset");
 
-    if (checkFlags(Flag_RequirePresentQueue))
+    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
         enabledExtensions.Append("VK_KHR_swapchain");
 
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceQueueFamilyProperties, JudgeResult);
@@ -295,12 +295,12 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     };
 #endif
 
-    if (checkFlags(Flag_RequireDedicatedComputeQueue | Flag_RequireSeparateComputeQueue))
-        flags |= Flag_RequireComputeQueue;
-    if (checkFlags(Flag_RequireDedicatedTransferQueue | Flag_RequireSeparateTransferQueue))
-        flags |= Flag_RequireTransferQueue;
+    if (checkFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue | DeviceSelectorFlag_RequireSeparateComputeQueue))
+        flags |= DeviceSelectorFlag_RequireComputeQueue;
+    if (checkFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue | DeviceSelectorFlag_RequireSeparateTransferQueue))
+        flags |= DeviceSelectorFlag_RequireTransferQueue;
 
-    Flags deviceFlags = 0;
+    DeviceFlags deviceFlags = 0;
     const u32 dedicatedCompute =
         dedicatedQueueIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT);
     const u32 dedicatedTransfer =
@@ -322,80 +322,81 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     u32 transferIndex = TKIT_U32_MAX;
 
     if (graphicsIndex != TKIT_U32_MAX)
-        deviceFlags |= PhysicalDevice::Flag_HasGraphicsQueue;
+        deviceFlags |= DeviceFlag_HasGraphicsQueue;
     if (presentIndex != TKIT_U32_MAX)
-        deviceFlags |= PhysicalDevice::Flag_HasPresentQueue;
+        deviceFlags |= DeviceFlag_HasPresentQueue;
 
     if (dedicatedCompute != TKIT_U32_MAX)
     {
         computeIndex = dedicatedCompute;
-        deviceFlags |= PhysicalDevice::Flag_HasDedicatedComputeQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasSeparateComputeQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
+        deviceFlags |= DeviceFlag_HasDedicatedComputeQueue;
+        deviceFlags |= DeviceFlag_HasSeparateComputeQueue;
+        deviceFlags |= DeviceFlag_HasComputeQueue;
     }
     else if (separateCompute != TKIT_U32_MAX)
     {
         computeIndex = separateCompute;
-        deviceFlags |= PhysicalDevice::Flag_HasSeparateComputeQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
+        deviceFlags |= DeviceFlag_HasSeparateComputeQueue;
+        deviceFlags |= DeviceFlag_HasComputeQueue;
     }
     else if (computeCompatible != TKIT_U32_MAX)
     {
         computeIndex = computeCompatible;
-        deviceFlags |= PhysicalDevice::Flag_HasComputeQueue;
+        deviceFlags |= DeviceFlag_HasComputeQueue;
     }
 
     if (dedicatedTransfer != TKIT_U32_MAX)
     {
         transferIndex = dedicatedTransfer;
-        deviceFlags |= PhysicalDevice::Flag_HasDedicatedTransferQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasSeparateTransferQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
+        deviceFlags |= DeviceFlag_HasDedicatedTransferQueue;
+        deviceFlags |= DeviceFlag_HasSeparateTransferQueue;
+        deviceFlags |= DeviceFlag_HasTransferQueue;
     }
     else if (separateTransfer != TKIT_U32_MAX)
     {
         transferIndex = separateTransfer;
-        deviceFlags |= PhysicalDevice::Flag_HasSeparateTransferQueue;
-        deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
+        deviceFlags |= DeviceFlag_HasSeparateTransferQueue;
+        deviceFlags |= DeviceFlag_HasTransferQueue;
     }
     else if (transferCompatible != TKIT_U32_MAX)
     {
         transferIndex = transferCompatible;
-        deviceFlags |= PhysicalDevice::Flag_HasTransferQueue;
+        deviceFlags |= DeviceFlag_HasTransferQueue;
     }
 
-    const auto compareFlags = [&flags, deviceFlags](const Flags p_SelectorFlag, const Flags p_DeviceFlag) -> bool {
+    const auto compareFlags = [&flags, deviceFlags](const DeviceSelectorFlags p_SelectorFlag,
+                                                    const DeviceFlags p_DeviceFlag) -> bool {
         return !(flags & p_SelectorFlag) || (deviceFlags & p_DeviceFlag);
     };
 
-    if (!compareFlags(Flag_RequireGraphicsQueue, PhysicalDevice::Flag_HasGraphicsQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a graphics queue", name));
-    if (!compareFlags(Flag_RequireComputeQueue, PhysicalDevice::Flag_HasComputeQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireComputeQueue, DeviceFlag_HasComputeQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a compute queue", name));
-    if (!compareFlags(Flag_RequireTransferQueue, PhysicalDevice::Flag_HasTransferQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireTransferQueue, DeviceFlag_HasTransferQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a transfer queue", name));
-    if (!compareFlags(Flag_RequirePresentQueue, PhysicalDevice::Flag_HasPresentQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequirePresentQueue, DeviceFlag_HasPresentQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a present queue", name));
 
-    if (!compareFlags(Flag_RequireDedicatedComputeQueue, PhysicalDevice::Flag_HasDedicatedComputeQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a dedicated compute queue", name));
-    if (!compareFlags(Flag_RequireDedicatedTransferQueue, PhysicalDevice::Flag_HasDedicatedTransferQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a dedicated transfer queue", name));
-    if (!compareFlags(Flag_RequireSeparateComputeQueue, PhysicalDevice::Flag_HasSeparateComputeQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a separate compute queue", name));
-    if (!compareFlags(Flag_RequireSeparateTransferQueue, PhysicalDevice::Flag_HasSeparateTransferQueue))
+    if (!compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue))
         return JudgeResult::Error(
             VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a separate transfer queue", name));
 
 #ifdef VK_KHR_surface
-    if (checkFlags(Flag_RequirePresentQueue))
+    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
     {
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceFormatsKHR, JudgeResult);
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfacePresentModesKHR, JudgeResult);
@@ -413,7 +414,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     const bool v11 = false;
 #endif
 
-    const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
+    const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
         return JudgeResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
@@ -535,9 +536,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         return JudgeResult::Error(VKIT_FORMAT_ERROR(
             VK_ERROR_FEATURE_NOT_PRESENT, "The device '{}' does not have the required Vulkan 1.4 features", name));
 #endif
-    if (m_PreferredType != Type(properties.Core.deviceType))
+    if (m_PreferredType != DeviceType(properties.Core.deviceType))
     {
-        if (!checkFlags(Flag_AnyType))
+        if (!checkFlags(DeviceSelectorFlag_AnyType))
             return JudgeResult::Error(
                 VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' is not of the preferred type", name));
         fullySuitable = false;
@@ -579,7 +580,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     fullySuitable &= hasRequestedMemory;
     if (fullySuitable)
-        deviceFlags |= PhysicalDevice::Flag_Optimal;
+        deviceFlags |= DeviceFlag_Optimal;
 
 #ifdef VKIT_API_VERSION_1_2
     features.Vulkan11.pNext = nullptr;
@@ -606,7 +607,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     deviceInfo.FamilyIndices[Queue_Transfer] = transferIndex;
     deviceInfo.FamilyIndices[Queue_Present] = presentIndex;
     deviceInfo.QueueFamilies = families;
-    deviceInfo.Type = Type(properties.Core.deviceType);
+    deviceInfo.Type = DeviceType(properties.Core.deviceType);
     deviceInfo.AvailableFeatures = features;
     deviceInfo.EnabledFeatures = m_RequiredFeatures;
     deviceInfo.Properties = properties;
@@ -627,8 +628,8 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_In
     m_RequiredFeatures.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
 #endif
 
-    if (!(m_Instance->GetInfo().Flags & Instance::Flag_Headless))
-        m_Flags |= Flag_RequirePresentQueue;
+    if (!(m_Instance->GetInfo().Flags & InstanceFlag_Headless))
+        m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
 }
 
 Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
@@ -636,12 +637,12 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     using EnumerateResult = Result<TKit::Array4<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
-    if ((m_Flags & Flag_RequirePresentQueue) && !m_Surface)
+    if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(
             VK_ERROR_INITIALIZATION_FAILED,
             "The surface must be set if the instance is not headless (requires present queue)");
 #else
-    if (m_Flags & Flag_RequirePresentQueue)
+    if (m_Flags & DeviceSelectorFlag_RequirePresentQueue)
         return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
                                       "A present queue is not available with a device that does not support the "
                                       "surface extension. The instance must be headless");
@@ -673,7 +674,7 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     }
 
     std::stable_partition(devices.begin(), devices.end(), [](const Result<PhysicalDevice> &p_Device) {
-        return p_Device && (p_Device.GetValue().GetInfo().Flags & PhysicalDevice::Flag_Optimal);
+        return p_Device && (p_Device.GetValue().GetInfo().Flags & DeviceFlag_Optimal);
     });
     return devices;
 }
@@ -726,7 +727,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name)
     m_Name = p_Name;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const Type p_Type)
+PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const DeviceType p_Type)
 {
     m_PreferredType = p_Type;
     return *this;
@@ -794,17 +795,17 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Featur
     m_RequiredFeatures.Next = next;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const Flags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const DeviceSelectorFlags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const Flags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const DeviceSelectorFlags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const Flags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const DeviceSelectorFlags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;

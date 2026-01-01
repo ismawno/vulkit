@@ -451,62 +451,65 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBounds(const f32 p
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilFailOperation(const VkStencilOp p_FailOp,
-                                                                              const Flags p_Flags)
+                                                                              const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.failOp = p_FailOp;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.failOp = p_FailOp;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilPassOperation(const VkStencilOp p_PassOp,
-                                                                              const Flags p_Flags)
+                                                                              const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.passOp = p_PassOp;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.passOp = p_PassOp;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilDepthFailOperation(const VkStencilOp p_DepthFailOp,
-                                                                                   const Flags p_Flags)
+                                                                                   const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.depthFailOp = p_DepthFailOp;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.depthFailOp = p_DepthFailOp;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation(const VkCompareOp p_CompareOp,
-                                                                                 const Flags p_Flags)
+                                                                                 const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.compareOp = p_CompareOp;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.compareOp = p_CompareOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask, const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask,
+                                                                            const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.compareMask = p_Mask;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.compareMask = p_Mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask, const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask,
+                                                                          const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.writeMask = p_Mask;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.writeMask = p_Mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference, const Flags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference,
+                                                                          const StencilOperationFlags p_Flags)
 {
-    if (p_Flags & Flag_StencilFront)
+    if (p_Flags & StencilOperationFlag_Front)
         m_DepthStencilInfo.front.reference = p_Reference;
-    if (p_Flags & Flag_StencilBack)
+    if (p_Flags & StencilOperationFlag_Back)
         m_DepthStencilInfo.back.reference = p_Reference;
     return *this;
 }

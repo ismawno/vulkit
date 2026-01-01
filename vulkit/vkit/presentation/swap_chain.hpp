@@ -10,19 +10,25 @@
 
 namespace VKit
 {
+using SwapChainBuilderFlags = u8;
+enum SwapChainBuilderFlagBits : SwapChainBuilderFlags
+{
+    SwapChainBuilderFlag_Clipped = 1 << 0,
+    SwapChainBuilderFlag_CreateImageViews = 1 << 1
+};
+
+using SwapChainFlags = u8;
+enum SwapChainFlagBits : SwapChainFlags
+{
+    SwapChainFlag_Clipped = 1 << 0,
+    SwapChainFlag_HasImageViews = 1 << 1
+};
 class VKIT_API SwapChain
 {
   public:
     class Builder
     {
       public:
-        using Flags = u8;
-        enum FlagBits : Flags
-        {
-            Flag_Clipped = 1 << 0,
-            Flag_CreateImageViews = 1 << 1
-        };
-
         Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) : m_Device(p_Device), m_Surface(p_Surface)
         {
         }
@@ -43,9 +49,9 @@ class VKIT_API SwapChain
 
         Builder &SetImageArrayLayers(u32 p_Layers);
 
-        Builder &SetFlags(Flags p_Flags);
-        Builder &AddFlags(Flags p_Flags);
-        Builder &RemoveFlags(Flags p_Flags);
+        Builder &SetFlags(SwapChainBuilderFlags p_Flags);
+        Builder &AddFlags(SwapChainBuilderFlags p_Flags);
+        Builder &RemoveFlags(SwapChainBuilderFlags p_Flags);
 
         Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
         Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
@@ -77,17 +83,10 @@ class VKIT_API SwapChain
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        Flags m_Flags = 0;
+        SwapChainBuilderFlags m_Flags = 0;
         VkSwapchainCreateFlagsKHR m_CreateFlags = 0;
         VkSurfaceTransformFlagBitsKHR m_TransformBit = static_cast<VkSurfaceTransformFlagBitsKHR>(0);
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    };
-
-    using Flags = u8;
-    enum FlagBits : Flags
-    {
-        Flag_Clipped = 1 << 0,
-        Flag_HasImageViews = 1 << 1
     };
 
     struct Info
@@ -100,7 +99,7 @@ class VKIT_API SwapChain
 
         PhysicalDevice::SwapChainSupportDetails SupportDetails;
 
-        Flags Flags;
+        SwapChainFlags Flags;
     };
 
     SwapChain() = default;

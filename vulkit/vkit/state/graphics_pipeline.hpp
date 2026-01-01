@@ -10,6 +10,12 @@
 
 namespace VKit
 {
+using StencilOperationFlags = u8;
+enum StencilOperationFlagBits : StencilOperationFlags
+{
+    StencilOperationFlag_Front = 1 << 0,
+    StencilOperationFlag_Back = 1 << 1,
+};
 class VKIT_API GraphicsPipeline
 {
   public:
@@ -45,13 +51,6 @@ class VKIT_API GraphicsPipeline
     class Builder
     {
       public:
-        using Flags = u8;
-        enum FlagBits : Flags
-        {
-            Flag_StencilFront = 1 << 0,
-            Flag_StencilBack = 1 << 1,
-        };
-
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
                 u32 p_Subpass = 0);
         Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout,
@@ -142,13 +141,13 @@ class VKIT_API GraphicsPipeline
         Builder &DisableStencilTest();
         Builder &SetDepthCompareOperation(VkCompareOp p_Op);
         Builder &SetDepthBounds(f32 p_Min, f32 p_Max);
-        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, Flags p_Flags);
-        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, Flags p_Flags);
-        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, Flags p_Flags);
-        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, Flags p_Flags);
-        Builder &SetStencilCompareMask(u32 p_Mask, Flags p_Flags);
-        Builder &SetStencilWriteMask(u32 p_Mask, Flags p_Flags);
-        Builder &SetStencilReference(u32 p_Reference, Flags p_Flags);
+        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, StencilOperationFlags p_Flags);
+        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, StencilOperationFlags p_Flags);
+        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, StencilOperationFlags p_Flags);
+        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, StencilOperationFlags p_Flags);
+        Builder &SetStencilCompareMask(u32 p_Mask, StencilOperationFlags p_Flags);
+        Builder &SetStencilWriteMask(u32 p_Mask, StencilOperationFlags p_Flags);
+        Builder &SetStencilReference(u32 p_Reference, StencilOperationFlags p_Flags);
 
         // Vertex Input
         Builder &AddBindingDescription(VkVertexInputRate p_InputRate, u32 p_Stride);

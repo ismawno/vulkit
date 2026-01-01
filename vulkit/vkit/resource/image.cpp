@@ -22,21 +22,21 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
     }
     return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
-VkImageAspectFlags Detail::DeduceAspectMask(const Image::Flags p_Flags)
+VkImageAspectFlags Detail::DeduceAspectMask(const ImageFlags p_Flags)
 {
-    if (p_Flags & Image::Flag_ColorAttachment)
+    if (p_Flags & ImageFlag_ColorAttachment)
         return VK_IMAGE_ASPECT_COLOR_BIT;
-    else if ((p_Flags & Image::Flag_DepthAttachment) && (p_Flags & Image::Flag_StencilAttachment))
+    else if ((p_Flags & ImageFlag_DepthAttachment) && (p_Flags & ImageFlag_StencilAttachment))
         return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-    else if (p_Flags & Image::Flag_DepthAttachment)
+    else if (p_Flags & ImageFlag_DepthAttachment)
         return VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (p_Flags & Image::Flag_StencilAttachment)
+    else if (p_Flags & ImageFlag_StencilAttachment)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
     TKIT_LOG_WARNING("[VULKIT] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
     return VK_IMAGE_ASPECT_NONE;
 }
-static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const Image::Flags p_Flags)
+static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const ImageFlags p_Flags)
 {
     VkImageSubresourceRange range{};
     range.aspectMask |= Detail::DeduceAspectMask(p_Flags);
@@ -48,7 +48,7 @@ static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, cons
     return range;
 }
 Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
-                        const VkExtent2D &p_Extent, const VkFormat p_Format, const Flags p_Flags)
+                        const VkExtent2D &p_Extent, const VkFormat p_Format, const ImageFlags p_Flags)
     : Image::Builder(p_Device, p_Allocator, VkExtent3D{.width = p_Extent.width, .height = p_Extent.height, .depth = 1},
                      p_Format, p_Flags)
 {
@@ -67,7 +67,7 @@ static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, c
 }
 
 Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
-                        const VkExtent3D &p_Extent, const VkFormat p_Format, const Flags p_Flags)
+                        const VkExtent3D &p_Extent, const VkFormat p_Format, const ImageFlags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -81,21 +81,21 @@ Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator
     m_ImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     m_ImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     m_ImageInfo.flags = 0;
-    if (p_Flags & Flag_ColorAttachment)
+    if (p_Flags & ImageFlag_ColorAttachment)
         m_ImageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    else if ((p_Flags & Flag_DepthAttachment) || (p_Flags & Flag_StencilAttachment))
+    else if ((p_Flags & ImageFlag_DepthAttachment) || (p_Flags & ImageFlag_StencilAttachment))
         m_ImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-    if (p_Flags & Flag_InputAttachment)
+    if (p_Flags & ImageFlag_InputAttachment)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-    if (p_Flags & Flag_Sampled)
+    if (p_Flags & ImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
                                             createRange(m_ImageInfo, p_Flags));
 }
 
-Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent, const Flags p_Flags)
+Image::Info Image::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent, const ImageFlags p_Flags)
 {
     Info info;
     info.Allocation = VK_NULL_HANDLE;
@@ -279,9 +279,8 @@ Result<> Image::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const
     TKIT_ASSERT(size == p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels,
                 "[VULKIT] When uploading host-side image, both images must match in size");
 
-    auto bres = Buffer::Builder(m_Device, m_Info.Allocator, Buffer::Flag_HostMapped | Buffer::Flag_StagingBuffer)
-                    .SetSize(size)
-                    .Build();
+    auto bres =
+        Buffer::Builder(m_Device, m_Info.Allocator, BufferFlag_HostMapped | BufferFlag_Staging).SetSize(size).Build();
     TKIT_RETURN_ON_ERROR(bres);
 
     Buffer &staging = bres.GetValue();

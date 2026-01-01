@@ -3,7 +3,6 @@
 
 namespace VKit
 {
-
 Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
                                         const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
 {
@@ -41,7 +40,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
 
-    const auto checkFlags = [this](const Flags p_Flags) -> bool { return m_Flags & p_Flags; };
+    const auto checkFlags = [this](const SwapChainBuilderFlags p_Flags) -> bool { return m_Flags & p_Flags; };
 
     TKit::Array16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
     TKit::Array8<VkPresentModeKHR> presentModes = m_PresentModes;
@@ -137,7 +136,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     createInfo.preTransform = transform;
     createInfo.compositeAlpha = m_CompositeAlphaFlags;
     createInfo.presentMode = presentMode;
-    createInfo.clipped = checkFlags(Flag_Clipped);
+    createInfo.clipped = checkFlags(SwapChainBuilderFlag_Clipped);
     createInfo.oldSwapchain = m_OldSwapChain;
     createInfo.flags = m_CreateFlags;
 
@@ -156,7 +155,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     info.SupportDetails = support;
 
     const auto earlyDestroy = [proxy, swapChain, &checkFlags, &finalImages] {
-        if (checkFlags(Flag_CreateImageViews))
+        if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
             for (Image &image : finalImages)
                 image.DestroyImageView();
 
@@ -185,7 +184,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     {
         Image::Info iminfo = Image::FromSwapChain(surfaceFormat.format, extent);
         VkImageView view = VK_NULL_HANDLE;
-        if (checkFlags(Flag_CreateImageViews))
+        if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
         {
             VkImageViewCreateInfo viewInfo{};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -273,17 +272,17 @@ SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent
     m_Extent = p_Extent;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetFlags(const Flags p_Flags)
+SwapChain::Builder &SwapChain::Builder::SetFlags(const SwapChainBuilderFlags p_Flags)
 {
     m_Flags = p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddFlags(const Flags p_Flags)
+SwapChain::Builder &SwapChain::Builder::AddFlags(const SwapChainBuilderFlags p_Flags)
 {
     m_Flags |= p_Flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveFlags(const Flags p_Flags)
+SwapChain::Builder &SwapChain::Builder::RemoveFlags(const SwapChainBuilderFlags p_Flags)
 {
     m_Flags &= ~p_Flags;
     return *this;

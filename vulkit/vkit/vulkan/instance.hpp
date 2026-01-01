@@ -13,12 +13,14 @@
 
 namespace VKit
 {
-/**
- * @brief Represents a Vulkan instance.
- *
- * A handle to the Vulkan API that manages extensions, layers, and debug configurations.
- * The underlying resources must be destroyed explicitly using the `Destroy()` method.
- */
+using InstanceFlags = u8;
+enum InstanceFlagBits : InstanceFlags
+{
+    InstanceFlag_Headless = 1 << 0,
+    InstanceFlag_HasValidationLayers = 1 << 1,
+    InstanceFlag_Properties2Extension = 1 << 2
+};
+
 class VKIT_API Instance
 {
   public:
@@ -118,26 +120,6 @@ class VKIT_API Instance
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
     };
 
-    using Flags = u8;
-    /**
-     * @brief Flags for configuring instance behavior.
-     *
-     * Use these flags to enable features like headless mode, validation layers,
-     * or specific Vulkan extensions during instance creation.
-     */
-    enum FlagBits : Flags
-    {
-        Flag_Headless = 1 << 0,
-        Flag_HasValidationLayers = 1 << 1,
-        Flag_Properties2Extension = 1 << 2
-    };
-
-    /**
-     * @brief Stores the configuration details for a Vulkan instance.
-     *
-     * Includes the application and engine names, API version, enabled extensions,
-     * and layers. It also contains optional settings for debugging and memory allocation.
-     */
     struct Info
     {
         const char *ApplicationName;
@@ -155,7 +137,7 @@ class VKIT_API Instance
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;
 
-        Flags Flags;
+        InstanceFlags Flags;
     };
 
     Instance() = default;

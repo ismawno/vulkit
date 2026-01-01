@@ -14,28 +14,28 @@ namespace VKit
 class CommandPool;
 class Image;
 
+using BufferFlags = u16;
+enum BufferFlagBits : BufferFlags
+{
+    BufferFlag_DeviceLocal = 1 << 0,
+    BufferFlag_HostVisible = 1 << 1,
+    BufferFlag_Source = 1 << 2,
+    BufferFlag_Destination = 1 << 3,
+    BufferFlag_Staging = 1 << 4,
+    BufferFlag_Vertex = 1 << 5,
+    BufferFlag_Index = 1 << 6,
+    BufferFlag_Storage = 1 << 7,
+    BufferFlag_HostMapped = 1 << 8,
+    BufferFlag_HostRandomAccess = 1 << 9,
+};
+
 class VKIT_API Buffer
 {
   public:
-    using Flags = u16;
-    enum FlagBits : Flags
-    {
-        Flag_DeviceLocal = 1 << 0,
-        Flag_HostVisible = 1 << 1,
-        Flag_Source = 1 << 2,
-        Flag_Destination = 1 << 3,
-        Flag_StagingBuffer = 1 << 4,
-        Flag_VertexBuffer = 1 << 5,
-        Flag_IndexBuffer = 1 << 6,
-        Flag_StorageBuffer = 1 << 7,
-        Flag_HostMapped = 1 << 8,
-        Flag_HostRandomAccess = 1 << 9,
-    };
-
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, Flags p_Flags = 0);
+        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, BufferFlags p_Flags = 0);
 
         Result<Buffer> Build() const;
 
@@ -57,7 +57,7 @@ class VKIT_API Buffer
         VkBufferUsageFlags m_Usage = 0;
         VmaAllocationCreateInfo m_AllocationInfo{};
         VkDeviceSize m_PerInstanceMinimumAlignment = 1;
-        Flags m_Flags;
+        BufferFlags m_Flags;
     };
 
     struct Info
@@ -69,7 +69,7 @@ class VKIT_API Buffer
         VkDeviceSize InstanceCount;
         VkDeviceSize InstanceAlignedSize;
         VkDeviceSize Size;
-        Flags Flags;
+        BufferFlags Flags;
     };
 
     Buffer() = default;

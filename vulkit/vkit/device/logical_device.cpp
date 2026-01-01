@@ -93,11 +93,11 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 #else
     const bool v11 = false;
 #endif
-    const bool prop2 = instanceInfo.Flags & Instance::Flag_Properties2Extension;
+    const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return Result<LogicalDevice>::Error(
-            VK_ERROR_EXTENSION_NOT_PRESENT, "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
+        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+                                            "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
@@ -194,7 +194,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     {
         table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
         return Result<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
-                                                                                   "vkGetDeviceQueue");
+                                                                          "vkGetDeviceQueue");
     }
 
     info.Instance = *m_Instance;

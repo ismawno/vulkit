@@ -18,18 +18,49 @@ enum QueueType : u32
     Queue_Present = 3,
 };
 const char *ToString(QueueType p_Type);
+
+enum DeviceType : u32
+{
+    Device_Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
+    Device_Integrated = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
+    Device_Virtual = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
+    Device_CPU = VK_PHYSICAL_DEVICE_TYPE_CPU,
+    Device_Other = VK_PHYSICAL_DEVICE_TYPE_OTHER
+};
+
+using DeviceSelectorFlags = u16;
+enum DeviceSelectorFlagBits : DeviceSelectorFlags
+{
+    DeviceSelectorFlag_AnyType = 1 << 0,
+    DeviceSelectorFlag_RequireDedicatedComputeQueue = 1 << 1,
+    DeviceSelectorFlag_RequireDedicatedTransferQueue = 1 << 2,
+    DeviceSelectorFlag_RequireSeparateComputeQueue = 1 << 3,
+    DeviceSelectorFlag_RequireSeparateTransferQueue = 1 << 4,
+    DeviceSelectorFlag_PortabilitySubset = 1 << 5,
+    DeviceSelectorFlag_RequireGraphicsQueue = 1 << 6,
+    DeviceSelectorFlag_RequireComputeQueue = 1 << 7,
+    DeviceSelectorFlag_RequireTransferQueue = 1 << 8,
+    DeviceSelectorFlag_RequirePresentQueue = 1 << 9
+};
+
+using DeviceFlags = u16;
+enum DeviceFlagBits : DeviceFlags
+{
+    DeviceFlag_Optimal = 1 << 0,
+    DeviceFlag_HasDedicatedComputeQueue = 1 << 1,
+    DeviceFlag_HasDedicatedTransferQueue = 1 << 2,
+    DeviceFlag_HasSeparateTransferQueue = 1 << 3,
+    DeviceFlag_HasSeparateComputeQueue = 1 << 4,
+    DeviceFlag_PortabilitySubset = 1 << 5,
+    DeviceFlag_HasGraphicsQueue = 1 << 6,
+    DeviceFlag_HasComputeQueue = 1 << 7,
+    DeviceFlag_HasTransferQueue = 1 << 8,
+    DeviceFlag_HasPresentQueue = 1 << 9
+};
+
 class VKIT_API PhysicalDevice
 {
   public:
-    enum Type
-    {
-        Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
-        Integrated = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
-        Virtual = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
-        CPU = VK_PHYSICAL_DEVICE_TYPE_CPU,
-        Other = VK_PHYSICAL_DEVICE_TYPE_OTHER
-    };
-
     struct Features
     {
         Features();
@@ -76,21 +107,6 @@ class VKIT_API PhysicalDevice
     class Selector
     {
       public:
-        using Flags = u16;
-        enum FlagBits : Flags
-        {
-            Flag_AnyType = 1 << 0,
-            Flag_RequireDedicatedComputeQueue = 1 << 1,
-            Flag_RequireDedicatedTransferQueue = 1 << 2,
-            Flag_RequireSeparateComputeQueue = 1 << 3,
-            Flag_RequireSeparateTransferQueue = 1 << 4,
-            Flag_PortabilitySubset = 1 << 5,
-            Flag_RequireGraphicsQueue = 1 << 6,
-            Flag_RequireComputeQueue = 1 << 7,
-            Flag_RequireTransferQueue = 1 << 8,
-            Flag_RequirePresentQueue = 1 << 9
-        };
-
         Selector(const Instance *p_Instance);
 
         Result<PhysicalDevice> Select() const;
@@ -98,7 +114,7 @@ class VKIT_API PhysicalDevice
         Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
-        Selector &PreferType(Type p_Type);
+        Selector &PreferType(DeviceType p_Type);
 
         Selector &RequireApiVersion(u32 p_Version);
         Selector &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
@@ -117,9 +133,9 @@ class VKIT_API PhysicalDevice
 
         Selector &RequireFeatures(const Features &p_Features);
 
-        Selector &SetFlags(Flags p_Flags);
-        Selector &AddFlags(Flags p_Flags);
-        Selector &RemoveFlags(Flags p_Flags);
+        Selector &SetFlags(DeviceSelectorFlags p_Flags);
+        Selector &AddFlags(DeviceSelectorFlags p_Flags);
+        Selector &RemoveFlags(DeviceSelectorFlags p_Flags);
 
 #ifdef VK_KHR_surface
         Selector &SetSurface(VkSurfaceKHR p_Surface);
@@ -137,9 +153,8 @@ class VKIT_API PhysicalDevice
 #ifdef VK_KHR_surface
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
 #endif
-        Type m_PreferredType = Discrete;
-
-        Flags m_Flags = 0;
+        DeviceType m_PreferredType = Device_Discrete;
+        DeviceSelectorFlags m_Flags = 0;
 
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
@@ -150,30 +165,9 @@ class VKIT_API PhysicalDevice
         Features m_RequiredFeatures{};
     };
 
-    using Flags = u16;
-    /**
-     * @brief Flags to describe physical device capabilities.
-     *
-     * These flags indicate features like dedicated or separate queues, graphics
-     * and compute support, and portability subset availability.
-     */
-    enum FlagBits : Flags
-    {
-        Flag_Optimal = 1 << 0,
-        Flag_HasDedicatedComputeQueue = 1 << 1,
-        Flag_HasDedicatedTransferQueue = 1 << 2,
-        Flag_HasSeparateTransferQueue = 1 << 3,
-        Flag_HasSeparateComputeQueue = 1 << 4,
-        Flag_PortabilitySubset = 1 << 5,
-        Flag_HasGraphicsQueue = 1 << 6,
-        Flag_HasComputeQueue = 1 << 7,
-        Flag_HasTransferQueue = 1 << 8,
-        Flag_HasPresentQueue = 1 << 9
-    };
-
     struct Info
     {
-        Type Type;
+        DeviceType Type;
 
         u32 ApiVersion;
 
@@ -188,7 +182,7 @@ class VKIT_API PhysicalDevice
         Features AvailableFeatures{};
 
         Properties Properties{};
-        Flags Flags;
+        DeviceFlags Flags;
     };
 
     PhysicalDevice() = default;

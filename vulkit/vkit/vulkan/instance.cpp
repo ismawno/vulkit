@@ -290,11 +290,11 @@ Result<Instance> Instance::Builder::Build() const
     info.DebugMessenger = debugMessenger;
     info.Table = table;
     if (m_Headless)
-        info.Flags |= Flag_Headless;
+        info.Flags |= InstanceFlag_Headless;
     if (validationLayers)
-        info.Flags |= Flag_HasValidationLayers;
+        info.Flags |= InstanceFlag_HasValidationLayers;
     if (properties2Support)
-        info.Flags |= Flag_Properties2Extension;
+        info.Flags |= InstanceFlag_Properties2Extension;
 
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
                 "[VULKIT] The debug messenger must be available if validation layers are enabled");
@@ -316,7 +316,7 @@ void Instance::Destroy()
     if (!m_Instance)
         return;
 
-    if ((m_Info.Flags & Instance::Flag_HasValidationLayers) && m_Info.DebugMessenger)
+    if ((m_Info.Flags & InstanceFlag_HasValidationLayers) && m_Info.DebugMessenger)
     {
         m_Info.Table.DestroyDebugUtilsMessengerEXT(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
         m_Info.DebugMessenger = VK_NULL_HANDLE;
