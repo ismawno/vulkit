@@ -6,7 +6,7 @@ namespace VKit
 
 Result<RenderPass> RenderPass::Builder::Build() const
 {
-    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
+    const ProxyDevice proxy = m_Device->CreateProxy();
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateRenderPass, Result<RenderPass>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyRenderPass, Result<RenderPass>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyFramebuffer, Result<RenderPass>);

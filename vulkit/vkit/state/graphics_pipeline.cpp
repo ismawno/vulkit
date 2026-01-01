@@ -4,13 +4,13 @@
 
 namespace VKit
 {
-GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
+GraphicsPipeline::Builder::Builder(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout,
                                    const VkRenderPass p_RenderPass, const u32 p_Subpass)
     : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(p_RenderPass), m_Subpass(p_Subpass)
 {
     initialize();
 }
-GraphicsPipeline::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout,
+GraphicsPipeline::Builder::Builder(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout,
                                    const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo)
     : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(VK_NULL_HANDLE), m_RenderingInfo(p_RenderingInfo)
 {
@@ -94,7 +94,7 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
 
-Result<> GraphicsPipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<Builder> p_Builders,
+Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<Builder> p_Builders,
                                   const TKit::Span<GraphicsPipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateGraphicsPipelines, Result<>);

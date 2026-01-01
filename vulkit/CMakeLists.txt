@@ -13,7 +13,7 @@ if(VULKIT_ENABLE_PHYSICAL_DEVICE)
 endif()
 
 if(VULKIT_ENABLE_LOGICAL_DEVICE)
-  list(APPEND SOURCES vkit/device/logical_device.cpp)
+  list(APPEND SOURCES vkit/device/logical_device.cpp vkit/execution/queue.cpp)
 endif()
 
 if(VULKIT_ENABLE_ALLOCATOR)
@@ -26,8 +26,7 @@ endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
   list(APPEND SOURCES vkit/state/descriptor_pool.cpp
-       vkit/state/descriptor_set_layout.cpp
-       vkit/state/descriptor_set.cpp)
+       vkit/state/descriptor_set_layout.cpp vkit/state/descriptor_set.cpp)
 endif()
 
 if(VULKIT_ENABLE_SHADERS)

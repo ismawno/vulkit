@@ -154,7 +154,7 @@ class VKIT_API RenderPass
         }
 
       private:
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
         TKit::Array128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
         TKit::Array8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
@@ -169,7 +169,7 @@ class VKIT_API RenderPass
     };
 
     RenderPass() = default;
-    RenderPass(const LogicalDevice::Proxy &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
+    RenderPass(const ProxyDevice &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
         : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
     {
     }
@@ -246,7 +246,7 @@ class VKIT_API RenderPass
     {
         return m_Info;
     }
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -264,7 +264,7 @@ class VKIT_API RenderPass
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkRenderPass m_RenderPass = VK_NULL_HANDLE;
     Info m_Info;
 };

@@ -94,6 +94,7 @@ const char *VkResultToString(const VkResult p_Result)
     case VK_ERROR_INVALID_EXTERNAL_HANDLE:
         return "VK_ERROR_INVALID_EXTERNAL_HANDLE";
 
+#ifdef VK_KHR_surface
     case VK_ERROR_SURFACE_LOST_KHR:
         return "VK_ERROR_SURFACE_LOST_KHR";
     case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
@@ -104,6 +105,7 @@ const char *VkResultToString(const VkResult p_Result)
         return "VK_ERROR_OUT_OF_DATE_KHR";
     case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
         return "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
+#endif
 
 #if defined(VK_EXT_validation_features) || defined(VK_EXT_debug_report)
     case VK_ERROR_VALIDATION_FAILED_EXT:

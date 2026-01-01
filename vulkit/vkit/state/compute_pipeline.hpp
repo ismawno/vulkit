@@ -20,13 +20,13 @@ class VKIT_API ComputePipeline
         VkPipelineCache Cache = VK_NULL_HANDLE;
     };
 
-    static Result<ComputePipeline> Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs);
+    static Result<ComputePipeline> Create(const ProxyDevice &p_Device, const Specs &p_Specs);
 
-    static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<const Specs> p_Specs,
+    static Result<> Create(const ProxyDevice &p_Device, TKit::Span<const Specs> p_Specs,
                            TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
     ComputePipeline() = default;
-    ComputePipeline(const LogicalDevice::Proxy &p_Device, VkPipeline p_Pipeline)
+    ComputePipeline(const ProxyDevice &p_Device, VkPipeline p_Pipeline)
         : m_Device(p_Device), m_Pipeline(p_Pipeline)
     {
     }
@@ -35,7 +35,7 @@ class VKIT_API ComputePipeline
 
     void Bind(VkCommandBuffer p_CommandBuffer) const;
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -53,7 +53,7 @@ class VKIT_API ComputePipeline
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkPipeline m_Pipeline = VK_NULL_HANDLE;
 };
 } // namespace VKit

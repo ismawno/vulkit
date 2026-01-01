@@ -18,11 +18,11 @@ class VKIT_API CommandPool
         VkCommandPoolCreateFlags Flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     };
 
-    static Result<CommandPool> Create(const LogicalDevice::Proxy &p_Device, u32 p_QueueFamilyIndex,
+    static Result<CommandPool> Create(const ProxyDevice &p_Device, u32 p_QueueFamilyIndex,
                                       VkCommandPoolCreateFlags p_Flags = 0);
 
     CommandPool() = default;
-    CommandPool(const LogicalDevice::Proxy &p_Device, const VkCommandPool p_Pool) : m_Device(p_Device), m_Pool(p_Pool)
+    CommandPool(const ProxyDevice &p_Device, const VkCommandPool p_Pool) : m_Device(p_Device), m_Pool(p_Pool)
     {
     }
 
@@ -39,7 +39,7 @@ class VKIT_API CommandPool
     Result<VkCommandBuffer> BeginSingleTimeCommands() const;
     Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -58,7 +58,7 @@ class VKIT_API CommandPool
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkCommandPool m_Pool = VK_NULL_HANDLE;
 };
 }; // namespace VKit

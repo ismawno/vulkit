@@ -3,7 +3,7 @@
 
 namespace VKit
 {
-Result<CommandPool> CommandPool::Create(const LogicalDevice::Proxy &p_Device, const u32 p_QueueFamilyIndex,
+Result<CommandPool> CommandPool::Create(const ProxyDevice &p_Device, const u32 p_QueueFamilyIndex,
                                         const VkCommandPoolCreateFlags p_Flags)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateCommandPool, Result<CommandPool>);

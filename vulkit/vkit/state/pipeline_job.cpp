@@ -19,7 +19,7 @@ void IPipelineJob<Pip>::Bind(const VkCommandBuffer p_CommandBuffer, u32 p_FirstS
     m_Pipeline.Bind(p_CommandBuffer);
     u32 offset = 0;
 
-    const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
+    const ProxyDevice &device = m_Pipeline.GetDevice();
     // Data may not need to be pushed every frame... but I guess it is a small price to pay for the flexibility
     for (u32 i = 0; i < m_PushData.GetSize(); ++i)
     {
@@ -66,14 +66,14 @@ void PipelineJob<GraphicsPipeline>::Draw(const VkCommandBuffer p_CommandBuffer, 
                                          const u32 p_InstanceCount, const u32 p_FirstVertex,
                                          const u32 p_FirstInstance) const
 {
-    const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
+    const ProxyDevice &device = m_Pipeline.GetDevice();
     device.Table->CmdDraw(p_CommandBuffer, p_VertexCount, p_InstanceCount, p_FirstVertex, p_FirstInstance);
 }
 void PipelineJob<GraphicsPipeline>::DrawIndexed(const VkCommandBuffer p_CommandBuffer, const u32 p_IndexCount,
                                                 const u32 p_InstanceCount, const u32 p_FirstIndex,
                                                 const i32 p_VertexOffset, const u32 p_FirstInstance) const
 {
-    const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
+    const ProxyDevice &device = m_Pipeline.GetDevice();
     device.Table->CmdDrawIndexed(p_CommandBuffer, p_IndexCount, p_InstanceCount, p_FirstIndex, p_VertexOffset,
                                  p_FirstInstance);
 }
@@ -93,7 +93,7 @@ Result<PipelineJob<ComputePipeline>> PipelineJob<ComputePipeline>::Create(const 
 void PipelineJob<ComputePipeline>::Dispatch(const VkCommandBuffer p_CommandBuffer, const u32 p_GroupCountX,
                                             const u32 p_GroupCountY, const u32 p_GroupCountZ) const
 {
-    const LogicalDevice::Proxy &device = m_Pipeline.GetDevice();
+    const ProxyDevice &device = m_Pipeline.GetDevice();
     device.Table->CmdDispatch(p_CommandBuffer, p_GroupCountX, p_GroupCountY, p_GroupCountZ);
 }
 

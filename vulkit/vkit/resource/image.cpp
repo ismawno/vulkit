@@ -47,7 +47,7 @@ static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, cons
     range.layerCount = p_Info.arrayLayers;
     return range;
 }
-Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
+Image::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator,
                         const VkExtent2D &p_Extent, const VkFormat p_Format, const ImageFlags p_Flags)
     : Image::Builder(p_Device, p_Allocator, VkExtent3D{.width = p_Extent.width, .height = p_Extent.height, .depth = 1},
                      p_Format, p_Flags)
@@ -66,7 +66,7 @@ static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, c
     return info;
 }
 
-Image::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator,
+Image::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator,
                         const VkExtent3D &p_Extent, const VkFormat p_Format, const ImageFlags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
 {

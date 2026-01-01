@@ -35,7 +35,7 @@ class VKIT_API Buffer
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, BufferFlags p_Flags = 0);
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, BufferFlags p_Flags = 0);
 
         Result<Buffer> Build() const;
 
@@ -50,7 +50,7 @@ class VKIT_API Buffer
         Builder &SetPerInstanceMinimumAlignment(VkDeviceSize p_Alignment);
 
       private:
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
         VmaAllocator m_Allocator;
         VkDeviceSize m_InstanceCount = 0;
         VkDeviceSize m_InstanceSize = 0;
@@ -74,7 +74,7 @@ class VKIT_API Buffer
 
     Buffer() = default;
 
-    Buffer(const LogicalDevice::Proxy &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
+    Buffer(const ProxyDevice &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
         : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
     {
     }
@@ -158,7 +158,7 @@ class VKIT_API Buffer
     }
     void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const;
 
-    static void BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, VkCommandBuffer p_CommandBuffer,
+    static void BindAsVertexBuffer(const ProxyDevice &p_Device, VkCommandBuffer p_CommandBuffer,
                                    TKit::Span<const VkBuffer> p_Buffers, u32 p_FirstBinding = 0,
                                    TKit::Span<const VkDeviceSize> p_Offsets = {});
 
@@ -167,7 +167,7 @@ class VKIT_API Buffer
     VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
     VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const;
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -190,7 +190,7 @@ class VKIT_API Buffer
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     void *m_Data = nullptr;
     VkBuffer m_Buffer = VK_NULL_HANDLE;
     Info m_Info;

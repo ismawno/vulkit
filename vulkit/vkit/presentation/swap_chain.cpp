@@ -27,7 +27,7 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
 
 Result<SwapChain> SwapChain::Builder::Build() const
 {
-    const LogicalDevice::Proxy proxy = m_Device->CreateProxy();
+    const ProxyDevice proxy = m_Device->CreateProxy();
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateSwapchainKHR, Result<SwapChain>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroySwapchainKHR, Result<SwapChain>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkGetSwapchainImagesKHR, Result<SwapChain>);

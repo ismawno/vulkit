@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/logical_device.hpp"
+#include "tkit/memory/arena_allocator.hpp"
 
 namespace VKit
 {
@@ -36,8 +37,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     TKit::Array8<TKit::Array32<f32>> finalPriorities;
 
     Info info{};
-    for (u32 i = 0; i < 4; ++i)
-        info.QueueCounts[i] = 0;
+    TKit::FixedArray4<u32> queueCounts;
+    for (u32 i = 0; i < queueCounts.GetSize(); ++i)
+        queueCounts[i] = 0;
 
     for (u32 index = 0; index < m_Priorities.GetSize(); ++index)
     {
@@ -70,10 +72,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
         if (!fp.IsEmpty())
         {
-            info.QueueCounts[Queue_Graphics] += (devInfo.FamilyIndices[Queue_Graphics] == index) * count;
-            info.QueueCounts[Queue_Compute] += (devInfo.FamilyIndices[Queue_Compute] == index) * count;
-            info.QueueCounts[Queue_Transfer] += (devInfo.FamilyIndices[Queue_Transfer] == index) * count;
-            info.QueueCounts[Queue_Present] += (devInfo.FamilyIndices[Queue_Present] == index) * count;
+            queueCounts[Queue_Graphics] += (devInfo.FamilyIndices[Queue_Graphics] == index) * count;
+            queueCounts[Queue_Compute] += (devInfo.FamilyIndices[Queue_Compute] == index) * count;
+            queueCounts[Queue_Transfer] += (devInfo.FamilyIndices[Queue_Transfer] == index) * count;
+            queueCounts[Queue_Present] += (devInfo.FamilyIndices[Queue_Present] == index) * count;
 
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -104,60 +106,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pEnabledFeatures = nullptr;
-
-#    ifdef VKIT_API_VERSION_1_1
-    VkPhysicalDeviceFeatures2 featuresChain{};
-#    else
-    VkPhysicalDeviceFeatures2KHR featuresChain{};
-#    endif
-
     if (v11 || prop2)
     {
-#    ifdef VKIT_API_VERSION_1_1
-        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-#    else
-        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-#    endif
-        featuresChain.features = devInfo.EnabledFeatures.Core;
-
-        const auto fillChain = [&] {
-#    ifdef VKIT_API_VERSION_1_2
-            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_2)
-            {
-                featuresChain.pNext = &devInfo.EnabledFeatures.Vulkan11;
-                devInfo.EnabledFeatures.Vulkan11.pNext = &devInfo.EnabledFeatures.Vulkan12;
-            }
-            else
-            {
-                featuresChain.pNext = devInfo.EnabledFeatures.Next;
-                return;
-            }
-#    else
-            featuresChain.pNext = devInfo.EnabledFeatures.Next;
-#    endif
-
-#    ifdef VKIT_API_VERSION_1_3
-            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_3)
-                devInfo.EnabledFeatures.Vulkan12.pNext = &devInfo.EnabledFeatures.Vulkan13;
-            else
-            {
-                devInfo.EnabledFeatures.Vulkan12.pNext = devInfo.EnabledFeatures.Next;
-                return;
-            }
-#    endif
-#    ifdef VKIT_API_VERSION_1_4
-            if (devInfo.ApiVersion >= VKIT_API_VERSION_1_4)
-                devInfo.EnabledFeatures.Vulkan13.pNext = &devInfo.EnabledFeatures.Vulkan14;
-            else
-            {
-                devInfo.EnabledFeatures.Vulkan13.pNext = devInfo.EnabledFeatures.Next;
-                return;
-            }
-#    endif
-        };
-
-        fillChain();
-        createInfo.pNext = &featuresChain;
+        const VkPhysicalDeviceFeatures2KHR fchain = devInfo.EnabledFeatures.CreateChain(devInfo.ApiVersion);
+        createInfo.pNext = &fchain;
     }
     else
     {
@@ -200,6 +152,37 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     info.Instance = *m_Instance;
     info.PhysicalDevice = *m_PhysicalDevice;
     info.Table = table;
+
+    static TKit::ArenaAllocator qalloc{MaxQueueCount * sizeof(Queue)};
+
+    LogicalDevice ldevice{device, info};
+    const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
+        for (u32 i = 0; i < info.Queues.GetSize(); ++i)
+            for (u32 j = 0; j < info.Queues[i].GetSize(); ++j)
+                if (info.Queues[i][j]->GetFamily() == p_Family && info.Queues[i][j]->GetIndex() == p_Index)
+                    return info.Queues[i][j];
+        VkQueue q;
+        table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
+        const auto result = Queue::Create(ldevice, q, p_Family, p_Index);
+        TKIT_RETURN_ON_ERROR(result);
+
+        Queue *queue = qalloc.Allocate<Queue>();
+        *queue = result.GetValue();
+        return queue;
+    };
+
+    for (u32 i = 0; i < queueCounts.GetSize(); ++i)
+    {
+        const u32 findex = devInfo.FamilyIndices[i];
+        const u32 count = queueCounts[i];
+        for (u32 j = 0; j < count; ++j)
+        {
+            const auto result = createQueue(findex, j);
+            TKIT_RETURN_ON_ERROR(result);
+            info.Queues[i].Append(result.GetValue());
+        }
+    }
+
     return Result<LogicalDevice>::Ok(device, info);
 }
 
@@ -212,7 +195,7 @@ void LogicalDevice::Destroy()
     }
 }
 
-Result<> LogicalDevice::WaitIdle(const Proxy &p_Device)
+Result<> LogicalDevice::WaitIdle(const ProxyDevice &p_Device)
 {
     const VkResult result = p_Device.Table->DeviceWaitIdle(p_Device);
     if (result != VK_SUCCESS)
@@ -250,42 +233,13 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
     return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
 }
 
-LogicalDevice::Proxy LogicalDevice::CreateProxy() const
+ProxyDevice LogicalDevice::CreateProxy() const
 {
-    Proxy proxy;
+    ProxyDevice proxy;
     proxy.Device = m_Device;
     proxy.AllocationCallbacks = m_Info.Instance.GetInfo().AllocationCallbacks;
     proxy.Table = &m_Info.Table;
     return proxy;
-}
-
-Result<VkQueue> LogicalDevice::GetQueue(const QueueType p_Type, const u32 p_QueueIndex) const
-{
-    const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
-    return GetQueue(info.FamilyIndices[p_Type], p_QueueIndex);
-}
-
-Result<VkQueue> LogicalDevice::GetQueue(const u32 p_FamilyIndex, const u32 p_QueueIndex) const
-{
-    const PhysicalDevice::Info &info = m_Info.PhysicalDevice.GetInfo();
-
-    bool found = false;
-    for (u32 i = 0; i < 4; ++i)
-    {
-        const bool known = info.FamilyIndices[i] == p_FamilyIndex;
-        found |= known;
-        if (known && p_QueueIndex >= m_Info.QueueCounts[i])
-            return Result<VkQueue>::Error(
-                VK_ERROR_FEATURE_NOT_PRESENT,
-                "Failed to retrieve queue. Index exceeds queue count for the given family index. "
-                "Try to request more queues of this family when creating the logical device");
-    }
-    if (!found)
-        return Result<VkQueue>::Error(VK_ERROR_UNKNOWN, "Unknown family index");
-
-    VkQueue queue;
-    m_Info.Table.GetDeviceQueue(m_Device, p_FamilyIndex, p_QueueIndex, &queue);
-    return queue;
 }
 
 } // namespace VKit

@@ -6,28 +6,14 @@
 #endif
 
 #include "vkit/device/physical_device.hpp"
+#include "vkit/execution/queue.hpp"
+#include "vkit/core/limits.hpp"
 
 namespace VKit
 {
 class VKIT_API LogicalDevice
 {
   public:
-    struct Proxy
-    {
-        VkDevice Device = VK_NULL_HANDLE;
-        const VkAllocationCallbacks *AllocationCallbacks = nullptr;
-        const Vulkan::DeviceTable *Table = nullptr;
-
-        operator VkDevice() const
-        {
-            return Device;
-        }
-        operator bool() const
-        {
-            return Device != VK_NULL_HANDLE;
-        }
-    };
-
     struct QueuePriorities
     {
         TKit::Array16<f32> RequiredPriorities;
@@ -63,7 +49,7 @@ class VKIT_API LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-        TKit::FixedArray4<u32> QueueCounts;
+        TKit::FixedArray4<TKit::Array<Queue *, MaxQueueCount>> Queues;
     };
 
     LogicalDevice() = default;
@@ -84,13 +70,10 @@ class VKIT_API LogicalDevice
     Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
                                          VkFormatFeatureFlags p_Features) const;
 
-    static Result<> WaitIdle(const Proxy &p_Device);
+    static Result<> WaitIdle(const ProxyDevice &p_Device);
     Result<> WaitIdle() const;
 
-    Result<VkQueue> GetQueue(QueueType p_Type, u32 p_QueueIndex = 0) const;
-    Result<VkQueue> GetQueue(u32 p_FamilyIndex, u32 p_QueueIndex = 0) const;
-
-    Proxy CreateProxy() const;
+    ProxyDevice CreateProxy() const;
 
     const Info &GetInfo() const
     {
@@ -101,7 +84,7 @@ class VKIT_API LogicalDevice
     {
         return m_Device;
     }
-    operator Proxy() const
+    operator ProxyDevice() const
     {
         return CreateProxy();
     }

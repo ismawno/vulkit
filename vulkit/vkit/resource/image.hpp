@@ -29,9 +29,9 @@ class Image
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
                 VkFormat p_Format, ImageFlags p_Flags = 0);
-        Builder(const LogicalDevice::Proxy &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
                 VkFormat p_Format, ImageFlags p_Flags = 0);
 
         /**
@@ -61,7 +61,7 @@ class Image
         Builder &WithImageView(const VkImageSubresourceRange &p_Range);
 
       private:
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
         VmaAllocator m_Allocator;
         VkImageCreateInfo m_ImageInfo{};
         VkImageViewCreateInfo m_ViewInfo{};
@@ -104,7 +104,7 @@ class Image
                               ImageFlags p_Flags = ImageFlag_ColorAttachment);
 
     Image() = default;
-    Image(const LogicalDevice::Proxy &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
+    Image(const ProxyDevice &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
           const VkImageView p_ImageView = VK_NULL_HANDLE)
         : m_Device(p_Device), m_Image(p_Image), m_ImageView(p_ImageView), m_Layout(p_Layout), m_Info(p_Info)
     {
@@ -150,7 +150,7 @@ class Image
         return m_Image != VK_NULL_HANDLE;
     }
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -172,7 +172,7 @@ class Image
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkImage m_Image = VK_NULL_HANDLE;
     VkImageView m_ImageView = VK_NULL_HANDLE;
     VkImageLayout m_Layout;

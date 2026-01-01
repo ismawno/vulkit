@@ -24,7 +24,7 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
     return pipelineInfo;
 }
 
-Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const Specs &p_Specs)
+Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, const Specs &p_Specs)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<ComputePipeline>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<ComputePipeline>);
@@ -43,7 +43,7 @@ Result<ComputePipeline> ComputePipeline::Create(const LogicalDevice::Proxy &p_De
 
     return Result<ComputePipeline>::Ok(p_Device, pipeline);
 }
-Result<> ComputePipeline::Create(const LogicalDevice::Proxy &p_Device, const TKit::Span<const Specs> p_Specs,
+Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Specs> p_Specs,
                                  const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateComputePipelines, Result<>);

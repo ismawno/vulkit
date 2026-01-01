@@ -19,7 +19,7 @@ class VKIT_API DescriptorPool
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
+        Builder(const ProxyDevice &p_Device) : m_Device(p_Device)
         {
         }
 
@@ -32,7 +32,7 @@ class VKIT_API DescriptorPool
         Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size);
 
       private:
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
 
         u32 m_MaxSets = 8;
         VkDescriptorPoolCreateFlags m_Flags = 0;
@@ -46,7 +46,7 @@ class VKIT_API DescriptorPool
     };
 
     DescriptorPool() = default;
-    DescriptorPool(const LogicalDevice::Proxy &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
+    DescriptorPool(const ProxyDevice &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
         : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
     {
     }
@@ -63,7 +63,7 @@ class VKIT_API DescriptorPool
     Result<> Deallocate(VkDescriptorSet p_Set) const;
     Result<> Reset();
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -81,7 +81,7 @@ class VKIT_API DescriptorPool
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkDescriptorPool m_Pool = VK_NULL_HANDLE;
     Info m_Info;
 };

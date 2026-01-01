@@ -12,7 +12,7 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
 }
 
-Buffer::Builder::Builder(const LogicalDevice::Proxy &p_Device, const VmaAllocator p_Allocator, BufferFlags p_Flags)
+Buffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, BufferFlags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator)
 {
     m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
@@ -291,7 +291,7 @@ void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkD
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
 }
 
-void Buffer::BindAsVertexBuffer(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+void Buffer::BindAsVertexBuffer(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
                                 const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
                                 const TKit::Span<const VkDeviceSize> p_Offsets)
 {

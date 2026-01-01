@@ -103,7 +103,7 @@ class VKIT_API SwapChain
     };
 
     SwapChain() = default;
-    SwapChain(const LogicalDevice::Proxy &p_Device, VkSwapchainKHR p_SwapChain, const TKit::Array8<Image> &p_Images,
+    SwapChain(const ProxyDevice &p_Device, VkSwapchainKHR p_SwapChain, const TKit::Array8<Image> &p_Images,
               const Info &p_Info)
         : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
     {
@@ -111,7 +111,7 @@ class VKIT_API SwapChain
 
     void Destroy();
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -147,7 +147,7 @@ class VKIT_API SwapChain
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
     TKit::Array8<Image> m_Images;
     Info m_Info;

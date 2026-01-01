@@ -51,9 +51,9 @@ class VKIT_API GraphicsPipeline
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
+        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
                 u32 p_Subpass = 0);
-        Builder(const LogicalDevice::Proxy &p_Device, VkPipelineLayout p_Layout,
+        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout,
                 const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo);
 
         /**
@@ -170,7 +170,7 @@ class VKIT_API GraphicsPipeline
 
       private:
         void initialize();
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
         VkPipelineLayout m_Layout;
         VkRenderPass m_RenderPass;
 
@@ -204,11 +204,11 @@ class VKIT_API GraphicsPipeline
         friend class ColorAttachmentBuilder;
     };
 
-    static Result<> Create(const LogicalDevice::Proxy &p_Device, TKit::Span<Builder> p_Builders,
+    static Result<> Create(const ProxyDevice &p_Device, TKit::Span<Builder> p_Builders,
                            TKit::Span<GraphicsPipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
     GraphicsPipeline() = default;
-    GraphicsPipeline(const LogicalDevice::Proxy &p_Device, const VkPipeline p_Pipeline)
+    GraphicsPipeline(const ProxyDevice &p_Device, const VkPipeline p_Pipeline)
         : m_Device(p_Device), m_Pipeline(p_Pipeline)
     {
     }
@@ -217,7 +217,7 @@ class VKIT_API GraphicsPipeline
 
     void Bind(VkCommandBuffer p_CommandBuffer) const;
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -235,7 +235,7 @@ class VKIT_API GraphicsPipeline
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkPipeline m_Pipeline = VK_NULL_HANDLE;
 };
 } // namespace VKit

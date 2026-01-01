@@ -14,7 +14,7 @@ namespace VKit
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-Result<Shader> Shader::Create(const LogicalDevice::Proxy &p_Device, const std::string_view p_SpirvPath)
+Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_view p_SpirvPath)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, Result<Shader>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, Result<Shader>);
@@ -61,7 +61,7 @@ TKit::Result<void, i32> Shader::CompileFromFile(const std::string_view p_SourceP
     return code;
 }
 
-Result<Shader> Shader::CompileFromFile(const LogicalDevice::Proxy &p_Device, const std::string_view p_SourcePath,
+Result<Shader> Shader::CompileFromFile(const ProxyDevice &p_Device, const std::string_view p_SourcePath,
                                        const std::string_view p_Arguments)
 {
     const std::string spv = (fs::temp_directory_path() / "vkit-shader.spv").string();
@@ -73,7 +73,7 @@ Result<Shader> Shader::CompileFromFile(const LogicalDevice::Proxy &p_Device, con
     return Create(p_Device, spv);
 }
 
-Result<Shader> Shader::CompileFromSource(const LogicalDevice::Proxy &p_Device, const std::string_view p_SourceCode,
+Result<Shader> Shader::CompileFromSource(const ProxyDevice &p_Device, const std::string_view p_SourceCode,
                                          const std::string_view p_Arguments)
 {
     const fs::path src = fs::temp_directory_path() / "vkit-shader.glsl";

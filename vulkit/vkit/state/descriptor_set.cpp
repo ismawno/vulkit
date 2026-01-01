@@ -4,7 +4,7 @@
 
 namespace VKit
 {
-Result<DescriptorSet> DescriptorSet::Create(const LogicalDevice::Proxy &p_Device, const VkDescriptorSet p_Set)
+Result<DescriptorSet> DescriptorSet::Create(const ProxyDevice &p_Device, const VkDescriptorSet p_Set)
 {
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkUpdateDescriptorSets, Result<DescriptorSet>);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindDescriptorSets, Result<DescriptorSet>);
@@ -17,7 +17,7 @@ void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipeline
 {
     Bind(m_Device, p_CommandBuffer, m_Set, p_BindPoint, p_Layout, 0, p_DynamicOffsets);
 }
-void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+void DescriptorSet::Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
                          const TKit::Span<const VkDescriptorSet> p_Sets, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets)
@@ -29,7 +29,7 @@ void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBu
         p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
                                               p_Sets.GetData(), 0, nullptr);
 }
-void DescriptorSet::Bind(const LogicalDevice::Proxy &p_Device, const VkCommandBuffer p_CommandBuffer,
+void DescriptorSet::Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
                          const VkDescriptorSet p_Set, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets)

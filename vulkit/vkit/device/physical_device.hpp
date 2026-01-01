@@ -10,14 +10,6 @@
 
 namespace VKit
 {
-enum QueueType : u32
-{
-    Queue_Graphics = 0,
-    Queue_Compute = 1,
-    Queue_Transfer = 2,
-    Queue_Present = 3,
-};
-const char *ToString(QueueType p_Type);
 
 enum DeviceType : u32
 {
@@ -63,7 +55,9 @@ class VKIT_API PhysicalDevice
   public:
     struct Features
     {
-        Features();
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
+        VkPhysicalDeviceFeatures2KHR CreateChain(u32 p_ApiVersion);
+#endif
 
         VkPhysicalDeviceFeatures Core{};
 #ifdef VKIT_API_VERSION_1_2
@@ -81,6 +75,10 @@ class VKIT_API PhysicalDevice
 
     struct Properties
     {
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
+        VkPhysicalDeviceProperties2 CreateChain(u32 p_ApiVersion);
+#endif
+
         VkPhysicalDeviceProperties Core{};
         VkPhysicalDeviceMemoryProperties Memory{};
 #ifdef VKIT_API_VERSION_1_2
@@ -93,6 +91,7 @@ class VKIT_API PhysicalDevice
 #ifdef VKIT_API_VERSION_1_4
         VkPhysicalDeviceVulkan14Properties Vulkan14{};
 #endif
+        void *Next;
     };
 
 #ifdef VK_KHR_surface

@@ -1,25 +1,11 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/physical_device.hpp"
+#include "vkit/execution/queue.hpp"
 
 #define EXPAND_VERSION(p_Version)                                                                                      \
     VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
 namespace VKit
 {
-const char *ToString(const QueueType p_Type)
-{
-    switch (p_Type)
-    {
-    case Queue_Graphics:
-        return "Graphics";
-    case Queue_Compute:
-        return "Compute";
-    case Queue_Transfer:
-        return "Transfer";
-    case Queue_Present:
-        return "Present";
-    }
-    return "Unknown";
-}
 template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value)
 {
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
@@ -53,12 +39,6 @@ template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> get
     return {ptr, size};
 }
 
-template <typename T> void setFeaturesToFalse(T &p_Features)
-{
-    auto [ptr, size] = getFeatureIterable<T, VkBool32>(p_Features);
-    for (u32 i = 0; i < size; ++i)
-        ptr[i] = VK_FALSE;
-}
 template <typename T> void orFeatures(T &p_Dest, const T &p_Src)
 {
     auto [ptr1, size1] = getFeatureIterable<T, VkBool32>(p_Dest);
@@ -143,21 +123,55 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
 }
 #endif
 
-PhysicalDevice::Features::Features()
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
+template <typename T2, typename T1> void createChain(T2 &p_Chain, T1 &p_Properties, const u32 p_ApiVersion)
 {
-    setFeaturesToFalse(Core);
-#ifdef VKIT_API_VERSION_1_2
-    setFeaturesToFalse(Vulkan11);
-    setFeaturesToFalse(Vulkan12);
-#endif
-#ifdef VKIT_API_VERSION_1_3
-    setFeaturesToFalse(Vulkan13);
-#endif
-#ifdef VKIT_API_VERSION_1_4
-    setFeaturesToFalse(Vulkan14);
-#endif
-    Next = nullptr;
+#    ifndef VKIT_API_VERSION_1_2
+    chain.pNext = p_Properties.Next;
+    return;
+#    else
+    if (p_ApiVersion < VKIT_API_VERSION_1_2)
+    {
+        p_Chain.pNext = p_Properties.Next;
+        return;
+    }
+    p_Chain.pNext = &p_Properties.Vulkan11;
+    p_Properties.Vulkan11.pNext = &p_Properties.Vulkan12;
+    p_Properties.Vulkan12.pNext = p_Properties.Next;
+#        ifdef VKIT_API_VERSION_1_3
+    if (p_ApiVersion >= VKIT_API_VERSION_1_3)
+    {
+        p_Properties.Vulkan12.pNext = &p_Properties.Vulkan13;
+        p_Properties.Vulkan13.pNext = p_Properties.Next;
+    }
+#            ifdef VKIT_API_VERSION_1_4
+    if (p_ApiVersion >= VKIT_API_VERSION_1_4)
+    {
+        p_Properties.Vulkan13.pNext = &p_Properties.Vulkan14;
+        p_Properties.Vulkan14.pNext = p_Properties.Next;
+    }
+#            endif
+#        endif
+#    endif
 }
+VkPhysicalDeviceFeatures2KHR PhysicalDevice::Features::CreateChain(const u32 p_ApiVersion)
+{
+    VkPhysicalDeviceFeatures2KHR features{};
+    features.features = Core;
+    features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+    createChain<VkPhysicalDeviceFeatures2KHR>(features, *this, p_ApiVersion);
+    return features;
+}
+
+VkPhysicalDeviceProperties2KHR PhysicalDevice::Properties::CreateChain(const u32 p_ApiVersion)
+{
+    VkPhysicalDeviceProperties2KHR properties{};
+    properties.properties = Core;
+    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+    createChain<VkPhysicalDeviceProperties2KHR>(properties, *this, p_ApiVersion);
+    return properties;
+}
+#endif
 
 Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
 {
@@ -442,62 +456,17 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     if (v11 || prop2)
     {
-#    ifdef VKIT_API_VERSION_1_1
-        VkPhysicalDeviceFeatures2 featuresChain{};
-        VkPhysicalDeviceProperties2 propertiesChain{};
-        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-        propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2, JudgeResult);
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2, JudgeResult);
-
-        // 2 and 2KHR have the same signature
-        PFN_vkGetPhysicalDeviceFeatures2 getFeatures2 = table->vkGetPhysicalDeviceFeatures2;
-        PFN_vkGetPhysicalDeviceProperties2 getProperties2 = table->vkGetPhysicalDeviceProperties2;
-#    else
-        VkPhysicalDeviceFeatures2KHR featuresChain{};
-        VkPhysicalDeviceProperties2KHR propertiesChain{};
-        featuresChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-        propertiesChain.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
+        VkPhysicalDeviceFeatures2KHR fchain = features.CreateChain(quickProperties.apiVersion);
+        VkPhysicalDeviceProperties2KHR pchain = properties.CreateChain(quickProperties.apiVersion);
 
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2KHR, JudgeResult);
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2KHR, JudgeResult);
 
-        // 2 and 2KHR have the same signature
-        PFN_vkGetPhysicalDeviceFeatures2KHR getFeatures2 = table->vkGetPhysicalDeviceFeatures2KHR;
-        PFN_vkGetPhysicalDeviceProperties2KHR getProperties2 = table->vkGetPhysicalDeviceProperties2KHR;
-#    endif
+        table->GetPhysicalDeviceFeatures2KHR(p_Device, &fchain);
+        table->GetPhysicalDeviceProperties2KHR(p_Device, &pchain);
 
-#    ifdef VKIT_API_VERSION_1_2
-        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_2)
-        {
-            featuresChain.pNext = &features.Vulkan11;
-            propertiesChain.pNext = &properties.Vulkan11;
-
-            features.Vulkan11.pNext = &features.Vulkan12;
-            properties.Vulkan11.pNext = &properties.Vulkan12;
-        }
-#    endif
-#    ifdef VKIT_API_VERSION_1_3
-        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_3)
-        {
-            features.Vulkan12.pNext = &features.Vulkan13;
-            properties.Vulkan12.pNext = &properties.Vulkan13;
-        }
-#    endif
-#    ifdef VKIT_API_VERSION_1_4
-        if (quickProperties.apiVersion >= VKIT_API_VERSION_1_4)
-        {
-            features.Vulkan13.pNext = &features.Vulkan14;
-            properties.Vulkan13.pNext = &properties.Vulkan14;
-        }
-#    endif
-
-        getFeatures2(p_Device, &featuresChain);
-        getProperties2(p_Device, &propertiesChain);
-
-        features.Core = featuresChain.features;
-        properties.Core = propertiesChain.properties;
+        features.Core = fchain.features;
+        properties.Core = pchain.properties;
     }
     else
     {

@@ -15,7 +15,7 @@ class VKIT_API PipelineLayout
     class Builder
     {
       public:
-        Builder(const LogicalDevice::Proxy &p_Device) : m_Device(p_Device)
+        Builder(const ProxyDevice &p_Device) : m_Device(p_Device)
         {
         }
 
@@ -33,7 +33,7 @@ class VKIT_API PipelineLayout
         Builder &RemoveFlags(VkPipelineLayoutCreateFlags p_Flags);
 
       private:
-        LogicalDevice::Proxy m_Device;
+        ProxyDevice m_Device;
 
         TKit::Array8<VkDescriptorSetLayout> m_DescriptorSetLayouts;
         TKit::Array4<VkPushConstantRange> m_PushConstantRanges;
@@ -47,7 +47,7 @@ class VKIT_API PipelineLayout
     };
 
     PipelineLayout() = default;
-    PipelineLayout(const LogicalDevice::Proxy &p_Device, const VkPipelineLayout p_Layout, const Info &p_Info)
+    PipelineLayout(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout, const Info &p_Info)
         : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
     {
     }
@@ -59,7 +59,7 @@ class VKIT_API PipelineLayout
         return m_Info;
     }
 
-    const LogicalDevice::Proxy &GetDevice() const
+    const ProxyDevice &GetDevice() const
     {
         return m_Device;
     }
@@ -77,7 +77,7 @@ class VKIT_API PipelineLayout
     }
 
   private:
-    LogicalDevice::Proxy m_Device{};
+    ProxyDevice m_Device{};
     VkPipelineLayout m_Layout = VK_NULL_HANDLE;
     Info m_Info;
 };
