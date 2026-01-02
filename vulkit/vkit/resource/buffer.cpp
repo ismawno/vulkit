@@ -19,6 +19,12 @@ Buffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Alloc
     m_AllocationInfo.requiredFlags = 0;
     m_AllocationInfo.preferredFlags = 0;
     m_AllocationInfo.flags = 0;
+
+    m_BufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    m_BufferInfo.usage = 0;
+    m_BufferInfo.flags = 0;
+    m_BufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
     if ((p_Flags & BufferFlag_HostMapped) || (p_Flags & BufferFlag_HostRandomAccess))
         p_Flags |= BufferFlag_HostVisible;
 
@@ -44,15 +50,15 @@ Buffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Alloc
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_MAPPED_BIT;
     }
     if (p_Flags & BufferFlag_Source)
-        m_Usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     if (p_Flags & BufferFlag_Destination)
-        m_Usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
     if (p_Flags & BufferFlag_Vertex)
-        m_Usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     if (p_Flags & BufferFlag_Index)
-        m_Usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
     if (p_Flags & BufferFlag_Storage)
-        m_Usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     m_Flags = p_Flags;
 }
 
@@ -70,11 +76,19 @@ Result<Buffer> Buffer::Builder::Build() const
     info.Size = info.InstanceAlignedSize * m_InstanceCount;
     info.Flags = m_Flags;
 
-    VkBufferCreateInfo bufferInfo{};
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    VkBufferCreateInfo bufferInfo = m_BufferInfo;
     bufferInfo.size = info.Size;
-    bufferInfo.usage = m_Usage;
-    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    if (!m_FamilyIndices.IsEmpty())
+    {
+        bufferInfo.pQueueFamilyIndices = m_FamilyIndices.GetData();
+        bufferInfo.queueFamilyIndexCount = m_FamilyIndices.GetSize();
+    }
+    else
+    {
+        bufferInfo.pQueueFamilyIndices = nullptr;
+        bufferInfo.queueFamilyIndexCount = 0;
+    }
 
     VkBuffer buffer;
     VmaAllocationInfo allocationInfo;
@@ -105,7 +119,12 @@ Buffer::Builder &Buffer::Builder::SetSize(const VkDeviceSize p_InstanceCount, co
 }
 Buffer::Builder &Buffer::Builder::SetUsage(const VkBufferUsageFlags p_Flags)
 {
-    m_Usage = p_Flags;
+    m_BufferInfo.usage = p_Flags;
+    return *this;
+}
+Buffer::Builder &Buffer::Builder::SetSharingMode(const VkSharingMode p_Mode)
+{
+    m_BufferInfo.sharingMode = p_Mode;
     return *this;
 }
 Buffer::Builder &Buffer::Builder::SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info)
@@ -117,6 +136,16 @@ Buffer::Builder &Buffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceS
 {
     m_PerInstanceMinimumAlignment = p_Alignment;
     return *this;
+}
+Buffer::Builder &Buffer::Builder::AddFamilyIndex(const u32 p_Index)
+{
+    m_FamilyIndices.Append(p_Index);
+    return *this;
+}
+
+const VkBufferCreateInfo &Buffer::Builder::GetBufferInfo() const
+{
+    return m_BufferInfo;
 }
 
 void Buffer::Destroy()

@@ -46,18 +46,30 @@ class VKIT_API Buffer
             return SetSize(p_InstanceCount, sizeof(T));
         }
         Builder &SetUsage(VkBufferUsageFlags p_Flags);
+        Builder &SetSharingMode(VkSharingMode p_Mode);
         Builder &SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info);
         Builder &SetPerInstanceMinimumAlignment(VkDeviceSize p_Alignment);
+
+        Builder &AddFamilyIndex(u32 p_Index);
+        template <typename T> Builder &AddNext(const T *p_Next)
+        {
+            const void *next = m_BufferInfo.pNext;
+            p_Next->pNext = next;
+            m_BufferInfo.pNext = p_Next;
+        }
+
+        const VkBufferCreateInfo &GetBufferInfo() const;
 
       private:
         ProxyDevice m_Device;
         VmaAllocator m_Allocator;
         VkDeviceSize m_InstanceCount = 0;
         VkDeviceSize m_InstanceSize = 0;
-        VkBufferUsageFlags m_Usage = 0;
+        VkBufferCreateInfo m_BufferInfo{};
         VmaAllocationCreateInfo m_AllocationInfo{};
         VkDeviceSize m_PerInstanceMinimumAlignment = 1;
         BufferFlags m_Flags;
+        TKit::Array8<u32> m_FamilyIndices{};
     };
 
     struct Info

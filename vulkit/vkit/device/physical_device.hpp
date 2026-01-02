@@ -50,50 +50,50 @@ enum DeviceFlagBits : DeviceFlags
     DeviceFlag_HasPresentQueue = 1 << 9
 };
 
+struct DeviceFeatures
+{
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
+    VkPhysicalDeviceFeatures2KHR CreateChain(u32 p_ApiVersion);
+#endif
+
+    VkPhysicalDeviceFeatures Core{};
+#ifdef VKIT_API_VERSION_1_2
+    VkPhysicalDeviceVulkan11Features Vulkan11{};
+    VkPhysicalDeviceVulkan12Features Vulkan12{};
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    VkPhysicalDeviceVulkan13Features Vulkan13{};
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    VkPhysicalDeviceVulkan14Features Vulkan14{};
+#endif
+    void *Next;
+};
+
+struct DeviceProperties
+{
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
+    VkPhysicalDeviceProperties2 CreateChain(u32 p_ApiVersion);
+#endif
+
+    VkPhysicalDeviceProperties Core{};
+    VkPhysicalDeviceMemoryProperties Memory{};
+#ifdef VKIT_API_VERSION_1_2
+    VkPhysicalDeviceVulkan11Properties Vulkan11{};
+    VkPhysicalDeviceVulkan12Properties Vulkan12{};
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    VkPhysicalDeviceVulkan13Properties Vulkan13{};
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    VkPhysicalDeviceVulkan14Properties Vulkan14{};
+#endif
+    void *Next;
+};
+
 class VKIT_API PhysicalDevice
 {
   public:
-    struct Features
-    {
-#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-        VkPhysicalDeviceFeatures2KHR CreateChain(u32 p_ApiVersion);
-#endif
-
-        VkPhysicalDeviceFeatures Core{};
-#ifdef VKIT_API_VERSION_1_2
-        VkPhysicalDeviceVulkan11Features Vulkan11{};
-        VkPhysicalDeviceVulkan12Features Vulkan12{};
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        VkPhysicalDeviceVulkan13Features Vulkan13{};
-#endif
-#ifdef VKIT_API_VERSION_1_4
-        VkPhysicalDeviceVulkan14Features Vulkan14{};
-#endif
-        void *Next;
-    };
-
-    struct Properties
-    {
-#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-        VkPhysicalDeviceProperties2 CreateChain(u32 p_ApiVersion);
-#endif
-
-        VkPhysicalDeviceProperties Core{};
-        VkPhysicalDeviceMemoryProperties Memory{};
-#ifdef VKIT_API_VERSION_1_2
-        VkPhysicalDeviceVulkan11Properties Vulkan11{};
-        VkPhysicalDeviceVulkan12Properties Vulkan12{};
-#endif
-#ifdef VKIT_API_VERSION_1_3
-        VkPhysicalDeviceVulkan13Properties Vulkan13{};
-#endif
-#ifdef VKIT_API_VERSION_1_4
-        VkPhysicalDeviceVulkan14Properties Vulkan14{};
-#endif
-        void *Next;
-    };
-
 #ifdef VK_KHR_surface
     struct SwapChainSupportDetails
     {
@@ -130,7 +130,7 @@ class VKIT_API PhysicalDevice
         Selector &RequireMemory(const VkDeviceSize p_Size);
         Selector &RequestMemory(const VkDeviceSize p_Size);
 
-        Selector &RequireFeatures(const Features &p_Features);
+        Selector &RequireFeatures(const DeviceFeatures &p_Features);
 
         Selector &SetFlags(DeviceSelectorFlags p_Flags);
         Selector &AddFlags(DeviceSelectorFlags p_Flags);
@@ -161,7 +161,7 @@ class VKIT_API PhysicalDevice
         TKit::Array256<std::string> m_RequiredExtensions;
         TKit::Array256<std::string> m_RequestedExtensions;
 
-        Features m_RequiredFeatures{};
+        DeviceFeatures m_RequiredFeatures{};
     };
 
     struct Info
@@ -177,10 +177,10 @@ class VKIT_API PhysicalDevice
         TKit::Array256<std::string> EnabledExtensions;
         TKit::Array256<std::string> AvailableExtensions;
 
-        Features EnabledFeatures{};
-        Features AvailableFeatures{};
+        DeviceFeatures EnabledFeatures{};
+        DeviceFeatures AvailableFeatures{};
 
-        Properties Properties{};
+        DeviceProperties Properties{};
         DeviceFlags Flags;
     };
 
@@ -189,10 +189,10 @@ class VKIT_API PhysicalDevice
     {
     }
 
-    bool AreFeaturesSupported(const Features &p_Features) const;
-    bool AreFeaturesEnabled(const Features &p_Features) const;
+    bool AreFeaturesSupported(const DeviceFeatures &p_Features) const;
+    bool AreFeaturesEnabled(const DeviceFeatures &p_Features) const;
 
-    bool EnableFeatures(const Features &p_Features);
+    bool EnableFeatures(const DeviceFeatures &p_Features);
 
     template <typename T> void EnableExtensionBoundFeature(T *p_Feature)
     {

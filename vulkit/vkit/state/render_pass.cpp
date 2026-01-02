@@ -3,7 +3,6 @@
 
 namespace VKit
 {
-
 Result<RenderPass> RenderPass::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();

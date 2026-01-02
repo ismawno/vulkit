@@ -40,23 +40,9 @@ class VKIT_API Instance
         }
     };
 
-    /**
-     * @brief A utility for setting up and creating a Vulkan instance.
-     *
-     * Provides methods to define application details, API versions, extensions,
-     * and layers. `Require()` methods enforce strict conditions, while `Request()`
-     * methods try to enable features without failing if unavailable.
-     */
     class Builder
     {
       public:
-        /**
-         * @brief Creates a Vulkan instance with the specified configuration.
-         *
-         * Returns a valid instance if all required parameters are met, or an error otherwise.
-         *
-         * @return A `Result` containing the created `Instance` or an error.
-         */
         Result<Instance> Build() const;
 
         Builder &SetApplicationName(const char *p_Name);

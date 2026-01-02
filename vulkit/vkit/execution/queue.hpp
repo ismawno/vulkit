@@ -2,6 +2,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "vkit/device/proxy_device.hpp"
+#include "tkit/container/span.hpp"
 
 namespace VKit
 {
@@ -23,7 +24,7 @@ class Queue
   public:
     Queue() = default;
 
-#ifdef VK_KHR_timeline_semaphore
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
     static Result<Queue> Create(const LogicalDevice &p_Device, VkQueue p_Queue, u32 p_Family, u32 p_Index);
 
     Queue(const ProxyDevice &p_Device, const VkQueue p_Queue, const u32 p_Family, const u32 p_Index,
@@ -37,6 +38,19 @@ class Queue
         : m_Queue(p_Queue), m_Family(p_Family), m_Index(p_Index)
     {
     }
+#endif
+
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
+    Result<> Submit(VkSubmitInfo p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+#else
+    Result<> Submit(const VkSubmitInfo &p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+#endif
+
+    Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+    Result<> Submit(VkSubmitInfo2KHR p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<> Submit(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
     VkQueue GetHandle() const
@@ -82,11 +96,15 @@ class Queue
 #else
     Result<u64> GetCompletedSubmissionCount() const
     {
-        return u64(0);
+        return Result<u64>::Error(
+            VK_ERROR_FEATURE_NOT_PRESENT,
+            "To query completed submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     }
     Result<u64> GetPendingSubmissionCount() const
     {
-        return u64(0);
+        return Result<u64>::Error(
+            VK_ERROR_FEATURE_NOT_PRESENT,
+            "To query pending submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     }
     VkSemaphore GetTimelineSempahore() const
     {

@@ -61,7 +61,7 @@ template <typename T> static bool compareFeatureStructs(const T &p_Supported, co
     return true;
 }
 
-static bool compareFeatures(const PhysicalDevice::Features &p_Supported, const PhysicalDevice::Features &p_Requested)
+static bool compareFeatures(const DeviceFeatures &p_Supported, const DeviceFeatures &p_Requested)
 {
     if (!compareFeatureStructs(p_Supported.Core, p_Requested.Core))
         return false;
@@ -154,7 +154,7 @@ template <typename T2, typename T1> void createChain(T2 &p_Chain, T1 &p_Properti
 #        endif
 #    endif
 }
-VkPhysicalDeviceFeatures2KHR PhysicalDevice::Features::CreateChain(const u32 p_ApiVersion)
+VkPhysicalDeviceFeatures2KHR DeviceFeatures::CreateChain(const u32 p_ApiVersion)
 {
     VkPhysicalDeviceFeatures2KHR features{};
     features.features = Core;
@@ -163,7 +163,7 @@ VkPhysicalDeviceFeatures2KHR PhysicalDevice::Features::CreateChain(const u32 p_A
     return features;
 }
 
-VkPhysicalDeviceProperties2KHR PhysicalDevice::Properties::CreateChain(const u32 p_ApiVersion)
+VkPhysicalDeviceProperties2KHR DeviceProperties::CreateChain(const u32 p_ApiVersion)
 {
     VkPhysicalDeviceProperties2KHR properties{};
     properties.properties = Core;
@@ -435,8 +435,8 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
                                   "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
-    Features features{};
-    Properties properties{};
+    DeviceFeatures features{};
+    DeviceProperties properties{};
 
 #ifdef VKIT_API_VERSION_1_2
     features.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
@@ -648,15 +648,15 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     return devices;
 }
 
-bool PhysicalDevice::AreFeaturesSupported(const Features &p_Features) const
+bool PhysicalDevice::AreFeaturesSupported(const DeviceFeatures &p_Features) const
 {
     return compareFeatures(m_Info.AvailableFeatures, p_Features);
 }
-bool PhysicalDevice::AreFeaturesEnabled(const Features &p_Features) const
+bool PhysicalDevice::AreFeaturesEnabled(const DeviceFeatures &p_Features) const
 {
     return compareFeatures(m_Info.EnabledFeatures, p_Features);
 }
-bool PhysicalDevice::EnableFeatures(const Features &p_Features)
+bool PhysicalDevice::EnableFeatures(const DeviceFeatures &p_Features)
 {
     if (!AreFeaturesSupported(p_Features))
         return false;
@@ -757,7 +757,7 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDevice
         m_RequiredMemory = m_RequestedMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const Features &p_Features)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const DeviceFeatures &p_Features)
 {
     void *next = m_RequiredFeatures.Next;
     m_RequiredFeatures = p_Features;

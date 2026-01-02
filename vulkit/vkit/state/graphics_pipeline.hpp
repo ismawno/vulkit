@@ -16,6 +16,7 @@ enum StencilOperationFlagBits : StencilOperationFlags
     StencilOperationFlag_Front = 1 << 0,
     StencilOperationFlag_Back = 1 << 1,
 };
+// no pNext hooks for now. must retrieve create info and add them yourself
 class VKIT_API GraphicsPipeline
 {
   public:
@@ -51,8 +52,7 @@ class VKIT_API GraphicsPipeline
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass,
-                u32 p_Subpass = 0);
+        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass, u32 p_Subpass = 0);
         Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout,
                 const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo);
 

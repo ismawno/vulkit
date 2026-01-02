@@ -20,14 +20,14 @@ const char *ToString(const QueueType p_Type)
     return "Unknown";
 }
 
-#ifdef VK_KHR_timeline_semaphore
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
 Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue, const u32 p_Family, const u32 p_Index)
 {
     const LogicalDevice::Info &info = p_Device.GetInfo();
     const ProxyDevice proxy = p_Device;
     const PhysicalDevice &pdev = info.PhysicalDevice;
 #    ifdef VKIT_API_VERSION_1_2
-    PhysicalDevice::Features features{};
+    DeviceFeatures features{};
     features.Vulkan12.timelineSemaphore = VK_TRUE;
     const bool timelineEnabled = pdev.AreFeaturesEnabled(features);
 #    else
@@ -81,11 +81,192 @@ Result<u64> Queue::GetPendingSubmissionCount() const
     return m_SubmissionCount - result.GetValue();
 }
 
+Result<> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
+{
+    const u64 signal = m_SubmissionCount + 1;
+    if (m_Timeline)
+    {
+        VkTimelineSemaphoreSubmitInfoKHR timeline{};
+        timeline.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+        timeline.signalSemaphoreValueCount = 1;
+        timeline.pSignalSemaphoreValues = &signal;
+
+        const void *next = p_Info.pNext;
+        timeline.pNext = next;
+        p_Info.pNext = &timeline;
+
+        TKit::Array16<VkSemaphore> signalSemaphores{};
+        const u32 count = p_Info.pSignalSemaphores ? p_Info.signalSemaphoreCount : 0;
+        for (u32 i = 0; i < count; ++i)
+            signalSemaphores.Append(p_Info.pSignalSemaphores[i]);
+
+        signalSemaphores.Append(m_Timeline);
+        p_Info.pSignalSemaphores = signalSemaphores.GetData();
+        p_Info.signalSemaphoreCount = signalSemaphores.GetSize();
+
+        const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+
+    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to submit to queue");
+
+    m_SubmissionCount = signal;
+    return Result<>::Ok();
+}
+
 #else
 Result<Queue> Queue::Create(const VkQueue p_Queue, const u32 p_Family, const u32 p_Index)
 {
     return Queue{p_Queue, p_Family, p_Index};
 }
+Result<> Queue::Submit(const VkSubmitInfo &p_Info, const VkFence p_Fence)
+{
+    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to submit to queue");
+
+    ++m_SubmissionCount;
+    return Result<>::Ok();
+}
 #endif
 
+Result<> Queue::Submit(const TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fence)
+{
+    u64 signal = m_SubmissionCount;
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
+    if (m_Timeline)
+    {
+        TKit::Array16<VkSubmitInfo> infos{};
+        TKit::Array16<u64> signals{};
+        TKit::Array16<TKit::Array8<VkSemaphore>> signalSemaphores{};
+        TKit::Array16<VkTimelineSemaphoreSubmitInfoKHR> timelines{};
+        for (VkSubmitInfo info : p_Info)
+        {
+            VkTimelineSemaphoreSubmitInfoKHR &timeline = timelines.Append();
+            timeline = {};
+            timeline.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+            timeline.signalSemaphoreValueCount = 1;
+            timeline.pSignalSemaphoreValues = &signals.Append(++signal);
+
+            const void *next = info.pNext;
+            timeline.pNext = next;
+            info.pNext = &timeline;
+
+            TKit::Array8<VkSemaphore> &semaphores = signalSemaphores.Append();
+            const u32 count = info.pSignalSemaphores ? info.signalSemaphoreCount : 0;
+            for (u32 i = 0; i < count; ++i)
+                semaphores.Append(info.pSignalSemaphores[i]);
+
+            semaphores.Append(m_Timeline);
+            info.pSignalSemaphores = semaphores.GetData();
+            info.signalSemaphoreCount = semaphores.GetSize();
+            infos.Append(info);
+        }
+        const VkResult result = m_Device.Table->QueueSubmit(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+    else
+    {
+        const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+#else
+    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to submit to queue");
+    m_SubmissionCount = signal;
+    return Result<>::Ok();
+#endif
+}
+
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+Result<> Queue::Submit(VkSubmitInfo2KHR p_Info, const VkFence p_Fence)
+{
+    const u64 signal = m_SubmissionCount + 1;
+    if (m_Timeline)
+    {
+        VkSemaphoreSubmitInfoKHR timeline{};
+
+        timeline.semaphore = m_Timeline;
+        timeline.stageMask = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR;
+        timeline.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR;
+        timeline.value = signal;
+
+        TKit::Array16<VkSemaphoreSubmitInfoKHR> signalSemaphores{};
+        const u32 count = p_Info.pSignalSemaphoreInfos ? p_Info.signalSemaphoreInfoCount : 0;
+        for (u32 i = 0; i < count; ++i)
+            signalSemaphores.Append(p_Info.pSignalSemaphoreInfos[i]);
+
+        signalSemaphores.Append(timeline);
+        p_Info.pSignalSemaphoreInfos = signalSemaphores.GetData();
+        p_Info.signalSemaphoreInfoCount = signalSemaphores.GetSize();
+
+        const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+
+    const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to submit to queue");
+
+    m_SubmissionCount = signal;
+    return Result<>::Ok();
+}
+Result<> Queue::Submit(const TKit::Span<const VkSubmitInfo2KHR> p_Info, const VkFence p_Fence)
+{
+    u64 signal = m_SubmissionCount;
+    if (m_Timeline)
+    {
+        TKit::Array16<VkSubmitInfo2KHR> infos{};
+        TKit::Array16<TKit::Array8<VkSemaphoreSubmitInfoKHR>> signalSemaphores{};
+        for (VkSubmitInfo2KHR info : p_Info)
+        {
+            VkSemaphoreSubmitInfoKHR timeline{};
+            timeline.semaphore = m_Timeline;
+            timeline.stageMask = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR;
+            timeline.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR;
+            timeline.value = ++signal;
+
+            TKit::Array8<VkSemaphoreSubmitInfoKHR> &signal = signalSemaphores.Append();
+            const u32 count = info.pSignalSemaphoreInfos ? info.signalSemaphoreInfoCount : 0;
+            for (u32 i = 0; i < count; ++i)
+                signal.Append(info.pSignalSemaphoreInfos[i]);
+
+            signal.Append(timeline);
+            info.pSignalSemaphoreInfos = signal.GetData();
+            info.signalSemaphoreInfoCount = signal.GetSize();
+            infos.Append(info);
+        }
+        const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+    else
+    {
+        const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+        if (result != VK_SUCCESS)
+            return Result<>::Error(result, "Failed to submit to queue");
+        m_SubmissionCount = signal;
+        return Result<>::Ok();
+    }
+}
+#endif
 } // namespace VKit

@@ -29,10 +29,10 @@ class Image
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
-                VkFormat p_Format, ImageFlags p_Flags = 0);
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
-                VkFormat p_Format, ImageFlags p_Flags = 0);
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent, VkFormat p_Format,
+                ImageFlags p_Flags = 0);
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent, VkFormat p_Format,
+                ImageFlags p_Flags = 0);
 
         /**
          * @brief Creates a vulkan image with the provided specification.
@@ -55,6 +55,21 @@ class Image
         Builder &SetFlags(VkImageCreateFlags p_Flags);
         Builder &SetUsage(VkImageUsageFlags p_Flags);
         Builder &SetImageCreateInfo(const VkImageCreateInfo &p_Info);
+        template <typename T> Builder &AddNextToImageInfo(const T *p_Next)
+        {
+            const void *next = m_ImageInfo.pNext;
+            p_Next->pNext = next;
+            m_ImageInfo.pNext = p_Next;
+        }
+        template <typename T> Builder &AddNextToImageViewInfo(const T *p_Next)
+        {
+            const void *next = m_ViewInfo.pNext;
+            p_Next->pNext = next;
+            m_ViewInfo.pNext = p_Next;
+        }
+
+        const VkImageCreateInfo &GetImageInfo() const;
+        const VkImageViewCreateInfo &GetImageViewInfo() const;
 
         Builder &WithImageView();
         Builder &WithImageView(const VkImageViewCreateInfo &p_Info);
