@@ -88,7 +88,7 @@ void RenderPass::Destroy()
 }
 void RenderPass::Resources::Destroy()
 {
-    for (Image image : m_Images)
+    for (DeviceImage image : m_Images)
         image.Destroy();
 
     for (const VkFramebuffer &frameBuffer : m_FrameBuffers)

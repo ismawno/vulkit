@@ -103,7 +103,7 @@ class VKIT_API SwapChain
     };
 
     SwapChain() = default;
-    SwapChain(const ProxyDevice &p_Device, VkSwapchainKHR p_SwapChain, const TKit::Array8<Image> &p_Images,
+    SwapChain(const ProxyDevice &p_Device, VkSwapchainKHR p_SwapChain, const TKit::Array8<DeviceImage> &p_Images,
               const Info &p_Info)
         : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
     {
@@ -120,11 +120,11 @@ class VKIT_API SwapChain
         return m_SwapChain;
     }
 
-    const Image &GetImage(const u32 p_Index) const
+    const DeviceImage &GetImage(const u32 p_Index) const
     {
         return m_Images[p_Index];
     }
-    Image &GetImage(const u32 p_Index)
+    DeviceImage &GetImage(const u32 p_Index)
     {
         return m_Images[p_Index];
     }
@@ -149,7 +149,7 @@ class VKIT_API SwapChain
   private:
     ProxyDevice m_Device{};
     VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
-    TKit::Array8<Image> m_Images;
+    TKit::Array8<DeviceImage> m_Images;
     Info m_Info;
 };
 } // namespace VKit

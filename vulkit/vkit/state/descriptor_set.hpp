@@ -9,7 +9,7 @@
 
 namespace VKit
 {
-class Buffer;
+class DeviceBuffer;
 
 class VKIT_API DescriptorSet
 {
@@ -23,7 +23,7 @@ class VKIT_API DescriptorSet
         }
 
         void WriteBuffer(u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo);
-        void WriteBuffer(u32 p_Binding, const Buffer &p_Buffer);
+        void WriteBuffer(u32 p_Binding, const DeviceBuffer &p_Buffer);
         void WriteImage(u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo);
         void Overwrite(const VkDescriptorSet p_Set);
 

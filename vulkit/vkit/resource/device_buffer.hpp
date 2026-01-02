@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_BUFFER
+#ifndef VKIT_ENABLE_DEVICE_BUFFER
 #    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_BUFFER"
 #endif
 
@@ -12,32 +12,33 @@
 namespace VKit
 {
 class CommandPool;
-class Image;
+class DeviceImage;
+class HostBuffer;
 
-using BufferFlags = u16;
-enum BufferFlagBits : BufferFlags
+using DeviceBufferFlags = u16;
+enum DeviceBufferFlagBits : DeviceBufferFlags
 {
-    BufferFlag_DeviceLocal = 1 << 0,
-    BufferFlag_HostVisible = 1 << 1,
-    BufferFlag_Source = 1 << 2,
-    BufferFlag_Destination = 1 << 3,
-    BufferFlag_Staging = 1 << 4,
-    BufferFlag_Vertex = 1 << 5,
-    BufferFlag_Index = 1 << 6,
-    BufferFlag_Storage = 1 << 7,
-    BufferFlag_HostMapped = 1 << 8,
-    BufferFlag_HostRandomAccess = 1 << 9,
+    DeviceBufferFlag_DeviceLocal = 1 << 0,
+    DeviceBufferFlag_HostVisible = 1 << 1,
+    DeviceBufferFlag_Source = 1 << 2,
+    DeviceBufferFlag_Destination = 1 << 3,
+    DeviceBufferFlag_Staging = 1 << 4,
+    DeviceBufferFlag_Vertex = 1 << 5,
+    DeviceBufferFlag_Index = 1 << 6,
+    DeviceBufferFlag_Storage = 1 << 7,
+    DeviceBufferFlag_HostMapped = 1 << 8,
+    DeviceBufferFlag_HostRandomAccess = 1 << 9,
 };
 
-class VKIT_API Buffer
+class VKIT_API DeviceBuffer
 {
   public:
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, BufferFlags p_Flags = 0);
+        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, DeviceBufferFlags p_Flags = 0);
 
-        Result<Buffer> Build() const;
+        Result<DeviceBuffer> Build() const;
 
         Builder &SetSize(VkDeviceSize p_Size);
         Builder &SetSize(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize);
@@ -68,7 +69,7 @@ class VKIT_API Buffer
         VkBufferCreateInfo m_BufferInfo{};
         VmaAllocationCreateInfo m_AllocationInfo{};
         VkDeviceSize m_PerInstanceMinimumAlignment = 1;
-        BufferFlags m_Flags;
+        DeviceBufferFlags m_Flags;
         TKit::Array8<u32> m_FamilyIndices{};
     };
 
@@ -81,12 +82,12 @@ class VKIT_API Buffer
         VkDeviceSize InstanceCount;
         VkDeviceSize InstanceAlignedSize;
         VkDeviceSize Size;
-        BufferFlags Flags;
+        DeviceBufferFlags Flags;
     };
 
-    Buffer() = default;
+    DeviceBuffer() = default;
 
-    Buffer(const ProxyDevice &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
+    DeviceBuffer(const ProxyDevice &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
         : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
     {
     }
@@ -101,13 +102,19 @@ class VKIT_API Buffer
         return m_Data != nullptr;
     }
 
-    void *ReadAt(const u32 p_Index) const
+    const void *ReadAt(const u32 p_Index) const
+    {
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+    }
+    void *ReadAt(const u32 p_Index)
     {
         TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
 
     void Write(const void *p_Data, BufferCopy p_Info = {});
+    void Write(const HostBuffer &p_Data, BufferCopy p_Info = {});
 
     template <typename T> void Write(const TKit::Span<const T> p_Data, const BufferCopy &p_Info = {})
     {
@@ -120,14 +127,14 @@ class VKIT_API Buffer
 
     void WriteAt(u32 p_Index, const void *p_Data);
 
-    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info);
+    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source, const BufferCopy &p_Info);
 
-    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source,
+    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
                             const BufferCopy &p_Info = {});
 
-    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info);
+    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const BufferImageCopy &p_Info);
 
-    Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source,
+    Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
                            const BufferImageCopy &p_Info = {});
 
     Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
@@ -145,7 +152,11 @@ class VKIT_API Buffer
             {.Size = size, .SrcOffset = p_Info.SrcOffset * sizeof(T), .DstOffset = p_Info.DstOffset * sizeof(T)});
     }
 
-    void *GetData() const
+    const void *GetData() const
+    {
+        return m_Data;
+    }
+    void *GetData()
     {
         return m_Data;
     }

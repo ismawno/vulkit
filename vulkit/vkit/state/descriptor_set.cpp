@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/descriptor_set.hpp"
-#include "vkit/resource/buffer.hpp"
+#include "vkit/resource/device_buffer.hpp"
 
 namespace VKit
 {
@@ -58,7 +58,7 @@ void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorB
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const Buffer &p_Buffer)
+void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const DeviceBuffer &p_Buffer)
 {
     WriteBuffer(p_Binding, p_Buffer.GetDescriptorInfo());
 }

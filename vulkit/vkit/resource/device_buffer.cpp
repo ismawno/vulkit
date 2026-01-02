@@ -1,7 +1,8 @@
 #include "vkit/core/pch.hpp"
-#include "vkit/resource/buffer.hpp"
+#include "vkit/resource/device_buffer.hpp"
 #include "vkit/execution/command_pool.hpp"
 #include "vkit/resource/image.hpp"
+#include "vkit/resource/host_buffer.hpp"
 #include "tkit/math/math.hpp"
 
 namespace VKit
@@ -12,7 +13,7 @@ static VkDeviceSize alignedSize(const VkDeviceSize p_Size, const VkDeviceSize p_
     return (p_Size + p_Alignment - 1) & ~(p_Alignment - 1);
 }
 
-Buffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, BufferFlags p_Flags)
+DeviceBuffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, DeviceBufferFlags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator)
 {
     m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
@@ -25,48 +26,48 @@ Buffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Alloc
     m_BufferInfo.flags = 0;
     m_BufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if ((p_Flags & BufferFlag_HostMapped) || (p_Flags & BufferFlag_HostRandomAccess))
-        p_Flags |= BufferFlag_HostVisible;
+    if ((p_Flags & DeviceBufferFlag_HostMapped) || (p_Flags & DeviceBufferFlag_HostRandomAccess))
+        p_Flags |= DeviceBufferFlag_HostVisible;
 
-    if (p_Flags & BufferFlag_Staging)
+    if (p_Flags & DeviceBufferFlag_Staging)
     {
-        p_Flags |= BufferFlag_HostVisible;
-        p_Flags |= BufferFlag_Source;
+        p_Flags |= DeviceBufferFlag_HostVisible;
+        p_Flags |= DeviceBufferFlag_Source;
     }
-    if (p_Flags & BufferFlag_DeviceLocal)
+    if (p_Flags & DeviceBufferFlag_DeviceLocal)
     {
-        p_Flags |= BufferFlag_Destination;
+        p_Flags |= DeviceBufferFlag_Destination;
         m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
         m_AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     }
-    if (p_Flags & BufferFlag_HostVisible)
+    if (p_Flags & DeviceBufferFlag_HostVisible)
     {
         m_AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-        if (p_Flags & BufferFlag_HostRandomAccess)
+        if (p_Flags & DeviceBufferFlag_HostRandomAccess)
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         else
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-        if (p_Flags & BufferFlag_HostMapped)
+        if (p_Flags & DeviceBufferFlag_HostMapped)
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_MAPPED_BIT;
     }
-    if (p_Flags & BufferFlag_Source)
+    if (p_Flags & DeviceBufferFlag_Source)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    if (p_Flags & BufferFlag_Destination)
+    if (p_Flags & DeviceBufferFlag_Destination)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-    if (p_Flags & BufferFlag_Vertex)
+    if (p_Flags & DeviceBufferFlag_Vertex)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    if (p_Flags & BufferFlag_Index)
+    if (p_Flags & DeviceBufferFlag_Index)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-    if (p_Flags & BufferFlag_Storage)
+    if (p_Flags & DeviceBufferFlag_Storage)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     m_Flags = p_Flags;
 }
 
-Result<Buffer> Buffer::Builder::Build() const
+Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindVertexBuffers, Result<Buffer>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<Buffer>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<Buffer>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindVertexBuffers, Result<DeviceBuffer>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<DeviceBuffer>);
+    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<DeviceBuffer>);
 
     Info info;
     info.Allocator = m_Allocator;
@@ -100,55 +101,56 @@ Result<Buffer> Buffer::Builder::Build() const
         data = allocationInfo.pMappedData;
 
     if (result != VK_SUCCESS)
-        return Result<Buffer>::Error(result, "Failed to create buffer");
+        return Result<DeviceBuffer>::Error(result, "Failed to create buffer");
 
-    return Result<Buffer>::Ok(m_Device, buffer, info, data);
+    return Result<DeviceBuffer>::Ok(m_Device, buffer, info, data);
 }
 
-Buffer::Builder &Buffer::Builder::SetSize(const VkDeviceSize p_Size)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetSize(const VkDeviceSize p_Size)
 {
     m_InstanceCount = p_Size;
     m_InstanceSize = 1;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::SetSize(const VkDeviceSize p_InstanceCount, const VkDeviceSize p_InstanceSize)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetSize(const VkDeviceSize p_InstanceCount,
+                                                      const VkDeviceSize p_InstanceSize)
 {
     m_InstanceCount = p_InstanceCount;
     m_InstanceSize = p_InstanceSize;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::SetUsage(const VkBufferUsageFlags p_Flags)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetUsage(const VkBufferUsageFlags p_Flags)
 {
     m_BufferInfo.usage = p_Flags;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::SetSharingMode(const VkSharingMode p_Mode)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetSharingMode(const VkSharingMode p_Mode)
 {
     m_BufferInfo.sharingMode = p_Mode;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info)
 {
     m_AllocationInfo = p_Info;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceSize p_Alignment)
+DeviceBuffer::Builder &DeviceBuffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceSize p_Alignment)
 {
     m_PerInstanceMinimumAlignment = p_Alignment;
     return *this;
 }
-Buffer::Builder &Buffer::Builder::AddFamilyIndex(const u32 p_Index)
+DeviceBuffer::Builder &DeviceBuffer::Builder::AddFamilyIndex(const u32 p_Index)
 {
     m_FamilyIndices.Append(p_Index);
     return *this;
 }
 
-const VkBufferCreateInfo &Buffer::Builder::GetBufferInfo() const
+const VkBufferCreateInfo &DeviceBuffer::Builder::GetBufferInfo() const
 {
     return m_BufferInfo;
 }
 
-void Buffer::Destroy()
+void DeviceBuffer::Destroy()
 {
     if (m_Buffer)
     {
@@ -157,7 +159,7 @@ void Buffer::Destroy()
     }
 }
 
-Result<> Buffer::Map()
+Result<> DeviceBuffer::Map()
 {
     TKIT_ASSERT(!m_Data, "[VULKIT] Buffer is already mapped");
     const VkResult result = vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data);
@@ -167,14 +169,14 @@ Result<> Buffer::Map()
     return Result<>::Ok();
 }
 
-void Buffer::Unmap()
+void DeviceBuffer::Unmap()
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Buffer is not mapped");
     vmaUnmapMemory(m_Info.Allocator, m_Info.Allocation);
     m_Data = nullptr;
 }
 
-void Buffer::Write(const void *p_Data, BufferCopy p_Info)
+void DeviceBuffer::Write(const void *p_Data, BufferCopy p_Info)
 {
     if (p_Info.Size == VK_WHOLE_SIZE)
         p_Info.Size = m_Info.Size - p_Info.DstOffset;
@@ -186,8 +188,13 @@ void Buffer::Write(const void *p_Data, BufferCopy p_Info)
     const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
     TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
 }
+void Write(const HostBuffer &p_Data, const BufferCopy &p_Info = {})
+{
+    const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (p_Data.GetSize() - p_Info.SrcOffset) : (p_Info.Size);
+    Write(p_Data.GetData(), {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = p_Info.DstOffset});
+}
 
-void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
+void DeviceBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
 
@@ -196,7 +203,8 @@ void Buffer::WriteAt(const u32 p_Index, const void *p_Data)
     TKit::Memory::ForwardCopy(data, p_Data, m_Info.InstanceSize);
 }
 
-void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferCopy &p_Info)
+void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                                  const BufferCopy &p_Info)
 {
     VkBufferCopy copy{};
     copy.dstOffset = p_Info.DstOffset;
@@ -207,11 +215,12 @@ void Buffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const Buffer 
     TKIT_ASSERT(m_Info.Size >= copy.size, "[VULKIT] Specified size exceeds destination buffer size");
     m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
 }
-void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p_Source, const BufferImageCopy &p_Info)
+void DeviceBuffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                                 const BufferImageCopy &p_Info)
 {
     const VkOffset3D &off = p_Info.ImageOffset;
     const VkExtent3D &ext = p_Info.Extent;
-    const Image::Info &info = p_Source.GetInfo();
+    const DeviceImage::Info &info = p_Source.GetInfo();
     const VkImageSubresourceLayers &subr = p_Info.Subresource;
 
     const u32 width = Math::Max(1u, info.Width >> subr.mipLevel);
@@ -247,8 +256,8 @@ void Buffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Image &p
     m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, 1, &copy);
 }
 
-Result<> Buffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source,
-                               const BufferImageCopy &p_Info)
+Result<> DeviceBuffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
+                                     const BufferImageCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
@@ -258,7 +267,8 @@ Result<> Buffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
-Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source, const BufferCopy &p_Info)
+Result<> DeviceBuffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
+                                      const BufferCopy &p_Info)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
@@ -268,16 +278,18 @@ Result<> Buffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buff
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
-Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
-                                const BufferCopy &p_Info)
+Result<> DeviceBuffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
+                                      const BufferCopy &p_Info)
 {
     const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (m_Info.Size - p_Info.DstOffset) : p_Info.Size;
 
     auto bres =
-        Buffer::Builder(m_Device, m_Info.Allocator, BufferFlag_HostMapped | BufferFlag_Staging).SetSize(size).Build();
+        DeviceBuffer::Builder(m_Device, m_Info.Allocator, DeviceBufferFlag_HostMapped | DeviceBufferFlag_Staging)
+            .SetSize(size)
+            .Build();
     TKIT_RETURN_ON_ERROR(bres);
 
-    Buffer &staging = bres.GetValue();
+    DeviceBuffer &staging = bres.GetValue();
     staging.Write(p_Data, {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = 0});
     staging.Flush();
 
@@ -287,7 +299,7 @@ Result<> Buffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, cons
     return cres;
 }
 
-Result<> Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
+Result<> DeviceBuffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot flush unmapped buffer");
     const VkResult result = vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
@@ -295,13 +307,13 @@ Result<> Buffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
         return Result<>::Error(result, "Failed to flush buffer memory");
     return Result<>::Ok();
 }
-Result<> Buffer::FlushAt(const u32 p_Index)
+Result<> DeviceBuffer::FlushAt(const u32 p_Index)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-Result<> Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
+Result<> DeviceBuffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT] Cannot invalidate unmapped buffer");
     const VkResult result = vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
@@ -309,20 +321,20 @@ Result<> Buffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offs
         return Result<>::Error(result, "Failed to invalidate buffer memory");
     return Result<>::Ok();
 }
-Result<> Buffer::InvalidateAt(const u32 p_Index)
+Result<> DeviceBuffer::InvalidateAt(const u32 p_Index)
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
-void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const
+void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkDeviceSize p_Offset) const
 {
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &m_Buffer, &p_Offset);
 }
 
-void Buffer::BindAsVertexBuffer(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
-                                const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
-                                const TKit::Span<const VkDeviceSize> p_Offsets)
+void DeviceBuffer::BindAsVertexBuffer(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
+                                      const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
+                                      const TKit::Span<const VkDeviceSize> p_Offsets)
 {
     if (!p_Offsets.IsEmpty())
         p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
@@ -332,13 +344,13 @@ void Buffer::BindAsVertexBuffer(const ProxyDevice &p_Device, const VkCommandBuff
                                              nullptr);
 }
 
-void Buffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
-                                const VkDeviceSize p_Offset) const
+void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
+                                      const VkDeviceSize p_Offset) const
 {
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
 }
 
-VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const
+VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const
 {
     VkDescriptorBufferInfo info{};
     info.buffer = m_Buffer;
@@ -346,7 +358,7 @@ VkDescriptorBufferInfo Buffer::GetDescriptorInfo(const VkDeviceSize p_Size, cons
     info.range = p_Size;
     return info;
 }
-VkDescriptorBufferInfo Buffer::GetDescriptorInfoAt(const u32 p_Index) const
+VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfoAt(const u32 p_Index) const
 {
     TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);

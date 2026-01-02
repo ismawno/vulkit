@@ -145,7 +145,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<SwapChain>::Error(result, "Failed to create the swap chain");
 
-    TKit::Array8<Image> finalImages;
+    TKit::Array8<DeviceImage> finalImages;
     SwapChain::Info info{};
     info.Extent = extent;
     info.SurfaceFormat = surfaceFormat;
@@ -156,7 +156,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
 
     const auto earlyDestroy = [proxy, swapChain, &checkFlags, &finalImages] {
         if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
-            for (Image &image : finalImages)
+            for (DeviceImage &image : finalImages)
                 image.DestroyImageView();
 
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
@@ -182,7 +182,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
     {
-        Image::Info iminfo = Image::FromSwapChain(surfaceFormat.format, extent);
+        DeviceImage::Info iminfo = DeviceImage::FromSwapChain(surfaceFormat.format, extent);
         VkImageView view = VK_NULL_HANDLE;
         if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
         {
@@ -208,7 +208,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
                 return Result<SwapChain>::Error(result, "Failed to create the image view");
             }
         }
-        finalImages[i] = Image{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};
+        finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};
     }
 
     return Result<SwapChain>::Ok(proxy, swapChain, finalImages, info);
@@ -216,7 +216,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
 
 void SwapChain::Destroy()
 {
-    for (Image image : m_Images)
+    for (DeviceImage image : m_Images)
         image.DestroyImageView();
 
     m_Images.Clear();

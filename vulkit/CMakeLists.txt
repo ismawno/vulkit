@@ -21,7 +21,7 @@ if(VULKIT_ENABLE_ALLOCATOR)
 endif()
 
 if(VULKIT_ENABLE_BUFFER)
-  list(APPEND SOURCES vkit/resource/buffer.cpp)
+  list(APPEND SOURCES vkit/resource/device_buffer.cpp)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
@@ -84,8 +84,12 @@ if(VULKIT_ENABLE_ALLOCATOR)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_ALLOCATOR)
 endif()
 
-if(VULKIT_ENABLE_BUFFER)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_BUFFER)
+if(VULKIT_ENABLE_DEVICE_BUFFER)
+  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DEVICE_BUFFER)
+endif()
+
+if(VULKIT_ENABLE_HOST_BUFFER)
+  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_HOST_BUFFER)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)

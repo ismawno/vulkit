@@ -11,7 +11,7 @@
 namespace VKit
 {
 class CommandPool;
-class Buffer;
+class DeviceBuffer;
 
 using ImageFlags = u8;
 enum ImageFlagBits : ImageFlags
@@ -23,7 +23,16 @@ enum ImageFlagBits : ImageFlags
     ImageFlag_Sampled = 1 << 4,
     ImageFlag_ForceHostVisible = 1 << 5
 };
-class Image
+struct HostImage
+{
+    u8 *Data;
+    u32 Width;
+    u32 Height;
+    u32 Depth;
+    u32 Channels;
+};
+
+class DeviceImage
 {
   public:
     class Builder
@@ -40,9 +49,9 @@ class Image
          * IMPORTANT: Image view configuration should be done after the image configuration is finished. That is, try to
          * call `CreateImageView()` as the last method before `Build()`.
          *
-         * @return A `Result` containing the created `Image` or an error if the creation fails.
+         * @return A `Result` containing the created `DeviceImage` or an error if the creation fails.
          */
-        Result<Image> Build() const;
+        Result<DeviceImage> Build() const;
 
         Builder &SetImageType(VkImageType p_Type);
         Builder &SetDepth(u32 p_Depth);
@@ -83,15 +92,6 @@ class Image
         ImageFlags m_Flags;
     };
 
-    struct HostData
-    {
-        u8 *Data;
-        u32 Width;
-        u32 Height;
-        u32 Depth;
-        u32 Channels;
-    };
-
     struct Info
     {
         VmaAllocator Allocator;
@@ -118,9 +118,9 @@ class Image
     static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent,
                               ImageFlags p_Flags = ImageFlag_ColorAttachment);
 
-    Image() = default;
-    Image(const ProxyDevice &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
-          const VkImageView p_ImageView = VK_NULL_HANDLE)
+    DeviceImage() = default;
+    DeviceImage(const ProxyDevice &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
+                const VkImageView p_ImageView = VK_NULL_HANDLE)
         : m_Device(p_Device), m_Image(p_Image), m_ImageView(p_ImageView), m_Layout(p_Layout), m_Info(p_Info)
     {
     }
@@ -131,16 +131,18 @@ class Image
 
     void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
 
-    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const Image &p_Source, const ImageCopy &p_Info = {});
+    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const ImageCopy &p_Info = {});
 
-    Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const Image &p_Source, const ImageCopy &p_Info = {});
+    Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
+                           const ImageCopy &p_Info = {});
 
-    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const Buffer &p_Source, const BufferImageCopy &p_Info = {});
+    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                        const BufferImageCopy &p_Info = {});
 
-    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const Buffer &p_Source,
+    Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
                             const BufferImageCopy &p_Info = {});
 
-    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostData &p_Data,
+    Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostImage &p_Data,
                             VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
     VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;

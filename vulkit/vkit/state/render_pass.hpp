@@ -155,7 +155,7 @@ class VKIT_API RenderPass
 
       private:
         ProxyDevice m_Device;
-        TKit::Array128<Image> m_Images;             // size: m_ImageCount * m_Attachments.GetSize()
+        TKit::Array128<DeviceImage> m_Images;       // size: m_ImageCount * m_Attachments.GetSize()
         TKit::Array8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
@@ -210,7 +210,7 @@ class VKIT_API RenderPass
                     return imresult;
                 }
 
-                const Image &imageData = imresult.GetValue();
+                const DeviceImage &imageData = imresult.GetValue();
                 resources.m_Images.Append(imageData);
                 attachments[j] = imageData.GetImageView();
             }
