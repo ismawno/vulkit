@@ -13,34 +13,33 @@ void Load(void *p_Library);
 
 #if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkCreateInstance vkCreateInstance;
-VKIT_API VKIT_LOADER_NO_DISCARD VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
-                                                        const VkAllocationCallbacks *pAllocator, VkInstance *pInstance);
+VKIT_LOADER_NO_DISCARD VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
+                                               const VkAllocationCallbacks *pAllocator, VkInstance *pInstance);
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
-VKIT_API VKIT_LOADER_NO_DISCARD PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName);
+VKIT_LOADER_NO_DISCARD PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName);
 #endif
 
 #if defined(VKIT_API_VERSION_1_1)
 extern PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion;
-VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceVersion(uint32_t *pApiVersion);
+VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceVersion(uint32_t *pApiVersion);
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
-VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
-                                                                          VkLayerProperties *pProperties);
+VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
+                                                                 VkLayerProperties *pProperties);
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
-VKIT_API VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceExtensionProperties(const char *pLayerName,
-                                                                              uint32_t *pPropertyCount,
-                                                                              VkExtensionProperties *pProperties);
+VKIT_LOADER_NO_DISCARD VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *pPropertyCount,
+                                                                     VkExtensionProperties *pProperties);
 #endif
 
-struct VKIT_API InstanceTable
+struct InstanceTable
 {
     static InstanceTable Create(VkInstance p_Instance);
 #if defined(VKIT_API_VERSION_1_0)
@@ -842,7 +841,7 @@ struct VKIT_API InstanceTable
                                        VkPhysicalDeviceToolPropertiesEXT *pToolProperties) const;
 #endif
 };
-struct VKIT_API DeviceTable
+struct DeviceTable
 {
     static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);
 #if defined(VKIT_API_VERSION_1_0)

@@ -154,7 +154,6 @@ class Function:
         namespace: str | None = None,
         vk_prefix: bool = True,
         no_discard: bool = False,
-        api_macro: bool = False,
         semicolon: bool = True,
         const: bool = False,
     ) -> str:
@@ -166,8 +165,6 @@ class Function:
         rtype = self.return_type
         if no_discard and rtype != "void":
             rtype = f"VKIT_LOADER_NO_DISCARD {rtype}"
-        if api_macro:
-            rtype = f"VKIT_API {rtype}"
         modifiers = " const" if const else ""
 
         return f"{rtype} {fname}({params}){modifiers};" if semicolon else f"{rtype} {fname}({params}){modifiers}"
@@ -531,7 +528,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
 
     def codefn1(gen: CPPGenerator, fn: Function, /) -> None:
         gen(fn.as_fn_pointer_declaration(modifier="extern"))
-        gen(fn.as_string(vk_prefix=False, no_discard=True, api_macro=True))
+        gen(fn.as_string(vk_prefix=False, no_discard=True))
 
     for fn in functions.values():
         if fn.is_instance_function() or fn.is_device_function():
@@ -547,7 +544,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
         gen(fn.as_fn_pointer_declaration(null=True))
         gen(fn.as_string(vk_prefix=False, no_discard=True, const=True))
 
-    with hpp.scope("struct VKIT_API InstanceTable", closer="};"):
+    with hpp.scope("struct InstanceTable", closer="};"):
         hpp("static InstanceTable Create(VkInstance p_Instance);")
         for fn in functions.values():
             if not fn.is_instance_function():
@@ -557,7 +554,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
             guard_if_needed(hpp, codefn2, guards, fn)
             hpp.spacing()
 
-    with hpp.scope("struct VKIT_API DeviceTable", closer="};"):
+    with hpp.scope("struct DeviceTable", closer="};"):
         hpp("static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);")
         for fn in functions.values():
             if not fn.is_device_function():

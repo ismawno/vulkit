@@ -10,7 +10,7 @@
 
 namespace VKit
 {
-class VKIT_API Shader
+class Shader
 {
   public:
     static Result<Shader> Create(const ProxyDevice &p_Device, std::string_view p_SpirvPath);

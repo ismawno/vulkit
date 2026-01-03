@@ -5,7 +5,7 @@
 
 namespace VKit
 {
-struct VKIT_API Core
+struct Core
 {
     static Result<> Initialize(const char *p_LoaderPath = nullptr);
     static void Terminate();

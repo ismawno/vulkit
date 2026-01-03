@@ -11,7 +11,7 @@
 
 namespace VKit
 {
-class VKIT_API LogicalDevice
+class LogicalDevice
 {
   public:
     struct QueuePriorities

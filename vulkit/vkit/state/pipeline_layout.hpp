@@ -9,7 +9,7 @@
 
 namespace VKit
 {
-class VKIT_API PipelineLayout
+class PipelineLayout
 {
   public:
     class Builder

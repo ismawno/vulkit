@@ -17,7 +17,7 @@ enum StencilOperationFlagBits : StencilOperationFlags
     StencilOperationFlag_Back = 1 << 1,
 };
 // no pNext hooks for now. must retrieve create info and add them yourself
-class VKIT_API GraphicsPipeline
+class GraphicsPipeline
 {
   public:
     class Builder;

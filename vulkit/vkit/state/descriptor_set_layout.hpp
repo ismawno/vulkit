@@ -5,13 +5,12 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DESCRIPTORS"
 #endif
 
-#include "vkit/core/api.hpp"
 #include "vkit/device/logical_device.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit
 {
-class VKIT_API DescriptorSetLayout
+class DescriptorSetLayout
 {
   public:
     class Builder

@@ -11,7 +11,7 @@ namespace VKit
 {
 class DeviceBuffer;
 
-class VKIT_API DescriptorSet
+class DescriptorSet
 {
   public:
     class Writer

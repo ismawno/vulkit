@@ -9,7 +9,7 @@
 
 namespace VKit
 {
-class VKIT_API ComputePipeline
+class ComputePipeline
 {
   public:
     struct Specs
@@ -26,8 +26,7 @@ class VKIT_API ComputePipeline
                            TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
     ComputePipeline() = default;
-    ComputePipeline(const ProxyDevice &p_Device, VkPipeline p_Pipeline)
-        : m_Device(p_Device), m_Pipeline(p_Pipeline)
+    ComputePipeline(const ProxyDevice &p_Device, VkPipeline p_Pipeline) : m_Device(p_Device), m_Pipeline(p_Pipeline)
     {
     }
 

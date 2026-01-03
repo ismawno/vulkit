@@ -30,7 +30,7 @@ enum DeviceBufferFlagBits : DeviceBufferFlags
     DeviceBufferFlag_HostRandomAccess = 1 << 9,
 };
 
-class VKIT_API DeviceBuffer
+class DeviceBuffer
 {
   public:
     class Builder

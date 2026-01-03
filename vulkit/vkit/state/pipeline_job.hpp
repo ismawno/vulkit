@@ -61,7 +61,7 @@ template <Pipeline Pip> class IPipelineJob
 
 template <Pipeline Pip> class PipelineJob;
 
-template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelineJob<GraphicsPipeline>
+template <> class PipelineJob<GraphicsPipeline> final : public IPipelineJob<GraphicsPipeline>
 {
   public:
     using IPipelineJob<GraphicsPipeline>::IPipelineJob;
@@ -75,7 +75,7 @@ template <> class VKIT_API PipelineJob<GraphicsPipeline> final : public IPipelin
                      i32 p_VertexOffset = 0, u32 p_FirstInstance = 0) const;
 };
 
-template <> class VKIT_API PipelineJob<ComputePipeline> final : public IPipelineJob<ComputePipeline>
+template <> class PipelineJob<ComputePipeline> final : public IPipelineJob<ComputePipeline>
 {
   public:
     using IPipelineJob<ComputePipeline>::IPipelineJob;

@@ -5,7 +5,6 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_INSTANCE"
 #endif
 
-#include "vkit/core/api.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/container/span.hpp"
@@ -21,7 +20,7 @@ enum InstanceFlagBits : InstanceFlags
     InstanceFlag_Properties2Extension = 1 << 2
 };
 
-class VKIT_API Instance
+class Instance
 {
   public:
     struct Proxy

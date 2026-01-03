@@ -9,7 +9,7 @@
 
 namespace VKit
 {
-class VKIT_API CommandPool
+class CommandPool
 {
   public:
     struct Specs

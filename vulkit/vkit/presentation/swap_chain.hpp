@@ -23,7 +23,7 @@ enum SwapChainFlagBits : SwapChainFlags
     SwapChainFlag_Clipped = 1 << 0,
     SwapChainFlag_HasImageViews = 1 << 1
 };
-class VKIT_API SwapChain
+class SwapChain
 {
   public:
     class Builder

@@ -4,14 +4,13 @@
 #    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_BUFFER"
 #endif
 
-#include "vkit/core/api.hpp"
 #include "vkit/core/alias.hpp"
 #include "vkit/resource/utils.hpp"
 #include "tkit/container/span.hpp"
 
 namespace VKit
 {
-class VKIT_API HostBuffer
+class HostBuffer
 {
   public:
     HostBuffer(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize,

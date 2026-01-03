@@ -1,6 +1,5 @@
 #pragma once
 
-#include "vkit/core/api.hpp"
 #include "tkit/utils/result.hpp"
 #include "tkit/container/array.hpp"
 #include <vulkan/vulkan.h>
@@ -140,7 +139,7 @@
 
 namespace VKit
 {
-VKIT_API const char *VkResultToString(VkResult p_Result);
+const char *VkResultToString(VkResult p_Result);
 
 template <typename T> bool IsSuccessful(const T &p_Result)
 {
@@ -196,7 +195,7 @@ namespace VKit
 {
 template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 
-class VKIT_API DeletionQueue
+class DeletionQueue
 {
   public:
     void Push(std::function<void()> &&p_Deleter);

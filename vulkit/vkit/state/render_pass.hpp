@@ -10,7 +10,7 @@
 
 namespace VKit
 {
-class VKIT_API RenderPass
+class RenderPass
 {
   public:
     struct Attachment

@@ -91,7 +91,7 @@ struct DeviceProperties
     void *Next;
 };
 
-class VKIT_API PhysicalDevice
+class PhysicalDevice
 {
   public:
 #ifdef VK_KHR_surface
