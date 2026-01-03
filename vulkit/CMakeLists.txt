@@ -182,7 +182,9 @@ if(NOT VULKAN_FOUND)
     set(SHADERC_VERSION v2024.1)
 
   else()
-    message(FATAL_ERROR "Unsupported Vulkan SDK version: ${VULKAN_SDK_VERSION}")
+    message(
+      FATAL_ERROR
+        "VULKIT - Unsupported Vulkan SDK version: ${VULKAN_SDK_VERSION}")
   endif()
 
   FetchContent_Declare(

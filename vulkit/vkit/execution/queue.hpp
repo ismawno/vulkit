@@ -55,6 +55,7 @@ class Queue
                                                          VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
+    Result<> WaitIdle() const;
     VkQueue GetHandle() const
     {
         return m_Queue;

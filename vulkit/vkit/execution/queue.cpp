@@ -280,4 +280,12 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
     }
 }
 #endif
+
+Result<> Queue::WaitIdle() const
+{
+    const VkResult result = m_Device.Table->QueueWaitIdle(m_Queue);
+    if (result != VK_SUCCESS)
+        return Result<>::Error(result, "Failed to wait for queue");
+    return Result<>::Ok();
+}
 } // namespace VKit
