@@ -2,6 +2,7 @@
 
 #include "tkit/utils/result.hpp"
 #include "tkit/container/array.hpp"
+#include "tkit/preprocessor/utils.hpp"
 #include <vulkan/vulkan.h>
 #include <functional>
 
@@ -71,7 +72,7 @@
             TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
         }
 #else
-#    define VKIT_LOG_RESULT_DEBUG(p_Result)
+#    define VKIT_LOG_RESULT_DEBUG(p_Result) TKIT_UNUSED(p_Result)
 #    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression) p_Expression
 #endif
 
@@ -84,7 +85,7 @@
             TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));  \
         }
 #else
-#    define VKIT_LOG_RESULT_INFO(p_Result)
+#    define VKIT_LOG_RESULT_INFO(p_Result) TKIT_UNUSED(p_Result)
 #    define VKIT_LOG_EXPRESSION_INFO(p_Expression) p_Expression
 #endif
 
@@ -98,7 +99,7 @@
                                 VKit::ResultToString(__vkit_result));                                                  \
         }
 #else
-#    define VKIT_LOG_RESULT_WARNING(p_Result)
+#    define VKIT_LOG_RESULT_WARNING(p_Result) TKIT_UNUSED(p_Result)
 #    define VKIT_LOG_EXPRESSION_WARNING(p_Expression) p_Expression
 #endif
 
@@ -111,7 +112,7 @@
             TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
         }
 #else
-#    define VKIT_LOG_RESULT_ERROR(p_Result)
+#    define VKIT_LOG_RESULT_ERROR(p_Result) TKIT_UNUSED(p_Result)
 #    define VKIT_LOG_EXPRESSION_ERROR(p_Expression) p_Expression
 #endif
 
@@ -124,7 +125,7 @@
             TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));        \
         }
 #else
-#    define VKIT_ASSERT_RESULT(p_Result)
+#    define VKIT_ASSERT_RESULT(p_Result) TKIT_UNUSED(p_Result)
 #    define VKIT_ASSERT_EXPRESSION(p_Expression) p_Expression
 #endif
 
