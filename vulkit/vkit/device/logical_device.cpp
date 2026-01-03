@@ -158,12 +158,11 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     LogicalDevice ldevice{device, info};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.Queues.GetSize(); ++i)
-            for (u32 j = 0; j < info.Queues[i].GetSize(); ++j)
-                if (info.Queues[i][j]->GetFamily() == p_Family && info.Queues[i][j]->GetIndex() == p_Index)
-                    return info.Queues[i][j];
+            if (info.Queues[i][p_Index]->GetFamily() == p_Family)
+                return info.Queues[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
-        const auto result = Queue::Create(ldevice, q, p_Family, p_Index);
+        const auto result = Queue::Create(ldevice, q, p_Family);
         TKIT_RETURN_ON_ERROR(result);
 
         Queue *queue = qalloc.Allocate<Queue>();

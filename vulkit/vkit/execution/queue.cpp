@@ -21,7 +21,7 @@ const char *ToString(const QueueType p_Type)
 }
 
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
-Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue, const u32 p_Family, const u32 p_Index)
+Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue, const u32 p_Family)
 {
     const LogicalDevice::Info &info = p_Device.GetInfo();
     const ProxyDevice proxy = p_Device;
@@ -42,7 +42,7 @@ Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue
     const bool timelineEnabled = static_cast<bool>(timelineSemaphore.timelineSemaphore);
 #    endif
     if (!timelineEnabled)
-        return Queue{p_Device, p_Queue, p_Family, p_Index};
+        return Queue{p_Device, p_Queue, p_Family};
 
     VkSemaphoreTypeCreateInfoKHR tinfo{};
     tinfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
@@ -58,7 +58,7 @@ Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue
     if (result != VK_SUCCESS)
         return Result<Queue>::Error(result, "Failed to create timeline semaphore");
 
-    return Queue{p_Device, p_Queue, p_Family, p_Index, timeline};
+    return Queue{p_Device, p_Queue, p_Family, timeline};
 }
 
 Result<u64> Queue::GetCompletedSubmissionCount() const
@@ -121,9 +121,9 @@ Result<> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
 }
 
 #else
-Result<Queue> Queue::Create(const VkQueue p_Queue, const u32 p_Family, const u32 p_Index)
+Result<Queue> Queue::Create(const VkQueue p_Queue, const u32 p_Family)
 {
-    return Queue{p_Queue, p_Family, p_Index};
+    return Queue{p_Queue, p_Family};
 }
 Result<> Queue::Submit(const VkSubmitInfo &p_Info, const VkFence p_Fence)
 {

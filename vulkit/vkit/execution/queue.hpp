@@ -25,17 +25,16 @@ class Queue
     Queue() = default;
 
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
-    static Result<Queue> Create(const LogicalDevice &p_Device, VkQueue p_Queue, u32 p_Family, u32 p_Index);
+    static Result<Queue> Create(const LogicalDevice &p_Device, VkQueue p_Queue, u32 p_Family);
 
-    Queue(const ProxyDevice &p_Device, const VkQueue p_Queue, const u32 p_Family, const u32 p_Index,
+    Queue(const ProxyDevice &p_Device, const VkQueue p_Queue, const u32 p_Family,
           const VkSemaphore p_Timeline = VK_NULL_HANDLE)
-        : m_Queue(p_Queue), m_Device(p_Device), m_Timeline(p_Timeline), m_Family(p_Family), m_Index(p_Index)
+        : m_Queue(p_Queue), m_Device(p_Device), m_Timeline(p_Timeline), m_Family(p_Family)
     {
     }
 #else
-    static Result<Queue> Create(VkQueue p_Queue, QueueType p_Type, u32 p_Family, u32 p_Index);
-    Queue(const VkQueue p_Queue, const u32 p_Family, const u32 p_Index)
-        : m_Queue(p_Queue), m_Family(p_Family), m_Index(p_Index)
+    static Result<Queue> Create(VkQueue p_Queue, QueueType p_Type, u32 p_Family);
+    Queue(const VkQueue p_Queue, const u32 p_Family) : m_Queue(p_Queue), m_Family(p_Family)
     {
     }
 #endif
@@ -63,10 +62,6 @@ class Queue
         return m_SubmissionCount;
     }
 
-    u32 GetIndex() const
-    {
-        return m_Index;
-    }
     u32 GetFamily() const
     {
         return m_Family;
@@ -124,6 +119,5 @@ class Queue
 #endif
     u64 m_SubmissionCount = 0;
     u32 m_Family = 0;
-    u32 m_Index = 0;
 };
 } // namespace VKit
