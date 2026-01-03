@@ -38,7 +38,7 @@ class DeviceBuffer
       public:
         Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, DeviceBufferFlags p_Flags = 0);
 
-        [[nodiscard]] Result<DeviceBuffer> Build() const;
+        VKIT_NO_DISCARD Result<DeviceBuffer> Build() const;
 
         Builder &SetSize(VkDeviceSize p_Size);
         Builder &SetSize(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize);
@@ -94,7 +94,7 @@ class DeviceBuffer
 
     void Destroy();
 
-    [[nodiscard]] Result<> Map();
+    VKIT_NO_DISCARD Result<> Map();
     void Unmap();
 
     bool IsMapped() const
@@ -129,18 +129,18 @@ class DeviceBuffer
 
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source, const BufferCopy &p_Info);
 
-    [[nodiscard]] Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
+    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
                                           const BufferCopy &p_Info = {});
 
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const BufferImageCopy &p_Info);
 
-    [[nodiscard]] Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
+    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
                                          const BufferImageCopy &p_Info = {});
 
-    [[nodiscard]] Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
+    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
                                           const BufferCopy &p_Info = {});
     template <typename T>
-    [[nodiscard]] Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
+    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
                                           const BufferCopy &p_Info = {})
     {
         const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
@@ -161,12 +161,12 @@ class DeviceBuffer
         return m_Data;
     }
 
-    [[nodiscard]] Result<> Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    VKIT_NO_DISCARD Result<> Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
 
-    [[nodiscard]] Result<> FlushAt(u32 p_Index);
+    VKIT_NO_DISCARD Result<> FlushAt(u32 p_Index);
 
-    [[nodiscard]] Result<> Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
-    [[nodiscard]] Result<> InvalidateAt(u32 p_Index);
+    VKIT_NO_DISCARD Result<> Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    VKIT_NO_DISCARD Result<> InvalidateAt(u32 p_Index);
 
     template <typename Index> void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
     {

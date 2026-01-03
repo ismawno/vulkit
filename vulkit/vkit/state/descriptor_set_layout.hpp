@@ -20,7 +20,7 @@ class DescriptorSetLayout
         {
         }
 
-        [[nodiscard]] Result<DescriptorSetLayout> Build() const;
+        VKIT_NO_DISCARD Result<DescriptorSetLayout> Build() const;
 
         Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1);
 

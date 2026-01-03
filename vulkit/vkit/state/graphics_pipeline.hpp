@@ -65,7 +65,7 @@ class GraphicsPipeline
          *
          * @return A `Result` containing the created `GraphicsPipeline` or an error if the creation fails.
          */
-        [[nodiscard]] Result<GraphicsPipeline> Build() const;
+        VKIT_NO_DISCARD Result<GraphicsPipeline> Build() const;
 
         /**
          * @brief Generates the `VkGraphicsPipelineCreateInfo` object.
@@ -204,7 +204,7 @@ class GraphicsPipeline
         friend class ColorAttachmentBuilder;
     };
 
-    [[nodiscard]] static Result<> Create(const ProxyDevice &p_Device, TKit::Span<Builder> p_Builders,
+    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &p_Device, TKit::Span<Builder> p_Builders,
                                          TKit::Span<GraphicsPipeline> p_Pipelines,
                                          VkPipelineCache p_Cache = VK_NULL_HANDLE);
 

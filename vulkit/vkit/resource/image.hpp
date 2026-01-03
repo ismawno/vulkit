@@ -51,7 +51,7 @@ class DeviceImage
          *
          * @return A `Result` containing the created `DeviceImage` or an error if the creation fails.
          */
-        [[nodiscard]] Result<DeviceImage> Build() const;
+        VKIT_NO_DISCARD Result<DeviceImage> Build() const;
 
         Builder &SetImageType(VkImageType p_Type);
         Builder &SetDepth(u32 p_Depth);
@@ -125,24 +125,24 @@ class DeviceImage
     {
     }
 
-    [[nodiscard]] Result<VkImageView> CreateImageView();
-    [[nodiscard]] Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &p_Info);
-    [[nodiscard]] Result<VkImageView> CreateImageView(const VkImageSubresourceRange &p_Range);
+    VKIT_NO_DISCARD Result<VkImageView> CreateImageView();
+    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &p_Info);
+    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &p_Range);
 
     void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
 
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const ImageCopy &p_Info = {});
 
-    [[nodiscard]] Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
+    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
                                          const ImageCopy &p_Info = {});
 
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
                         const BufferImageCopy &p_Info = {});
 
-    [[nodiscard]] Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
+    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
                                           const BufferImageCopy &p_Info = {});
 
-    [[nodiscard]] Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostImage &p_Data,
+    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostImage &p_Data,
                                           VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
     VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;

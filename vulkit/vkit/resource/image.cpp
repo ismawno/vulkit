@@ -292,7 +292,9 @@ Result<> DeviceImage::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue,
 
     DeviceBuffer &staging = bres.GetValue();
     staging.Write(p_Data.Data);
-    staging.Flush();
+
+    const auto result = staging.Flush();
+    TKIT_RETURN_ON_ERROR(result);
 
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);

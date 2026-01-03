@@ -42,7 +42,7 @@ class Instance
     class Builder
     {
       public:
-        [[nodiscard]] Result<Instance> Build() const;
+        VKIT_NO_DISCARD Result<Instance> Build() const;
 
         Builder &SetApplicationName(const char *p_Name);
         Builder &SetEngineName(const char *p_Name);

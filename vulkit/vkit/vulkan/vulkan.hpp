@@ -5,6 +5,12 @@
 #include <vulkan/vulkan.h>
 #include <functional>
 
+#ifdef TKIT_ENABLE_ASSERTS
+#    define VKIT_NO_DISCARD [[nodiscard]]
+#else
+#    define VKIT_NO_DISCARD
+#endif
+
 #ifdef VK_MAKE_API_VERSION
 #    define VKIT_MAKE_VERSION(p_Variant, p_Major, p_Minor, p_Patch)                                                    \
         VK_MAKE_API_VERSION(p_Variant, p_Major, p_Minor, p_Patch)

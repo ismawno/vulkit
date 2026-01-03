@@ -291,7 +291,8 @@ Result<> DeviceBuffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue
 
     DeviceBuffer &staging = bres.GetValue();
     staging.Write(p_Data, {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = 0});
-    staging.Flush();
+    const auto result = staging.Flush();
+    TKIT_RETURN_ON_ERROR(result);
 
     const auto cres =
         CopyFromBuffer(p_Pool, p_Queue, staging, {.Size = size, .SrcOffset = 0, .DstOffset = p_Info.DstOffset});

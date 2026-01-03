@@ -29,7 +29,7 @@ class LogicalDevice
         {
         }
 
-        [[nodiscard]] Result<LogicalDevice> Build() const;
+        VKIT_NO_DISCARD Result<LogicalDevice> Build() const;
 
         Builder &RequireQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
         Builder &RequestQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
@@ -65,13 +65,13 @@ class LogicalDevice
     }
 
 #ifdef VK_KHR_surface
-    [[nodiscard]] Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
+    VKIT_NO_DISCARD Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
 #endif
-    [[nodiscard]] Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
+    VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
                                                        VkFormatFeatureFlags p_Features) const;
 
-    [[nodiscard]] static Result<> WaitIdle(const ProxyDevice &p_Device);
-    [[nodiscard]] Result<> WaitIdle() const;
+    VKIT_NO_DISCARD static Result<> WaitIdle(const ProxyDevice &p_Device);
+    VKIT_NO_DISCARD Result<> WaitIdle() const;
 
     ProxyDevice CreateProxy() const;
 

@@ -34,7 +34,7 @@ class DescriptorSet
         TKit::Array16<VkWriteDescriptorSet> m_Writes;
     };
 
-    [[nodiscard]] static Result<DescriptorSet> Create(const ProxyDevice &p_Device, VkDescriptorSet p_Set);
+    VKIT_NO_DISCARD static Result<DescriptorSet> Create(const ProxyDevice &p_Device, VkDescriptorSet p_Set);
 
     DescriptorSet() = default;
     DescriptorSet(const ProxyDevice &p_Device, const VkDescriptorSet p_Set) : m_Device(p_Device), m_Set(p_Set)

@@ -108,9 +108,9 @@ class PhysicalDevice
       public:
         Selector(const Instance *p_Instance);
 
-        [[nodiscard]] Result<PhysicalDevice> Select() const;
+        VKIT_NO_DISCARD Result<PhysicalDevice> Select() const;
 
-        [[nodiscard]] Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
+        VKIT_NO_DISCARD Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(DeviceType p_Type);
@@ -141,7 +141,7 @@ class PhysicalDevice
 #endif
 
       private:
-        [[nodiscard]] Result<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
+        VKIT_NO_DISCARD Result<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;
@@ -216,7 +216,7 @@ class PhysicalDevice
     }
 
 #ifdef VK_KHR_surface
-    [[nodiscard]] Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
+    VKIT_NO_DISCARD Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
                                                                         VkSurfaceKHR p_Surface) const;
 #endif
 

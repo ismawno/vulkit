@@ -164,7 +164,7 @@ class Function:
 
         rtype = self.return_type
         if no_discard and rtype != "void":
-            rtype = f"VKIT_LOADER_NO_DISCARD {rtype}"
+            rtype = f"VKIT_NO_DISCARD {rtype}"
         modifiers = " const" if const else ""
 
         return f"{rtype} {fname}({params}){modifiers};" if semicolon else f"{rtype} {fname}({params}){modifiers}"
@@ -514,11 +514,6 @@ hpp = CPPGenerator()
 hpp.disclaimer("vkloader.py")
 hpp("#pragma once")
 hpp.include("vkit/vulkan/vulkan.hpp", quotes=True)
-hpp("#ifdef TKIT_ENABLE_ASSERTS")
-hpp("#define VKIT_LOADER_NO_DISCARD [[nodiscard]]")
-hpp("#else")
-hpp("#define VKIT_LOADER_NO_DISCARD")
-hpp("#endif")
 
 with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp.spacing()
