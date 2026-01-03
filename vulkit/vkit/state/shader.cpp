@@ -29,11 +29,18 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
     TKit::Array<char, MaxShaderSize> code(static_cast<u32>(fileSize));
     file.seekg(0);
     file.read(code.GetData(), fileSize);
+    const u32 *spv = reinterpret_cast<const u32 *>(code.GetData());
+    return Create(p_Device, spv, fileSize);
+}
 
+TKIT_COMPILER_WARNING_IGNORE_POP()
+
+Result<Shader> Shader::Create(const ProxyDevice &p_Device, const u32 *p_Spirv, const size_t p_Size)
+{
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = fileSize;
-    createInfo.pCode = reinterpret_cast<const u32 *>(code.GetData());
+    createInfo.codeSize = p_Size;
+    createInfo.pCode = p_Spirv;
 
     VkShaderModule module;
     const VkResult result =
@@ -44,60 +51,20 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
     return Result<Shader>::Ok(p_Device, module);
 }
 
-TKIT_COMPILER_WARNING_IGNORE_POP()
-
-TKit::Result<void, i32> Shader::CompileFromFile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath,
-                                                const std::string_view p_Arguments)
-{
-    const fs::path spvPath = p_SpirvPath;
-
-    std::filesystem::create_directories(spvPath.parent_path());
-    const std::string compileCommand =
-        VKIT_GLSL_BINARY " " + std::string(p_Arguments) + std::string(p_SourcePath) + " -o " + spvPath.string();
-    const i32 code = static_cast<i32>(std::system(compileCommand.c_str()));
-    if (code == 0)
-        return TKit::Result<void, i32>::Ok();
-
-    return code;
-}
-
-Result<Shader> Shader::CompileFromFile(const ProxyDevice &p_Device, const std::string_view p_SourcePath,
-                                       const std::string_view p_Arguments)
-{
-    const std::string spv = (fs::temp_directory_path() / "vkit-shader.spv").string();
-    const auto result = CompileFromFile(p_SourcePath, spv, p_Arguments);
-    if (!result)
-        return Result<Shader>::Error(VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED,
-                                                       "[VULKIT] Shader compilation failed with error code: {}",
-                                                       result.GetError()));
-    return Create(p_Device, spv);
-}
-
-Result<Shader> Shader::CompileFromSource(const ProxyDevice &p_Device, const std::string_view p_SourceCode,
-                                         const std::string_view p_Arguments)
-{
-    const fs::path src = fs::temp_directory_path() / "vkit-shader.glsl";
-    std::ofstream file{src, std::ios::binary};
-    file.write(p_SourceCode.data(), p_SourceCode.size());
-    file.flush();
-
-    return CompileFromFile(p_Device, src.string(), p_Arguments);
-}
-
-bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath)
-{
-    const fs::path sourcePath = p_SourcePath;
-    const fs::path spvPath = p_SpirvPath;
-
-    TKIT_ASSERT(fs::exists(sourcePath), "[VULKIT] Source file does not exist");
-
-    if (!fs::exists(spvPath))
-        return true;
-
-    const auto sourceTime = fs::last_write_time(sourcePath);
-    const auto spvTime = fs::last_write_time(spvPath);
-    return sourceTime > spvTime;
-}
+// bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath)
+// {
+//     const fs::path sourcePath = p_SourcePath;
+//     const fs::path spvPath = p_SpirvPath;
+//
+//     TKIT_ASSERT(fs::exists(sourcePath), "[VULKIT] Source file does not exist");
+//
+//     if (!fs::exists(spvPath))
+//         return true;
+//
+//     const auto sourceTime = fs::last_write_time(sourcePath);
+//     const auto spvTime = fs::last_write_time(spvPath);
+//     return sourceTime > spvTime;
+// }
 
 void Shader::Destroy()
 {

@@ -15,18 +15,7 @@ class Shader
 {
   public:
     static Result<Shader> Create(const ProxyDevice &p_Device, std::string_view p_SpirvPath);
-    static Result<Shader> Create(const ProxyDevice &p_Device, const u32 *p_Spirv);
-
-    static TKit::Result<void, i32> CompileFromFile(std::string_view p_SourcePath, std::string_view p_SpirvPath,
-                                                   std::string_view p_Arguments = "");
-
-    static Result<Shader> CompileFromFile(const ProxyDevice &p_Device, std::string_view p_SourcePath,
-                                          std::string_view p_Arguments = "");
-
-    static Result<Shader> CompileFromSource(const ProxyDevice &p_Device, std::string_view p_SourceCode,
-                                            std::string_view p_Arguments = "");
-
-    static bool MustCompile(std::string_view p_SourcePath, std::string_view p_SpirvPath);
+    static Result<Shader> Create(const ProxyDevice &p_Device, const u32 *p_Spirv, size_t p_Size);
 
     Shader() = default;
     Shader(const ProxyDevice &p_Device, VkShaderModule p_Module) : m_Device(p_Device), m_Module(p_Module)

@@ -199,117 +199,6 @@ else()
   target_include_directories(vulkit PUBLIC ${Vulkan_INCLUDE_DIRS})
 endif()
 
-find_program(GLSLC_EXECUTABLE glslc QUIET)
-
-if(NOT GLSLC_EXECUTABLE)
-  message(STATUS "VULKIT - GLSLC executable not found. Fetching source...")
-
-  FetchContent_Declare(
-    spirv-headers
-    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Headers.git
-    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
-  set(SPIRV_HEADERS_ENABLE_TESTS
-      OFF
-      CACHE BOOL "" FORCE)
-  set(SPIRV_HEADERS_ENABLE_INSTALL
-      OFF
-      CACHE BOOL "" FORCE)
-
-  FetchContent_MakeAvailable(spirv-headers)
-
-  FetchContent_Declare(
-    spirv-tools
-    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
-    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
-  set(SPIRV_SKIP_TESTS
-      ON
-      CACHE BOOL "" FORCE)
-  set(SPIRV_TOOLS_BUILD_STATIC
-      ON
-      CACHE BOOL "" FORCE)
-  set(SPIRV_SKIP_EXECUTABLES
-      ON
-      CACHE BOOL "" FORCE)
-  set(SKIP_SPIRV_TOOLS_INSTALL
-      ON
-      CACHE BOOL "" FORCE)
-  set(SPIRV_WERROR
-      OFF
-      CACHE BOOL "" FORCE)
-
-  FetchContent_MakeAvailable(spirv-tools)
-  tkit_configure_compile_link_options(SPIRV-Tools-static NO_EXCEPTIONS NO_RTTI)
-  if(MSVC)
-    target_compile_options(SPIRV-Tools-opt PRIVATE /Zc:__cplusplus)
-  endif()
-
-  FetchContent_Declare(
-    glslang
-    GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
-    GIT_TAG vulkan-sdk-${VULKAN_SDK_VERSION}
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
-  set(GLSLANG_ENABLE_INSTALL
-      OFF
-      CACHE BOOL "" FORCE)
-  set(GLSLANG_TESTS
-      OFF
-      CACHE BOOL "" FORCE)
-  set(ENABLE_SPIRV
-      ON
-      CACHE BOOL "" FORCE)
-  set(ENABLE_HLSL
-      ON
-      CACHE BOOL "" FORCE)
-  set(ENABLE_PRVREMAPPER
-      OFF
-      CACHE BOOL "" FORCE)
-  set(ENABLE_GLSLANG_BINARIES
-      OFF
-      CACHE BOOL "" FORCE)
-  set(ENABLE_GLSLANG_JS
-      OFF
-      CACHE BOOL "" FORCE)
-  FetchContent_MakeAvailable(glslang)
-  tkit_configure_compile_link_options(glslang NO_EXCEPTIONS NO_RTTI)
-
-  FetchContent_Declare(
-    shaderc
-    GIT_REPOSITORY https://github.com/google/shaderc.git
-    GIT_TAG ${SHADERC_VERSION}
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
-  set(SHADERC_SKIP_TESTS
-      ON
-      CACHE BOOL "" FORCE)
-  set(SHADERC_SKIP_INSTALL
-      ON
-      CACHE BOOL "" FORCE)
-  set(SHADERC_SKIP_EXAMPLES
-      ON
-      CACHE BOOL "" FORCE)
-  set(SHADERC_SKIP_EXECUTABLES
-      OFF
-      CACHE BOOL "" FORCE)
-  set(SHADERC_ENABLE_SHARED_CRT
-      ON
-      CACHE BOOL "" FORCE)
-  FetchContent_MakeAvailable(shaderc)
-  tkit_configure_compile_link_options(glslc_exe NO_EXCEPTIONS NO_RTTI)
-
-  set(GLSLC_EXECUTABLE $<TARGET_FILE:glslc_exe>)
-else()
-  message(STATUS "VULKIT - GLSLC executable found")
-endif()
-
 # link dlopen
 if(UNIX AND NOT APPLE)
   target_link_libraries(vulkit PUBLIC ${CMAKE_DL_LIBS})
@@ -317,8 +206,7 @@ endif()
 
 target_precompile_headers(vulkit PRIVATE
                           ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
-target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}"
-                                         VKIT_GLSL_BINARY="${GLSLC_EXECUTABLE}")
+target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}")
 
 tkit_default_configure(vulkit)
 # No need for more: toolkit handles the rest. As it is a library I develop, I
