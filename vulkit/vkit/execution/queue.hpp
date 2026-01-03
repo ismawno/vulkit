@@ -2,6 +2,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "vkit/device/proxy_device.hpp"
+#include "vkit/core/limits.hpp"
 #include "tkit/container/span.hpp"
 
 namespace VKit
@@ -40,16 +41,18 @@ class Queue
 #endif
 
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
-    Result<> Submit(VkSubmitInfo p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<u64> Submit(VkSubmitInfo p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #else
-    Result<> Submit(const VkSubmitInfo &p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<u64> Submit(const VkSubmitInfo &p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
-    Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<TKit::Array<u64, MaxQueueSubmissions>> Submit(TKit::Span<const VkSubmitInfo> p_Info,
+                                                         VkFence p_Fence = VK_NULL_HANDLE);
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    Result<> Submit(VkSubmitInfo2KHR p_Info, VkFence p_Fence = VK_NULL_HANDLE);
-    Result<> Submit(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<u64> Submit(VkSubmitInfo2KHR p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    Result<TKit::Array<u64, MaxQueueSubmissions>> Submit(TKit::Span<const VkSubmitInfo2KHR> p_Info,
+                                                         VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
     VkQueue GetHandle() const

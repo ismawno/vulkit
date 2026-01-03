@@ -114,7 +114,7 @@ class DeviceBuffer
     }
 
     void Write(const void *p_Data, BufferCopy p_Info = {});
-    void Write(const HostBuffer &p_Data, BufferCopy p_Info = {});
+    void Write(const HostBuffer &p_Data, const BufferCopy &p_Info = {});
 
     template <typename T> void Write(const TKit::Span<const T> p_Data, const BufferCopy &p_Info = {})
     {

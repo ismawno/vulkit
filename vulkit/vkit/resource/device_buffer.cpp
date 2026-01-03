@@ -188,7 +188,7 @@ void DeviceBuffer::Write(const void *p_Data, BufferCopy p_Info)
     const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
     TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
 }
-void Write(const HostBuffer &p_Data, const BufferCopy &p_Info = {})
+void DeviceBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
 {
     const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (p_Data.GetSize() - p_Info.SrcOffset) : (p_Info.Size);
     Write(p_Data.GetData(), {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = p_Info.DstOffset});
