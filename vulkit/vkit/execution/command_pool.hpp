@@ -18,8 +18,8 @@ class CommandPool
         VkCommandPoolCreateFlags Flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     };
 
-    static Result<CommandPool> Create(const ProxyDevice &p_Device, u32 p_QueueFamilyIndex,
-                                      VkCommandPoolCreateFlags p_Flags = 0);
+    [[nodiscard]] static Result<CommandPool> Create(const ProxyDevice &p_Device, u32 p_QueueFamilyIndex,
+                                                    VkCommandPoolCreateFlags p_Flags = 0);
 
     CommandPool() = default;
     CommandPool(const ProxyDevice &p_Device, const VkCommandPool p_Pool) : m_Device(p_Device), m_Pool(p_Pool)
@@ -28,16 +28,17 @@ class CommandPool
 
     void Destroy();
 
-    Result<VkCommandBuffer> Allocate(VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+    [[nodiscard]] Result<VkCommandBuffer> Allocate(
+        VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                      VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+    [[nodiscard]] Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
+                                    VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
     void Deallocate(VkCommandBuffer p_CommandBuffer) const;
     void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const;
-    Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const;
-    Result<VkCommandBuffer> BeginSingleTimeCommands() const;
-    Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
+    [[nodiscard]] Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const;
+    [[nodiscard]] Result<VkCommandBuffer> BeginSingleTimeCommands() const;
+    [[nodiscard]] Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
 
     const ProxyDevice &GetDevice() const
     {

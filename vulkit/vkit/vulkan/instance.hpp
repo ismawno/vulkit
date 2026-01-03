@@ -42,7 +42,7 @@ class Instance
     class Builder
     {
       public:
-        Result<Instance> Build() const;
+        [[nodiscard]] Result<Instance> Build() const;
 
         Builder &SetApplicationName(const char *p_Name);
         Builder &SetEngineName(const char *p_Name);

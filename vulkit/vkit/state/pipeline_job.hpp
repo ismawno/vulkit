@@ -66,7 +66,7 @@ template <> class PipelineJob<GraphicsPipeline> final : public IPipelineJob<Grap
   public:
     using IPipelineJob<GraphicsPipeline>::IPipelineJob;
 
-    static Result<PipelineJob> Create(const GraphicsPipeline &p_Pipeline, const PipelineLayout &p_Layout);
+    [[nodiscard]] static Result<PipelineJob> Create(const GraphicsPipeline &p_Pipeline, const PipelineLayout &p_Layout);
 
     void Draw(VkCommandBuffer p_CommandBuffer, u32 p_VertexCount, u32 p_InstanceCount = 1, u32 p_FirstVertex = 0,
               u32 p_Firstinstance = 0) const;
@@ -80,7 +80,7 @@ template <> class PipelineJob<ComputePipeline> final : public IPipelineJob<Compu
   public:
     using IPipelineJob<ComputePipeline>::IPipelineJob;
 
-    static Result<PipelineJob> Create(const ComputePipeline &p_Pipeline, const PipelineLayout &p_Layout);
+    [[nodiscard]] static Result<PipelineJob> Create(const ComputePipeline &p_Pipeline, const PipelineLayout &p_Layout);
 
     void Dispatch(VkCommandBuffer p_CommandBuffer, u32 p_GroupCountX, u32 p_GroupCountY, u32 p_GroupCountZ) const;
 };

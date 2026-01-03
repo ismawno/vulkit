@@ -114,7 +114,7 @@ class RenderPass
         {
         }
 
-        Result<RenderPass> Build() const;
+        [[nodiscard]] Result<RenderPass> Build() const;
 
         AttachmentBuilder &BeginAttachment(ImageFlags p_Flags);
 
@@ -192,7 +192,8 @@ class RenderPass
      * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
-    Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData, u32 p_FrameBufferLayers = 1)
+    [[nodiscard]] Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
+                                                    u32 p_FrameBufferLayers = 1)
     {
         Resources resources;
         resources.m_Device = m_Device;

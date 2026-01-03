@@ -33,7 +33,7 @@ class SwapChain
         {
         }
 
-        Result<SwapChain> Build() const;
+        [[nodiscard]] Result<SwapChain> Build() const;
 
         Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format);
         Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format);
