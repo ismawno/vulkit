@@ -16,7 +16,7 @@ class RenderPass
     struct Attachment
     {
         VkAttachmentDescription Description{};
-        ImageFlags Flags;
+        DeviceImageFlags Flags;
     };
 
     class Builder;
@@ -25,7 +25,7 @@ class RenderPass
     class AttachmentBuilder
     {
       public:
-        AttachmentBuilder(Builder *p_Builder, ImageFlags p_Flags);
+        AttachmentBuilder(Builder *p_Builder, DeviceImageFlags p_Flags);
 
         AttachmentBuilder &SetLoadOperation(VkAttachmentLoadOp p_Operation,
                                             VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
@@ -116,7 +116,7 @@ class RenderPass
 
         VKIT_NO_DISCARD Result<RenderPass> Build() const;
 
-        AttachmentBuilder &BeginAttachment(ImageFlags p_Flags);
+        AttachmentBuilder &BeginAttachment(DeviceImageFlags p_Flags);
 
         SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint);
         DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass);

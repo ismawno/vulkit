@@ -13,15 +13,15 @@ namespace VKit
 class CommandPool;
 class DeviceBuffer;
 
-using ImageFlags = u8;
-enum ImageFlagBits : ImageFlags
+using DeviceImageFlags = u8;
+enum DeviceImageFlagBits : DeviceImageFlags
 {
-    ImageFlag_ColorAttachment = 1 << 0,
-    ImageFlag_DepthAttachment = 1 << 1,
-    ImageFlag_StencilAttachment = 1 << 2,
-    ImageFlag_InputAttachment = 1 << 3,
-    ImageFlag_Sampled = 1 << 4,
-    ImageFlag_ForceHostVisible = 1 << 5
+    DeviceImageFlag_ColorAttachment = 1 << 0,
+    DeviceImageFlag_DepthAttachment = 1 << 1,
+    DeviceImageFlag_StencilAttachment = 1 << 2,
+    DeviceImageFlag_InputAttachment = 1 << 3,
+    DeviceImageFlag_Sampled = 1 << 4,
+    DeviceImageFlag_ForceHostVisible = 1 << 5
 };
 struct HostImage
 {
@@ -39,9 +39,9 @@ class DeviceImage
     {
       public:
         Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent, VkFormat p_Format,
-                ImageFlags p_Flags = 0);
+                DeviceImageFlags p_Flags = 0);
         Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent, VkFormat p_Format,
-                ImageFlags p_Flags = 0);
+                DeviceImageFlags p_Flags = 0);
 
         /**
          * @brief Creates a vulkan image with the provided specification.
@@ -89,7 +89,7 @@ class DeviceImage
         VmaAllocator m_Allocator;
         VkImageCreateInfo m_ImageInfo{};
         VkImageViewCreateInfo m_ViewInfo{};
-        ImageFlags m_Flags;
+        DeviceImageFlags m_Flags;
     };
 
     struct Info
@@ -100,7 +100,7 @@ class DeviceImage
         u32 Width;
         u32 Height;
         u32 Depth;
-        ImageFlags Flags;
+        DeviceImageFlags Flags;
     };
 
     struct TransitionInfo
@@ -116,7 +116,7 @@ class DeviceImage
     };
 
     static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent,
-                              ImageFlags p_Flags = ImageFlag_ColorAttachment);
+                              DeviceImageFlags p_Flags = DeviceImageFlag_ColorAttachment);
 
     DeviceImage() = default;
     DeviceImage(const ProxyDevice &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
@@ -134,16 +134,16 @@ class DeviceImage
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const ImageCopy &p_Info = {});
 
     VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                         const ImageCopy &p_Info = {});
+                                           const ImageCopy &p_Info = {});
 
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
                         const BufferImageCopy &p_Info = {});
 
     VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                          const BufferImageCopy &p_Info = {});
+                                            const BufferImageCopy &p_Info = {});
 
     VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostImage &p_Data,
-                                          VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+                                            VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
     VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;
     VkDeviceSize ComputeSize(u32 p_Mip = 0) const;
@@ -199,5 +199,5 @@ class DeviceImage
 
 namespace VKit::Detail
 {
-VkImageAspectFlags DeduceAspectMask(const ImageFlags p_Flags);
+VkImageAspectFlags DeduceAspectMask(const DeviceImageFlags p_Flags);
 }

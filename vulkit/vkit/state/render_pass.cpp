@@ -20,21 +20,21 @@ Result<RenderPass> RenderPass::Builder::Build() const
         TKit::Array16<VkFormat> formats = attachment.m_Formats;
         if (formats.IsEmpty())
         {
-            if (attachment.m_Attachment.Flags & ImageFlag_ColorAttachment)
+            if (attachment.m_Attachment.Flags & DeviceImageFlag_ColorAttachment)
                 formats.Append(VK_FORMAT_B8G8R8A8_SRGB);
-            else if ((attachment.m_Attachment.Flags & ImageFlag_DepthAttachment) &&
-                     (attachment.m_Attachment.Flags & ImageFlag_StencilAttachment))
+            else if ((attachment.m_Attachment.Flags & DeviceImageFlag_DepthAttachment) &&
+                     (attachment.m_Attachment.Flags & DeviceImageFlag_StencilAttachment))
                 formats.Append(VK_FORMAT_D32_SFLOAT_S8_UINT);
-            else if (attachment.m_Attachment.Flags & ImageFlag_DepthAttachment)
+            else if (attachment.m_Attachment.Flags & DeviceImageFlag_DepthAttachment)
                 formats.Append(VK_FORMAT_D32_SFLOAT);
-            else if (attachment.m_Attachment.Flags & ImageFlag_StencilAttachment)
+            else if (attachment.m_Attachment.Flags & DeviceImageFlag_StencilAttachment)
                 formats.Append(VK_FORMAT_S8_UINT);
         }
         VkFormatFeatureFlags flags = 0;
-        if (attachment.m_Attachment.Flags & ImageFlag_ColorAttachment)
+        if (attachment.m_Attachment.Flags & DeviceImageFlag_ColorAttachment)
             flags = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
-        else if ((attachment.m_Attachment.Flags & ImageFlag_DepthAttachment) ||
-                 (attachment.m_Attachment.Flags & ImageFlag_StencilAttachment))
+        else if ((attachment.m_Attachment.Flags & DeviceImageFlag_DepthAttachment) ||
+                 (attachment.m_Attachment.Flags & DeviceImageFlag_StencilAttachment))
             flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
         const auto result = m_Device->FindSupportedFormat(formats, VK_IMAGE_TILING_OPTIMAL, flags);
@@ -97,7 +97,7 @@ void RenderPass::Resources::Destroy()
     m_Images.Clear();
     m_FrameBuffers.Clear();
 }
-RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const ImageFlags p_Flags)
+RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const DeviceImageFlags p_Flags)
 {
     return m_Attachments.Append(this, p_Flags);
 }
@@ -131,13 +131,13 @@ RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFl
     return *this;
 }
 
-RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const ImageFlags p_Flags)
+RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const DeviceImageFlags p_Flags)
     : m_Builder(p_Builder)
 {
     TKIT_ASSERT(p_Flags, "[VULKIT] Attachment must have at least one type flag");
-    TKIT_ASSERT(!((p_Flags & ImageFlag_ColorAttachment) && (p_Flags & ImageFlag_DepthAttachment)),
+    TKIT_ASSERT(!((p_Flags & DeviceImageFlag_ColorAttachment) && (p_Flags & DeviceImageFlag_DepthAttachment)),
                 "[VULKIT] Attachment must be color or depth, not both");
-    TKIT_ASSERT(!((p_Flags & ImageFlag_ColorAttachment) && (p_Flags & ImageFlag_StencilAttachment)),
+    TKIT_ASSERT(!((p_Flags & DeviceImageFlag_ColorAttachment) && (p_Flags & DeviceImageFlag_StencilAttachment)),
                 "[VULKIT] Attachment must be color or stencil, not both");
 
     m_Attachment.Description.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -150,17 +150,17 @@ RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder,
     m_Attachment.Description.flags = 0;
     m_Attachment.Flags = p_Flags;
 
-    if (p_Flags & ImageFlag_ColorAttachment)
+    if (p_Flags & DeviceImageFlag_ColorAttachment)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     }
-    if (p_Flags & ImageFlag_DepthAttachment)
+    if (p_Flags & DeviceImageFlag_DepthAttachment)
     {
         m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     }
-    if (p_Flags & ImageFlag_StencilAttachment)
+    if (p_Flags & DeviceImageFlag_StencilAttachment)
     {
         m_Attachment.Description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         m_Attachment.Description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

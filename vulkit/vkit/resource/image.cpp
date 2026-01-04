@@ -22,21 +22,21 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
     }
     return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
-VkImageAspectFlags Detail::DeduceAspectMask(const ImageFlags p_Flags)
+VkImageAspectFlags Detail::DeduceAspectMask(const DeviceImageFlags p_Flags)
 {
-    if (p_Flags & ImageFlag_ColorAttachment)
+    if (p_Flags & DeviceImageFlag_ColorAttachment)
         return VK_IMAGE_ASPECT_COLOR_BIT;
-    else if ((p_Flags & ImageFlag_DepthAttachment) && (p_Flags & ImageFlag_StencilAttachment))
+    else if ((p_Flags & DeviceImageFlag_DepthAttachment) && (p_Flags & DeviceImageFlag_StencilAttachment))
         return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-    else if (p_Flags & ImageFlag_DepthAttachment)
+    else if (p_Flags & DeviceImageFlag_DepthAttachment)
         return VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (p_Flags & ImageFlag_StencilAttachment)
+    else if (p_Flags & DeviceImageFlag_StencilAttachment)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
     TKIT_LOG_WARNING("[VULKIT] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
     return VK_IMAGE_ASPECT_NONE;
 }
-static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const ImageFlags p_Flags)
+static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const DeviceImageFlags p_Flags)
 {
     VkImageSubresourceRange range{};
     range.aspectMask |= Detail::DeduceAspectMask(p_Flags);
@@ -48,7 +48,7 @@ static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, cons
     return range;
 }
 DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
-                              const VkFormat p_Format, const ImageFlags p_Flags)
+                              const VkFormat p_Format, const DeviceImageFlags p_Flags)
     : DeviceImage::Builder(p_Device, p_Allocator,
                            VkExtent3D{.width = p_Extent.width, .height = p_Extent.height, .depth = 1}, p_Format,
                            p_Flags)
@@ -68,7 +68,7 @@ static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, c
 }
 
 DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
-                              const VkFormat p_Format, const ImageFlags p_Flags)
+                              const VkFormat p_Format, const DeviceImageFlags p_Flags)
     : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -82,14 +82,14 @@ DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_
     m_ImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     m_ImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     m_ImageInfo.flags = 0;
-    if (p_Flags & ImageFlag_ColorAttachment)
+    if (p_Flags & DeviceImageFlag_ColorAttachment)
         m_ImageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    else if ((p_Flags & ImageFlag_DepthAttachment) || (p_Flags & ImageFlag_StencilAttachment))
+    else if ((p_Flags & DeviceImageFlag_DepthAttachment) || (p_Flags & DeviceImageFlag_StencilAttachment))
         m_ImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-    if (p_Flags & ImageFlag_InputAttachment)
+    if (p_Flags & DeviceImageFlag_InputAttachment)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-    if (p_Flags & ImageFlag_Sampled)
+    if (p_Flags & DeviceImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
@@ -97,7 +97,7 @@ DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_
 }
 
 DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent,
-                                             const ImageFlags p_Flags)
+                                             const DeviceImageFlags p_Flags)
 {
     Info info;
     info.Allocation = VK_NULL_HANDLE;
