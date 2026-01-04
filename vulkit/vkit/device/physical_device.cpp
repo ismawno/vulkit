@@ -6,57 +6,230 @@
     VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
 namespace VKit
 {
+
+static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceFeatures::*, 55> s_CoreMembers = {
+    &VkPhysicalDeviceFeatures::robustBufferAccess,
+    &VkPhysicalDeviceFeatures::fullDrawIndexUint32,
+    &VkPhysicalDeviceFeatures::imageCubeArray,
+    &VkPhysicalDeviceFeatures::independentBlend,
+    &VkPhysicalDeviceFeatures::geometryShader,
+    &VkPhysicalDeviceFeatures::tessellationShader,
+    &VkPhysicalDeviceFeatures::sampleRateShading,
+    &VkPhysicalDeviceFeatures::dualSrcBlend,
+    &VkPhysicalDeviceFeatures::logicOp,
+    &VkPhysicalDeviceFeatures::multiDrawIndirect,
+    &VkPhysicalDeviceFeatures::drawIndirectFirstInstance,
+    &VkPhysicalDeviceFeatures::depthClamp,
+    &VkPhysicalDeviceFeatures::depthBiasClamp,
+    &VkPhysicalDeviceFeatures::fillModeNonSolid,
+    &VkPhysicalDeviceFeatures::depthBounds,
+    &VkPhysicalDeviceFeatures::wideLines,
+    &VkPhysicalDeviceFeatures::largePoints,
+    &VkPhysicalDeviceFeatures::alphaToOne,
+    &VkPhysicalDeviceFeatures::multiViewport,
+    &VkPhysicalDeviceFeatures::samplerAnisotropy,
+    &VkPhysicalDeviceFeatures::textureCompressionETC2,
+    &VkPhysicalDeviceFeatures::textureCompressionASTC_LDR,
+    &VkPhysicalDeviceFeatures::textureCompressionBC,
+    &VkPhysicalDeviceFeatures::occlusionQueryPrecise,
+    &VkPhysicalDeviceFeatures::pipelineStatisticsQuery,
+    &VkPhysicalDeviceFeatures::vertexPipelineStoresAndAtomics,
+    &VkPhysicalDeviceFeatures::fragmentStoresAndAtomics,
+    &VkPhysicalDeviceFeatures::shaderTessellationAndGeometryPointSize,
+    &VkPhysicalDeviceFeatures::shaderImageGatherExtended,
+    &VkPhysicalDeviceFeatures::shaderStorageImageExtendedFormats,
+    &VkPhysicalDeviceFeatures::shaderStorageImageMultisample,
+    &VkPhysicalDeviceFeatures::shaderStorageImageReadWithoutFormat,
+    &VkPhysicalDeviceFeatures::shaderStorageImageWriteWithoutFormat,
+    &VkPhysicalDeviceFeatures::shaderUniformBufferArrayDynamicIndexing,
+    &VkPhysicalDeviceFeatures::shaderSampledImageArrayDynamicIndexing,
+    &VkPhysicalDeviceFeatures::shaderStorageBufferArrayDynamicIndexing,
+    &VkPhysicalDeviceFeatures::shaderStorageImageArrayDynamicIndexing,
+    &VkPhysicalDeviceFeatures::shaderClipDistance,
+    &VkPhysicalDeviceFeatures::shaderCullDistance,
+    &VkPhysicalDeviceFeatures::shaderFloat64,
+    &VkPhysicalDeviceFeatures::shaderInt64,
+    &VkPhysicalDeviceFeatures::shaderInt16,
+    &VkPhysicalDeviceFeatures::shaderResourceResidency,
+    &VkPhysicalDeviceFeatures::shaderResourceMinLod,
+    &VkPhysicalDeviceFeatures::sparseBinding,
+    &VkPhysicalDeviceFeatures::sparseResidencyBuffer,
+    &VkPhysicalDeviceFeatures::sparseResidencyImage2D,
+    &VkPhysicalDeviceFeatures::sparseResidencyImage3D,
+    &VkPhysicalDeviceFeatures::sparseResidency2Samples,
+    &VkPhysicalDeviceFeatures::sparseResidency4Samples,
+    &VkPhysicalDeviceFeatures::sparseResidency8Samples,
+    &VkPhysicalDeviceFeatures::sparseResidency16Samples,
+    &VkPhysicalDeviceFeatures::sparseResidencyAliased,
+    &VkPhysicalDeviceFeatures::variableMultisampleRate,
+    &VkPhysicalDeviceFeatures::inheritedQueries};
+
+#ifdef VKIT_API_VERSION_1_2
+static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan11Features::*, 12> s_Vulkan11Members = {
+    &VkPhysicalDeviceVulkan11Features::storageBuffer16BitAccess,
+    &VkPhysicalDeviceVulkan11Features::uniformAndStorageBuffer16BitAccess,
+    &VkPhysicalDeviceVulkan11Features::storagePushConstant16,
+    &VkPhysicalDeviceVulkan11Features::storageInputOutput16,
+    &VkPhysicalDeviceVulkan11Features::multiview,
+    &VkPhysicalDeviceVulkan11Features::multiviewGeometryShader,
+    &VkPhysicalDeviceVulkan11Features::multiviewTessellationShader,
+    &VkPhysicalDeviceVulkan11Features::variablePointersStorageBuffer,
+    &VkPhysicalDeviceVulkan11Features::variablePointers,
+    &VkPhysicalDeviceVulkan11Features::protectedMemory,
+    &VkPhysicalDeviceVulkan11Features::samplerYcbcrConversion,
+    &VkPhysicalDeviceVulkan11Features::shaderDrawParameters};
+
+static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan12Features::*, 47> s_Vulkan12Members = {
+    &VkPhysicalDeviceVulkan12Features::samplerMirrorClampToEdge,
+    &VkPhysicalDeviceVulkan12Features::drawIndirectCount,
+    &VkPhysicalDeviceVulkan12Features::storageBuffer8BitAccess,
+    &VkPhysicalDeviceVulkan12Features::uniformAndStorageBuffer8BitAccess,
+    &VkPhysicalDeviceVulkan12Features::storagePushConstant8,
+    &VkPhysicalDeviceVulkan12Features::shaderBufferInt64Atomics,
+    &VkPhysicalDeviceVulkan12Features::shaderSharedInt64Atomics,
+    &VkPhysicalDeviceVulkan12Features::shaderFloat16,
+    &VkPhysicalDeviceVulkan12Features::shaderInt8,
+    &VkPhysicalDeviceVulkan12Features::descriptorIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderInputAttachmentArrayDynamicIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderUniformTexelBufferArrayDynamicIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderStorageTexelBufferArrayDynamicIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderUniformBufferArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderSampledImageArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderStorageBufferArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderStorageImageArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderInputAttachmentArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderUniformTexelBufferArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::shaderStorageTexelBufferArrayNonUniformIndexing,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingUniformBufferUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingSampledImageUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingStorageImageUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingStorageBufferUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingUniformTexelBufferUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingStorageTexelBufferUpdateAfterBind,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingUpdateUnusedWhilePending,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingPartiallyBound,
+    &VkPhysicalDeviceVulkan12Features::descriptorBindingVariableDescriptorCount,
+    &VkPhysicalDeviceVulkan12Features::runtimeDescriptorArray,
+    &VkPhysicalDeviceVulkan12Features::samplerFilterMinmax,
+    &VkPhysicalDeviceVulkan12Features::scalarBlockLayout,
+    &VkPhysicalDeviceVulkan12Features::imagelessFramebuffer,
+    &VkPhysicalDeviceVulkan12Features::uniformBufferStandardLayout,
+    &VkPhysicalDeviceVulkan12Features::shaderSubgroupExtendedTypes,
+    &VkPhysicalDeviceVulkan12Features::separateDepthStencilLayouts,
+    &VkPhysicalDeviceVulkan12Features::hostQueryReset,
+    &VkPhysicalDeviceVulkan12Features::timelineSemaphore,
+    &VkPhysicalDeviceVulkan12Features::bufferDeviceAddress,
+    &VkPhysicalDeviceVulkan12Features::bufferDeviceAddressCaptureReplay,
+    &VkPhysicalDeviceVulkan12Features::bufferDeviceAddressMultiDevice,
+    &VkPhysicalDeviceVulkan12Features::vulkanMemoryModel,
+    &VkPhysicalDeviceVulkan12Features::vulkanMemoryModelDeviceScope,
+    &VkPhysicalDeviceVulkan12Features::vulkanMemoryModelAvailabilityVisibilityChains,
+    &VkPhysicalDeviceVulkan12Features::shaderOutputViewportIndex,
+    &VkPhysicalDeviceVulkan12Features::shaderOutputLayer,
+    &VkPhysicalDeviceVulkan12Features::subgroupBroadcastDynamicId};
+#endif
+
+#ifdef VKIT_API_VERSION_1_3
+static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan13Features::*, 15> s_Vulkan13Members = {
+    &VkPhysicalDeviceVulkan13Features::robustImageAccess,
+    &VkPhysicalDeviceVulkan13Features::inlineUniformBlock,
+    &VkPhysicalDeviceVulkan13Features::descriptorBindingInlineUniformBlockUpdateAfterBind,
+    &VkPhysicalDeviceVulkan13Features::pipelineCreationCacheControl,
+    &VkPhysicalDeviceVulkan13Features::privateData,
+    &VkPhysicalDeviceVulkan13Features::shaderDemoteToHelperInvocation,
+    &VkPhysicalDeviceVulkan13Features::shaderTerminateInvocation,
+    &VkPhysicalDeviceVulkan13Features::subgroupSizeControl,
+    &VkPhysicalDeviceVulkan13Features::computeFullSubgroups,
+    &VkPhysicalDeviceVulkan13Features::synchronization2,
+    &VkPhysicalDeviceVulkan13Features::textureCompressionASTC_HDR,
+    &VkPhysicalDeviceVulkan13Features::shaderZeroInitializeWorkgroupMemory,
+    &VkPhysicalDeviceVulkan13Features::dynamicRendering,
+    &VkPhysicalDeviceVulkan13Features::shaderIntegerDotProduct,
+    &VkPhysicalDeviceVulkan13Features::maintenance4};
+#endif
+
+#ifdef VKIT_API_VERSION_1_4
+static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan14Features::*, 21> s_Vulkan14Members = {
+    &VkPhysicalDeviceVulkan14Features::globalPriorityQuery,
+    &VkPhysicalDeviceVulkan14Features::shaderSubgroupRotate,
+    &VkPhysicalDeviceVulkan14Features::shaderSubgroupRotateClustered,
+    &VkPhysicalDeviceVulkan14Features::shaderFloatControls2,
+    &VkPhysicalDeviceVulkan14Features::shaderExpectAssume,
+    &VkPhysicalDeviceVulkan14Features::rectangularLines,
+    &VkPhysicalDeviceVulkan14Features::bresenhamLines,
+    &VkPhysicalDeviceVulkan14Features::smoothLines,
+    &VkPhysicalDeviceVulkan14Features::stippledRectangularLines,
+    &VkPhysicalDeviceVulkan14Features::stippledBresenhamLines,
+    &VkPhysicalDeviceVulkan14Features::stippledSmoothLines,
+    &VkPhysicalDeviceVulkan14Features::vertexAttributeInstanceRateDivisor,
+    &VkPhysicalDeviceVulkan14Features::vertexAttributeInstanceRateZeroDivisor,
+    &VkPhysicalDeviceVulkan14Features::indexTypeUint8,
+    &VkPhysicalDeviceVulkan14Features::dynamicRenderingLocalRead,
+    &VkPhysicalDeviceVulkan14Features::maintenance5,
+    &VkPhysicalDeviceVulkan14Features::maintenance6,
+    &VkPhysicalDeviceVulkan14Features::pipelineProtectedAccess,
+    &VkPhysicalDeviceVulkan14Features::pipelineRobustness,
+    &VkPhysicalDeviceVulkan14Features::hostImageCopy,
+    &VkPhysicalDeviceVulkan14Features::pushDescriptor};
+#endif
+
 template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value)
 {
     return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
 }
 
-template <typename T, typename Bool = const VkBool32> std::pair<Bool *, u32> getFeatureIterable(T &p_Features)
+template <typename T> const auto &getMembers()
 {
-    u32 size;
-    Bool *ptr;
-    if constexpr (std::is_same_v<T, VkPhysicalDeviceFeatures>)
-    {
-        size = sizeof(VkPhysicalDeviceFeatures) / sizeof(Bool);
-        ptr = reinterpret_cast<Bool *>(&p_Features);
-    }
+#ifdef VKIT_API_VERSION_1_2
+    if constexpr (std::is_same_v<T, VkPhysicalDeviceVulkan11Features>)
+        return s_Vulkan11Members;
+    else if constexpr (std::is_same_v<T, VkPhysicalDeviceVulkan12Features>)
+        return s_Vulkan12Members;
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    else if constexpr (std::is_same_v<T, VkPhysicalDeviceVulkan13Features>)
+        return s_Vulkan13Members;
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    else if constexpr (std::is_same_v<T, VkPhysicalDeviceVulkan14Features>)
+        return s_Vulkan14Members;
+#endif
+#ifdef VKIT_API_VERSION_1_2
     else
-    {
-        const u32 offset = sizeof(VkStructureType) + sizeof(void *);
-        size = (sizeof(T) - offset) / sizeof(Bool);
-
-        if constexpr (std::is_const_v<T>)
-        {
-            const std::byte *rawPtr = reinterpret_cast<const std::byte *>(&p_Features) + offset;
-            ptr = reinterpret_cast<Bool *>(rawPtr);
-        }
-        else
-        {
-            std::byte *rawPtr = reinterpret_cast<std::byte *>(&p_Features) + offset;
-            ptr = reinterpret_cast<Bool *>(rawPtr);
-        }
-    }
-    return {ptr, size};
+        return s_CoreMembers;
+#else
+    return s_CoreMembers;
+#endif
 }
 
-template <typename T> void orFeatures(T &p_Dest, const T &p_Src)
+template <typename T> static void orFeatures(T &p_Dst, const T &p_Src)
 {
-    auto [ptr1, size1] = getFeatureIterable<T, VkBool32>(p_Dest);
-    const auto [ptr2, size2] = getFeatureIterable(p_Src);
-    TKIT_ASSERT(size1 == size2, "[VULKIT] Feature struct sizes do not match");
+    const auto &members = getMembers<T>();
+    for (const auto member : members)
+        p_Dst.*member |= p_Src.*member;
+}
 
-    for (u32 i = 0; i < size1; ++i)
-        ptr1[i] |= ptr2[i];
+static void orFeatures(DeviceFeatures &p_Dst, const DeviceFeatures &p_Src)
+{
+    orFeatures(p_Dst.Core, p_Src.Core);
+#ifdef VKIT_API_VERSION_1_2
+    orFeatures(p_Dst.Vulkan11, p_Src.Vulkan11);
+    orFeatures(p_Dst.Vulkan12, p_Src.Vulkan12);
+#endif
+#ifdef VKIT_API_VERSION_1_3
+    orFeatures(p_Dst.Vulkan13, p_Src.Vulkan13);
+#endif
+#ifdef VKIT_API_VERSION_1_4
+    orFeatures(p_Dst.Vulkan14, p_Src.Vulkan14);
+#endif
 }
 
 template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested)
 {
-    const auto [ptr1, size1] = getFeatureIterable(p_Supported);
-    const auto [ptr2, size2] = getFeatureIterable(p_Requested);
-    TKIT_ASSERT(size1 == size2, "[VULKIT] Feature struct sizes do not match");
+    const auto &members = getMembers<T>();
 
-    for (u32 i = 0; i < size1; ++i)
-        if (!ptr1[i] && ptr2[i])
+    for (const auto member : members)
+        if (!(p_Supported.*member) && p_Requested.*member)
             return false;
     return true;
 }
