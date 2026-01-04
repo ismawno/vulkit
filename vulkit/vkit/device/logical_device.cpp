@@ -158,7 +158,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     LogicalDevice ldevice{device, info};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.Queues.GetSize(); ++i)
-            if (info.Queues[i][p_Index]->GetFamily() == p_Family)
+            if (p_Index < info.Queues[i].GetSize() && info.Queues[i][p_Index]->GetFamily() == p_Family)
                 return info.Queues[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
