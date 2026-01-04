@@ -76,13 +76,16 @@ Result<> Core::Initialize(const char *p_LoaderPath)
 #if defined(TKIT_OS_APPLE)
     attempt("libvulkan.dylib");
     attempt("libvulkan.1.dylib");
-    attempt("libMoltenVK.dylib");
     attempt("@executable_path/../Frameworks/libvulkan.dylib");
     attempt("@executable_path/../Frameworks/libvulkan.1.dylib");
-    attempt("@executable_path/../Frameworks/libMoltenVK.dylib");
     attempt("/usr/local/lib/libvulkan.dylib");
-    attempt("/usr/local/lib/libMoltenVK.dylib");
+    attempt("/usr/local/lib/libvulkan.1.dylib");
     attempt("/opt/homebrew/lib/libvulkan.dylib");
+    attempt("/opt/homebrew/lib/libvulkan.1.dylib");
+
+    attempt("libMoltenVK.dylib");
+    attempt("@executable_path/../Frameworks/libMoltenVK.dylib");
+    attempt("/usr/local/lib/libMoltenVK.dylib");
     attempt("/opt/homebrew/lib/libMoltenVK.dylib");
     attempt("/Library/Frameworks/Vulkan.framework/Vulkan");
 
