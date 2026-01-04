@@ -20,8 +20,12 @@ if(VULKIT_ENABLE_ALLOCATOR)
   list(APPEND SOURCES vkit/memory/allocator.cpp)
 endif()
 
-if(VULKIT_ENABLE_BUFFER)
+if(VULKIT_ENABLE_DEVICE_BUFFER)
   list(APPEND SOURCES vkit/resource/device_buffer.cpp)
+endif()
+
+if(VULKIT_ENABLE_HOST_BUFFER)
+  list(APPEND SOURCES vkit/resource/host_buffer.cpp)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
