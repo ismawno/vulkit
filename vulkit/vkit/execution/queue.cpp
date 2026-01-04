@@ -68,7 +68,11 @@ Result<u64> Queue::GetCompletedSubmissionCount() const
             VK_ERROR_FEATURE_NOT_PRESENT,
             "To query completed submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     u64 count;
+#    ifdef VKIT_API_VERSION_1_2
+    const VkResult result = m_Device.Table->GetSemaphoreCounterValue(m_Device, m_Timeline, &count);
+#    else
     const VkResult result = m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &count);
+#    endif
     if (result != VK_SUCCESS)
         return Result<u64>::Error(result, "Failed to query semaphore counter value");
 
@@ -218,14 +222,22 @@ Result<u64> Queue::Submit(VkSubmitInfo2KHR p_Info, const VkFence p_Fence)
         p_Info.pSignalSemaphoreInfos = signalSemaphores.GetData();
         p_Info.signalSemaphoreInfoCount = signalSemaphores.GetSize();
 
+#    ifdef VKIT_API_VERSION_1_3
+        const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, 1, &p_Info, p_Fence);
+#    else
         const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
+#    endif
         if (result != VK_SUCCESS)
             return Result<>::Error(result, "Failed to submit to queue");
         m_SubmissionCount = signal;
         return Result<>::Ok();
     }
 
+#    ifdef VKIT_API_VERSION_1_3
+    const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, 1, &p_Info, p_Fence);
+#    else
     const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
+#    endif
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to submit to queue");
 
@@ -260,7 +272,11 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
             info.signalSemaphoreInfoCount = signal.GetSize();
             infos.Append(info);
         }
+#    ifdef VKIT_API_VERSION_1_3
         const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
+#    else
+        const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
+#    endif
         if (result != VK_SUCCESS)
             return Result<>::Error(result, "Failed to submit to queue");
 
@@ -272,7 +288,11 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
         for (u32 i = 0; i < p_Info.GetSize(); ++i)
             signals[i] = ++signal;
 
+#    ifdef VKIT_API_VERSION_1_3
         const VkResult result = m_Device.Table->QueueSubmit2(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+#    else
+        const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+#    endif
         if (result != VK_SUCCESS)
             return Result<>::Error(result, "Failed to submit to queue");
         m_SubmissionCount = signal;
