@@ -73,7 +73,7 @@ struct DeviceFeatures
 struct DeviceProperties
 {
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-    VkPhysicalDeviceProperties2 CreateChain(u32 p_ApiVersion);
+    VkPhysicalDeviceProperties2KHR CreateChain(u32 p_ApiVersion);
 #endif
 
     VkPhysicalDeviceProperties Core{};
@@ -217,7 +217,7 @@ class PhysicalDevice
 
 #ifdef VK_KHR_surface
     VKIT_NO_DISCARD Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
-                                                                        VkSurfaceKHR p_Surface) const;
+                                                                          VkSurfaceKHR p_Surface) const;
 #endif
 
     operator VkPhysicalDevice() const

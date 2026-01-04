@@ -167,7 +167,7 @@ VkPhysicalDeviceProperties2KHR DeviceProperties::CreateChain(const u32 p_ApiVers
 {
     VkPhysicalDeviceProperties2KHR properties{};
     properties.properties = Core;
-    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
     createChain<VkPhysicalDeviceProperties2KHR>(properties, *this, p_ApiVersion);
     return properties;
 }
@@ -459,11 +459,22 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         VkPhysicalDeviceFeatures2KHR fchain = features.CreateChain(quickProperties.apiVersion);
         VkPhysicalDeviceProperties2KHR pchain = properties.CreateChain(quickProperties.apiVersion);
 
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2KHR, JudgeResult);
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2KHR, JudgeResult);
+        if (v11)
+        {
+            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2, JudgeResult);
+            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2, JudgeResult);
 
-        table->GetPhysicalDeviceFeatures2KHR(p_Device, &fchain);
-        table->GetPhysicalDeviceProperties2KHR(p_Device, &pchain);
+            table->GetPhysicalDeviceFeatures2(p_Device, &fchain);
+            table->GetPhysicalDeviceProperties2(p_Device, &pchain);
+        }
+        else
+        {
+            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2KHR, JudgeResult);
+            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2KHR, JudgeResult);
+
+            table->GetPhysicalDeviceFeatures2KHR(p_Device, &fchain);
+            table->GetPhysicalDeviceProperties2KHR(p_Device, &pchain);
+        }
 
         features.Core = fchain.features;
         properties.Core = pchain.properties;
