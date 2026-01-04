@@ -1,7 +1,8 @@
 #pragma once
 
 #ifndef VKIT_ENABLE_DEVICE_BUFFER
-#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_BUFFER"
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_BUFFER"
 #endif
 
 #include "vkit/device/logical_device.hpp"
@@ -130,18 +131,18 @@ class DeviceBuffer
     void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source, const BufferCopy &p_Info);
 
     VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                          const BufferCopy &p_Info = {});
+                                            const BufferCopy &p_Info = {});
 
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const BufferImageCopy &p_Info);
 
     VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                         const BufferImageCopy &p_Info = {});
+                                           const BufferImageCopy &p_Info = {});
 
     VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
-                                          const BufferCopy &p_Info = {});
+                                            const BufferCopy &p_Info = {});
     template <typename T>
     VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const TKit::Span<const T> p_Data,
-                                          const BufferCopy &p_Info = {})
+                                            const BufferCopy &p_Info = {})
     {
         const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
                                       ? (p_Data.GetSize() * sizeof(T) - p_Info.SrcOffset * sizeof(T))

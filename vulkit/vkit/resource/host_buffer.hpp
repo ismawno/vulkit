@@ -1,7 +1,8 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_DEVICE_BUFFER
-#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_BUFFER"
+#ifndef VKIT_ENABLE_HOST_BUFFER
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_HOST_BUFFER"
 #endif
 
 #include "vkit/core/alias.hpp"
