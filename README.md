@@ -42,7 +42,7 @@ Moving on:
 
 ```cpp
 const auto vkres = VKit::Core::Initialize();
-VKIT_ASSERT_RESULT(result);
+VKIT_CHECK_RESULT(result);
 ```
 
 Creating an instance is straightforward as well with the `VKit::Instance::Builder` object:
@@ -56,7 +56,7 @@ const auto result = VKit::Instance::Builder()
                         .RequestExtension("VK_extra_extension")
                         .RequestValidationLayers()
                         .Build();
-VKIT_ASSERT_RESULT(result);
+VKIT_CHECK_RESULT(result);
 const VKit::Instance &instance = result.GetValue();
 // Rest of the code...
 ```
@@ -76,11 +76,11 @@ const auto physres =
         .AddFlags(VKit::PhysicalDevice::Selector::Flag_AnyType | VKit::PhysicalDevice::Selector::Flag_PortabilitySubset |
                     VKit::PhysicalDevice::Selector::Flag_RequireGraphicsQueue)
         .Select();
-VKIT_ASSERT_RESULT(physres);
+VKIT_CHECK_RESULT(physres);
 const VKit::PhysicalDevice &phys = physres.GetValue();
 
 const auto devres = VKit::LogicalDevice::Create(s_Instance, phys);
-VKIT_ASSERT_RESULT(devres);
+VKIT_CHECK_RESULT(devres);
 ```
 
 Note that if the instance is not headless, a surface must be provided to select an appropriate physical device.
@@ -102,7 +102,7 @@ const auto result =
         .AddFlags(VKit::SwapChain::Builder::Flag_Clipped | VKit::SwapChain::Builder::Flag_CreateImageViews)
         .Build();
 
-VKIT_ASSERT_RESULT(result);
+VKIT_CHECK_RESULT(result);
 ```
 
 ### Render pass
@@ -136,7 +136,7 @@ const auto result =
         .EndDependency()
         .Build();
 
-VKIT_ASSERT_RESULT(result);
+VKIT_CHECK_RESULT(result);
 ```
 
 Once all of the render pass specification has been declared, it is possible to create the underlying resources with further `RenderPass` utilities. Even though this simplifies Vulkan's render pass interaction, it is still recommended to use dynamic rendering.

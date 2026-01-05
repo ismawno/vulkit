@@ -120,17 +120,17 @@
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_ASSERT_RESULT(p_Result)                                                                               \
+#    define VKIT_CHECK_RESULT(p_Result)                                                                               \
         TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
-#    define VKIT_ASSERT_EXPRESSION(p_Expression)                                                                       \
+#    define VKIT_CHECK_EXPRESSION(p_Expression)                                                                       \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
             TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                                      \
                         VKit::ResultToString(__vkit_result));                                                          \
         }
 #else
-#    define VKIT_ASSERT_RESULT(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_ASSERT_EXPRESSION(p_Expression) p_Expression
+#    define VKIT_CHECK_RESULT(p_Result) TKIT_UNUSED(p_Result)
+#    define VKIT_CHECK_EXPRESSION(p_Expression) p_Expression
 #endif
 
 #define VKIT_FORMAT_ERROR(p_Result, ...) VKit::Detail::Error(p_Result, TKit::Format(__VA_ARGS__))
