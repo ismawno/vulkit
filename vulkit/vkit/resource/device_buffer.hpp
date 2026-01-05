@@ -105,14 +105,12 @@ class DeviceBuffer
 
     const void *ReadAt(const u32 p_Index) const
     {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                    m_Info.InstanceCount);
+        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
     void *ReadAt(const u32 p_Index)
     {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                    m_Info.InstanceCount);
+        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
 

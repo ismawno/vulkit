@@ -32,7 +32,7 @@ void HostBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
 
 void HostBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
-    TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index, m_InstanceCount);
+    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
 
     const VkDeviceSize size = m_InstanceSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;

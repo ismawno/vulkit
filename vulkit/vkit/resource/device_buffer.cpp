@@ -198,8 +198,7 @@ void DeviceBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
 
 void DeviceBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                m_Info.InstanceCount);
+    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
 
     const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
@@ -335,7 +334,7 @@ Result<> DeviceBuffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Off
 }
 Result<> DeviceBuffer::FlushAt(const u32 p_Index)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds");
+    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
     return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
@@ -349,7 +348,7 @@ Result<> DeviceBuffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize 
 }
 Result<> DeviceBuffer::InvalidateAt(const u32 p_Index)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds");
+    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
     return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
@@ -386,8 +385,7 @@ VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfo(const VkDeviceSize p_Size
 }
 VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfoAt(const u32 p_Index) const
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                m_Info.InstanceCount);
+    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 

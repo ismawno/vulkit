@@ -24,14 +24,12 @@ class HostBuffer
 
     const void *ReadAt(const u32 p_Index) const
     {
-        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                    m_InstanceCount);
+        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
         return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
     }
     void *ReadAt(const u32 p_Index)
     {
-        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index,
-                    m_InstanceCount);
+        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
         return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
     }
 
