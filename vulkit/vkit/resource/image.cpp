@@ -33,7 +33,7 @@ VkImageAspectFlags Detail::DeduceAspectMask(const DeviceImageFlags p_Flags)
     else if (p_Flags & DeviceImageFlag_StencilAttachment)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
-    TKIT_LOG_WARNING("[VULKIT] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
+    TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
     return VK_IMAGE_ASPECT_NONE;
 }
 static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const DeviceImageFlags p_Flags)
@@ -198,13 +198,25 @@ void DeviceImage::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const Dev
     cext.depth = ext.depth == TKIT_U32_MAX ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
 
     // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(cext.width <= info.Width - soff.x, "[VULKIT] Specified width exceeds source image width");
-    TKIT_ASSERT(cext.height <= info.Height - soff.y, "[VULKIT] Specified height exceeds source image height");
-    TKIT_ASSERT(cext.depth <= info.Depth - soff.z, "[VULKIT] Specified depth exceeds source image depth");
+    TKIT_ASSERT(cext.width <= info.Width - soff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds source image width ({})", info.Width - soff.x,
+                cext.width);
+    TKIT_ASSERT(cext.height <= info.Height - soff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds source image height ({})", info.Height - soff.x,
+                cext.width);
+    TKIT_ASSERT(cext.depth <= info.Depth - soff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds source image depth ({})", info.Depth - soff.x,
+                cext.width);
 
-    TKIT_ASSERT(cext.width <= m_Info.Width - doff.x, "[VULKIT] Specified width exceeds destination image width");
-    TKIT_ASSERT(cext.height <= m_Info.Height - doff.y, "[VULKIT] Specified height exceeds destination image height");
-    TKIT_ASSERT(cext.depth <= m_Info.Depth - doff.z, "[VULKIT] Specified depth exceeds destination image depth");
+    TKIT_ASSERT(cext.width <= m_Info.Width - doff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds destination image width ({})",
+                m_Info.Width - doff.x, cext.width);
+    TKIT_ASSERT(cext.height <= m_Info.Height - doff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds destination image height ({})",
+                m_Info.Height - doff.x, cext.width);
+    TKIT_ASSERT(cext.depth <= m_Info.Depth - doff.x,
+                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds destination image depth ({})",
+                m_Info.Depth - doff.x, cext.width);
 
     m_Device.Table->CmdCopyImage(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Image, m_Layout, 1, &copy);
 }
@@ -238,15 +250,31 @@ void DeviceImage::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const De
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
-                "[VULKIT] 3D images cannot have multiple layers and array images cannot have depth > 1");
-    TKIT_ASSERT(cext.width <= width - off.x, "[VULKIT] Specified width exceeds source image width");
-    TKIT_ASSERT(cext.height <= height - off.y, "[VULKIT] Specified height exceeds source image height");
-    TKIT_ASSERT(cext.depth <= depth - off.z, "[VULKIT] Specified depth exceeds source image depth");
-    TKIT_ASSERT(p_Source.GetInfo().Size - p_Info.BufferOffset >=
-                    ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
-                                p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
-                        subr.layerCount,
-                "[VULKIT] Buffer is not large enough to fit image");
+                "[VULKIT][DEVICE-IMAGE] 3D images cannot have multiple layers and array images cannot have a depth "
+                "greather than 1. "
+                "Layers: {}, depth: {}",
+                subr.layerCount, info.Depth);
+
+    TKIT_ASSERT(cext.width <= width - off.x,
+                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds source image width ({})", width - off.x,
+                cext.width);
+    TKIT_ASSERT(cext.height <= height - off.x,
+                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds source image height ({})", height - off.x,
+                cext.width);
+    TKIT_ASSERT(cext.depth <= depth - off.x,
+                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds source image depth ({})", depth - off.x,
+                cext.width);
+
+#ifdef TKIT_ENABLE_ASSERTS
+    const VkDeviceSize bsize = p_Source.GetInfo().Size - p_Info.BufferOffset;
+    const VkDeviceSize isize =
+        ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
+                    p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
+        subr.layerCount;
+
+    TKIT_ASSERT(bsize >= isize, "[VULKIT][DEVICE-IMAGE] Buffer of size {} is not large enough to fit image of size {}",
+                bsize, isize);
+#endif
     m_Device.Table->CmdCopyBufferToImage(p_CommandBuffer, p_Source, m_Image, m_Layout, 1, &copy);
 }
 
@@ -280,9 +308,17 @@ Result<> DeviceImage::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue,
 
     const VkDeviceSize size = ComputeSize();
     TKIT_ASSERT(p_Data.Channels == GetBytesPerPixel(),
-                "[VULKIT] The number of channels must match the bytes per pixel of the image");
-    TKIT_ASSERT(size == p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels,
-                "[VULKIT] When uploading host-side image, both images must match in size");
+                "[VULKIT][DEVICE-IMAGE] The number of channels ({}) must match the bytes per pixel of the image ({})",
+                p_Data.Channels, GetBytesPerPixel());
+
+#ifdef TKIT_ENABLE_ASSERTS
+    const u32 hsize = p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels;
+    TKIT_ASSERT(
+        size == hsize,
+        "[VULKIT][DEVICE-IMAGE] When uploading host-side image, both images must match in size. Host size: {}, device "
+        "size: {}",
+        hsize, size);
+#endif
 
     auto bres =
         DeviceBuffer::Builder(m_Device, m_Info.Allocator, DeviceBufferFlag_HostMapped | DeviceBufferFlag_Staging)
@@ -427,10 +463,12 @@ VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat p_Format)
     case VK_FORMAT_D32_SFLOAT_S8_UINT:
         return 5;
     default:
-        TKIT_LOG_WARNING("[VULKIT] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
+        TKIT_LOG_WARNING(
+            "[VULKIT][DEVICE-IMAGE] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
         return 0;
     }
-    TKIT_LOG_WARNING("[VULKIT] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
+    TKIT_LOG_WARNING(
+        "[VULKIT][DEVICE-IMAGE] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
     return 0;
 }
 
@@ -548,7 +586,7 @@ DeviceImage::Builder &DeviceImage::Builder::WithImageView()
 DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageViewCreateInfo &p_Info)
 {
     TKIT_ASSERT(!p_Info.image,
-                "[VULKIT] The image must be set to null when passing a image view create info because it "
+                "[VULKIT][DEVICE-IMAGE] The image must be set to null when passing a image view create info because it "
                 "will be replaced with the newly created image");
     m_ViewInfo = p_Info;
     return *this;

@@ -2,7 +2,7 @@
 
 #ifndef VKIT_ENABLE_DEVICE_BUFFER
 #    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_BUFFER"
+        "[VULKIT][DEVICE-BUFFER] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_BUFFER"
 #endif
 
 #include "vkit/device/logical_device.hpp"
@@ -105,12 +105,14 @@ class DeviceBuffer
 
     const void *ReadAt(const u32 p_Index) const
     {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                    m_Info.InstanceCount);
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
     void *ReadAt(const u32 p_Index)
     {
-        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+        TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                    m_Info.InstanceCount);
         return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
     }
 
@@ -172,7 +174,7 @@ class DeviceBuffer
     template <typename Index> void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
-                      "[VULKIT] Index type must be u8, u16 or u32");
+                      "[VULKIT][DEVICE-BUFFER] Index type must be u8, u16 or u32");
         if constexpr (std::is_same_v<Index, u8>)
             m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
         else if constexpr (std::is_same_v<Index, u16>)

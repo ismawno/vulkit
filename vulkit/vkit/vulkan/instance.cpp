@@ -35,19 +35,19 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
     switch (p_Severity)
     {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        TKIT_LOG_DEBUG("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_DEBUG("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        TKIT_FATAL("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_FATAL("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        TKIT_LOG_WARNING("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_WARNING("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        TKIT_LOG_INFO("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     default:
-        TKIT_LOG_INFO("[VULKIT] [{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
         break;
     }
     return VK_FALSE;
@@ -80,13 +80,16 @@ Result<Instance> Instance::Builder::Build() const
         return p_IsRequested ? p_Version : version;
     };
 
-    TKIT_ASSERT(m_RequestedApiVersion >= m_RequiredApiVersion,
-                "[VULKIT] The requested api version must be greater than or equal to the required api version");
+    TKIT_ASSERT(
+        m_RequestedApiVersion >= m_RequiredApiVersion,
+        "[VULKIT][INSTANCE] The requested api version ({}.{}.{}) must be greater than or equal to the required api "
+        "version ({}.{}.{})",
+        EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
 
     Result<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
     {
-        TKIT_LOG_WARNING("[VULKIT] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
+        TKIT_LOG_WARNING("[VULKIT][INSTANCE] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
                          EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
 
         vresult = checkApiVersion(m_RequiredApiVersion, false);
@@ -112,7 +115,7 @@ Result<Instance> Instance::Builder::Build() const
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = Core::IsExtensionSupported(extension);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The requested extension '{}' is not suported", extension);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested extension '{}' is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.Append(extension);
     }
@@ -125,7 +128,7 @@ Result<Instance> Instance::Builder::Build() const
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = Core::IsLayerSupported(layer);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT] The requested layer '{}' is not suported", layer);
+        TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested layer '{}' is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.Append(layer);
     }
@@ -140,8 +143,9 @@ Result<Instance> Instance::Builder::Build() const
             return Result<Instance>::Error(VK_ERROR_LAYER_NOT_PRESENT,
                                            "Validation layers (along with the debug utils extension) are not suported");
 
-        TKIT_LOG_WARNING_IF(!validationLayers && m_RequestValidationLayers,
-                            "[VULKIT] Validation layers (along with the debug utils extension) are not suported");
+        TKIT_LOG_WARNING_IF(
+            !validationLayers && m_RequestValidationLayers,
+            "[VULKIT][INSTANCE] Validation layers (along with the debug utils extension) are not suported");
 
         if (validationLayers && !contains(extensions, "VK_EXT_debug_utils"))
             extensions.Append("VK_EXT_debug_utils");
@@ -297,7 +301,7 @@ Result<Instance> Instance::Builder::Build() const
         info.Flags |= InstanceFlag_Properties2Extension;
 
     TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
-                "[VULKIT] The debug messenger must be available if validation layers are enabled");
+                "[VULKIT][INSTANCE] The debug messenger must be available if validation layers are enabled");
 
     return Result<Instance>::Ok(vkinstance, info);
 }

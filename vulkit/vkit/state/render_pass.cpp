@@ -134,11 +134,11 @@ RenderPass::Builder &RenderPass::Builder::RemoveFlags(const VkRenderPassCreateFl
 RenderPass::AttachmentBuilder::AttachmentBuilder(RenderPass::Builder *p_Builder, const DeviceImageFlags p_Flags)
     : m_Builder(p_Builder)
 {
-    TKIT_ASSERT(p_Flags, "[VULKIT] Attachment must have at least one type flag");
+    TKIT_ASSERT(p_Flags, "[VULKIT][RENDER-PASS] Attachment must have at least one type flag");
     TKIT_ASSERT(!((p_Flags & DeviceImageFlag_ColorAttachment) && (p_Flags & DeviceImageFlag_DepthAttachment)),
-                "[VULKIT] Attachment must be color or depth, not both");
+                "[VULKIT][RENDER-PASS] Attachment must be color or depth, not both");
     TKIT_ASSERT(!((p_Flags & DeviceImageFlag_ColorAttachment) && (p_Flags & DeviceImageFlag_StencilAttachment)),
-                "[VULKIT] Attachment must be color or stencil, not both");
+                "[VULKIT][RENDER-PASS] Attachment must be color or stencil, not both");
 
     m_Attachment.Description.samples = VK_SAMPLE_COUNT_1_BIT;
     m_Attachment.Description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -253,7 +253,7 @@ RenderPass::SubpassBuilder &RenderPass::SubpassBuilder::AddColorAttachment(const
     {
         m_ResolveAttachments.Append(VkAttachmentReference{p_ResolveIndex, p_Layout});
         TKIT_ASSERT(m_ResolveAttachments.GetSize() == m_ColorAttachments.GetSize(),
-                    "[VULKIT] Mismatched color and resolve attachments");
+                    "[VULKIT][RENDER-PASS] Mismatched color and resolve attachments");
     }
     return *this;
 }

@@ -372,7 +372,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             VK_ERROR_INCOMPATIBLE_DRIVER, "The device name '{}' does not match the requested name '{}'", name, m_Name));
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
-                        "[VULKIT] The device '{}' does not support the requested API version {}.{}.{}", name,
+                        "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
                         EXPAND_VERSION(m_RequestedApiVersion));
 
     if (quickProperties.apiVersion < m_RequiredApiVersion)
@@ -415,7 +415,8 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             enabledExtensions.Append(extension);
         else
         {
-            TKIT_LOG_WARNING("[VULKIT] The device '{}' does not support the requested extension '{}'", name, extension);
+            TKIT_LOG_WARNING("[VULKIT][P-DEVICE] The device '{}' does not support the requested extension '{}'", name,
+                             extension);
             fullySuitable = false;
         }
 
@@ -701,7 +702,8 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     table->GetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
 
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
-                "[VULKIT] Requested memory must be greater than or equal to required memory");
+                "[VULKIT][P-DEVICE] Requested memory ({}) must be greater than or equal to required memory ({})",
+                m_RequestedMemory, m_RequiredMemory);
 
     bool hasDeviceLocalMemory = false;
     bool hasRequestedMemory = m_RequestedMemory == 0;
@@ -724,8 +726,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!hasDeviceLocalMemory)
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY,
                                                     "The device '{}' does not have device local memory", name));
-    TKIT_LOG_WARNING_IF(!hasRequestedMemory, "[VULKIT] The device '{}' does not have the requested memory of {} bytes",
-                        name, m_RequestedMemory);
+    TKIT_LOG_WARNING_IF(!hasRequestedMemory,
+                        "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {} bytes", name,
+                        m_RequestedMemory);
     if (!hasRequiredMemory)
         return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY,
                                                     "The device '{}' does not have the required memory of {} bytes",

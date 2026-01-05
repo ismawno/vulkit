@@ -161,7 +161,7 @@ void DeviceBuffer::Destroy()
 
 Result<> DeviceBuffer::Map()
 {
-    TKIT_ASSERT(!m_Data, "[VULKIT] Buffer is already mapped");
+    TKIT_ASSERT(!m_Data, "[VULKIT][DEVICE-BUFFER] Buffer is already mapped");
     const VkResult result = vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to map buffer memory");
@@ -171,7 +171,7 @@ Result<> DeviceBuffer::Map()
 
 void DeviceBuffer::Unmap()
 {
-    TKIT_ASSERT(m_Data, "[VULKIT] Buffer is not mapped");
+    TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Buffer is not mapped");
     vmaUnmapMemory(m_Info.Allocator, m_Info.Allocation);
     m_Data = nullptr;
 }
@@ -181,8 +181,10 @@ void DeviceBuffer::Write(const void *p_Data, BufferCopy p_Info)
     if (p_Info.Size == VK_WHOLE_SIZE)
         p_Info.Size = m_Info.Size - p_Info.DstOffset;
 
-    TKIT_ASSERT(m_Data, "[VULKIT] Cannot copy to unmapped buffer");
-    TKIT_ASSERT(m_Info.Size >= p_Info.Size + p_Info.DstOffset, "[VULKIT] Buffer slice is smaller than the data size");
+    TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot copy to unmapped buffer");
+    TKIT_ASSERT(m_Info.Size >= p_Info.Size + p_Info.DstOffset,
+                "[VULKIT][DEVICE-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Info.Size,
+                p_Info.Size + p_Info.DstOffset);
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + p_Info.DstOffset;
     const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
@@ -196,7 +198,8 @@ void DeviceBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
 
 void DeviceBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                m_Info.InstanceCount);
 
     const VkDeviceSize size = m_Info.InstanceAlignedSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
@@ -211,8 +214,14 @@ void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const D
     copy.srcOffset = p_Info.SrcOffset;
     copy.size = p_Info.Size;
 
-    TKIT_ASSERT(p_Source.GetInfo().Size >= copy.size, "[VULKIT] Specified size exceeds source buffer size");
-    TKIT_ASSERT(m_Info.Size >= copy.size, "[VULKIT] Specified size exceeds destination buffer size");
+    TKIT_ASSERT(p_Source.GetInfo().Size - copy.srcOffset >= copy.size,
+                "[VULKIT][DEVICE-BUFFER] Specified size ({}) exceeds source buffer size ({})", copy.size,
+                p_Source.GetInfo().Size - copy.srcOffset);
+
+    TKIT_ASSERT(m_Info.Size - copy.dstOffset >= copy.size,
+                "[VULKIT][DEVICE-BUFFER] Specified size ({}) exceeds destination buffer size ({})", copy.size,
+                m_Info.Size - copy.dstOffset);
+
     m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
 }
 void DeviceBuffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
@@ -243,16 +252,32 @@ void DeviceBuffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const De
 
     // i know this is so futile, validation layers would already catch this but well...
     TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
-                "[VULKIT] 3D images cannot have multiple layers and array images cannot have depth > 1");
-    TKIT_ASSERT(cext.width <= width - off.x, "[VULKIT] Specified width exceeds source image width");
-    TKIT_ASSERT(cext.height <= height - off.y, "[VULKIT] Specified height exceeds source image height");
-    TKIT_ASSERT(cext.depth <= depth - off.z, "[VULKIT] Specified depth exceeds source image depth");
-    TKIT_ASSERT(m_Info.Size - p_Info.BufferOffset >=
-                    p_Source.ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
-                                         p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0,
-                                         cext.depth) *
-                        subr.layerCount,
-                "[VULKIT] Buffer is not large enough to fit image");
+                "[VULKIT][DEVICE-BUFFER] 3D images cannot have multiple layers and array images cannot have a depth "
+                "greather than 1. "
+                "Layers: {}, depth: {}",
+                subr.layerCount, info.Depth);
+
+    TKIT_ASSERT(cext.width <= width - off.x,
+                "[VULKIT][DEVICE-BUFFER] Specified width ({}) exceeds source image width ({})", width - off.x,
+                cext.width);
+    TKIT_ASSERT(cext.height <= height - off.x,
+                "[VULKIT][DEVICE-BUFFER] Specified height ({}) exceeds source image height ({})", height - off.x,
+                cext.width);
+    TKIT_ASSERT(cext.depth <= depth - off.x,
+                "[VULKIT][DEVICE-BUFFER] Specified depth ({}) exceeds source image depth ({})", depth - off.x,
+                cext.width);
+    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
+                "[VULKIT][DEVICE-BUFFER] 3D images cannot have multiple layers and array images cannot have depth > 1");
+#ifdef TKIT_ENABLE_ASSERTS
+    const VkDeviceSize bsize = m_Info.Size - p_Info.BufferOffset;
+    const VkDeviceSize isize =
+        p_Source.ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
+                             p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
+        subr.layerCount;
+
+    TKIT_ASSERT(bsize >= isize, "[VULKIT][DEVICE-BUFFER] Buffer of size {} is not large enough to fit image of size {}",
+                bsize, isize);
+#endif
     m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, 1, &copy);
 }
 
@@ -302,7 +327,7 @@ Result<> DeviceBuffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue
 
 Result<> DeviceBuffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
-    TKIT_ASSERT(m_Data, "[VULKIT] Cannot flush unmapped buffer");
+    TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot flush unmapped buffer");
     const VkResult result = vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to flush buffer memory");
@@ -310,13 +335,13 @@ Result<> DeviceBuffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Off
 }
 Result<> DeviceBuffer::FlushAt(const u32 p_Index)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds");
     return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
 Result<> DeviceBuffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize p_Offset)
 {
-    TKIT_ASSERT(m_Data, "[VULKIT] Cannot invalidate unmapped buffer");
+    TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot invalidate unmapped buffer");
     const VkResult result = vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
     if (result != VK_SUCCESS)
         return Result<>::Error(result, "Failed to invalidate buffer memory");
@@ -324,7 +349,7 @@ Result<> DeviceBuffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize 
 }
 Result<> DeviceBuffer::InvalidateAt(const u32 p_Index)
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds");
     return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
@@ -361,7 +386,8 @@ VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfo(const VkDeviceSize p_Size
 }
 VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfoAt(const u32 p_Index) const
 {
-    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT] Index out of bounds");
+    TKIT_ASSERT(p_Index < m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                m_Info.InstanceCount);
     return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 

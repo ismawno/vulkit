@@ -65,11 +65,12 @@
 
 #ifdef TKIT_ENABLE_DEBUG_LOGS
 #    define VKIT_LOG_RESULT_DEBUG(p_Result)                                                                            \
-        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
 #    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression)                                                                    \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
+            TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                               \
+                              VKit::ResultToString(__vkit_result));                                                    \
         }
 #else
 #    define VKIT_LOG_RESULT_DEBUG(p_Result) TKIT_UNUSED(p_Result)
@@ -78,11 +79,12 @@
 
 #ifdef TKIT_ENABLE_INFO_LOGS
 #    define VKIT_LOG_RESULT_INFO(p_Result)                                                                             \
-        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
 #    define VKIT_LOG_EXPRESSION_INFO(p_Expression)                                                                     \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));  \
+            TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                                \
+                             VKit::ResultToString(__vkit_result));                                                     \
         }
 #else
 #    define VKIT_LOG_RESULT_INFO(p_Result) TKIT_UNUSED(p_Result)
@@ -91,11 +93,11 @@
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
 #    define VKIT_LOG_RESULT_WARNING(p_Result)                                                                          \
-        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
 #    define VKIT_LOG_EXPRESSION_WARNING(p_Expression)                                                                  \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}",                                     \
+            TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                             \
                                 VKit::ResultToString(__vkit_result));                                                  \
         }
 #else
@@ -105,11 +107,12 @@
 
 #ifdef TKIT_ENABLE_ERROR_LOGS
 #    define VKIT_LOG_RESULT_ERROR(p_Result)                                                                            \
-        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
 #    define VKIT_LOG_EXPRESSION_ERROR(p_Expression)                                                                    \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result)); \
+            TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                               \
+                              VKit::ResultToString(__vkit_result));                                                    \
         }
 #else
 #    define VKIT_LOG_RESULT_ERROR(p_Result) TKIT_UNUSED(p_Result)
@@ -118,11 +121,12 @@
 
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_ASSERT_RESULT(p_Result)                                                                               \
-        TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT] {}", VKit::ResultToString(p_Result))
+        TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
 #    define VKIT_ASSERT_EXPRESSION(p_Expression)                                                                       \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT] {}", VKit::ResultToString(__vkit_result));        \
+            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                                      \
+                        VKit::ResultToString(__vkit_result));                                                          \
         }
 #else
 #    define VKIT_ASSERT_RESULT(p_Result) TKIT_UNUSED(p_Result)
@@ -164,8 +168,8 @@ template <typename T> auto ResultToString(const T &p_Result)
         return VkResultToString(p_Result);
     else
     {
-        TKIT_ASSERT(!p_Result, "[VULKIT] Only unsuccessful results make sense to be stringified");
-        return p_Result.GetError().ToString();
+        TKIT_ASSERT(!p_Result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
+        return p_Result ? "" : p_Result.GetError().ToString();
     }
 }
 } // namespace VKit

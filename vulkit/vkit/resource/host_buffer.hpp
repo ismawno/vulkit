@@ -2,7 +2,7 @@
 
 #ifndef VKIT_ENABLE_HOST_BUFFER
 #    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_HOST_BUFFER"
+        "[VULKIT][HOST-BUFFER] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_HOST_BUFFER"
 #endif
 
 #include "vkit/core/alias.hpp"
@@ -24,12 +24,14 @@ class HostBuffer
 
     const void *ReadAt(const u32 p_Index) const
     {
-        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT] Index out of bounds");
+        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                    m_InstanceCount);
         return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
     }
     void *ReadAt(const u32 p_Index)
     {
-        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT] Index out of bounds");
+        TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index,
+                    m_InstanceCount);
         return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
     }
 

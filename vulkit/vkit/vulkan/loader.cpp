@@ -7,7 +7,7 @@ namespace VKit::Vulkan
 #ifdef TKIT_ENABLE_ASSERTS
 template <typename T> static T validateFunction(const char *p_Name, T &&p_Function)
 {
-    TKIT_ASSERT(p_Function, "The function '{}' is not available for the device being used.", p_Name);
+    TKIT_ASSERT(p_Function, "[VULKIT][LOADER] The function '{}' is not available for the device being used.", p_Name);
     return p_Function;
 }
 #endif

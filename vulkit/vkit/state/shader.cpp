@@ -51,21 +51,6 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const u32 *p_Spirv, c
     return Result<Shader>::Ok(p_Device, module);
 }
 
-// bool Shader::MustCompile(const std::string_view p_SourcePath, const std::string_view p_SpirvPath)
-// {
-//     const fs::path sourcePath = p_SourcePath;
-//     const fs::path spvPath = p_SpirvPath;
-//
-//     TKIT_ASSERT(fs::exists(sourcePath), "[VULKIT] Source file does not exist");
-//
-//     if (!fs::exists(spvPath))
-//         return true;
-//
-//     const auto sourceTime = fs::last_write_time(sourcePath);
-//     const auto spvTime = fs::last_write_time(spvPath);
-//     return sourceTime > spvTime;
-// }
-
 void Shader::Destroy()
 {
     if (m_Module)

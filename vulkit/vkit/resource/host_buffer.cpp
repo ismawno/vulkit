@@ -15,7 +15,9 @@ void HostBuffer::Write(const void *p_Data, BufferCopy p_Info)
     if (p_Info.Size == VK_WHOLE_SIZE)
         p_Info.Size = m_Size - p_Info.DstOffset;
 
-    TKIT_ASSERT(m_Size >= p_Info.Size + p_Info.DstOffset, "[VULKIT] Buffer slice is smaller than the data size");
+    TKIT_ASSERT(m_Size >= p_Info.Size + p_Info.DstOffset,
+                "[VULKIT][HOST-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Size,
+                p_Info.Size + p_Info.DstOffset);
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + p_Info.DstOffset;
     const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
@@ -30,7 +32,7 @@ void HostBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
 
 void HostBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 {
-    TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT] Index out of bounds");
+    TKIT_ASSERT(p_Index < m_InstanceCount, "[VULKIT][HOST-BUFFER] Index is out of bounds: {} >= {}", p_Index, m_InstanceCount);
 
     const VkDeviceSize size = m_InstanceSize * p_Index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
