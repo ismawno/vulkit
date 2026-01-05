@@ -35,6 +35,48 @@ void DeletionQueue::Flush()
     m_Deleters.Clear();
 }
 
+const char *ErrorCodeToString(const ErrorCode p_Code)
+{
+    switch (p_Code)
+    {
+    case Error_VulkanError:
+        return "Vulkan error";
+    case Error_VulkanLibraryNotFound:
+        return "Vulkan library not found";
+    case Error_VulkanFunctionNotLoaded:
+        return "Vulkan function not loaded";
+    case Error_BadInput:
+        return "Bad input";
+    case Error_VersionMismatch:
+        return "Version mismatch";
+    case Error_NoSurfaceCapabilities:
+        return "No surface capabilities";
+    case Error_RejectedDevice:
+        return "Rejected device";
+    case Error_MissingQueue:
+        return "Missing queue";
+    case Error_MissingExtension:
+        return "Missing extension";
+    case Error_MissingFeature:
+        return "Missing feature";
+    case Error_MissingLayer:
+        return "Missing layer";
+    case Error_InsufficientMemory:
+        return "Insufficient memory";
+    case Error_NoDeviceFound:
+        return "No device found";
+    case Error_NoFormatSupported:
+        return "No supported format";
+    case Error_BadImageCount:
+        return "Bad image count";
+    case Error_FileNotFound:
+        return "File not found";
+    case Error_Unknown:
+        return "Unknown error";
+    }
+    return "Unknown error";
+}
+
 const char *VulkanResultToString(const VkResult p_Result)
 {
     switch (p_Result)
