@@ -153,8 +153,6 @@ Vulkit provides many more abstractions, slightly simpler than the ones presented
 
 - [pipelines and shaders](https://github.com/ismawno/vulkit/tree/main/vulkit/vkit/pipeline): Offers abstractions for both graphics and compute pipelines. Additionally, a `Shader` class is provided, capable of compiling GLSL shaders into SPIR-V format by invoking the `glslc` compiler.
 
-- [pipeline job](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/state/pipeline_job.hpp): Automates resource binding and push constant ranges for a graphics or compute pipeline.
-
 ## Dependencies and Third-Party Libraries
 
 Vulkit relies on Vulkan, VMA and shaderc to work. `CMake` will try to detect these dependencies for you and pull them locally if not found.

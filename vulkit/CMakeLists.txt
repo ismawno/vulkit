@@ -41,10 +41,6 @@ if(VULKIT_ENABLE_PIPELINE_LAYOUT)
   list(APPEND SOURCES vkit/state/pipeline_layout.cpp)
 endif()
 
-if(VULKIT_ENABLE_PIPELINE_JOB)
-  list(APPEND SOURCES vkit/state/pipeline_job.cpp)
-endif()
-
 if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
   list(APPEND SOURCES vkit/state/graphics_pipeline.cpp)
 endif()
@@ -106,10 +102,6 @@ endif()
 
 if(VULKIT_ENABLE_PIPELINE_LAYOUT)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_PIPELINE_LAYOUT)
-endif()
-
-if(VULKIT_ENABLE_PIPELINE_JOB)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_PIPELINE_JOB)
 endif()
 
 if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
