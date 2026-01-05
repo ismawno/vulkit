@@ -21,7 +21,7 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const
     const VkResult result =
         m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
-        return Result<PipelineLayout>::Error(result, "Failed to create pipeline layout");
+        return Result<PipelineLayout>::Error(result);
 
     PipelineLayout::Info info;
     info.DescriptorSetLayouts = m_DescriptorSetLayouts;

@@ -9,12 +9,19 @@ using namespace Detail;
 
 template <typename T> static std::string formatMessage(const VkResult p_Result, const T &p_Message)
 {
-    return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VkResultToString(p_Result), p_Message);
+    return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(p_Result), p_Message);
 }
 
 std::string Error::ToString() const
 {
-    return CheapMessage ? formatMessage(ErrorCode, CheapMessage) : formatMessage(ErrorCode, FormattedMessage);
+    std::string str = TKit::Format("[VULKIT] Error code: '{}'", ErrorCodeToString(m_ErrorCode));
+    if (m_ErrorCode == Error_VulkanError)
+        str += TKit::Format(" - Vulkan result: '{}'", VulkanResultToString(m_VkResult));
+    if (m_CheapMessage)
+        str += TKit::Format(" - Message: '{}'", m_CheapMessage);
+    else if (!m_FormattedMessage.empty())
+        str += TKit::Format(" - Message: '{}'", m_FormattedMessage);
+    return str;
 }
 
 void DeletionQueue::Push(std::function<void()> &&p_Deleter)
@@ -28,7 +35,7 @@ void DeletionQueue::Flush()
     m_Deleters.Clear();
 }
 
-const char *VkResultToString(const VkResult p_Result)
+const char *VulkanResultToString(const VkResult p_Result)
 {
     switch (p_Result)
     {
@@ -94,7 +101,7 @@ const char *VkResultToString(const VkResult p_Result)
     case VK_ERROR_INVALID_EXTERNAL_HANDLE:
         return "VK_ERROR_INVALID_EXTERNAL_HANDLE";
 
-#ifdef VK_KHR_surface
+#if defined(VK_KHR_surface)
     case VK_ERROR_SURFACE_LOST_KHR:
         return "VK_ERROR_SURFACE_LOST_KHR";
     case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:

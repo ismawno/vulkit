@@ -89,7 +89,7 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
     const VkResult result = m_Device.Table->CreateGraphicsPipelines(m_Device, m_Cache, 1, &pipelineInfo,
                                                                     m_Device.AllocationCallbacks, &pipeline);
     if (result != VK_SUCCESS)
-        return Result<GraphicsPipeline>::Error(result, "Failed to create graphics pipeline");
+        return Result<GraphicsPipeline>::Error(result);
 
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
@@ -102,9 +102,10 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<>);
 
     if (p_Builders.GetSize() != p_Pipelines.GetSize())
-        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must have the same size");
+        return Result<>::Error(Error_BadInput, TKit::Format("Specs size ({}) and pipelines ({}) size must be equal",
+                                                                p_Builders.GetSize(), p_Pipelines.GetSize()));
     if (p_Builders.GetSize() == 0)
-        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED, "Specs and pipelines must not be empty");
+        return Result<>::Error(Error_BadInput, "Specs and pipelines must not be empty");
 
     TKit::Array32<VkGraphicsPipelineCreateInfo> pipelineInfos;
     for (Builder &builder : p_Builders)
@@ -116,7 +117,7 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<
                                                                     p_Device.AllocationCallbacks, pipelines.GetData());
 
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to create graphics pipelines");
+        return Result<>::Error(result);
 
     for (u32 i = 0; i < count; ++i)
         p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i]);

@@ -96,13 +96,13 @@ class Queue
     Result<u64> GetCompletedSubmissionCount() const
     {
         return Result<u64>::Error(
-            VK_ERROR_FEATURE_NOT_PRESENT,
+            Error_MissingFeature,
             "To query completed submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     }
     Result<u64> GetPendingSubmissionCount() const
     {
         return Result<u64>::Error(
-            VK_ERROR_FEATURE_NOT_PRESENT,
+            Error_MissingFeature,
             "To query pending submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     }
     VkSemaphore GetTimelineSempahore() const

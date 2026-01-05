@@ -56,7 +56,7 @@ Result<Queue> Queue::Create(const LogicalDevice &p_Device, const VkQueue p_Queue
     VkSemaphore timeline;
     const VkResult result = info.Table.CreateSemaphore(p_Device, &cinfo, proxy.AllocationCallbacks, &timeline);
     if (result != VK_SUCCESS)
-        return Result<Queue>::Error(result, "Failed to create timeline semaphore");
+        return Result<Queue>::Error(result);
 
     return Queue{p_Device, p_Queue, p_Family, timeline};
 }
@@ -74,7 +74,7 @@ Result<u64> Queue::GetCompletedSubmissionCount() const
     const VkResult result = m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &count);
 #    endif
     if (result != VK_SUCCESS)
-        return Result<u64>::Error(result, "Failed to query semaphore counter value");
+        return Result<u64>::Error(result);
 
     return count;
 }
@@ -110,7 +110,7 @@ Result<u64> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
 
         const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
 
         m_SubmissionCount = signal;
         return signal;
@@ -118,7 +118,7 @@ Result<u64> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
 
     const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to submit to queue");
+        return Result<>::Error(result);
 
     m_SubmissionCount = signal;
     return signal;
@@ -133,7 +133,7 @@ Result<u64> Queue::Submit(const VkSubmitInfo &p_Info, const VkFence p_Fence)
 {
     const VkResult result = m_Device.Table->QueueSubmit(m_Queue, 1, &p_Info, p_Fence);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to submit to queue");
+        return Result<>::Error(result);
 
     return ++m_SubmissionCount;
 }
@@ -174,7 +174,7 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
         }
         const VkResult result = m_Device.Table->QueueSubmit(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
         m_SubmissionCount = signal;
         return signals;
     }
@@ -185,7 +185,7 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
 
         const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
         m_SubmissionCount = signal;
         return signals;
     }
@@ -194,7 +194,7 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
         signals[i] = ++signal;
     const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to submit to queue");
+        return Result<>::Error(result);
     m_SubmissionCount = signal;
     return signals;
 #endif
@@ -228,7 +228,7 @@ Result<u64> Queue::Submit(VkSubmitInfo2KHR p_Info, const VkFence p_Fence)
         const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
 #    endif
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
         m_SubmissionCount = signal;
         return Result<>::Ok();
     }
@@ -239,7 +239,7 @@ Result<u64> Queue::Submit(VkSubmitInfo2KHR p_Info, const VkFence p_Fence)
     const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, 1, &p_Info, p_Fence);
 #    endif
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to submit to queue");
+        return Result<>::Error(result);
 
     m_SubmissionCount = signal;
     return signal;
@@ -278,7 +278,7 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
         const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, infos.GetSize(), infos.GetData(), p_Fence);
 #    endif
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
 
         m_SubmissionCount = signal;
         return Result<>::Ok();
@@ -294,7 +294,7 @@ Result<TKit::Array<u64, MaxQueueSubmissions>> Queue::Submit(const TKit::Span<con
         const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
 #    endif
         if (result != VK_SUCCESS)
-            return Result<>::Error(result, "Failed to submit to queue");
+            return Result<>::Error(result);
         m_SubmissionCount = signal;
         return signals;
     }
@@ -305,7 +305,7 @@ Result<> Queue::WaitIdle() const
 {
     const VkResult result = m_Device.Table->QueueWaitIdle(m_Queue);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to wait for queue");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 } // namespace VKit

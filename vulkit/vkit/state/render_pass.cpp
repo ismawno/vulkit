@@ -11,7 +11,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyFramebuffer, Result<RenderPass>);
 
     if (m_Subpasses.IsEmpty())
-        return Result<RenderPass>::Error(VK_ERROR_INITIALIZATION_FAILED, "Render must have at least one subpass");
+        return Result<RenderPass>::Error(Error_BadInput, "Render must have at least one subpass");
 
     TKit::Array16<Attachment> attachments;
     TKit::Array16<VkAttachmentDescription> attDescriptions;
@@ -68,7 +68,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
     VkRenderPass renderPass;
     const VkResult result = proxy.Table->CreateRenderPass(proxy, &createInfo, proxy.AllocationCallbacks, &renderPass);
     if (result != VK_SUCCESS)
-        return Result<RenderPass>::Error(result, "Failed to create render pass");
+        return Result<RenderPass>::Error(result);
 
     RenderPass::Info info{};
     info.Allocator = m_Allocator;

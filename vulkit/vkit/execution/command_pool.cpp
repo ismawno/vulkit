@@ -24,7 +24,7 @@ Result<CommandPool> CommandPool::Create(const ProxyDevice &p_Device, const u32 p
     const VkResult result =
         p_Device.Table->CreateCommandPool(p_Device, &createInfo, p_Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
-        return Result<CommandPool>::Error(result, "Failed to create the command pool");
+        return Result<CommandPool>::Error(result);
 
     return Result<CommandPool>::Ok(p_Device, pool);
 }
@@ -49,7 +49,7 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffer
 
     const VkResult result = m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, p_CommandBuffers.GetData());
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to allocate command buffers");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const
@@ -76,7 +76,7 @@ Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const
 {
     const VkResult result = m_Device.Table->ResetCommandPool(m_Device, m_Pool, p_Flags);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to reset command pool");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 
@@ -93,7 +93,7 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
 
     const VkResult vkresult = m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo);
     if (vkresult != VK_SUCCESS)
-        return Result<VkCommandBuffer>::Error(vkresult, "Failed to begin command buffer");
+        return Result<VkCommandBuffer>::Error(vkresult);
 
     return commandBuffer;
 }
@@ -104,7 +104,7 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
     if (result != VK_SUCCESS)
     {
         Deallocate(p_CommandBuffer);
-        return Result<>::Error(result, "Failed to end command buffer");
+        return Result<>::Error(result);
     }
 
     VkSubmitInfo submitInfo{};
@@ -116,13 +116,13 @@ Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer p_CommandBuffe
     if (result != VK_SUCCESS)
     {
         Deallocate(p_CommandBuffer);
-        return Result<>::Error(result, "Failed to submit command buffer");
+        return Result<>::Error(result);
     }
 
     result = m_Device.Table->QueueWaitIdle(p_Queue);
     Deallocate(p_CommandBuffer);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to wait for queue to idle");
+        return Result<>::Error(result);
 
     return Result<>::Ok();
 }

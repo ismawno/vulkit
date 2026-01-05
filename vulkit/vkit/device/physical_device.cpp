@@ -266,31 +266,31 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
 
     VkResult result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, nullptr);
     if (result != VK_SUCCESS)
-        return Res::Error(result, "Failed to get the number of surface formats");
+        return Res::Error(result);
 
     result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount, nullptr);
     if (result != VK_SUCCESS)
-        return Res::Error(result, "Failed to get the number of present modes");
+        return Res::Error(result);
 
     if (formatCount == 0 || modeCount == 0)
-        return Res::Error(VK_ERROR_INITIALIZATION_FAILED, "No surface formats or present modes found");
+        return Res::Error(Error_NoSurfaceCapabilities);
 
     PhysicalDevice::SwapChainSupportDetails details;
     result = p_Table->GetPhysicalDeviceSurfaceCapabilitiesKHR(p_Device, p_Surface, &details.Capabilities);
     if (result != VK_SUCCESS)
-        return Res::Error(result, "Failed to get the surface capabilities");
+        return Res::Error(result);
 
     details.Formats.Resize(formatCount);
     details.PresentModes.Resize(modeCount);
 
     result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, details.Formats.GetData());
     if (result != VK_SUCCESS)
-        return Res::Error(result, "Failed to get the surface formats");
+        return Res::Error(result);
 
     result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount,
                                                               details.PresentModes.GetData());
     if (result != VK_SUCCESS)
-        return Res::Error(result, "Failed to get the present modes");
+        return Res::Error(result);
 
     return details;
 }
@@ -368,17 +368,18 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     const char *name = quickProperties.deviceName;
 
     if (m_Name && strcmp(m_Name, name) != 0)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_INCOMPATIBLE_DRIVER, "The device name '{}' does not match the requested name '{}'", name, m_Name));
+        return JudgeResult::Error(
+            Error_RejectedDevice,
+            TKit::Format("The device name '{}' does not match the requested name '{}'", name, m_Name));
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
                         "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
                         EXPAND_VERSION(m_RequestedApiVersion));
 
     if (quickProperties.apiVersion < m_RequiredApiVersion)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_INCOMPATIBLE_DRIVER, "The device '{}' does not support the required API version {}.{}.{}", name,
-            EXPAND_VERSION(m_RequiredApiVersion)));
+        return JudgeResult::Error(Error_VersionMismatch,
+                                  TKit::Format("The device '{}' does not support the required API version {}.{}.{}",
+                                               name, EXPAND_VERSION(m_RequiredApiVersion)));
 
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
@@ -388,13 +389,12 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     VkResult result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(result, "Failed to get the number of device extensions for the device: {}", name));
+            result, TKit::Format("Failed to get the number of device extensions for the device: {}", name));
 
     TKit::Array256<VkExtensionProperties> extensionsProps{extensionCount};
     result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(result, "Failed to get the device extensions for the device: {}", name));
+        return JudgeResult::Error(result, TKit::Format("Failed to get the device extensions for the device: {}", name));
 
     TKit::Array256<std::string> availableExtensions;
     for (const VkExtensionProperties &extension : extensionsProps)
@@ -404,9 +404,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     for (const std::string &extension : m_RequiredExtensions)
     {
         if (!contains(availableExtensions, extension))
-            return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                                        "The device '{}' does not support the required extension '{}'",
-                                                        name, extension));
+            return JudgeResult::Error(
+                Error_MissingExtension,
+                TKit::Format("The device '{}' does not support the required extension '{}'", name, extension));
         enabledExtensions.Append(extension);
     }
 
@@ -558,30 +558,30 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     };
 
     if (!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a graphics queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a graphics queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireComputeQueue, DeviceFlag_HasComputeQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a compute queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireTransferQueue, DeviceFlag_HasTransferQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a transfer queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a transfer queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequirePresentQueue, DeviceFlag_HasPresentQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a present queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a present queue", name));
 
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a dedicated compute queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a dedicated compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a dedicated transfer queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a dedicated transfer queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a separate compute queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a separate compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue))
-        return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' does not have a separate transfer queue", name));
+        return JudgeResult::Error(Error_MissingQueue,
+                                  TKit::Format("The device '{}' does not have a separate transfer queue", name));
 
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
@@ -590,9 +590,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfacePresentModesKHR, JudgeResult);
         VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceCapabilitiesKHR, JudgeResult);
         const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
-        if (!qresult)
-            return JudgeResult::Error(VKIT_FORMAT_ERROR(qresult.GetError().ErrorCode, "{}. Device: {}",
-                                                        qresult.GetError().GetMessage(), name));
+        TKIT_RETURN_ON_ERROR(qresult);
     }
 #endif
 
@@ -605,7 +603,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return JudgeResult::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+        return JudgeResult::Error(Error_MissingExtension,
                                   "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
@@ -670,31 +668,31 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
-                                                    "The device '{}' does not have the required core features", name));
+        return JudgeResult::Error(Error_MissingFeature,
+                                  TKit::Format("The device '{}' does not have the required core features", name));
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
         !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
         return JudgeResult::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
-                              "The device '{}' does not have the required Vulkan 1.1 or 1.2 features", name));
+            Error_MissingFeature,
+            TKit::Format("The device '{}' does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
     if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_FEATURE_NOT_PRESENT, "The device '{}' does not have the required Vulkan 1.3 features", name));
+        return JudgeResult::Error(Error_MissingFeature,
+                                  TKit::Format("The device '{}' does not have the required Vulkan 1.3 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_4
     if (!compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14))
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(
-            VK_ERROR_FEATURE_NOT_PRESENT, "The device '{}' does not have the required Vulkan 1.4 features", name));
+        return JudgeResult::Error(Error_MissingFeature,
+                                  TKit::Format("The device '{}' does not have the required Vulkan 1.4 features", name));
 #endif
     if (m_PreferredType != DeviceType(properties.Core.deviceType))
     {
         if (!checkFlags(DeviceSelectorFlag_AnyType))
-            return JudgeResult::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_DEVICE_LOST, "The device '{}' is not of the preferred type", name));
+            return JudgeResult::Error(Error_RejectedDevice,
+                                      TKit::Format("The device '{}' is not of the preferred type", name));
         fullySuitable = false;
     }
 
@@ -724,15 +722,15 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             hasRequiredMemory = true;
     }
     if (!hasDeviceLocalMemory)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY,
-                                                    "The device '{}' does not have device local memory", name));
+        return JudgeResult::Error(Error_InsufficientMemory,
+                                  TKit::Format("The device '{}' does not have device local memory", name));
     TKIT_LOG_WARNING_IF(!hasRequestedMemory,
                         "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {} bytes", name,
                         m_RequestedMemory);
     if (!hasRequiredMemory)
-        return JudgeResult::Error(VKIT_FORMAT_ERROR(VK_ERROR_OUT_OF_DEVICE_MEMORY,
-                                                    "The device '{}' does not have the required memory of {} bytes",
-                                                    name, m_RequiredMemory));
+        return JudgeResult::Error(
+            Error_InsufficientMemory,
+            TKit::Format("The device '{}' does not have the required memory of {} bytes", name, m_RequiredMemory));
 
     fullySuitable &= hasRequestedMemory;
     if (fullySuitable)
@@ -795,11 +793,10 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
 #ifdef VK_KHR_surface
     if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
         return EnumerateResult::Error(
-            VK_ERROR_INITIALIZATION_FAILED,
-            "The surface must be set if the instance is not headless (requires present queue)");
+            Error_BadInput, "The surface must be set if the instance is not headless (requires present queue)");
 #else
     if (m_Flags & DeviceSelectorFlag_RequirePresentQueue)
-        return EnumerateResult::Error(VK_ERROR_INITIALIZATION_FAILED,
+        return EnumerateResult::Error(Error_MissingExtension,
                                       "A present queue is not available with a device that does not support the "
                                       "surface extension. The instance must be headless");
 #endif
@@ -812,15 +809,15 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     u32 deviceCount = 0;
     VkResult result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr);
     if (result != VK_SUCCESS)
-        return EnumerateResult::Error(result, "Failed to get the number of physical devices");
+        return EnumerateResult::Error(result);
 
     vkdevices.Resize(deviceCount);
     result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData());
     if (result != VK_SUCCESS)
-        return EnumerateResult::Error(result, "Failed to get the physical devices");
+        return EnumerateResult::Error(result);
 
     if (vkdevices.IsEmpty())
-        return EnumerateResult::Error(VK_ERROR_DEVICE_LOST, "No physical devices found");
+        return EnumerateResult::Error(Error_NoDeviceFound);
 
     TKit::Array4<Result<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)

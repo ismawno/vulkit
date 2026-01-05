@@ -101,7 +101,7 @@ Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
         data = allocationInfo.pMappedData;
 
     if (result != VK_SUCCESS)
-        return Result<DeviceBuffer>::Error(result, "Failed to create buffer");
+        return Result<DeviceBuffer>::Error(result);
 
     return Result<DeviceBuffer>::Ok(m_Device, buffer, info, data);
 }
@@ -164,7 +164,7 @@ Result<> DeviceBuffer::Map()
     TKIT_ASSERT(!m_Data, "[VULKIT][DEVICE-BUFFER] Buffer is already mapped");
     const VkResult result = vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to map buffer memory");
+        return Result<>::Error(result);
 
     return Result<>::Ok();
 }
@@ -329,7 +329,7 @@ Result<> DeviceBuffer::Flush(const VkDeviceSize p_Size, const VkDeviceSize p_Off
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot flush unmapped buffer");
     const VkResult result = vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to flush buffer memory");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 Result<> DeviceBuffer::FlushAt(const u32 p_Index)
@@ -343,7 +343,7 @@ Result<> DeviceBuffer::Invalidate(const VkDeviceSize p_Size, const VkDeviceSize 
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot invalidate unmapped buffer");
     const VkResult result = vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, p_Offset, p_Size);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to invalidate buffer memory");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 Result<> DeviceBuffer::InvalidateAt(const u32 p_Index)

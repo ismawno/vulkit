@@ -10,8 +10,7 @@ Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKH
         for (const VkSurfaceFormatKHR &supported : p_Supported)
             if (desired.format == supported.format && desired.colorSpace == supported.colorSpace)
                 return Result<VkSurfaceFormatKHR>::Ok(desired);
-    return Result<VkSurfaceFormatKHR>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED,
-                                             "No desired format that is supported found");
+    return Result<VkSurfaceFormatKHR>::Error(Error_NoFormatSupported);
 }
 
 Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
@@ -21,8 +20,7 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
         for (const VkPresentModeKHR &supported : p_Supported)
             if (desired == supported)
                 return desired;
-    return Result<VkPresentModeKHR>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED,
-                                           "No desired present mode that is supported found");
+    return Result<VkPresentModeKHR>::Error(Error_NoFormatSupported);
 }
 
 Result<SwapChain> SwapChain::Builder::Build() const
@@ -35,10 +33,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
 
     const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
-    if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX)
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No graphics queue found");
-    if (devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
-        return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, "No present queue found");
+    if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX || devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
+        return Result<SwapChain>::Error(Error_MissingQueue);
 
     const auto checkFlags = [this](const SwapChainBuilderFlags p_Flags) -> bool { return m_Flags & p_Flags; };
 
@@ -83,7 +79,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
             imageCount = m_RequiredImages;
             const char *error = badImageCount(imageCount);
             if (error)
-                return Result<SwapChain>::Error(VK_ERROR_INITIALIZATION_FAILED, error);
+                return Result<SwapChain>::Error(Error_BadImageCount, error);
         }
     }
 
@@ -143,7 +139,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     VkSwapchainKHR swapChain;
     VkResult result = proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain);
     if (result != VK_SUCCESS)
-        return Result<SwapChain>::Error(result, "Failed to create the swap chain");
+        return Result<SwapChain>::Error(result);
 
     TKit::Array8<DeviceImage> finalImages;
     SwapChain::Info info{};
@@ -166,7 +162,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
     {
         earlyDestroy();
-        return Result<SwapChain>::Error(result, "Failed to get the swap chain images count");
+        return Result<SwapChain>::Error(result);
     }
 
     TKit::Array8<VkImage> images;
@@ -176,7 +172,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
     {
         earlyDestroy();
-        return Result<SwapChain>::Error(result, "Failed to get the swap chain images");
+        return Result<SwapChain>::Error(result);
     }
 
     finalImages.Resize(imageCount);
@@ -205,7 +201,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
             if (result != VK_SUCCESS)
             {
                 earlyDestroy();
-                return Result<SwapChain>::Error(result, "Failed to create the image view");
+                return Result<SwapChain>::Error(result);
             }
         }
         finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};

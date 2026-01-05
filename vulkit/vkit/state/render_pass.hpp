@@ -193,7 +193,7 @@ class RenderPass
      */
     template <typename F>
     VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
-                                                    u32 p_FrameBufferLayers = 1)
+                                                      u32 p_FrameBufferLayers = 1)
     {
         Resources resources;
         resources.m_Device = m_Device;
@@ -230,7 +230,7 @@ class RenderPass
             if (result != VK_SUCCESS)
             {
                 resources.Destroy();
-                return Result<Resources>::Error(result, "Failed to create the frame buffer");
+                return Result<Resources>::Error(result);
             }
 
             resources.m_FrameBuffers.Append(frameBuffer);

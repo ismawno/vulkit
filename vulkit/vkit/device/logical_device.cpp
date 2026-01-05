@@ -50,9 +50,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         const u32 requestedCount = priorities.RequestedPriorities.GetSize();
         if (requiredCount > family.queueCount)
             return Result<LogicalDevice>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_FEATURE_NOT_PRESENT,
-                                  "The required queue count for the family index {} exceeds its queue count. {} > {}",
-                                  index, requiredCount, family.queueCount));
+                Error_RejectedDevice,
+                TKit::Format("The required queue count for the family index {} exceeds its queue count. {} >= {}",
+                             index, requiredCount, family.queueCount));
 
         TKit::Array32<f32> &fp = finalPriorities.Append();
 
@@ -98,7 +98,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return Result<LogicalDevice>::Error(VK_ERROR_EXTENSION_NOT_PRESENT,
+        return Result<LogicalDevice>::Error(Error_MissingExtension,
                                             "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
@@ -137,7 +137,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const VkResult result =
         itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
     if (result != VK_SUCCESS)
-        return Result<LogicalDevice>::Error(result, "Failed to create the logical device");
+        return Result<LogicalDevice>::Error(result);
 
     const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
     VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, Result<LogicalDevice>);
@@ -145,8 +145,8 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     if (!table.vkGetDeviceQueue)
     {
         table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
-        return Result<LogicalDevice>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: "
-                                                                          "vkGetDeviceQueue");
+        return Result<LogicalDevice>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: "
+                                                                               "vkGetDeviceQueue");
     }
 
     info.Instance = *m_Instance;
@@ -198,7 +198,7 @@ Result<> LogicalDevice::WaitIdle(const ProxyDevice &p_Device)
 {
     const VkResult result = p_Device.Table->DeviceWaitIdle(p_Device);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to wait for device");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 Result<> LogicalDevice::WaitIdle() const
@@ -229,7 +229,7 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
         if (p_Tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & p_Features) == p_Features)
             return format;
     }
-    return Result<VkFormat>::Error(VK_ERROR_FORMAT_NOT_SUPPORTED, "No supported format found");
+    return Result<VkFormat>::Error(Error_NoFormatSupported);
 }
 
 ProxyDevice LogicalDevice::CreateProxy() const

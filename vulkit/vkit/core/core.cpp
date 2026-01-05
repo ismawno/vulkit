@@ -97,9 +97,9 @@ Result<> Core::Initialize(const char *p_LoaderPath)
     attempt("vulkan.dll");
 #endif
     if (!s_Library)
-        return Result<>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                               "Failed to load Vulkan library. All attempts have been exhausted. You may try "
-                               "specifying a custom path for the vulkan library");
+        return Result<>::Error(Error_VulkanLibraryNotFound,
+                               "Failed to load the vulkan library. All attempts have been exhausted. You may try "
+                               "specifying a custom path for it");
 
     Vulkan::Load(s_Library);
 
@@ -110,22 +110,22 @@ Result<> Core::Initialize(const char *p_LoaderPath)
     VkResult result;
     result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to get the number of instance extensions");
+        return Result<>::Error(result);
 
     AvailableExtensions.Resize(extensionCount);
     result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, AvailableExtensions.GetData());
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to get the instance extensions");
+        return Result<>::Error(result);
 
     u32 layerCount = 0;
     result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to get the number of instance layers");
+        return Result<>::Error(result);
 
     AvailableLayers.Resize(layerCount);
     result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, AvailableLayers.GetData());
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to get the instance layers");
+        return Result<>::Error(result);
 
     return Result<>::Ok();
 }

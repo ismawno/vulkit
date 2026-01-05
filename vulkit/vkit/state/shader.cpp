@@ -21,8 +21,7 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
 
     std::ifstream file{p_SpirvPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
-        return Result<Shader>::Error(
-            VKIT_FORMAT_ERROR(VK_ERROR_INITIALIZATION_FAILED, "File at path '{}' not found", p_SpirvPath));
+        return Result<Shader>::Error(Error_FileNotFound, TKit::Format("File at path '{}' not found", p_SpirvPath));
 
     const auto fileSize = file.tellg();
 
@@ -46,7 +45,7 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const u32 *p_Spirv, c
     const VkResult result =
         p_Device.Table->CreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
     if (result != VK_SUCCESS)
-        return Result<Shader>::Error(result, "Failed to create shader module");
+        return Result<Shader>::Error(result);
 
     return Result<Shader>::Ok(p_Device, module);
 }

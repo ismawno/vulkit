@@ -67,15 +67,16 @@ Result<Instance> Instance::Builder::Build() const
         u32 version;
         const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
-            return Result<u32>::Error(result, "Failed to get the vulkan instance version");
+            return Result<u32>::Error(result);
 #else
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
         if (version < p_Version)
-            return Result<u32>::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_INCOMPATIBLE_DRIVER,
-                "The vulkan instance version {}.{}.{} found is not supported. The required version is {}.{}.{}",
-                EXPAND_VERSION(version), EXPAND_VERSION(p_Version)));
+            return Result<u32>::Error(
+                Error_VersionMismatch,
+                TKit::Format(
+                    "The vulkan instance version {}.{}.{} found is not supported. The required version is {}.{}.{}",
+                    EXPAND_VERSION(version), EXPAND_VERSION(p_Version)));
 
         return p_IsRequested ? p_Version : version;
     };
@@ -99,13 +100,13 @@ Result<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequiredExtensions)
         if (!Core::IsExtensionSupported(extension))
-            return Result<Instance>::Error(VKIT_FORMAT_ERROR(VK_ERROR_EXTENSION_NOT_PRESENT,
-                                                             "The required extension '{}' is not suported", extension));
+            return Result<Instance>::Error(Error_MissingExtension,
+                                           TKit::Format("The required extension '{}' is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!Core::IsLayerSupported(layer))
-            return Result<Instance>::Error(
-                VKIT_FORMAT_ERROR(VK_ERROR_LAYER_NOT_PRESENT, "The required layer '{}' is not suported", layer));
+            return Result<Instance>::Error(Error_MissingLayer,
+                                           TKit::Format("The required layer '{}' is not suported", layer));
 
     TKit::Array64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
@@ -140,7 +141,7 @@ Result<Instance> Instance::Builder::Build() const
             Core::IsExtensionSupported("VK_EXT_debug_utils") && Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
-            return Result<Instance>::Error(VK_ERROR_LAYER_NOT_PRESENT,
+            return Result<Instance>::Error(Error_MissingLayer,
                                            "Validation layers (along with the debug utils extension) are not suported");
 
         TKIT_LOG_WARNING_IF(
@@ -177,9 +178,9 @@ Result<Instance> Instance::Builder::Build() const
         };
 
         const auto generateError = [](const char *p_Extension) -> Result<Instance> {
-            return Result<Instance>::Error(VKIT_FORMAT_ERROR(
-                VK_ERROR_EXTENSION_NOT_PRESENT,
-                "The extension {}, required for windowing capabilities, is not suported", p_Extension));
+            return Result<Instance>::Error(
+                Error_MissingExtension,
+                TKit::Format("The extension '{}', required for windowing capabilities, is not suported", p_Extension));
         };
 
         if (!checkWindowingSupport("VK_KHR_surface"))
@@ -250,7 +251,7 @@ Result<Instance> Instance::Builder::Build() const
     VkInstance vkinstance;
     VkResult result = Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
-        return Result<Instance>::Error(result, "Failed to create the vulkan instance");
+        return Result<Instance>::Error(result);
 
     const Vulkan::InstanceTable table = Vulkan::InstanceTable::Create(vkinstance);
 
@@ -263,21 +264,21 @@ Result<Instance> Instance::Builder::Build() const
         if (!table.vkCreateDebugUtilsMessengerEXT || !table.vkDestroyDebugUtilsMessengerEXT)
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan functions: "
-                                                                         "vkCreate/DestroyDebugUtilsMessengerEXT");
+            return Result<Instance>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan functions: "
+                                                                              "vkCreate/DestroyDebugUtilsMessengerEXT");
         }
         result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(result, "Failed to create the debug messenger");
+            return Result<Instance>::Error(result);
         }
     }
 #else
     if (validationLayers)
     {
         table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-        return Result<Instance>::Error(VK_ERROR_LAYER_NOT_PRESENT,
+        return Result<Instance>::Error(Error_MissingLayer,
                                        "Validation layers (along with the debug utils extension) are not suported");
     }
 #endif

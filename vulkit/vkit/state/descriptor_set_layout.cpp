@@ -18,7 +18,7 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
     const VkResult result =
         m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
     if (result != VK_SUCCESS)
-        return Result<DescriptorSetLayout>::Error(result, "Failed to create descriptor set layout");
+        return Result<DescriptorSetLayout>::Error(result);
     return Result<DescriptorSetLayout>::Ok(m_Device, layout, m_Bindings);
 }
 

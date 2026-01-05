@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
 #include "tkit/container/array.hpp"
 #include "tkit/preprocessor/utils.hpp"
@@ -120,9 +121,9 @@
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_CHECK_RESULT(p_Result)                                                                               \
+#    define VKIT_CHECK_RESULT(p_Result)                                                                                \
         TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
-#    define VKIT_CHECK_EXPRESSION(p_Expression)                                                                       \
+#    define VKIT_CHECK_EXPRESSION(p_Expression)                                                                        \
         {                                                                                                              \
             const auto __vkit_result = p_Expression;                                                                   \
             TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                                      \
@@ -133,16 +134,14 @@
 #    define VKIT_CHECK_EXPRESSION(p_Expression) p_Expression
 #endif
 
-#define VKIT_FORMAT_ERROR(p_Result, ...) VKit::Detail::Error(p_Result, TKit::Format(__VA_ARGS__))
-
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)                                                     \
         if (!VKit::Vulkan::p_Func)                                                                                     \
-        return p_Result::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: " #p_Func)
+        return p_Result::Error(VKit::Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: " #p_Func)
 
 #    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)                                             \
         if (!p_Table->p_Func)                                                                                          \
-        return p_Result::Error(VK_ERROR_INCOMPATIBLE_DRIVER, "Failed to load Vulkan function: " #p_Func)
+        return p_Result::Error(VKit::Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: " #p_Func)
 #else
 #    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)
 #    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)
@@ -150,7 +149,29 @@
 
 namespace VKit
 {
-const char *VkResultToString(VkResult p_Result);
+enum ErrorCode : u8
+{
+    Error_VulkanError,
+    Error_VulkanLibraryNotFound,
+    Error_VulkanFunctionNotLoaded,
+    Error_BadInput,
+    Error_VersionMismatch,
+    Error_NoSurfaceCapabilities,
+    Error_RejectedDevice,
+    Error_MissingQueue,
+    Error_MissingExtension,
+    Error_MissingFeature,
+    Error_MissingLayer,
+    Error_InsufficientMemory,
+    Error_NoDeviceFound,
+    Error_NoFormatSupported,
+    Error_BadImageCount,
+    Error_FileNotFound,
+    Error_Unknown,
+};
+
+const char *VulkanResultToString(VkResult p_Result);
+const char *ErrorCodeToString(ErrorCode p_Code);
 
 template <typename T> bool IsSuccessful(const T &p_Result)
 {
@@ -165,40 +186,65 @@ template <typename T> auto ResultToString(const T &p_Result)
 {
     using TT = std::remove_cvref_t<T>;
     if constexpr (std::same_as<TT, VkResult>)
-        return VkResultToString(p_Result);
+        return VulkanResultToString(p_Result);
     else
     {
         TKIT_ASSERT(!p_Result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
-        return p_Result ? "" : p_Result.GetError().ToString();
+        return p_Result ? "Success" : p_Result.GetError().ToString();
     }
 }
 } // namespace VKit
 namespace VKit::Detail
 {
-struct Error
+class Error
 {
+  public:
     Error() = default;
-    Error(const VkResult p_Error, const std::string &p_Message) : ErrorCode(p_Error), FormattedMessage(p_Message)
+    Error(const ErrorCode p_Code, const std::string &p_Message) : m_FormattedMessage(p_Message), m_ErrorCode(p_Code)
     {
     }
-    Error(const VkResult p_Error, const char *p_Message) : ErrorCode(p_Error), CheapMessage(p_Message)
+    Error(const ErrorCode p_Code, const char *p_Message) : m_CheapMessage(p_Message), m_ErrorCode(p_Code)
+    {
+    }
+    Error(const VkResult p_Result, const std::string &p_Message)
+        : m_FormattedMessage(p_Message), m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
+    {
+    }
+    Error(const VkResult p_Result, const char *p_Message)
+        : m_CheapMessage(p_Message), m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
+    {
+    }
+    Error(const ErrorCode p_Code) : m_ErrorCode(p_Code)
+    {
+    }
+    Error(const VkResult p_Result) : m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
     {
     }
 
     std::string ToString() const;
     std::string GetMessage() const
     {
-        return CheapMessage ? CheapMessage : FormattedMessage;
+        return m_CheapMessage ? m_CheapMessage : m_FormattedMessage;
+    }
+
+    VkResult GetVulkanResult() const
+    {
+        return m_VkResult;
+    }
+    ErrorCode GetErrorCode() const
+    {
+        return m_ErrorCode;
     }
 
     operator VkResult() const
     {
-        return ErrorCode;
+        return m_VkResult;
     }
 
-    VkResult ErrorCode{};
-    const char *CheapMessage = nullptr;
-    std::string FormattedMessage{};
+    const char *m_CheapMessage = nullptr;
+    std::string m_FormattedMessage{};
+    ErrorCode m_ErrorCode = Error_Unknown;
+    VkResult m_VkResult = VK_SUCCESS;
 };
 } // namespace VKit::Detail
 

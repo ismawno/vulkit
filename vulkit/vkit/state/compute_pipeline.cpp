@@ -7,11 +7,9 @@ namespace VKit
 static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs)
 {
     if (!p_Specs.Layout)
-        return Result<VkComputePipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                                          "Pipeline layout must be provided");
+        return Result<VkComputePipelineCreateInfo>::Error(Error_BadInput, "Pipeline layout must be provided");
     if (!p_Specs.ComputeShader)
-        return Result<VkComputePipelineCreateInfo>::Error(VK_ERROR_INITIALIZATION_FAILED,
-                                                          "Compute shader must be provided");
+        return Result<VkComputePipelineCreateInfo>::Error(Error_BadInput, "Compute shader must be provided");
 
     VkComputePipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -39,7 +37,7 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, con
     const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo,
                                                                    p_Device.AllocationCallbacks, &pipeline);
     if (result != VK_SUCCESS)
-        return Result<ComputePipeline>::Error(result, "Failed to create compute pipeline");
+        return Result<ComputePipeline>::Error(result);
 
     return Result<ComputePipeline>::Ok(p_Device, pipeline);
 }
@@ -64,7 +62,7 @@ Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<c
                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
 
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to create compute pipelines");
+        return Result<>::Error(result);
 
     for (u32 i = 0; i < count; ++i)
         p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i]);

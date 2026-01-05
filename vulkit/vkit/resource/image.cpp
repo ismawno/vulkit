@@ -124,7 +124,7 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
 
     const VkResult result = vmaCreateImage(m_Allocator, &m_ImageInfo, &allocInfo, &image, &allocation, nullptr);
     if (result != VK_SUCCESS)
-        return Result<DeviceImage>::Error(result, "Failed to create image");
+        return Result<DeviceImage>::Error(result);
 
     Info info;
     info.Allocator = m_Allocator;
@@ -153,7 +153,7 @@ Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &p_
     const VkResult result =
         m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &m_ImageView);
     if (result != VK_SUCCESS)
-        return Result<VkImageView>::Error(result, "Failed to create image view");
+        return Result<VkImageView>::Error(result);
     return m_ImageView;
 }
 

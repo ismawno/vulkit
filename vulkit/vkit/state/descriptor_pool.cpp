@@ -24,7 +24,7 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const
     const VkResult result =
         m_Device.Table->CreateDescriptorPool(m_Device, &poolInfo, m_Device.AllocationCallbacks, &pool);
     if (result != VK_SUCCESS)
-        return Result<DescriptorPool>::Error(result, "Failed to create descriptor pool");
+        return Result<DescriptorPool>::Error(result);
 
     DescriptorPool::Info info{};
     info.MaxSets = m_MaxSets;
@@ -53,7 +53,7 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
 
     const VkResult result = m_Device.Table->AllocateDescriptorSets(m_Device, &allocInfo, &set);
     if (result != VK_SUCCESS)
-        return Result<DescriptorSet>::Error(result, "Failed to allocate descriptor set");
+        return Result<DescriptorSet>::Error(result);
 
     return DescriptorSet::Create(m_Device, set);
 }
@@ -62,7 +62,7 @@ Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Se
 {
     const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 
@@ -70,7 +70,7 @@ Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const
 {
     const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 
@@ -78,7 +78,7 @@ Result<> DescriptorPool::Reset()
 {
     const VkResult result = m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, 0);
     if (result != VK_SUCCESS)
-        return Result<>::Error(result, "Failed to deallocate descriptor sets");
+        return Result<>::Error(result);
     return Result<>::Ok();
 }
 
