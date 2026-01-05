@@ -40,41 +40,41 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
     switch (p_Code)
     {
     case Error_VulkanError:
-        return "Vulkan error";
+        return "VulkanError";
     case Error_VulkanLibraryNotFound:
-        return "Vulkan library not found";
+        return "VulkanLibraryNotFound";
     case Error_VulkanFunctionNotLoaded:
-        return "Vulkan function not loaded";
+        return "VulkanFunctionNotLoaded";
     case Error_BadInput:
-        return "Bad input";
+        return "BadInput";
     case Error_VersionMismatch:
-        return "Version mismatch";
+        return "VersionMismatch";
     case Error_NoSurfaceCapabilities:
-        return "No surface capabilities";
+        return "NoSurfaceCapabilities";
     case Error_RejectedDevice:
-        return "Rejected device";
+        return "RejectedDevice";
     case Error_MissingQueue:
-        return "Missing queue";
+        return "MissingQueue";
     case Error_MissingExtension:
-        return "Missing extension";
+        return "MissingExtension";
     case Error_MissingFeature:
-        return "Missing feature";
+        return "MissingFeature";
     case Error_MissingLayer:
-        return "Missing layer";
+        return "MissingLayer";
     case Error_InsufficientMemory:
-        return "Insufficient memory";
+        return "InsufficientMemory";
     case Error_NoDeviceFound:
-        return "No device found";
+        return "NoDeviceFound";
     case Error_NoFormatSupported:
-        return "No supported format";
+        return "NoFormatSupported";
     case Error_BadImageCount:
-        return "Bad image count";
+        return "BadImageCount";
     case Error_FileNotFound:
-        return "File not found";
+        return "FileNotFound";
     case Error_Unknown:
-        return "Unknown error";
+        return "Unknown";
     }
-    return "Unknown error";
+    return "Unknown";
 }
 
 const char *VulkanResultToString(const VkResult p_Result)
