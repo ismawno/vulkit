@@ -88,7 +88,10 @@ Result<u64> Queue::GetPendingSubmissionCount() const
 void Queue::DestroyTimeline()
 {
     if (m_Timeline)
+    {
         m_Device.Table->DestroySemaphore(m_Device, m_Timeline, m_Device.AllocationCallbacks);
+        m_Timeline = VK_NULL_HANDLE;
+    }
 }
 
 Result<u64> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
