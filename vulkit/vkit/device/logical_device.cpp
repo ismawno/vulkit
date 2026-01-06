@@ -146,7 +146,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     {
         table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
         return Result<LogicalDevice>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: "
-                                                                               "vkGetDeviceQueue");
+                                                                           "vkGetDeviceQueue");
     }
 
     info.Instance = *m_Instance;
@@ -189,6 +189,9 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
+        for (const auto &queues : m_Info.Queues)
+            for (Queue *q : queues)
+                q->DestroyTimeline();
         m_Info.Table.DestroyDevice(m_Device, m_Info.Instance.GetInfo().AllocationCallbacks);
         m_Device = VK_NULL_HANDLE;
     }

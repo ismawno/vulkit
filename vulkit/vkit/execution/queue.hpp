@@ -80,7 +80,9 @@ class Queue
         return m_Queue != VK_NULL_HANDLE;
     }
 
-#ifdef VK_KHR_timeline_semaphore
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_timeline_semaphore)
+    void DestroyTimeline();
+
     Result<u64> GetCompletedSubmissionCount() const;
     Result<u64> GetPendingSubmissionCount() const;
 
@@ -93,6 +95,9 @@ class Queue
         return m_Timeline != VK_NULL_HANDLE;
     }
 #else
+    void DestroyTimeline()
+    {
+    }
     Result<u64> GetCompletedSubmissionCount() const
     {
         return Result<u64>::Error(

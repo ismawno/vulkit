@@ -65,7 +65,7 @@ Result<u64> Queue::GetCompletedSubmissionCount() const
 {
     if (!m_Timeline)
         return Result<u64>::Error(
-            VK_ERROR_FEATURE_NOT_PRESENT,
+            Error_MissingFeature,
             "To query completed submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
     u64 count;
 #    ifdef VKIT_API_VERSION_1_2
@@ -83,6 +83,12 @@ Result<u64> Queue::GetPendingSubmissionCount() const
     const auto result = GetCompletedSubmissionCount();
     TKIT_RETURN_ON_ERROR(result);
     return m_SubmissionCount - result.GetValue();
+}
+
+void Queue::DestroyTimeline()
+{
+    if (m_Timeline)
+        m_Device.Table->DestroySemaphore(m_Device, m_Timeline, m_Device.AllocationCallbacks);
 }
 
 Result<u64> Queue::Submit(VkSubmitInfo p_Info, const VkFence p_Fence)
