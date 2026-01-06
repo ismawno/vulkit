@@ -37,8 +37,8 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     TKit::Array8<TKit::Array32<f32>> finalPriorities;
 
     Info info{};
-    TKit::FixedArray4<u32> queueCounts;
-    for (u32 i = 0; i < queueCounts.GetSize(); ++i)
+    TKit::FixedArray<u32, Queue_Count> queueCounts;
+    for (u32 i = 0; i < Queue_Count; ++i)
         queueCounts[i] = 0;
 
     for (u32 index = 0; index < m_Priorities.GetSize(); ++index)

@@ -7,6 +7,7 @@
 
 #include "tkit/container/array.hpp"
 #include "vkit/vulkan/instance.hpp"
+#include "vkit/execution/queue.hpp"
 
 namespace VKit
 {
@@ -170,7 +171,7 @@ class PhysicalDevice
 
         u32 ApiVersion;
 
-        TKit::FixedArray4<u32> FamilyIndices;
+        TKit::FixedArray<u32, Queue_Count> FamilyIndices;
         TKit::Array8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated

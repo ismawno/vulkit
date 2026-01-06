@@ -9,10 +9,11 @@ namespace VKit
 {
 enum QueueType : u32
 {
-    Queue_Graphics = 0,
-    Queue_Compute = 1,
-    Queue_Transfer = 2,
-    Queue_Present = 3,
+    Queue_Graphics,
+    Queue_Compute,
+    Queue_Transfer,
+    Queue_Present,
+    Queue_Count,
 };
 
 const char *ToString(QueueType p_Type);

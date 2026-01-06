@@ -168,6 +168,7 @@ enum ErrorCode : u8
     Error_BadImageCount,
     Error_FileNotFound,
     Error_Unknown,
+    Error_Count
 };
 
 const char *VulkanResultToString(VkResult p_Result);

@@ -49,7 +49,7 @@ class LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-        TKit::FixedArray4<TKit::Array<Queue *, MaxQueueCount>> Queues;
+        TKit::FixedArray<TKit::Array<Queue *, MaxQueueCount>, Queue_Count> Queues;
     };
 
     LogicalDevice() = default;
@@ -67,8 +67,8 @@ class LogicalDevice
 #ifdef VK_KHR_surface
     VKIT_NO_DISCARD Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
 #endif
-    VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates, VkImageTiling p_Tiling,
-                                                       VkFormatFeatureFlags p_Features) const;
+    VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates,
+                                                         VkImageTiling p_Tiling, VkFormatFeatureFlags p_Features) const;
 
     VKIT_NO_DISCARD static Result<> WaitIdle(const ProxyDevice &p_Device);
     VKIT_NO_DISCARD Result<> WaitIdle() const;
