@@ -14,6 +14,7 @@ namespace VKit
 class HostBuffer
 {
   public:
+    HostBuffer() = default;
     HostBuffer(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize,
                VkDeviceSize p_Alignment = alignof(std::max_align_t));
 
