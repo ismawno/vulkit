@@ -41,8 +41,6 @@ void HostBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 
 void HostBuffer::Resize(const VkDeviceSize p_InstanceCount)
 {
-    if (p_InstanceCount <= m_InstanceCount)
-        return;
     const VkDeviceSize size = p_InstanceCount * m_InstanceSize;
     void *data = TKit::Memory::AllocateAligned(size, m_Alignment);
     TKit::Memory::ForwardCopy(data, m_Data, m_Size);
