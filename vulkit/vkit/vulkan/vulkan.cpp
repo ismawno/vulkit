@@ -73,6 +73,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "FileNotFound";
     case Error_Unknown:
         return "Unknown";
+    default:
+        return "Unknown";
     }
     return "Unknown";
 }
