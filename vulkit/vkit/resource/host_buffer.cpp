@@ -48,6 +48,7 @@ void HostBuffer::Resize(const VkDeviceSize p_InstanceCount)
     TKit::Memory::ForwardCopy(data, m_Data, m_Size);
     TKit::Memory::DeallocateAligned(m_Data);
     m_Size = size;
+    m_InstanceCount = p_InstanceCount;
 }
 
 void HostBuffer::Destroy()
