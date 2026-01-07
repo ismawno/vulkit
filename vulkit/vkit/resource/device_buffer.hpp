@@ -188,8 +188,8 @@ class DeviceBuffer
 
     void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkBuffer p_Buffer, VkDeviceSize p_Offset = 0) const;
 
-    VkDescriptorBufferInfo GetDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
-    VkDescriptorBufferInfo GetDescriptorInfoAt(u32 p_Index) const;
+    VkDescriptorBufferInfo CreateDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
+    VkDescriptorBufferInfo CreateDescriptorInfoAt(u32 p_Index) const;
 
     const ProxyDevice &GetDevice() const
     {

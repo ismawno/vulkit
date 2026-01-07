@@ -60,7 +60,7 @@ void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorB
 
 void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const DeviceBuffer &p_Buffer)
 {
-    WriteBuffer(p_Binding, p_Buffer.GetDescriptorInfo());
+    WriteBuffer(p_Binding, p_Buffer.CreateDescriptorInfo());
 }
 
 void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo)

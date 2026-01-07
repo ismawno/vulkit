@@ -375,7 +375,7 @@ void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, con
     m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
 }
 
-VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const
+VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const
 {
     VkDescriptorBufferInfo info{};
     info.buffer = m_Buffer;
@@ -383,10 +383,10 @@ VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfo(const VkDeviceSize p_Size
     info.range = p_Size;
     return info;
 }
-VkDescriptorBufferInfo DeviceBuffer::GetDescriptorInfoAt(const u32 p_Index) const
+VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfoAt(const u32 p_Index) const
 {
     TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return GetDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
+    return CreateDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * p_Index);
 }
 
 } // namespace VKit
