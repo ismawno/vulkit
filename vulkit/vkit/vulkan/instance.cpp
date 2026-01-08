@@ -3,9 +3,6 @@
 #include "vkit/vulkan/instance.hpp"
 #include "tkit/utils/debug.hpp"
 
-#define EXPAND_VERSION(p_Version)                                                                                      \
-    VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
-
 namespace VKit
 {
 static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
@@ -76,7 +73,7 @@ Result<Instance> Instance::Builder::Build() const
                 Error_VersionMismatch,
                 TKit::Format(
                     "The vulkan instance version {}.{}.{} found is not supported. The required version is {}.{}.{}",
-                    EXPAND_VERSION(version), EXPAND_VERSION(p_Version)));
+                    VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(p_Version)));
 
         return p_IsRequested ? p_Version : version;
     };
@@ -85,13 +82,13 @@ Result<Instance> Instance::Builder::Build() const
         m_RequestedApiVersion >= m_RequiredApiVersion,
         "[VULKIT][INSTANCE] The requested api version ({}.{}.{}) must be greater than or equal to the required api "
         "version ({}.{}.{})",
-        EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
+        VKIT_EXPAND_VERSION(m_RequestedApiVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
 
     Result<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
     if (!vresult)
     {
         TKIT_LOG_WARNING("[VULKIT][INSTANCE] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
-                         EXPAND_VERSION(m_RequestedApiVersion), EXPAND_VERSION(m_RequiredApiVersion));
+                         VKIT_EXPAND_VERSION(m_RequestedApiVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
 
         vresult = checkApiVersion(m_RequiredApiVersion, false);
         TKIT_RETURN_ON_ERROR(vresult);
@@ -265,7 +262,7 @@ Result<Instance> Instance::Builder::Build() const
         {
             table.DestroyInstance(vkinstance, m_AllocationCallbacks);
             return Result<Instance>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan functions: "
-                                                                              "vkCreate/DestroyDebugUtilsMessengerEXT");
+                                                                          "vkCreate/DestroyDebugUtilsMessengerEXT");
         }
         result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)

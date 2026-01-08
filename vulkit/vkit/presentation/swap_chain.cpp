@@ -1,6 +1,10 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/presentation/swap_chain.hpp"
 
+#ifndef VK_KHR_surface
+#    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"
+#else
+
 namespace VKit
 {
 Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
@@ -335,3 +339,4 @@ SwapChain::Builder &SwapChain::Builder::SetOldSwapChain(const VkSwapchainKHR p_O
 }
 
 } // namespace VKit
+#endif

@@ -8,6 +8,10 @@
 #include "vkit/device/logical_device.hpp"
 #include "vkit/resource/image.hpp"
 
+#ifndef VK_KHR_surface
+#    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"
+#else
+
 namespace VKit
 {
 using SwapChainBuilderFlags = u8;
@@ -153,3 +157,4 @@ class SwapChain
     Info m_Info;
 };
 } // namespace VKit
+#endif

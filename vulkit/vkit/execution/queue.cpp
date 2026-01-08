@@ -68,7 +68,7 @@ Result<u64> Queue::GetCompletedSubmissionCount() const
     if (!m_Timeline)
         return Result<u64>::Error(
             Error_MissingFeature,
-            "To query completed submissions of a queue, the VK_KHR_timeline_semaphore feature must be enabled");
+            "To query completed submissions of a queue, the 'VK_KHR_timeline_semaphore' feature must be enabled");
     u64 count;
 #    ifdef VKIT_API_VERSION_1_2
     const VkResult result = m_Device.Table->GetSemaphoreCounterValue(m_Device, m_Timeline, &count);

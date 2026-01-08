@@ -2,8 +2,6 @@
 #include "vkit/device/physical_device.hpp"
 #include "vkit/execution/queue.hpp"
 
-#define EXPAND_VERSION(p_Version)                                                                                      \
-    VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
 namespace VKit
 {
 
@@ -374,12 +372,12 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
                         "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
-                        EXPAND_VERSION(m_RequestedApiVersion));
+                        VKIT_EXPAND_VERSION(m_RequestedApiVersion));
 
     if (quickProperties.apiVersion < m_RequiredApiVersion)
         return JudgeResult::Error(Error_VersionMismatch,
                                   TKit::Format("The device '{}' does not support the required API version {}.{}.{}",
-                                               name, EXPAND_VERSION(m_RequiredApiVersion)));
+                                               name, VKIT_EXPAND_VERSION(m_RequiredApiVersion)));
 
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
@@ -797,8 +795,8 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
 #else
     if (m_Flags & DeviceSelectorFlag_RequirePresentQueue)
         return EnumerateResult::Error(Error_MissingExtension,
-                                      "A present queue is not available with a device that does not support the "
-                                      "surface extension. The instance must be headless");
+                                      "The current version of the vulkan headers does not provide the compile-time "
+                                      "capabilities to enable surface creation. The instance must be headless");
 #endif
 
     TKit::Array4<VkPhysicalDevice> vkdevices;

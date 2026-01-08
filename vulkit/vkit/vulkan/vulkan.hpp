@@ -7,7 +7,7 @@
 #include <vulkan/vulkan.h>
 #include <functional>
 
-#ifdef TKIT_ENABLE_ASSERTS
+#if !defined(VKIT_NO_DISCARD) && defined(TKIT_ENABLE_ASSERTS)
 #    define VKIT_NO_DISCARD [[nodiscard]]
 #else
 #    define VKIT_NO_DISCARD
@@ -63,6 +63,9 @@
 #elif defined(VK_VERSION_VARIANT)
 #    define VKIT_API_VERSION_VARIANT(p_Version) VK_VERSION_VARIANT(p_Version)
 #endif
+
+#define VKIT_EXPAND_VERSION(p_Version)                                                                                 \
+    VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
 
 #ifdef TKIT_ENABLE_DEBUG_LOGS
 #    define VKIT_LOG_RESULT_DEBUG(p_Result)                                                                            \
