@@ -221,7 +221,7 @@ class Error
     {
         return m_VkResult;
     }
-    ErrorCode GetErrorCode() const
+    ErrorCode GetCode() const
     {
         return m_ErrorCode;
     }

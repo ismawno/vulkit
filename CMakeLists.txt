@@ -16,6 +16,9 @@ set(CMAKE_BUILD_TYPE
     "Debug"
     CACHE STRING "")
 
+set(VULKIT_BUILD_TESTS
+    OFF
+    CACHE BOOL "")
 set(VULKIT_ENABLE_INSTANCE
     OFF
     CACHE BOOL "")
@@ -69,3 +72,6 @@ set(VULKIT_ENABLE_SWAP_CHAIN
 set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(vulkit)
+if(VULKIT_BUILD_TESTS)
+  add_subdirectory(tests)
+endif()

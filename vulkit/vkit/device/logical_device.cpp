@@ -1,6 +1,5 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/logical_device.hpp"
-#include "tkit/memory/arena_allocator.hpp"
 
 namespace VKit
 {
@@ -142,8 +141,6 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     info.PhysicalDevice = *m_PhysicalDevice;
     info.Table = table;
 
-    static TKit::ArenaAllocator qalloc{MaxQueueCount * sizeof(Queue)};
-
     LogicalDevice ldevice{device, info};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.Queues.GetSize(); ++i)
@@ -151,7 +148,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
                 return info.Queues[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
-        return qalloc.Create<Queue>(ldevice, q, p_Family);
+        return new Queue(ldevice, q, p_Family);
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -173,9 +170,14 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
-        for (const auto &queues : m_Info.Queues)
-            for (Queue *q : queues)
-                q->DestroyTimeline();
+        for (auto &queues : m_Info.Queues)
+            for (auto &q : queues)
+                if (q)
+                {
+                    q->DestroyTimeline();
+                    delete q;
+                    q = nullptr;
+                }
         m_Info.Table.DestroyDevice(m_Device, m_Info.Instance.GetInfo().AllocationCallbacks);
         m_Device = VK_NULL_HANDLE;
     }
