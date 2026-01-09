@@ -4,9 +4,7 @@
 #    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_IMAGE"
 #endif
 
-#include "vkit/device/logical_device.hpp"
 #include "vkit/memory/allocator.hpp"
-#include "vkit/resource/utils.hpp"
 
 namespace VKit
 {
@@ -23,6 +21,17 @@ enum DeviceImageFlagBits : DeviceImageFlags
     DeviceImageFlag_Sampled = 1 << 4,
     DeviceImageFlag_ForceHostVisible = 1 << 5
 };
+
+} // namespace VKit
+
+namespace VKit::Detail
+{
+VkImageAspectFlags InferAspectMask(const DeviceImageFlags p_Flags);
+}
+
+namespace VKit
+{
+
 struct HostImage
 {
     u8 *Data;
@@ -131,19 +140,22 @@ class DeviceImage
 
     void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
 
-    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source, const ImageCopy &p_Info = {});
+    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                       TKit::Span<const VkImageCopy> p_Copy);
+    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                        TKit::Span<const VkBufferImageCopy> p_Copy);
+
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+    void CopyFromImage2(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                        TKit::Span<const VkImageCopy2KHR> p_Copy, const void *p_Next = nullptr);
+    void CopyFromBuffer2(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                         TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next = nullptr);
+#endif
 
     VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                           const ImageCopy &p_Info = {});
-
-    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                        const BufferImageCopy &p_Info = {});
-
+                                           TKit::Span<const VkImageCopy> p_Copy);
     VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                            const BufferImageCopy &p_Info = {});
-
-    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, VkQueue p_Queue, const HostImage &p_Data,
-                                            VkImageLayout p_FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+                                            TKit::Span<const VkBufferImageCopy> p_Copy);
 
     VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;
     VkDeviceSize ComputeSize(u32 p_Mip = 0) const;
@@ -165,6 +177,11 @@ class DeviceImage
     operator bool() const
     {
         return m_Image != VK_NULL_HANDLE;
+    }
+
+    VkImageAspectFlags InferAspectMask() const
+    {
+        return Detail::InferAspectMask(m_Info.Flags);
     }
 
     const ProxyDevice &GetDevice() const
@@ -196,8 +213,3 @@ class DeviceImage
     Info m_Info;
 };
 } // namespace VKit
-
-namespace VKit::Detail
-{
-VkImageAspectFlags DeduceAspectMask(const DeviceImageFlags p_Flags);
-}

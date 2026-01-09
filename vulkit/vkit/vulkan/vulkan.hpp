@@ -137,26 +137,12 @@
 #    define VKIT_CHECK_EXPRESSION(p_Expression) p_Expression
 #endif
 
-#ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)                                                     \
-        if (!VKit::Vulkan::p_Func)                                                                                     \
-        return p_Result::Error(VKit::Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: " #p_Func)
-
-#    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)                                             \
-        if (!p_Table->p_Func)                                                                                          \
-        return p_Result::Error(VKit::Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: " #p_Func)
-#else
-#    define VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(p_Func, p_Result)
-#    define VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Table, p_Func, p_Result)
-#endif
-
 namespace VKit
 {
 enum ErrorCode : u8
 {
     Error_VulkanError,
     Error_VulkanLibraryNotFound,
-    Error_VulkanFunctionNotLoaded,
     Error_BadInput,
     Error_VersionMismatch,
     Error_NoSurfaceCapabilities,

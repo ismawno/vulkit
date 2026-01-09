@@ -79,10 +79,6 @@ void GraphicsPipeline::Builder::initialize()
 
 Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateGraphicsPipelines, Result<GraphicsPipeline>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipeline, Result<GraphicsPipeline>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindPipeline, Result<GraphicsPipeline>);
-
     const VkGraphicsPipelineCreateInfo pipelineInfo = CreatePipelineInfo();
 
     VkPipeline pipeline;
@@ -94,21 +90,17 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
 
-Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<Builder> p_Builders,
+Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Builder> p_Builders,
                                   const TKit::Span<GraphicsPipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateGraphicsPipelines, Result<>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyPipeline, Result<>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindPipeline, Result<>);
-
     if (p_Builders.GetSize() != p_Pipelines.GetSize())
         return Result<>::Error(Error_BadInput, TKit::Format("Specs size ({}) and pipelines ({}) size must be equal",
-                                                                p_Builders.GetSize(), p_Pipelines.GetSize()));
+                                                            p_Builders.GetSize(), p_Pipelines.GetSize()));
     if (p_Builders.GetSize() == 0)
         return Result<>::Error(Error_BadInput, "Specs and pipelines must not be empty");
 
     TKit::Array32<VkGraphicsPipelineCreateInfo> pipelineInfos;
-    for (Builder &builder : p_Builders)
+    for (const Builder &builder : p_Builders)
         pipelineInfos.Append(builder.CreatePipelineInfo());
 
     const u32 count = p_Builders.GetSize();
@@ -218,20 +210,6 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport, const VkRect2D p_Scissor)
 {
     m_Viewports.Append(std::make_pair(p_Viewport, p_Scissor));
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewports(
-    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports)
-{
-    for (const auto &viewport : p_Viewports)
-        m_Viewports.Append(viewport);
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewports(
-    const TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports)
-{
-    m_Viewports.Clear();
-    AddViewports(p_Viewports);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount)
@@ -561,18 +539,6 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkSha
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState p_State)
 {
     m_DynamicStates.Append(p_State);
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicStates(const TKit::Span<const VkDynamicState> p_States)
-{
-    for (const VkDynamicState state : p_States)
-        m_DynamicStates.Append(state);
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDynamicStates(const TKit::Span<const VkDynamicState> p_States)
-{
-    m_DynamicStates.Clear();
-    AddDynamicStates(p_States);
     return *this;
 }
 

@@ -59,8 +59,6 @@ Result<Instance> Instance::Builder::Build() const
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
 #ifdef VKIT_API_VERSION_1_1
-        VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceVersion, Result<u32>);
-
         u32 version;
         const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
         if (result != VK_SUCCESS)
@@ -243,8 +241,6 @@ Result<Instance> Instance::Builder::Build() const
         instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
 
-    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkCreateInstance, Result<Instance>);
-
     VkInstance vkinstance;
     VkResult result = Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
     if (result != VK_SUCCESS)
@@ -252,18 +248,10 @@ Result<Instance> Instance::Builder::Build() const
 
     const Vulkan::InstanceTable table = Vulkan::InstanceTable::Create(vkinstance);
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyInstance, Result<Instance>);
-
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
     {
-        if (!table.vkCreateDebugUtilsMessengerEXT || !table.vkDestroyDebugUtilsMessengerEXT)
-        {
-            table.DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan functions: "
-                                                                          "vkCreate/DestroyDebugUtilsMessengerEXT");
-        }
         result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
@@ -392,19 +380,9 @@ Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension)
     m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireExtensions(TKit::Span<const char *const> p_Extensions)
-{
-    m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
-    return *this;
-}
 Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension)
 {
     m_RequestedExtensions.Append(p_Extension);
-    return *this;
-}
-Instance::Builder &Instance::Builder::RequestExtensions(TKit::Span<const char *const> p_Extensions)
-{
-    m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer)
@@ -412,19 +390,9 @@ Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer)
     m_RequiredLayers.Append(p_Layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireLayers(TKit::Span<const char *const> p_Layers)
-{
-    m_RequiredLayers.Insert(m_RequiredLayers.end(), p_Layers.begin(), p_Layers.end());
-    return *this;
-}
 Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer)
 {
     m_RequestedLayers.Append(p_Layer);
-    return *this;
-}
-Instance::Builder &Instance::Builder::RequestLayers(TKit::Span<const char *const> p_Layers)
-{
-    m_RequestedLayers.Insert(m_RequestedLayers.end(), p_Layers.begin(), p_Layers.end());
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireValidationLayers()

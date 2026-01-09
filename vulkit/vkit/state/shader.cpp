@@ -16,9 +16,6 @@ TKIT_MSVC_WARNING_IGNORE(6262)
 
 Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_view p_SpirvPath)
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateShaderModule, Result<Shader>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyShaderModule, Result<Shader>);
-
     std::ifstream file{p_SpirvPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return Result<Shader>::Error(Error_FileNotFound, TKit::Format("File at path '{}' not found", p_SpirvPath));

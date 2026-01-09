@@ -2,7 +2,6 @@
 #include "vkit/resource/device_buffer.hpp"
 #include "vkit/execution/command_pool.hpp"
 #include "vkit/resource/image.hpp"
-#include "vkit/resource/host_buffer.hpp"
 #include "tkit/math/math.hpp"
 
 namespace VKit
@@ -65,10 +64,6 @@ DeviceBuffer::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p
 
 Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindVertexBuffers, Result<DeviceBuffer>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdBindIndexBuffer, Result<DeviceBuffer>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCmdCopyBuffer, Result<DeviceBuffer>);
-
     Info info;
     info.Allocator = m_Allocator;
     info.InstanceSize = m_InstanceSize;
@@ -176,24 +171,16 @@ void DeviceBuffer::Unmap()
     m_Data = nullptr;
 }
 
-void DeviceBuffer::Write(const void *p_Data, BufferCopy p_Info)
+void DeviceBuffer::Write(const void *p_Data, const VkBufferCopy &p_Copy)
 {
-    if (p_Info.Size == VK_WHOLE_SIZE)
-        p_Info.Size = m_Info.Size - p_Info.DstOffset;
-
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot copy to unmapped buffer");
-    TKIT_ASSERT(m_Info.Size >= p_Info.Size + p_Info.DstOffset,
+    TKIT_ASSERT(m_Info.Size >= p_Copy.size + p_Copy.dstOffset,
                 "[VULKIT][DEVICE-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Info.Size,
-                p_Info.Size + p_Info.DstOffset);
+                p_Copy.size + p_Copy.dstOffset);
 
-    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Info.DstOffset;
-    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
-    TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
-}
-void DeviceBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
-{
-    const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (p_Data.GetSize() - p_Info.SrcOffset) : (p_Info.Size);
-    Write(p_Data.GetData(), {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = p_Info.DstOffset});
+    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Copy.dstOffset;
+    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Copy.srcOffset;
+    TKit::Memory::ForwardCopy(dst, src, p_Copy.size);
 }
 
 void DeviceBuffer::WriteAt(const u32 p_Index, const void *p_Data)
@@ -206,120 +193,85 @@ void DeviceBuffer::WriteAt(const u32 p_Index, const void *p_Data)
 }
 
 void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                                  const BufferCopy &p_Info)
+                                  const TKit::Span<const VkBufferCopy> p_Copy)
 {
-    VkBufferCopy copy{};
-    copy.dstOffset = p_Info.DstOffset;
-    copy.srcOffset = p_Info.SrcOffset;
-    copy.size = p_Info.Size;
-
-    TKIT_ASSERT(p_Source.GetInfo().Size - copy.srcOffset >= copy.size,
-                "[VULKIT][DEVICE-BUFFER] Specified size ({}) exceeds source buffer size ({})", copy.size,
-                p_Source.GetInfo().Size - copy.srcOffset);
-
-    TKIT_ASSERT(m_Info.Size - copy.dstOffset >= copy.size,
-                "[VULKIT][DEVICE-BUFFER] Specified size ({}) exceeds destination buffer size ({})", copy.size,
-                m_Info.Size - copy.dstOffset);
-
-    m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, 1, &copy);
+    m_Device.Table->CmdCopyBuffer(p_CommandBuffer, p_Source, m_Buffer, p_Copy.GetSize(), p_Copy.GetData());
 }
-void DeviceBuffer::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                                 const BufferImageCopy &p_Info)
+
+void DeviceBuffer::CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                                 const TKit::Span<const VkBufferImageCopy> p_Copy)
 {
-    const VkOffset3D &off = p_Info.ImageOffset;
-    const VkExtent3D &ext = p_Info.Extent;
-    const DeviceImage::Info &info = p_Source.GetInfo();
-    const VkImageSubresourceLayers &subr = p_Info.Subresource;
+    m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, p_Copy.GetSize(),
+                                         p_Copy.GetData());
+}
 
-    const u32 width = Math::Max(1u, info.Width >> subr.mipLevel);
-    const u32 height = Math::Max(1u, info.Height >> subr.mipLevel);
-    const u32 depth = Math::Max(1u, info.Depth >> subr.mipLevel);
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+void DeviceBuffer::CopyFromBuffer2(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                                   const TKit::Span<const VkBufferCopy2KHR> p_Copy, const void *p_Next)
+{
+    VkCopyBufferInfo2KHR info{};
+    info.sType = VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR;
+    info.pNext = p_Next;
+    info.srcBuffer = p_Source;
+    info.dstBuffer = m_Buffer;
+    info.pRegions = p_Copy.GetData();
+    info.regionCount = p_Copy.GetSize();
 
-    VkBufferImageCopy copy;
-    copy.bufferImageHeight = p_Info.BufferImageHeight;
-    copy.bufferOffset = p_Info.BufferOffset;
-    copy.imageOffset = off;
-    copy.bufferRowLength = p_Info.BufferRowLength;
-    copy.imageSubresource = subr;
-    if (copy.imageSubresource.aspectMask == VK_IMAGE_ASPECT_NONE)
-        copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(p_Source.GetInfo().Flags);
-
-    VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKIT_U32_MAX ? (width - off.x) : ext.width;
-    cext.height = ext.height == TKIT_U32_MAX ? (height - off.y) : ext.height;
-    cext.depth = ext.depth == TKIT_U32_MAX ? (depth - off.z) : ext.depth;
-
-    // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
-                "[VULKIT][DEVICE-BUFFER] 3D images cannot have multiple layers and array images cannot have a depth "
-                "greather than 1. "
-                "Layers: {}, depth: {}",
-                subr.layerCount, info.Depth);
-
-    TKIT_ASSERT(cext.width <= width - off.x,
-                "[VULKIT][DEVICE-BUFFER] Specified width ({}) exceeds source image width ({})", width - off.x,
-                cext.width);
-    TKIT_ASSERT(cext.height <= height - off.x,
-                "[VULKIT][DEVICE-BUFFER] Specified height ({}) exceeds source image height ({})", height - off.x,
-                cext.width);
-    TKIT_ASSERT(cext.depth <= depth - off.x,
-                "[VULKIT][DEVICE-BUFFER] Specified depth ({}) exceeds source image depth ({})", depth - off.x,
-                cext.width);
-    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
-                "[VULKIT][DEVICE-BUFFER] 3D images cannot have multiple layers and array images cannot have depth > 1");
-#ifdef TKIT_ENABLE_ASSERTS
-    const VkDeviceSize bsize = m_Info.Size - p_Info.BufferOffset;
-    const VkDeviceSize isize =
-        p_Source.ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
-                             p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
-        subr.layerCount;
-
-    TKIT_ASSERT(bsize >= isize, "[VULKIT][DEVICE-BUFFER] Buffer of size {} is not large enough to fit image of size {}",
-                bsize, isize);
+    m_Device.Table->CmdCopyBuffer2KHR(p_CommandBuffer, &info);
+}
+void DeviceBuffer::CopyFromImage2(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                                  TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next)
+{
+    VkCopyImageToBufferInfo2KHR info{};
+    info.sType = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR;
+    info.pNext = p_Next;
+    info.srcImage = p_Source;
+    info.dstBuffer = m_Buffer;
+    info.srcImageLayout = p_Source.GetLayout();
+    info.pRegions = p_Copy.GetData();
+    info.regionCount = p_Copy.GetSize();
+    m_Device.Table->CmdCopyImageToBuffer2KHR(p_CommandBuffer, &info);
+}
 #endif
-    m_Device.Table->CmdCopyImageToBuffer(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Buffer, 1, &copy);
-}
 
-Result<> DeviceBuffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                     const BufferImageCopy &p_Info)
+Result<> DeviceBuffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
+                                      const TKit::Span<const VkBufferCopy> p_Copy)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromImage(cmd, p_Source, p_Info);
+    CopyFromBuffer(cmd, p_Source, p_Copy);
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
-Result<> DeviceBuffer::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                      const BufferCopy &p_Info)
+Result<> DeviceBuffer::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
+                                     const TKit::Span<const VkBufferImageCopy> p_Copy)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromBuffer(cmd, p_Source, p_Info);
+    CopyFromImage(cmd, p_Source, p_Copy);
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
 Result<> DeviceBuffer::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
-                                      const BufferCopy &p_Info)
+                                      const VkBufferCopy &p_Copy)
 {
-    const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (m_Info.Size - p_Info.DstOffset) : p_Info.Size;
-
     auto bres =
         DeviceBuffer::Builder(m_Device, m_Info.Allocator, DeviceBufferFlag_HostMapped | DeviceBufferFlag_Staging)
-            .SetSize(size)
+            .SetSize(p_Copy.size)
             .Build();
     TKIT_RETURN_ON_ERROR(bres);
 
     DeviceBuffer &staging = bres.GetValue();
-    staging.Write(p_Data, {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = 0});
+    staging.Write(p_Data, {.srcOffset = p_Copy.srcOffset, .dstOffset = 0, .size = p_Copy.size});
     const auto result = staging.Flush();
     TKIT_RETURN_ON_ERROR(result);
 
-    const auto cres =
-        CopyFromBuffer(p_Pool, p_Queue, staging, {.Size = size, .SrcOffset = 0, .DstOffset = p_Info.DstOffset});
+    const VkBufferCopy copy{.srcOffset = 0, .dstOffset = p_Copy.dstOffset, .size = p_Copy.size};
+    const auto cres = CopyFromBuffer(p_Pool, p_Queue, staging, copy);
     staging.Destroy();
     return cres;
 }
@@ -361,18 +313,8 @@ void DeviceBuffer::BindAsVertexBuffer(const ProxyDevice &p_Device, const VkComma
                                       const TKit::Span<const VkBuffer> p_Buffers, const u32 p_FirstBinding,
                                       const TKit::Span<const VkDeviceSize> p_Offsets)
 {
-    if (!p_Offsets.IsEmpty())
-        p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
-                                             p_Offsets.GetData());
-    else
-        p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
-                                             nullptr);
-}
-
-void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer p_CommandBuffer, const VkBuffer p_Buffer,
-                                      const VkDeviceSize p_Offset) const
-{
-    m_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, 0, 1, &p_Buffer, &p_Offset);
+    p_Device.Table->CmdBindVertexBuffers(p_CommandBuffer, p_FirstBinding, p_Buffers.GetSize(), p_Buffers.GetData(),
+                                         p_Offsets.GetData());
 }
 
 VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfo(const VkDeviceSize p_Size, const VkDeviceSize p_Offset) const

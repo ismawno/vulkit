@@ -92,8 +92,6 @@ class GraphicsPipeline
 
         // Viewport and Scissor
         Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor);
-        Builder &AddViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports);
-        Builder &SetViewports(TKit::Span<std::pair<VkViewport, VkRect2D>> p_Viewports);
         Builder &SetViewportCount(u32 p_ViewportCount);
 
         // Rasterization
@@ -165,8 +163,6 @@ class GraphicsPipeline
 
         // Dynamic State
         Builder &AddDynamicState(VkDynamicState p_State);
-        Builder &AddDynamicStates(TKit::Span<const VkDynamicState> p_States);
-        Builder &SetDynamicStates(TKit::Span<const VkDynamicState> p_States);
 
       private:
         void initialize();
@@ -204,9 +200,9 @@ class GraphicsPipeline
         friend class ColorAttachmentBuilder;
     };
 
-    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &p_Device, TKit::Span<Builder> p_Builders,
-                                         TKit::Span<GraphicsPipeline> p_Pipelines,
-                                         VkPipelineCache p_Cache = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &p_Device, TKit::Span<const Builder> p_Builders,
+                                           TKit::Span<GraphicsPipeline> p_Pipelines,
+                                           VkPipelineCache p_Cache = VK_NULL_HANDLE);
 
     GraphicsPipeline() = default;
     GraphicsPipeline(const ProxyDevice &p_Device, const VkPipeline p_Pipeline)

@@ -59,7 +59,6 @@ class DescriptorPool
 
     Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const;
     Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const;
-    Result<> Deallocate(VkDescriptorSet p_Set) const;
     Result<> Reset();
 
     const ProxyDevice &GetDevice() const

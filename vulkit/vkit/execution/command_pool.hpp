@@ -34,7 +34,6 @@ class CommandPool
     VKIT_NO_DISCARD Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
                                       VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    void Deallocate(VkCommandBuffer p_CommandBuffer) const;
     void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const;
     VKIT_NO_DISCARD Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const;
     VKIT_NO_DISCARD Result<VkCommandBuffer> BeginSingleTimeCommands() const;

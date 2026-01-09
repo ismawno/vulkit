@@ -130,9 +130,6 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
     const Vulkan::InstanceTable *itable = &instanceInfo.Table;
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkCreateDevice, Result<LogicalDevice>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(itable, vkGetPhysicalDeviceFormatProperties, Result<LogicalDevice>);
-
     VkDevice device;
     const VkResult result =
         itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
@@ -140,14 +137,6 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         return Result<LogicalDevice>::Error(result);
 
     const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN((&table), vkDestroyDevice, Result<LogicalDevice>);
-
-    if (!table.vkGetDeviceQueue)
-    {
-        table.DestroyDevice(device, instanceInfo.AllocationCallbacks);
-        return Result<LogicalDevice>::Error(Error_VulkanFunctionNotLoaded, "Failed to load Vulkan function: "
-                                                                           "vkGetDeviceQueue");
-    }
 
     info.Instance = *m_Instance;
     info.PhysicalDevice = *m_PhysicalDevice;
@@ -162,12 +151,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
                 return info.Queues[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
-        const auto result = Queue::Create(ldevice, q, p_Family);
-        TKIT_RETURN_ON_ERROR(result);
-
-        Queue *queue = qalloc.Allocate<Queue>();
-        *queue = result.GetValue();
-        return queue;
+        return qalloc.Create<Queue>(ldevice, q, p_Family);
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)

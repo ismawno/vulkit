@@ -197,7 +197,6 @@ class RenderPass
     {
         Resources resources;
         resources.m_Device = m_Device;
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateFramebuffer, Result<Resources>);
 
         TKit::Array16<VkImageView> attachments{m_Info.Attachments.GetSize(), VK_NULL_HANDLE};
         for (u32 i = 0; i < m_Info.ImageCount; ++i)

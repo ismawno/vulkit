@@ -60,16 +60,10 @@ class Instance
         Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
         Builder &RequireExtension(const char *p_Extension);
-        Builder &RequireExtensions(TKit::Span<const char *const> p_Extensions);
-
         Builder &RequestExtension(const char *p_Extension);
-        Builder &RequestExtensions(TKit::Span<const char *const> p_Extensions);
 
         Builder &RequireLayer(const char *p_Layer);
-        Builder &RequireLayers(TKit::Span<const char *const> p_Layers);
-
         Builder &RequestLayer(const char *p_Layer);
-        Builder &RequestLayers(TKit::Span<const char *const> p_Layers);
 
         Builder &RequireValidationLayers();
         Builder &RequestValidationLayers();

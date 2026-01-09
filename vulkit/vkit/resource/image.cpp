@@ -22,7 +22,7 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
     }
     return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
-VkImageAspectFlags Detail::DeduceAspectMask(const DeviceImageFlags p_Flags)
+VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags p_Flags)
 {
     if (p_Flags & DeviceImageFlag_ColorAttachment)
         return VK_IMAGE_ASPECT_COLOR_BIT;
@@ -39,7 +39,7 @@ VkImageAspectFlags Detail::DeduceAspectMask(const DeviceImageFlags p_Flags)
 static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const DeviceImageFlags p_Flags)
 {
     VkImageSubresourceRange range{};
-    range.aspectMask |= Detail::DeduceAspectMask(p_Flags);
+    range.aspectMask |= Detail::InferAspectMask(p_Flags);
 
     range.baseMipLevel = 0;
     range.levelCount = p_Info.mipLevels;
@@ -112,9 +112,6 @@ DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat p_Format, const VkEx
 
 Result<DeviceImage> DeviceImage::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateImageView, Result<DeviceImage>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyImageView, Result<DeviceImage>);
-
     VmaAllocationCreateInfo allocInfo{};
     allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
     allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
@@ -173,7 +170,7 @@ void DeviceImage::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const 
     barrier.srcAccessMask = p_Info.SrcAccess;
     barrier.dstAccessMask = p_Info.DstAccess;
     if (p_Info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
-        barrier.subresourceRange.aspectMask = Detail::DeduceAspectMask(m_Info.Flags);
+        barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
 
     m_Device.Table->CmdPipelineBarrier(p_CommandBuffer, p_Info.SrcStage, p_Info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
                                        &barrier);
@@ -181,180 +178,68 @@ void DeviceImage::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const 
 }
 
 void DeviceImage::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                                const ImageCopy &p_Info)
+                                const TKit::Span<const VkImageCopy> p_Copy)
 {
-    const VkOffset3D &soff = p_Info.SrcOffset;
-    const VkOffset3D &doff = p_Info.DstOffset;
-    const VkExtent3D &ext = p_Info.Extent;
-    const DeviceImage::Info &info = p_Source.GetInfo();
-
-    VkImageCopy copy;
-    copy.srcOffset = soff;
-    copy.dstOffset = doff;
-
-    VkExtent3D &cext = copy.extent;
-    cext.width = ext.width == TKIT_U32_MAX ? Math::Min(info.Width - soff.x, m_Info.Width - doff.x) : ext.width;
-    cext.height = ext.height == TKIT_U32_MAX ? Math::Min(info.Height - soff.y, m_Info.Height - doff.y) : ext.height;
-    cext.depth = ext.depth == TKIT_U32_MAX ? Math::Min(info.Depth - soff.z, m_Info.Depth - doff.z) : ext.depth;
-
-    // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(cext.width <= info.Width - soff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds source image width ({})", info.Width - soff.x,
-                cext.width);
-    TKIT_ASSERT(cext.height <= info.Height - soff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds source image height ({})", info.Height - soff.x,
-                cext.width);
-    TKIT_ASSERT(cext.depth <= info.Depth - soff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds source image depth ({})", info.Depth - soff.x,
-                cext.width);
-
-    TKIT_ASSERT(cext.width <= m_Info.Width - doff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds destination image width ({})",
-                m_Info.Width - doff.x, cext.width);
-    TKIT_ASSERT(cext.height <= m_Info.Height - doff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds destination image height ({})",
-                m_Info.Height - doff.x, cext.width);
-    TKIT_ASSERT(cext.depth <= m_Info.Depth - doff.x,
-                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds destination image depth ({})",
-                m_Info.Depth - doff.x, cext.width);
-
-    m_Device.Table->CmdCopyImage(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Image, m_Layout, 1, &copy);
+    m_Device.Table->CmdCopyImage(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Image, m_Layout, p_Copy.GetSize(),
+                                 p_Copy.GetData());
 }
-
 void DeviceImage::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                                 const BufferImageCopy &p_Info)
+                                 const TKit::Span<const VkBufferImageCopy> p_Copy)
 {
-    const VkOffset3D &off = p_Info.ImageOffset;
-    const VkExtent3D &ext = p_Info.Extent;
-
-    const DeviceImage::Info &info = m_Info;
-    const VkImageSubresourceLayers &subr = p_Info.Subresource;
-
-    const u32 width = Math::Max(1u, info.Width >> subr.mipLevel);
-    const u32 height = Math::Max(1u, info.Height >> subr.mipLevel);
-    const u32 depth = Math::Max(1u, info.Depth >> subr.mipLevel);
-
-    VkBufferImageCopy copy;
-    copy.bufferImageHeight = p_Info.BufferImageHeight;
-    copy.bufferOffset = p_Info.BufferOffset;
-    copy.imageOffset = off;
-    copy.bufferRowLength = p_Info.BufferRowLength;
-    copy.imageSubresource = subr;
-    if (copy.imageSubresource.aspectMask == VK_IMAGE_ASPECT_NONE)
-        copy.imageSubresource.aspectMask = Detail::DeduceAspectMask(m_Info.Flags);
-
-    VkExtent3D &cext = copy.imageExtent;
-    cext.width = ext.width == TKIT_U32_MAX ? (width - off.x) : ext.width;
-    cext.height = ext.height == TKIT_U32_MAX ? (height - off.y) : ext.height;
-    cext.depth = ext.depth == TKIT_U32_MAX ? (depth - off.z) : ext.depth;
-
-    // i know this is so futile, validation layers would already catch this but well...
-    TKIT_ASSERT(subr.layerCount == 1 || info.Depth == 1,
-                "[VULKIT][DEVICE-IMAGE] 3D images cannot have multiple layers and array images cannot have a depth "
-                "greather than 1. "
-                "Layers: {}, depth: {}",
-                subr.layerCount, info.Depth);
-
-    TKIT_ASSERT(cext.width <= width - off.x,
-                "[VULKIT][DEVICE-IMAGE] Specified width ({}) exceeds source image width ({})", width - off.x,
-                cext.width);
-    TKIT_ASSERT(cext.height <= height - off.x,
-                "[VULKIT][DEVICE-IMAGE] Specified height ({}) exceeds source image height ({})", height - off.x,
-                cext.width);
-    TKIT_ASSERT(cext.depth <= depth - off.x,
-                "[VULKIT][DEVICE-IMAGE] Specified depth ({}) exceeds source image depth ({})", depth - off.x,
-                cext.width);
-
-#ifdef TKIT_ENABLE_ASSERTS
-    const VkDeviceSize bsize = p_Source.GetInfo().Size - p_Info.BufferOffset;
-    const VkDeviceSize isize =
-        ComputeSize(p_Info.BufferRowLength ? p_Info.BufferRowLength : cext.width,
-                    p_Info.BufferImageHeight ? p_Info.BufferImageHeight : cext.height, 0, cext.depth) *
-        subr.layerCount;
-
-    TKIT_ASSERT(bsize >= isize, "[VULKIT][DEVICE-IMAGE] Buffer of size {} is not large enough to fit image of size {}",
-                bsize, isize);
-#endif
-    m_Device.Table->CmdCopyBufferToImage(p_CommandBuffer, p_Source, m_Image, m_Layout, 1, &copy);
+    m_Device.Table->CmdCopyBufferToImage(p_CommandBuffer, p_Source, m_Image, m_Layout, p_Copy.GetSize(),
+                                         p_Copy.GetData());
 }
+
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+void DeviceImage::CopyFromImage2(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
+                                 const TKit::Span<const VkImageCopy2KHR> p_Copy, const void *p_Next)
+{
+    VkCopyImageInfo2KHR info{};
+    info.sType = VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR;
+    info.pNext = p_Next;
+    info.srcImage = m_Image;
+    info.srcImageLayout = m_Layout;
+    info.dstImage = p_Source;
+    info.dstImageLayout = p_Source.GetLayout();
+    info.pRegions = p_Copy.GetData();
+    info.regionCount = p_Copy.GetSize();
+    m_Device.Table->CmdCopyImage2KHR(p_CommandBuffer, &info);
+}
+void DeviceImage::CopyFromBuffer2(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
+                                  const TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next)
+{
+    VkCopyBufferToImageInfo2KHR info{};
+    info.sType = VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR;
+    info.pNext = p_Next;
+    info.srcBuffer = p_Source;
+    info.dstImage = m_Image;
+    info.dstImageLayout = m_Layout;
+    info.pRegions = p_Copy.GetData();
+    info.regionCount = p_Copy.GetSize();
+    m_Device.Table->CmdCopyBufferToImage2KHR(p_CommandBuffer, &info);
+}
+#endif
 
 Result<> DeviceImage::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                    const ImageCopy &p_Info)
+                                    const TKit::Span<const VkImageCopy> p_Copy)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromImage(cmd, p_Source, p_Info);
+    CopyFromImage(cmd, p_Source, p_Copy);
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
 }
 
 Result<> DeviceImage::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                     const BufferImageCopy &p_Info)
+                                     const TKit::Span<const VkBufferImageCopy> p_Copy)
 {
     const auto cres = p_Pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromBuffer(cmd, p_Source, p_Info);
+    CopyFromBuffer(cmd, p_Source, p_Copy);
     return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
-}
-
-Result<> DeviceImage::UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const HostImage &p_Data,
-                                     VkImageLayout p_FinalLayout)
-{
-    if (p_FinalLayout == VK_IMAGE_LAYOUT_UNDEFINED)
-        p_FinalLayout = m_Layout;
-
-    const VkDeviceSize size = ComputeSize();
-    TKIT_ASSERT(p_Data.Channels == GetBytesPerPixel(),
-                "[VULKIT][DEVICE-IMAGE] The number of channels ({}) must match the bytes per pixel of the image ({})",
-                p_Data.Channels, GetBytesPerPixel());
-
-#ifdef TKIT_ENABLE_ASSERTS
-    const u32 hsize = p_Data.Width * p_Data.Height * p_Data.Depth * p_Data.Channels;
-    TKIT_ASSERT(
-        size == hsize,
-        "[VULKIT][DEVICE-IMAGE] When uploading host-side image, both images must match in size. Host size: {}, device "
-        "size: {}",
-        hsize, size);
-#endif
-
-    auto bres =
-        DeviceBuffer::Builder(m_Device, m_Info.Allocator, DeviceBufferFlag_HostMapped | DeviceBufferFlag_Staging)
-            .SetSize(size)
-            .Build();
-    TKIT_RETURN_ON_ERROR(bres);
-
-    DeviceBuffer &staging = bres.GetValue();
-    staging.Write(p_Data.Data);
-
-    const auto result = staging.Flush();
-    TKIT_RETURN_ON_ERROR(result);
-
-    const auto cres = p_Pool.BeginSingleTimeCommands();
-    TKIT_RETURN_ON_ERROR(cres);
-
-    const VkCommandBuffer cmd = cres.GetValue();
-
-    TransitionLayout(cmd, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                     {.SrcAccess = 0,
-                      .DstAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-                      .SrcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                      .DstStage = VK_PIPELINE_STAGE_TRANSFER_BIT});
-
-    CopyFromBuffer(cmd, staging);
-
-    TransitionLayout(cmd, p_FinalLayout,
-                     {.SrcAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-                      .DstAccess = 0,
-                      .SrcStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-                      .DstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT});
-
-    const auto endres = p_Pool.EndSingleTimeCommands(cmd, p_Queue);
-
-    staging.Destroy();
-    return endres;
 }
 
 VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat p_Format)

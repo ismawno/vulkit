@@ -4,15 +4,8 @@
 
 namespace VKit
 {
-
 Result<DescriptorPool> DescriptorPool::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreateDescriptorPool, Result<DescriptorPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyDescriptorPool, Result<DescriptorPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkAllocateDescriptorSets, Result<DescriptorPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkFreeDescriptorSets, Result<DescriptorPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkResetDescriptorPool, Result<DescriptorPool>);
-
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.poolSizeCount = m_PoolSizes.GetSize();
@@ -55,20 +48,12 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     if (result != VK_SUCCESS)
         return Result<DescriptorSet>::Error(result);
 
-    return DescriptorSet::Create(m_Device, set);
+    return DescriptorSet{m_Device, set};
 }
 
 Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const
 {
     const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
-    return Result<>::Ok();
-}
-
-Result<> DescriptorPool::Deallocate(const VkDescriptorSet p_Set) const
-{
-    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, 1, &p_Set);
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
     return Result<>::Ok();

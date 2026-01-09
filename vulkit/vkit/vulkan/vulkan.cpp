@@ -43,8 +43,6 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "VulkanError";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
-    case Error_VulkanFunctionNotLoaded:
-        return "VulkanFunctionNotLoaded";
     case Error_BadInput:
         return "BadInput";
     case Error_VersionMismatch:

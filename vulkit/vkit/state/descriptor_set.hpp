@@ -34,8 +34,6 @@ class DescriptorSet
         TKit::Array16<VkWriteDescriptorSet> m_Writes;
     };
 
-    VKIT_NO_DISCARD static Result<DescriptorSet> Create(const ProxyDevice &p_Device, VkDescriptorSet p_Set);
-
     DescriptorSet() = default;
     DescriptorSet(const ProxyDevice &p_Device, const VkDescriptorSet p_Set) : m_Device(p_Device), m_Set(p_Set)
     {
@@ -47,10 +45,6 @@ class DescriptorSet
     static void Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
                      TKit::Span<const VkDescriptorSet> p_Sets, VkPipelineBindPoint p_BindPoint,
                      VkPipelineLayout p_Layout, u32 p_FirstSet = 0, TKit::Span<const u32> p_DynamicOffsets = {});
-
-    static void Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer, VkDescriptorSet p_Set,
-                     VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout, u32 p_FirstSet = 0,
-                     TKit::Span<const u32> p_DynamicOffsets = {});
 
     const ProxyDevice &GetDevice() const
     {

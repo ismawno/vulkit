@@ -359,8 +359,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     const Vulkan::InstanceTable *table = &instanceInfo.Table;
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
-
     VkPhysicalDeviceProperties quickProperties;
     table->GetPhysicalDeviceProperties(p_Device, &quickProperties);
     const char *name = quickProperties.deviceName;
@@ -380,8 +378,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
                                                name, VKIT_EXPAND_VERSION(m_RequiredApiVersion)));
 
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
-
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumerateDeviceExtensionProperties, JudgeResult);
 
     u32 extensionCount;
     VkResult result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
@@ -426,8 +422,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
         enabledExtensions.Append("VK_KHR_swapchain");
-
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceQueueFamilyProperties, JudgeResult);
 
     u32 familyCount;
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
@@ -584,9 +578,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
     {
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceFormatsKHR, JudgeResult);
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfacePresentModesKHR, JudgeResult);
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceSurfaceCapabilitiesKHR, JudgeResult);
         const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
         TKIT_RETURN_ON_ERROR(qresult);
     }
@@ -631,17 +622,11 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
         if (v11)
         {
-            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2, JudgeResult);
-            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2, JudgeResult);
-
             table->GetPhysicalDeviceFeatures2(p_Device, &fchain);
             table->GetPhysicalDeviceProperties2(p_Device, &pchain);
         }
         else
         {
-            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures2KHR, JudgeResult);
-            VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties2KHR, JudgeResult);
-
             table->GetPhysicalDeviceFeatures2KHR(p_Device, &fchain);
             table->GetPhysicalDeviceProperties2KHR(p_Device, &pchain);
         }
@@ -651,16 +636,10 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     }
     else
     {
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures, JudgeResult);
-        VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
-
         table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
         table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
     }
 #else
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceFeatures, JudgeResult);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceProperties, JudgeResult);
-
     table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
     table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
 #endif
@@ -694,7 +673,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         fullySuitable = false;
     }
 
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkGetPhysicalDeviceMemoryProperties, JudgeResult);
     table->GetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
 
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
@@ -802,7 +780,6 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     TKit::Array4<VkPhysicalDevice> vkdevices;
 
     const Vulkan::InstanceTable *table = &m_Instance->GetInfo().Table;
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(table, vkEnumeratePhysicalDevices, EnumerateResult);
 
     u32 deviceCount = 0;
     VkResult result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr);
@@ -910,19 +887,9 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char 
     m_RequiredExtensions.Append(p_Extension);
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtensions(const TKit::Span<const char *const> p_Extensions)
-{
-    m_RequiredExtensions.Insert(m_RequiredExtensions.end(), p_Extensions.begin(), p_Extensions.end());
-    return *this;
-}
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *p_Extension)
 {
     m_RequestedExtensions.Append(p_Extension);
-    return *this;
-}
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtensions(const TKit::Span<const char *const> p_Extensions)
-{
-    m_RequestedExtensions.Insert(m_RequestedExtensions.end(), p_Extensions.begin(), p_Extensions.end());
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize p_Size)
@@ -941,9 +908,9 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDevice
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const DeviceFeatures &p_Features)
 {
-    void *next = m_RequiredFeatures.Next;
+    // void *next = m_RequiredFeatures.Next;
     m_RequiredFeatures = p_Features;
-    m_RequiredFeatures.Next = next;
+    // m_RequiredFeatures.Next = next;
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const DeviceSelectorFlags p_Flags)

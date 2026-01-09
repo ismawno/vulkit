@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/resource/host_buffer.hpp"
+#include "tkit/memory/memory.hpp"
 
 namespace VKit
 {
@@ -10,24 +11,15 @@ HostBuffer::HostBuffer(const VkDeviceSize p_InstanceCount, const VkDeviceSize p_
     m_Data = TKit::Memory::AllocateAligned(m_Size, p_Alignment);
 }
 
-void HostBuffer::Write(const void *p_Data, BufferCopy p_Info)
+void HostBuffer::Write(const void *p_Data, const VkBufferCopy &p_Copy)
 {
-    if (p_Info.Size == VK_WHOLE_SIZE)
-        p_Info.Size = m_Size - p_Info.DstOffset;
-
-    TKIT_ASSERT(m_Size >= p_Info.Size + p_Info.DstOffset,
+    TKIT_ASSERT(m_Size >= p_Copy.size + p_Copy.dstOffset,
                 "[VULKIT][HOST-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Size,
-                p_Info.Size + p_Info.DstOffset);
+                p_Copy.size + p_Copy.dstOffset);
 
-    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Info.DstOffset;
-    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Info.SrcOffset;
-    TKit::Memory::ForwardCopy(dst, src, p_Info.Size);
-}
-
-void HostBuffer::Write(const HostBuffer &p_Data, const BufferCopy &p_Info)
-{
-    const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE ? (p_Data.GetSize() - p_Info.SrcOffset) : (p_Info.Size);
-    Write(p_Data.GetData(), {.Size = size, .SrcOffset = p_Info.SrcOffset, .DstOffset = p_Info.DstOffset});
+    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Copy.dstOffset;
+    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Copy.srcOffset;
+    TKit::Memory::ForwardCopy(dst, src, p_Copy.size);
 }
 
 void HostBuffer::WriteAt(const u32 p_Index, const void *p_Data)

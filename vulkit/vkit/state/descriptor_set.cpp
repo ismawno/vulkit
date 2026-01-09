@@ -4,14 +4,6 @@
 
 namespace VKit
 {
-Result<DescriptorSet> DescriptorSet::Create(const ProxyDevice &p_Device, const VkDescriptorSet p_Set)
-{
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkUpdateDescriptorSets, Result<DescriptorSet>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCmdBindDescriptorSets, Result<DescriptorSet>);
-
-    return Result<DescriptorSet>::Ok(p_Device, p_Set);
-}
-
 void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
                          const VkPipelineLayout p_Layout, const TKit::Span<const u32> p_DynamicOffsets) const
 {
@@ -22,24 +14,8 @@ void DescriptorSet::Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_Co
                          const VkPipelineLayout p_Layout, const u32 p_FirstSet,
                          const TKit::Span<const u32> p_DynamicOffsets)
 {
-    if (!p_DynamicOffsets.IsEmpty())
-        p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
-                                              p_Sets.GetData(), p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
-    else
-        p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
-                                              p_Sets.GetData(), 0, nullptr);
-}
-void DescriptorSet::Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
-                         const VkDescriptorSet p_Set, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const TKit::Span<const u32> p_DynamicOffsets)
-{
-    if (!p_DynamicOffsets.IsEmpty())
-        p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set,
-                                              p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
-    else
-        p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, 1, &p_Set, 0,
-                                              nullptr);
+    p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
+                                          p_Sets.GetData(), p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
 }
 
 void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo)

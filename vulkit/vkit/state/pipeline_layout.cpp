@@ -6,9 +6,6 @@ namespace VKit
 
 Result<PipelineLayout> PipelineLayout::Builder::Build() const
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkCreatePipelineLayout, Result<PipelineLayout>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(m_Device.Table, vkDestroyPipelineLayout, Result<PipelineLayout>);
-
     VkPipelineLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     layoutInfo.setLayoutCount = m_DescriptorSetLayouts.GetSize();

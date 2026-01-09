@@ -571,7 +571,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
     cpp("#ifdef TKIT_ENABLE_ASSERTS", indent=0)
     with cpp.scope("template <typename T> static T validateFunction(const char *p_Name, T &&p_Function)"):
         cpp(
-            "TKIT_ASSERT(p_Function, \"[VULKIT][LOADER] The function '{}' is not available for the device being used.\", p_Name);"
+            "TKIT_ASSERT(p_Function, \"[VULKIT][LOADER] The function '{}' is not available for the instance or device being used, either because VKit::Core::Initialize() was not called or because the feature or extension bound to the function has not been enabled\", p_Name);"
         )
         cpp("return p_Function;")
     cpp("#endif", indent=0)

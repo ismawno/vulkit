@@ -6,8 +6,7 @@
 #endif
 
 #include "vkit/core/alias.hpp"
-#include "vkit/resource/utils.hpp"
-#include "tkit/container/span.hpp"
+#include "tkit/utils/debug.hpp"
 
 namespace VKit
 {
@@ -34,18 +33,7 @@ class HostBuffer
         return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
     }
 
-    void Write(const void *p_Data, BufferCopy p_Info = {});
-    void Write(const HostBuffer &p_Data, const BufferCopy &p_Info = {});
-
-    template <typename T> void Write(const TKit::Span<const T> p_Data, const BufferCopy &p_Info = {})
-    {
-        const VkDeviceSize size = p_Info.Size == VK_WHOLE_SIZE
-                                      ? (p_Data.GetSize() * sizeof(T) - p_Info.SrcOffset * sizeof(T))
-                                      : (p_Info.Size * sizeof(T));
-        Write(p_Data.GetData(),
-              {.Size = size, .SrcOffset = p_Info.SrcOffset * sizeof(T), .DstOffset = p_Info.DstOffset * sizeof(T)});
-    }
-
+    void Write(const void *p_Data, const VkBufferCopy &p_Copy);
     void WriteAt(u32 p_Index, const void *p_Data);
 
     void Destroy();

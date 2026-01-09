@@ -7,8 +7,8 @@
 
 namespace VKit
 {
-Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
-                                        const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
+static Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
+                                               const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
 {
     for (const VkSurfaceFormatKHR &desired : p_Requested)
         for (const VkSurfaceFormatKHR &supported : p_Supported)
@@ -17,8 +17,8 @@ Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKH
     return Result<VkSurfaceFormatKHR>::Error(Error_NoFormatSupported);
 }
 
-Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
-                                           const TKit::Span<const VkPresentModeKHR> p_Supported)
+static Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
+                                                  const TKit::Span<const VkPresentModeKHR> p_Supported)
 {
     for (const VkPresentModeKHR &desired : p_Requested)
         for (const VkPresentModeKHR &supported : p_Supported)
@@ -30,12 +30,6 @@ Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeK
 Result<SwapChain> SwapChain::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateSwapchainKHR, Result<SwapChain>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroySwapchainKHR, Result<SwapChain>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkGetSwapchainImagesKHR, Result<SwapChain>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateImageView, Result<SwapChain>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyImageView, Result<SwapChain>);
-
     const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
     if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX || devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(Error_MissingQueue);

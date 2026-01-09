@@ -123,10 +123,7 @@ class PhysicalDevice
         Selector &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
 
         Selector &RequireExtension(const char *p_Extension);
-        Selector &RequireExtensions(TKit::Span<const char *const> p_Extensions);
-
         Selector &RequestExtension(const char *p_Extension);
-        Selector &RequestExtensions(TKit::Span<const char *const> p_Extensions);
 
         Selector &RequireMemory(const VkDeviceSize p_Size);
         Selector &RequestMemory(const VkDeviceSize p_Size);

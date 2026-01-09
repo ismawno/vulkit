@@ -6,15 +6,6 @@ namespace VKit
 Result<CommandPool> CommandPool::Create(const ProxyDevice &p_Device, const u32 p_QueueFamilyIndex,
                                         const VkCommandPoolCreateFlags p_Flags)
 {
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkCreateCommandPool, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkDestroyCommandPool, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkAllocateCommandBuffers, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkResetCommandPool, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkBeginCommandBuffer, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkEndCommandBuffer, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkQueueSubmit, Result<CommandPool>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(p_Device.Table, vkQueueWaitIdle, Result<CommandPool>);
-
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.queueFamilyIndex = p_QueueFamilyIndex;
@@ -55,9 +46,7 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> p_CommandBuffer
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level) const
 {
     VkCommandBuffer commandBuffer;
-    const TKit::Span<VkCommandBuffer> commandBuffers(&commandBuffer, 1);
-
-    const Result<> result = Allocate(commandBuffers, p_Level);
+    const Result<> result = Allocate(commandBuffer, p_Level);
     TKIT_RETURN_ON_ERROR(result);
     return commandBuffer;
 }
@@ -65,11 +54,6 @@ Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel p_Level
 void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> p_CommandBuffers) const
 {
     m_Device.Table->FreeCommandBuffers(m_Device, m_Pool, p_CommandBuffers.GetSize(), p_CommandBuffers.GetData());
-}
-void CommandPool::Deallocate(const VkCommandBuffer p_CommandBuffer) const
-{
-    const TKit::Span<const VkCommandBuffer> commandBuffers(&p_CommandBuffer, 1);
-    Deallocate(commandBuffers);
 }
 
 Result<> CommandPool::Reset(const VkCommandPoolResetFlags p_Flags) const

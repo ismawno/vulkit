@@ -6,10 +6,6 @@ namespace VKit
 Result<RenderPass> RenderPass::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkCreateRenderPass, Result<RenderPass>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyRenderPass, Result<RenderPass>);
-    VKIT_CHECK_TABLE_FUNCTION_OR_RETURN(proxy.Table, vkDestroyFramebuffer, Result<RenderPass>);
-
     if (m_Subpasses.IsEmpty())
         return Result<RenderPass>::Error(Error_BadInput, "Render must have at least one subpass");
 

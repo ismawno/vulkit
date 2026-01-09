@@ -103,9 +103,6 @@ Result<> Core::Initialize(const char *p_LoaderPath)
 
     Vulkan::Load(s_Library);
 
-    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceExtensionProperties, Result<>);
-    VKIT_CHECK_GLOBAL_FUNCTION_OR_RETURN(vkEnumerateInstanceLayerProperties, Result<>);
-
     u32 extensionCount = 0;
     VkResult result;
     result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
