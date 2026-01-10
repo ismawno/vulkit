@@ -50,7 +50,7 @@ void Queue::DestroyTimeline()
     }
 }
 
-Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fence)
+Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fence) const
 {
     const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
     if (result != VK_SUCCESS)
@@ -59,7 +59,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fe
 }
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-Result<> Queue::Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence)
+Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> p_Info, const VkFence p_Fence) const
 {
     const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
     if (result != VK_SUCCESS)

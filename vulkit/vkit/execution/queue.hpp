@@ -32,9 +32,9 @@ class Queue
     {
     }
 
-    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
 #endif
 
     VKIT_NO_DISCARD Result<> WaitIdle() const;
