@@ -12,12 +12,6 @@ namespace VKit
 class CommandPool
 {
   public:
-    struct Specs
-    {
-        u32 QueueFamilyIndex;
-        VkCommandPoolCreateFlags Flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    };
-
     VKIT_NO_DISCARD static Result<CommandPool> Create(const ProxyDevice &p_Device, u32 p_QueueFamilyIndex,
                                                       VkCommandPoolCreateFlags p_Flags = 0);
 
