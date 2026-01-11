@@ -9,11 +9,7 @@ namespace VKit
 #endif
 
 #ifndef VKIT_MAX_QUEUE_COUNT
-#    define VKIT_MAX_QUEUE_COUNT 32
-#endif
-
-#ifndef VKIT_MAX_QUEUE_SUBMISSIONS
-#    define VKIT_MAX_QUEUE_SUBMISSIONS 16
+#    define VKIT_MAX_QUEUE_COUNT 8
 #endif
 
 constexpr u32 MaxShaderSize = VKIT_MAX_SHADER_SIZE;

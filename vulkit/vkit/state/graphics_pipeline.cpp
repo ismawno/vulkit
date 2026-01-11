@@ -209,7 +209,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
 // Viewport and Scissor
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport, const VkRect2D p_Scissor)
 {
-    m_Viewports.Append(std::make_pair(p_Viewport, p_Scissor));
+    m_Viewports.Append(p_Viewport, p_Scissor);
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount)

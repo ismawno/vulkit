@@ -48,6 +48,12 @@ class GraphicsPipeline
         friend class Builder;
     };
 
+    struct ViewportInfo
+    {
+        VkViewport Viewport;
+        VkRect2D Scissor;
+    };
+
   public:
     class Builder
     {
@@ -195,7 +201,7 @@ class GraphicsPipeline
         // PipelineCreateInfo, and so linked arrays to the create info must remain alive.
         TKit::Array8<VkPipelineColorBlendAttachmentState> m_ColorAttachments;
         TKit::Array4<VkPipelineShaderStageCreateInfo> m_ShaderStages;
-        TKit::Array4<std::pair<VkViewport, VkRect2D>> m_Viewports;
+        TKit::Array4<ViewportInfo> m_Viewports;
 
         friend class ColorAttachmentBuilder;
     };
