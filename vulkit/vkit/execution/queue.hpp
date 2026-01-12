@@ -32,9 +32,9 @@ class Queue
     {
     }
 
-    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
+    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
+    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
     VKIT_NO_DISCARD Result<> WaitIdle() const;
@@ -75,8 +75,15 @@ class Queue
         m_SubmissionCount = p_InitialSubmissionCount;
     }
 
-    VKIT_NO_DISCARD Result<u64> GetCompletedSubmissionCount() const;
-    VKIT_NO_DISCARD Result<u64> GetPendingSubmissionCount() const;
+    VKIT_NO_DISCARD Result<u64> UpdateCompletedSubmissionCount();
+    u64 GetCompletedSubmissionCount() const
+    {
+        return m_CompletedCount;
+    }
+    u64 GetPendingSubmissionCount() const
+    {
+        return m_SubmissionCount - m_CompletedCount;
+    }
 
     VkSemaphore GetTimelineSempahore() const
     {
@@ -92,6 +99,7 @@ class Queue
     VkQueue m_Queue = VK_NULL_HANDLE;
     VkSemaphore m_Timeline = VK_NULL_HANDLE;
     u64 m_SubmissionCount = 0;
+    u64 m_CompletedCount = 0;
     u32 m_Family = 0;
 };
 } // namespace VKit
