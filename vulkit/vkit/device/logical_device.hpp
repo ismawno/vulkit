@@ -49,7 +49,9 @@ class LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-        TKit::FixedArray<TKit::Array<Queue *, MaxQueueCount>, Queue_Count> Queues;
+        TKit::Array<Queue *, MaxQueueCount> Queues;
+        // may contain duplicates!
+        TKit::FixedArray<TKit::Array<Queue *, MaxQueueCount>, Queue_Count> QueuesPerType;
     };
 
     LogicalDevice() = default;

@@ -143,12 +143,12 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
     LogicalDevice ldevice{device, info};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
-        for (u32 i = 0; i < info.Queues.GetSize(); ++i)
-            if (p_Index < info.Queues[i].GetSize() && info.Queues[i][p_Index]->GetFamily() == p_Family)
-                return info.Queues[i][p_Index];
+        for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
+            if (p_Index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][p_Index]->GetFamily() == p_Family)
+                return info.QueuesPerType[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
-        return new Queue(ldevice, q, p_Family);
+        return info.Queues.Append(new Queue(ldevice, q, p_Family));
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -159,7 +159,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         {
             const auto result = createQueue(findex, j);
             TKIT_RETURN_ON_ERROR(result);
-            info.Queues[i].Append(result.GetValue());
+            info.QueuesPerType[i].Append(result.GetValue());
         }
     }
 
@@ -170,14 +170,11 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
-        for (auto &queues : m_Info.Queues)
-            for (auto &q : queues)
-                if (q)
-                {
-                    q->DestroyTimeline();
-                    delete q;
-                    q = nullptr;
-                }
+        for (VKit::Queue *q : m_Info.Queues)
+        {
+            q->DestroyTimeline();
+            delete q;
+        }
         m_Info.Table.DestroyDevice(m_Device, m_Info.Instance.GetInfo().AllocationCallbacks);
         m_Device = VK_NULL_HANDLE;
     }
