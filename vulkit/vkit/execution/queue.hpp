@@ -71,6 +71,8 @@ class Queue
 
     void TakeTimelineSemaphoreOwnership(const VkSemaphore p_Timeline, const u64 p_InitialSubmissionCount = 0)
     {
+        TKIT_ASSERT(!m_Timeline, "[ONYX] The current queue already has a timeline semaphore. Ensure the previous one "
+                                 "is destroyed with DestroyTimelineSemaphore()");
         m_Timeline = p_Timeline;
         m_SubmissionCount = p_InitialSubmissionCount;
     }
