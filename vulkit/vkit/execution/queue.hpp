@@ -48,9 +48,9 @@ class Queue
         return m_Queue;
     }
 
-    u64 GetTotalSubmissionCount() const
+    u64 NextTimelineValue()
     {
-        return m_SubmissionCount;
+        return ++m_TimelineCounter;
     }
 
     u32 GetFamily() const
@@ -74,17 +74,18 @@ class Queue
         TKIT_ASSERT(!m_Timeline, "[ONYX] The current queue already has a timeline semaphore. Ensure the previous one "
                                  "is destroyed with DestroyTimelineSemaphore()");
         m_Timeline = p_Timeline;
-        m_SubmissionCount = p_InitialSubmissionCount;
+        m_TimelineCounter = p_InitialSubmissionCount;
     }
 
-    VKIT_NO_DISCARD Result<u64> UpdateCompletedSubmissionCount();
-    u64 GetCompletedSubmissionCount() const
+    VKIT_NO_DISCARD Result<u64> UpdateCompletedTimeline();
+
+    u64 GetCompletedTimeline() const
     {
-        return m_CompletedCount;
+        return m_CompletedTimeline;
     }
-    u64 GetPendingSubmissionCount() const
+    u64 GetPendingTimeline() const
     {
-        return m_SubmissionCount - m_CompletedCount;
+        return m_TimelineCounter - m_CompletedTimeline;
     }
 
     VkSemaphore GetTimelineSempahore() const
@@ -100,8 +101,8 @@ class Queue
     ProxyDevice m_Device{};
     VkQueue m_Queue = VK_NULL_HANDLE;
     VkSemaphore m_Timeline = VK_NULL_HANDLE;
-    u64 m_SubmissionCount = 0;
-    u64 m_CompletedCount = 0;
+    u64 m_TimelineCounter = 0;
+    u64 m_CompletedTimeline = 0;
     u32 m_Family = 0;
 };
 } // namespace VKit
