@@ -156,6 +156,7 @@ enum ErrorCode : u8
     Error_NoFormatSupported,
     Error_BadImageCount,
     Error_FileNotFound,
+    Error_BadSynchronization,
     Error_Unknown,
     Error_Count
 };

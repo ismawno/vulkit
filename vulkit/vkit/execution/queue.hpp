@@ -32,9 +32,9 @@ class Queue
     {
     }
 
-    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
+    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE) const;
+    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
 #endif
 
     VKIT_NO_DISCARD Result<> WaitIdle() const;
@@ -52,6 +52,11 @@ class Queue
     {
         return ++m_TimelineCounter;
     }
+    void RevokeUnsubmittedTimelineValues()
+    {
+        m_TimelineCounter = m_TimelineSubmissions;
+    }
+
     u64 GetTimelineValue() const
     {
         return m_TimelineCounter;
@@ -106,6 +111,7 @@ class Queue
     VkQueue m_Queue = VK_NULL_HANDLE;
     VkSemaphore m_Timeline = VK_NULL_HANDLE;
     u64 m_TimelineCounter = 0;
+    u64 m_TimelineSubmissions = 0;
     u64 m_CompletedTimeline = 0;
     u32 m_Family = 0;
 };
