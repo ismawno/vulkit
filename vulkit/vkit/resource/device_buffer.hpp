@@ -120,7 +120,7 @@ class DeviceBuffer
     void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
                        TKit::Span<const VkBufferImageCopy> p_Copy);
 
-#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_copy_commands2)
     void CopyFromBuffer2(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
                          TKit::Span<const VkBufferCopy2KHR> p_Copy, const void *p_Next = nullptr);
     void CopyFromImage2(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,

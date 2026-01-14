@@ -205,7 +205,7 @@ void DeviceBuffer::CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceIm
                                          p_Copy.GetData());
 }
 
-#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_copy_commands2)
 void DeviceBuffer::CopyFromBuffer2(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
                                    const TKit::Span<const VkBufferCopy2KHR> p_Copy, const void *p_Next)
 {
