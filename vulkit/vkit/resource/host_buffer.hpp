@@ -17,7 +17,7 @@ class HostBuffer
     HostBuffer(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize,
                VkDeviceSize p_Alignment = alignof(std::max_align_t));
 
-    template <typename T> HostBuffer Create(const VkDeviceSize p_InstanceCount)
+    template <typename T> static HostBuffer Create(const VkDeviceSize p_InstanceCount)
     {
         return HostBuffer(p_InstanceCount, sizeof(T), alignof(T));
     }
