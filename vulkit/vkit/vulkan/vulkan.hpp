@@ -2,7 +2,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
-#include "tkit/container/static_array.hpp"
+#include "tkit/container/arena_array.hpp"
 #include "tkit/preprocessor/utils.hpp"
 #include <vulkan/vulkan.h>
 #include <functional>
@@ -246,6 +246,10 @@ template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 class DeletionQueue
 {
   public:
+    DeletionQueue(const u32 p_MaxDeleters = 128)
+    {
+        m_Deleters.Reserve(p_MaxDeleters);
+    }
     void Push(std::function<void()> &&p_Deleter);
     void Flush();
 
@@ -255,7 +259,7 @@ class DeletionQueue
     }
 
   private:
-    TKit::StaticArray1024<std::function<void()>> m_Deleters;
+    TKit::ArenaArray<std::function<void()>> m_Deleters{};
 };
 
 } // namespace VKit

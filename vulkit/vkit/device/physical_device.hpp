@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PHYSICAL_DEVICE"
 #endif
 
-#include "tkit/container/static_array.hpp"
+#include "tkit/container/tier_array.hpp"
 #include "vkit/vulkan/instance.hpp"
 #include "vkit/execution/queue.hpp"
 
@@ -99,19 +99,19 @@ class PhysicalDevice
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
-        TKit::StaticArray128<VkSurfaceFormatKHR> Formats;
-        TKit::StaticArray8<VkPresentModeKHR> PresentModes;
+        TKit::TierArray<VkSurfaceFormatKHR> Formats;
+        TKit::TierArray<VkPresentModeKHR> PresentModes;
     };
 #endif
 
     class Selector
     {
       public:
-        Selector(const Instance *p_Instance);
+        Selector(const Instance *p_Instance, u32 p_MaxExtensions = 256);
 
         VKIT_NO_DISCARD Result<PhysicalDevice> Select() const;
 
-        VKIT_NO_DISCARD Result<TKit::StaticArray4<Result<PhysicalDevice>>> Enumerate() const;
+        VKIT_NO_DISCARD Result<TKit::ArenaArray<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(DeviceType p_Type);
@@ -156,8 +156,8 @@ class PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::StaticArray256<std::string> m_RequiredExtensions;
-        TKit::StaticArray256<std::string> m_RequestedExtensions;
+        TKit::ArenaArray<std::string> m_RequiredExtensions;
+        TKit::ArenaArray<std::string> m_RequestedExtensions;
 
         DeviceFeatures m_RequiredFeatures{};
     };
@@ -169,11 +169,11 @@ class PhysicalDevice
         u32 ApiVersion;
 
         TKit::FixedArray<u32, Queue_Count> FamilyIndices;
-        TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
+        TKit::ArenaArray<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::StaticArray256<std::string> EnabledExtensions;
-        TKit::StaticArray256<std::string> AvailableExtensions;
+        TKit::ArenaArray<std::string> EnabledExtensions;
+        TKit::ArenaArray<std::string> AvailableExtensions;
 
         DeviceFeatures EnabledFeatures{};
         DeviceFeatures AvailableFeatures{};

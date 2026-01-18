@@ -42,6 +42,8 @@ class Instance
     class Builder
     {
       public:
+        Builder();
+
         VKIT_NO_DISCARD Result<Instance> Build() const;
 
         Builder &SetApplicationName(const char *p_Name);
@@ -83,11 +85,11 @@ class Instance
         u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
         u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
-        TKit::StaticArray64<const char *> m_RequiredExtensions;
-        TKit::StaticArray64<const char *> m_RequestedExtensions;
+        TKit::ArenaArray<const char *> m_RequiredExtensions{};
+        TKit::ArenaArray<const char *> m_RequestedExtensions{};
 
-        TKit::StaticArray16<const char *> m_RequiredLayers;
-        TKit::StaticArray16<const char *> m_RequestedLayers;
+        TKit::ArenaArray<const char *> m_RequiredLayers{};
+        TKit::ArenaArray<const char *> m_RequestedLayers{};
 
         bool m_RequireValidationLayers = false;
         bool m_RequestValidationLayers = false;
@@ -104,8 +106,8 @@ class Instance
         const char *ApplicationName;
         const char *EngineName;
 
-        TKit::StaticArray64<const char *> EnabledExtensions;
-        TKit::StaticArray16<const char *> EnabledLayers;
+        TKit::ArenaArray<const char *> EnabledExtensions;
+        TKit::ArenaArray<const char *> EnabledLayers;
 
         Vulkan::InstanceTable Table;
 

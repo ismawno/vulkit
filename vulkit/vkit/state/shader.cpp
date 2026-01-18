@@ -1,9 +1,8 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/shader.hpp"
-#include "vkit/core/limits.hpp"
+#include "tkit/container/stack_array.hpp"
 
 #include <fstream>
-#include <filesystem>
 #include <cstdlib>
 
 namespace fs = std::filesystem;
@@ -22,7 +21,7 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
 
     const auto fileSize = file.tellg();
 
-    TKit::StaticArray<char, MaxShaderSize> code(static_cast<u32>(fileSize));
+    TKit::StackArray<char> code{static_cast<u32>(fileSize)};
     file.seekg(0);
     file.read(code.GetData(), fileSize);
     const u32 *spv = reinterpret_cast<const u32 *>(code.GetData());

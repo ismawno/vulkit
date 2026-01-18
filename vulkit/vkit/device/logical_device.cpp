@@ -31,7 +31,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
 
     TKit::StaticArray8<VkDeviceQueueCreateInfo> queueCreateInfos;
-    const TKit::StaticArray8<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
+    const TKit::ArenaArray<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
 
     TKit::StaticArray8<TKit::StaticArray32<f32>> finalPriorities;
 

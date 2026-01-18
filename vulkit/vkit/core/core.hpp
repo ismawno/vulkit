@@ -4,6 +4,7 @@
 #include "tkit/memory/arena_allocator.hpp"
 #include "tkit/memory/stack_allocator.hpp"
 #include "tkit/memory/tier_allocator.hpp"
+#include "tkit/container/fixed_array.hpp"
 #include "tkit/utils/limits.hpp"
 
 namespace VKit

@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/physical_device.hpp"
 #include "vkit/execution/queue.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -385,16 +386,18 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         return JudgeResult::Error(
             result, TKit::Format("Failed to get the number of device extensions for the device: {}", name));
 
-    TKit::StaticArray256<VkExtensionProperties> extensionsProps{extensionCount};
+    TKit::StackArray<VkExtensionProperties> extensionsProps{extensionCount};
     result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(result, TKit::Format("Failed to get the device extensions for the device: {}", name));
 
-    TKit::StaticArray256<std::string> availableExtensions;
+    TKit::StackArray<std::string> availableExtensions;
+    availableExtensions.Reserve(extensionsProps.GetSize());
     for (const VkExtensionProperties &extension : extensionsProps)
         availableExtensions.Append(extension.extensionName);
 
-    TKit::StaticArray256<std::string> enabledExtensions;
+    TKit::StackArray<std::string> enabledExtensions;
+    enabledExtensions.Reserve(m_RequestedExtensions.GetCapacity());
     for (const std::string &extension : m_RequiredExtensions)
     {
         if (!contains(availableExtensions, extension))
@@ -426,7 +429,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     u32 familyCount;
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
 
-    TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
+    TKit::StackArray<VkQueueFamilyProperties> families{familyCount};
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
 
     const auto compatibleQueueIndex = [&](const VkQueueFlags p_Flags) -> u32 {
@@ -745,7 +748,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     return JudgeResult::Ok(p_Device, deviceInfo);
 }
 
-PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_Instance)
+PhysicalDevice::Selector::Selector(const Instance *p_Instance, const u32 p_MaxExtensions) : m_Instance(p_Instance)
 {
 #ifdef VKIT_API_VERSION_1_2
     m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
@@ -758,13 +761,16 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_In
     m_RequiredFeatures.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
 #endif
 
+    m_RequestedExtensions.Reserve(p_MaxExtensions);
+    m_RequiredExtensions.Reserve(p_MaxExtensions);
+
     if (!(m_Instance->GetInfo().Flags & InstanceFlag_Headless))
         m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
 }
 
-Result<TKit::StaticArray4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
+Result<TKit::ArenaArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
 {
-    using EnumerateResult = Result<TKit::StaticArray4<Result<PhysicalDevice>>>;
+    using EnumerateResult = Result<TKit::ArenaArray<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
@@ -777,7 +783,7 @@ Result<TKit::StaticArray4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enu
                                       "capabilities to enable surface creation. The instance must be headless");
 #endif
 
-    TKit::StaticArray4<VkPhysicalDevice> vkdevices;
+    TKit::StackArray<VkPhysicalDevice> vkdevices;
 
     const Vulkan::InstanceTable *table = &m_Instance->GetInfo().Table;
 
@@ -794,7 +800,8 @@ Result<TKit::StaticArray4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enu
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(Error_NoDeviceFound);
 
-    TKit::StaticArray4<Result<PhysicalDevice>> devices;
+    TKit::ArenaArray<Result<PhysicalDevice>> devices;
+    devices.Reserve(vkdevices.GetSize());
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice);

@@ -1,6 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/graphics_pipeline.hpp"
-#include "tkit/utils/debug.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -99,12 +99,13 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<
     if (p_Builders.GetSize() == 0)
         return Result<>::Error(Error_BadInput, "Specs and pipelines must not be empty");
 
-    TKit::StaticArray32<VkGraphicsPipelineCreateInfo> pipelineInfos;
+    TKit::StackArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
+    pipelineInfos.Reserve(p_Builders.GetSize());
     for (const Builder &builder : p_Builders)
         pipelineInfos.Append(builder.CreatePipelineInfo());
 
     const u32 count = p_Builders.GetSize();
-    TKit::StaticArray32<VkPipeline> pipelines{count};
+    TKit::StackArray<VkPipeline> pipelines{count};
     const VkResult result = p_Device.Table->CreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                                     p_Device.AllocationCallbacks, pipelines.GetData());
 

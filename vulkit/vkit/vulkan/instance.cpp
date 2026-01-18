@@ -2,6 +2,7 @@
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/instance.hpp"
 #include "tkit/utils/debug.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -55,6 +56,15 @@ static bool contains(const TKit::Span<const char *const> p_Extensions, const cha
     return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
 }
 
+Instance::Builder::Builder()
+{
+    m_RequiredExtensions.Reserve(Core::GetExtensionCount());
+    m_RequestedExtensions.Reserve(Core::GetExtensionCount());
+
+    m_RequiredLayers.Reserve(Core::GetLayerCount());
+    m_RequestedLayers.Reserve(Core::GetLayerCount());
+}
+
 Result<Instance> Instance::Builder::Build() const
 {
     const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
@@ -103,7 +113,8 @@ Result<Instance> Instance::Builder::Build() const
             return Result<Instance>::Error(Error_MissingLayer,
                                            TKit::Format("The required layer '{}' is not suported", layer));
 
-    TKit::StaticArray64<const char *> extensions;
+    TKit::StackArray<const char *> extensions;
+    extensions.Reserve(m_RequiredExtensions.GetCapacity());
     for (const char *extension : m_RequiredExtensions)
         if (!contains(extensions, extension))
             extensions.Append(extension);
@@ -116,7 +127,8 @@ Result<Instance> Instance::Builder::Build() const
             extensions.Append(extension);
     }
 
-    TKit::StaticArray16<const char *> layers;
+    TKit::StackArray<const char *> layers;
+    layers.Reserve(m_RequiredLayers.GetCapacity());
     for (const char *layer : m_RequiredLayers)
         if (!contains(layers, layer))
             layers.Append(layer);

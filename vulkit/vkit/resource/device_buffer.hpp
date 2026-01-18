@@ -69,7 +69,7 @@ class DeviceBuffer
         VmaAllocationCreateInfo m_AllocationInfo{};
         VkDeviceSize m_PerInstanceMinimumAlignment = 1;
         DeviceBufferFlags m_Flags;
-        TKit::StaticArray8<u32> m_FamilyIndices{};
+        TKit::TierArray<u32> m_FamilyIndices{};
     };
 
     struct Info

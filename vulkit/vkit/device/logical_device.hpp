@@ -8,6 +8,7 @@
 #include "vkit/device/physical_device.hpp"
 #include "vkit/execution/queue.hpp"
 #include "vkit/core/limits.hpp"
+#include "tkit/container/static_array.hpp"
 
 namespace VKit
 {
