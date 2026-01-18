@@ -340,7 +340,6 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
 
     SECTION("Instance with validation layers requested")
     {
-        VKit::Core::Initialize();
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Validated App")
                                 .SetHeadless(true)
@@ -357,7 +356,6 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
         INFO("Validation layers enabled: " << hasValidation);
 
         instance.Destroy();
-        VKit::Core::Terminate();
     }
 }
 
@@ -1439,69 +1437,71 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
 {
     // Step 1: Initialize Core
     auto coreResult = VKit::Core::Initialize();
-    REQUIRE(coreResult);
 
-    // Step 2: Create Instance
-    auto instanceResult = VKit::Instance::Builder()
-                              .SetApplicationName("Full Pipeline Test")
-                              .SetApplicationVersion(1, 0, 0)
-                              .SetEngineName("Test Engine")
-                              .SetEngineVersion(1, 0, 0)
-                              .RequireApiVersion(1, 0, 0)
-                              .RequestApiVersion(1, 2, 0)
-                              .RequireValidationLayers()
-                              .SetHeadless(true)
-                              .Build();
-
-    REQUIRE(instanceResult);
-    VKit::Instance instance = instanceResult.GetValue();
-
-    // Step 3: Select Physical Device
-    auto physicalResult = VKit::PhysicalDevice::Selector(&instance)
-                              .PreferType(VKit::Device_Discrete)
-                              .AddFlags(VKit::DeviceSelectorFlag_AnyType)
-                              .AddFlags(VKit::DeviceSelectorFlag_RequireGraphicsQueue)
-                              .RemoveFlags(VKit::DeviceSelectorFlag_RequirePresentQueue)
-                              .Select();
-
-    if (!physicalResult)
     {
+        REQUIRE(coreResult);
+
+        // Step 2: Create Instance
+        auto instanceResult = VKit::Instance::Builder()
+                                  .SetApplicationName("Full Pipeline Test")
+                                  .SetApplicationVersion(1, 0, 0)
+                                  .SetEngineName("Test Engine")
+                                  .SetEngineVersion(1, 0, 0)
+                                  .RequireApiVersion(1, 0, 0)
+                                  .RequestApiVersion(1, 2, 0)
+                                  .RequireValidationLayers()
+                                  .SetHeadless(true)
+                                  .Build();
+
+        REQUIRE(instanceResult);
+        VKit::Instance instance = instanceResult.GetValue();
+
+        // Step 3: Select Physical Device
+        auto physicalResult = VKit::PhysicalDevice::Selector(&instance)
+                                  .PreferType(VKit::Device_Discrete)
+                                  .AddFlags(VKit::DeviceSelectorFlag_AnyType)
+                                  .AddFlags(VKit::DeviceSelectorFlag_RequireGraphicsQueue)
+                                  .RemoveFlags(VKit::DeviceSelectorFlag_RequirePresentQueue)
+                                  .Select();
+
+        if (!physicalResult)
+        {
+            instance.Destroy();
+            VKit::Core::Terminate();
+            SKIP("No physical device available");
+        }
+
+        VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+
+        // Log device info
+        INFO("Selected device: " << physicalDevice.GetInfo().Properties.Core.deviceName);
+        INFO("API Version: " << VK_VERSION_MAJOR(physicalDevice.GetInfo().ApiVersion) << "."
+                             << VK_VERSION_MINOR(physicalDevice.GetInfo().ApiVersion) << "."
+                             << VK_VERSION_PATCH(physicalDevice.GetInfo().ApiVersion));
+
+        // Step 4: Create Logical Device
+        auto deviceResult = VKit::LogicalDevice::Builder(&instance, &physicalDevice)
+                                .RequireQueue(VKit::Queue_Graphics, 1, 1.0f)
+                                .RequestQueue(VKit::Queue_Compute, 1, 0.5f)
+                                .Build();
+
+        REQUIRE(deviceResult);
+        VKit::LogicalDevice device = deviceResult.GetValue();
+
+        // Verify everything is set up correctly
+        CHECK(device.GetHandle() != VK_NULL_HANDLE);
+        CHECK_FALSE(device.GetInfo().QueuesPerType[VKit::Queue_Graphics].IsEmpty());
+
+        // Can perform basic operations
+        auto waitResult = device.WaitIdle();
+        REQUIRE(waitResult);
+
+        // Step 5: Clean teardown (reverse order)
+        device.Destroy();
         instance.Destroy();
-        VKit::Core::Terminate();
-        SKIP("No physical device available");
+        // Verify cleanup
+        CHECK(device.GetHandle() == VK_NULL_HANDLE);
+        CHECK(instance.GetHandle() == VK_NULL_HANDLE);
     }
-
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
-
-    // Log device info
-    INFO("Selected device: " << physicalDevice.GetInfo().Properties.Core.deviceName);
-    INFO("API Version: " << VK_VERSION_MAJOR(physicalDevice.GetInfo().ApiVersion) << "."
-                         << VK_VERSION_MINOR(physicalDevice.GetInfo().ApiVersion) << "."
-                         << VK_VERSION_PATCH(physicalDevice.GetInfo().ApiVersion));
-
-    // Step 4: Create Logical Device
-    auto deviceResult = VKit::LogicalDevice::Builder(&instance, &physicalDevice)
-                            .RequireQueue(VKit::Queue_Graphics, 1, 1.0f)
-                            .RequestQueue(VKit::Queue_Compute, 1, 0.5f)
-                            .Build();
-
-    REQUIRE(deviceResult);
-    VKit::LogicalDevice device = deviceResult.GetValue();
-
-    // Verify everything is set up correctly
-    CHECK(device.GetHandle() != VK_NULL_HANDLE);
-    CHECK_FALSE(device.GetInfo().QueuesPerType[VKit::Queue_Graphics].IsEmpty());
-
-    // Can perform basic operations
-    auto waitResult = device.WaitIdle();
-    REQUIRE(waitResult);
-
-    // Step 5: Clean teardown (reverse order)
-    device.Destroy();
-    instance.Destroy();
     VKit::Core::Terminate();
-
-    // Verify cleanup
-    CHECK(device.GetHandle() == VK_NULL_HANDLE);
-    CHECK(instance.GetHandle() == VK_NULL_HANDLE);
 }

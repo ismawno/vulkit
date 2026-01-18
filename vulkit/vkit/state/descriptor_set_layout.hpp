@@ -26,19 +26,19 @@ class DescriptorSetLayout
 
       private:
         ProxyDevice m_Device;
-        TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
+        TKit::TierArray<VkDescriptorSetLayoutBinding> m_Bindings;
     };
 
     DescriptorSetLayout() = default;
     DescriptorSetLayout(const ProxyDevice &p_Device, const VkDescriptorSetLayout p_Layout,
-                        const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &p_Bindings)
+                        const TKit::TierArray<VkDescriptorSetLayoutBinding> &p_Bindings)
         : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
     {
     }
 
     void Destroy();
 
-    const TKit::StaticArray16<VkDescriptorSetLayoutBinding> &GetBindings() const
+    const TKit::TierArray<VkDescriptorSetLayoutBinding> &GetBindings() const
     {
         return m_Bindings;
     }
@@ -62,6 +62,6 @@ class DescriptorSetLayout
   private:
     ProxyDevice m_Device{};
     VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
-    TKit::StaticArray16<VkDescriptorSetLayoutBinding> m_Bindings;
+    TKit::TierArray<VkDescriptorSetLayoutBinding> m_Bindings;
 };
 } // namespace VKit

@@ -27,7 +27,7 @@
         "TOOLKIT_ENABLE_BLOCK_ALLOCATOR": "OFF",
         "TOOLKIT_ENABLE_STACK_ALLOCATOR": "ON",
         "TOOLKIT_ENABLE_TIER_ALLOCATOR": "ON",
-        "TOOLKIT_ENABLE_MULTIPROCESSING": "OFF",
+        "TOOLKIT_ENABLE_MULTIPROCESSING": "ON",
         "TOOLKIT_ENABLE_PROFILING": "OFF",
 
         "TOOLKIT_ENABLE_REFLECTION": "OFF",
@@ -107,6 +107,22 @@
       "name": "release",
       "inherits": "base",
       "configurePreset": "release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": {
+        "outputOnFailure": true
+      }
     }
   ]
 }

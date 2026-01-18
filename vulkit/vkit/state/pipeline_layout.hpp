@@ -35,15 +35,15 @@ class PipelineLayout
       private:
         ProxyDevice m_Device;
 
-        TKit::StaticArray8<VkDescriptorSetLayout> m_DescriptorSetLayouts;
-        TKit::StaticArray4<VkPushConstantRange> m_PushConstantRanges;
+        TKit::TierArray<VkDescriptorSetLayout> m_DescriptorSetLayouts;
+        TKit::TierArray<VkPushConstantRange> m_PushConstantRanges;
         VkPipelineLayoutCreateFlags m_Flags = 0;
     };
 
     struct Info
     {
-        TKit::StaticArray8<VkDescriptorSetLayout> DescriptorSetLayouts;
-        TKit::StaticArray4<VkPushConstantRange> PushConstantRanges;
+        TKit::TierArray<VkDescriptorSetLayout> DescriptorSetLayouts;
+        TKit::TierArray<VkPushConstantRange> PushConstantRanges;
     };
 
     PipelineLayout() = default;

@@ -6,7 +6,6 @@
 #endif
 
 #include "vkit/resource/image.hpp"
-#include "tkit/container/static_array.hpp"
 
 namespace VKit
 {
@@ -50,7 +49,7 @@ class RenderPass
       private:
         Builder *m_Builder;
         Attachment m_Attachment{};
-        TKit::StaticArray16<VkFormat> m_Formats;
+        TKit::TierArray<VkFormat> m_Formats;
 
         friend class Builder;
     };
@@ -78,10 +77,10 @@ class RenderPass
       private:
         Builder *m_Builder;
         VkSubpassDescription m_Description{};
-        TKit::StaticArray8<VkAttachmentReference> m_ColorAttachments{};
-        TKit::StaticArray8<VkAttachmentReference> m_InputAttachments{};
-        TKit::StaticArray8<u32> m_PreserveAttachments{};
-        TKit::StaticArray8<VkAttachmentReference> m_ResolveAttachments{};
+        TKit::TierArray<VkAttachmentReference> m_ColorAttachments{};
+        TKit::TierArray<VkAttachmentReference> m_InputAttachments{};
+        TKit::TierArray<u32> m_PreserveAttachments{};
+        TKit::TierArray<VkAttachmentReference> m_ResolveAttachments{};
         VkAttachmentReference m_DepthStencilAttachment{};
 
         friend class Builder;
@@ -133,9 +132,9 @@ class RenderPass
         VkRenderPassCreateFlags m_Flags = 0;
         u32 m_ImageCount;
 
-        TKit::StaticArray16<AttachmentBuilder> m_Attachments{};
-        TKit::StaticArray8<SubpassBuilder> m_Subpasses{};
-        TKit::StaticArray8<DependencyBuilder> m_Dependencies{};
+        TKit::TierArray<AttachmentBuilder> m_Attachments{};
+        TKit::TierArray<SubpassBuilder> m_Subpasses{};
+        TKit::TierArray<DependencyBuilder> m_Dependencies{};
     };
 
     class Resources
@@ -155,8 +154,8 @@ class RenderPass
 
       private:
         ProxyDevice m_Device;
-        TKit::StaticArray128<DeviceImage> m_Images;       // size: m_ImageCount * m_Attachments.GetSize()
-        TKit::StaticArray8<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
+        TKit::TierArray<DeviceImage> m_Images;         // size: m_ImageCount * m_Attachments.GetSize()
+        TKit::TierArray<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
 
         friend class RenderPass;
     };
@@ -164,7 +163,7 @@ class RenderPass
     struct Info
     {
         VmaAllocator Allocator;
-        TKit::StaticArray16<Attachment> Attachments;
+        TKit::TierArray<Attachment> Attachments;
         u32 ImageCount;
     };
 
@@ -198,7 +197,7 @@ class RenderPass
         Resources resources;
         resources.m_Device = m_Device;
 
-        TKit::StaticArray16<VkImageView> attachments{m_Info.Attachments.GetSize()};
+        TKit::TierArray<VkImageView> attachments{m_Info.Attachments.GetSize()};
         for (u32 i = 0; i < m_Info.ImageCount; ++i)
         {
             for (u32 j = 0; j < attachments.GetSize(); ++j)

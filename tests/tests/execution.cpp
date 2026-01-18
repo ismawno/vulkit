@@ -53,61 +53,61 @@ class TestContext
 
     VKit::ProxyDevice GetProxy() const
     {
-        return m_LogicalDevice.CreateProxy();
+        return m_LogicalDevice->CreateProxy();
     }
 
     const VKit::Instance &GetInstance() const
     {
-        return m_Instance;
+        return *m_Instance;
     }
 
     const VKit::PhysicalDevice &GetPhysicalDevice() const
     {
-        return m_PhysicalDevice;
+        return *m_PhysicalDevice;
     }
 
     const VKit::LogicalDevice &GetLogicalDevice() const
     {
-        return m_LogicalDevice;
+        return *m_LogicalDevice;
     }
 
     u32 GetGraphicsFamily() const
     {
-        return m_PhysicalDevice.GetInfo().FamilyIndices[VKit::Queue_Graphics];
+        return m_PhysicalDevice->GetInfo().FamilyIndices[VKit::Queue_Graphics];
     }
 
     u32 GetComputeFamily() const
     {
-        return m_PhysicalDevice.GetInfo().FamilyIndices[VKit::Queue_Compute];
+        return m_PhysicalDevice->GetInfo().FamilyIndices[VKit::Queue_Compute];
     }
 
     u32 GetTransferFamily() const
     {
-        return m_PhysicalDevice.GetInfo().FamilyIndices[VKit::Queue_Transfer];
+        return m_PhysicalDevice->GetInfo().FamilyIndices[VKit::Queue_Transfer];
     }
 
     VKit::Queue *GetGraphicsQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Graphics];
+        const auto &queues = m_LogicalDevice->GetInfo().QueuesPerType[VKit::Queue_Graphics];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
     VKit::Queue *GetComputeQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Compute];
+        const auto &queues = m_LogicalDevice->GetInfo().QueuesPerType[VKit::Queue_Compute];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
     VKit::Queue *GetTransferQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Transfer];
+        const auto &queues = m_LogicalDevice->GetInfo().QueuesPerType[VKit::Queue_Transfer];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
     void WaitIdle()
     {
         if (m_Valid)
-            m_LogicalDevice.WaitIdle();
+            m_LogicalDevice->WaitIdle();
     }
 
   private:
@@ -148,10 +148,10 @@ class TestContext
             VKit::Core::Terminate();
             return;
         }
-        m_Instance = instanceResult.GetValue();
+        m_Instance = new VKit::Instance(instanceResult.GetValue());
 
         // Select physical device with all queue types
-        auto physicalResult = VKit::PhysicalDevice::Selector(&m_Instance)
+        auto physicalResult = VKit::PhysicalDevice::Selector(m_Instance)
                                   .PreferType(VKit::Device_Discrete)
                                   .AddFlags(VKit::DeviceSelectorFlag_AnyType)
                                   .AddFlags(VKit::DeviceSelectorFlag_RequireGraphicsQueue)
@@ -163,14 +163,16 @@ class TestContext
         if (!physicalResult)
         {
             m_ErrorMessage = "Failed to select Physical Device: " + std::string(physicalResult.GetError().GetMessage());
-            m_Instance.Destroy();
+            m_Instance->Destroy();
+            delete m_Instance;
+            m_Instance = nullptr;
             VKit::Core::Terminate();
             return;
         }
-        m_PhysicalDevice = physicalResult.GetValue();
+        m_PhysicalDevice = new VKit::PhysicalDevice(physicalResult.GetValue());
 
         // Create logical device with multiple queue types
-        auto logicalResult = VKit::LogicalDevice::Builder(&m_Instance, &m_PhysicalDevice)
+        auto logicalResult = VKit::LogicalDevice::Builder(m_Instance, m_PhysicalDevice)
                                  .RequireQueue(VKit::Queue_Graphics, 1, 1.0f)
                                  .RequestQueue(VKit::Queue_Compute, 1, 0.8f)
                                  .RequestQueue(VKit::Queue_Transfer, 1, 0.5f)
@@ -179,12 +181,15 @@ class TestContext
         if (!logicalResult)
         {
             m_ErrorMessage = "Failed to create Logical Device: " + std::string(logicalResult.GetError().GetMessage());
-            m_Instance.Destroy();
+            m_Instance->Destroy();
+            delete m_PhysicalDevice;
+            delete m_Instance;
+            m_PhysicalDevice = nullptr;
+            m_Instance = nullptr;
             VKit::Core::Terminate();
             return;
         }
-        m_LogicalDevice = logicalResult.GetValue();
-
+        m_LogicalDevice = new VKit::LogicalDevice(logicalResult.GetValue());
         m_Valid = true;
     }
 
@@ -192,9 +197,12 @@ class TestContext
     {
         if (m_Valid)
         {
-            m_LogicalDevice.WaitIdle();
-            m_LogicalDevice.Destroy();
-            m_Instance.Destroy();
+            m_LogicalDevice->WaitIdle();
+            m_LogicalDevice->Destroy();
+            m_Instance->Destroy();
+            delete m_LogicalDevice;
+            delete m_PhysicalDevice;
+            delete m_Instance;
             VKit::Core::Terminate();
             m_Valid = false;
         }
@@ -202,9 +210,9 @@ class TestContext
 
     bool m_Valid = false;
     std::string m_ErrorMessage;
-    VKit::Instance m_Instance;
-    VKit::PhysicalDevice m_PhysicalDevice;
-    VKit::LogicalDevice m_LogicalDevice;
+    VKit::Instance *m_Instance = nullptr;
+    VKit::PhysicalDevice *m_PhysicalDevice = nullptr;
+    VKit::LogicalDevice *m_LogicalDevice = nullptr;
 };
 
 /**

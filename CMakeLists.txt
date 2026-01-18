@@ -73,5 +73,6 @@ set(VULKIT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(vulkit)
 if(VULKIT_BUILD_TESTS)
+  enable_testing()
   add_subdirectory(tests)
 endif()

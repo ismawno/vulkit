@@ -5,8 +5,6 @@
 #include <fstream>
 #include <cstdlib>
 
-namespace fs = std::filesystem;
-
 namespace VKit
 {
 

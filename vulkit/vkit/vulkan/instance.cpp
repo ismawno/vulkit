@@ -3,6 +3,7 @@
 #include "vkit/vulkan/instance.hpp"
 #include "tkit/utils/debug.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/container/span.hpp"
 
 namespace VKit
 {

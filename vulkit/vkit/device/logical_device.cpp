@@ -1,5 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/logical_device.hpp"
+#include "vkit/core/core.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -30,12 +32,13 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
 
-    TKit::StaticArray8<VkDeviceQueueCreateInfo> queueCreateInfos;
-    const TKit::ArenaArray<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
+    TKit::StackArray<VkDeviceQueueCreateInfo> queueCreateInfos;
+    queueCreateInfos.Reserve(m_Priorities.GetSize());
 
-    TKit::StaticArray8<TKit::StaticArray32<f32>> finalPriorities;
+    const TKit::TierArray<VkQueueFamilyProperties> &families = devInfo.QueueFamilies;
+    TKit::StackArray<TKit::TierArray<f32>> finalPriorities;
+    finalPriorities.Reserve(m_Priorities.GetSize());
 
-    Info info{};
     TKit::FixedArray<u32, Queue_Count> queueCounts;
     for (u32 i = 0; i < Queue_Count; ++i)
         queueCounts[i] = 0;
@@ -53,7 +56,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
                 TKit::Format("The required queue count for the family index {} exceeds its queue count. {} >= {}",
                              index, requiredCount, family.queueCount));
 
-        TKit::StaticArray32<f32> &fp = finalPriorities.Append();
+        TKit::TierArray<f32> &fp = finalPriorities.Append();
 
         for (u32 i = 0; i < requiredCount; ++i)
             fp.Append(priorities.RequiredPriorities[i]);
@@ -85,7 +88,8 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         }
     }
 
-    TKit::StaticArray256<const char *> enabledExtensions;
+    TKit::StackArray<const char *> enabledExtensions;
+    enabledExtensions.Reserve(devInfo.EnabledExtensions.GetSize());
     for (const std::string &extension : devInfo.EnabledExtensions)
         enabledExtensions.Append(extension.c_str());
 
@@ -137,18 +141,19 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
     const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
 
-    info.Instance = *m_Instance;
-    info.PhysicalDevice = *m_PhysicalDevice;
+    Info info{};
+    info.Instance = m_Instance;
+    info.PhysicalDevice = m_PhysicalDevice;
     info.Table = table;
 
-    LogicalDevice ldevice{device, info};
+    ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, &table};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
             if (p_Index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][p_Index]->GetFamily() == p_Family)
                 return info.QueuesPerType[i][p_Index];
         VkQueue q;
-        table.GetDeviceQueue(ldevice, p_Family, p_Index, &q);
-        return info.Queues.Append(new Queue(ldevice, q, p_Family));
+        table.GetDeviceQueue(pdevice, p_Family, p_Index, &q);
+        return info.Queues.Append(Core::GetAllocation().Tier->Create<Queue>(pdevice, q, p_Family));
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -163,7 +168,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         }
     }
 
-    return Result<LogicalDevice>::Ok(device, info);
+    return Result<LogicalDevice>::Ok(device, std::move(info));
 }
 
 void LogicalDevice::Destroy()
@@ -173,9 +178,9 @@ void LogicalDevice::Destroy()
         for (VKit::Queue *q : m_Info.Queues)
         {
             q->DestroyTimeline();
-            delete q;
+            Core::GetAllocation().Tier->Destroy(q);
         }
-        m_Info.Table.DestroyDevice(m_Device, m_Info.Instance.GetInfo().AllocationCallbacks);
+        m_Info.Table.DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
         m_Device = VK_NULL_HANDLE;
     }
 }
@@ -195,7 +200,7 @@ Result<> LogicalDevice::WaitIdle() const
 #ifdef VK_KHR_surface
 Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR p_Surface) const
 {
-    return m_Info.PhysicalDevice.QuerySwapChainSupport(m_Info.Instance, p_Surface);
+    return m_Info.PhysicalDevice->QuerySwapChainSupport(*m_Info.Instance, p_Surface);
 }
 #endif
 
@@ -203,12 +208,12 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
                                                     const VkImageTiling p_Tiling,
                                                     const VkFormatFeatureFlags p_Features) const
 {
-    const Vulkan::InstanceTable *table = &m_Info.Instance.GetInfo().Table;
+    const Vulkan::InstanceTable *table = &m_Info.Instance->GetInfo().Table;
 
     for (const VkFormat format : p_Candidates)
     {
         VkFormatProperties props;
-        table->GetPhysicalDeviceFormatProperties(m_Info.PhysicalDevice, format, &props);
+        table->GetPhysicalDeviceFormatProperties(*m_Info.PhysicalDevice, format, &props);
 
         if (p_Tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & p_Features) == p_Features)
             return format;
@@ -222,7 +227,7 @@ ProxyDevice LogicalDevice::CreateProxy() const
 {
     ProxyDevice proxy;
     proxy.Device = m_Device;
-    proxy.AllocationCallbacks = m_Info.Instance.GetInfo().AllocationCallbacks;
+    proxy.AllocationCallbacks = m_Info.Instance->GetInfo().AllocationCallbacks;
     proxy.Table = &m_Info.Table;
     return proxy;
 }

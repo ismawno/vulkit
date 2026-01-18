@@ -18,12 +18,14 @@ struct Allocation
 struct Specs
 {
     const char *LoaderPath = nullptr;
-    TKit::FixedArray<Allocation, TKIT_MAX_THREADS> Allocators{};
+    TKit::FixedArray<Allocation, TKit::MaxThreads> Allocators{};
 };
 } // namespace VKit
 
 namespace VKit::Core
 {
+const Allocation &GetAllocation();
+
 Result<> Initialize(const Specs &p_Specs = {});
 void Terminate();
 

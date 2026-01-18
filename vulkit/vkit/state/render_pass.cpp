@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/render_pass.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -9,11 +10,17 @@ Result<RenderPass> RenderPass::Builder::Build() const
     if (m_Subpasses.IsEmpty())
         return Result<RenderPass>::Error(Error_BadInput, "Render must have at least one subpass");
 
-    TKit::StaticArray16<Attachment> attachments;
-    TKit::StaticArray16<VkAttachmentDescription> attDescriptions;
+    TKit::StackArray<Attachment> attachments;
+    attachments.Reserve(m_Attachments.GetSize());
+
+    TKit::StackArray<VkAttachmentDescription> attDescriptions;
+    attDescriptions.Reserve(m_Attachments.GetSize());
+
     for (const AttachmentBuilder &attachment : m_Attachments)
     {
-        TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
+        TKit::StackArray<VkFormat> formats;
+        formats.Reserve(attachment.m_Formats.GetCapacity() + 4);
+        formats = attachment.m_Formats;
         if (formats.IsEmpty())
         {
             if (attachment.m_Attachment.Flags & DeviceImageFlag_ColorAttachment)
@@ -43,11 +50,13 @@ Result<RenderPass> RenderPass::Builder::Build() const
         attDescriptions.Append(att.Description);
     }
 
-    TKit::StaticArray8<VkSubpassDescription> subpasses;
+    TKit::StackArray<VkSubpassDescription> subpasses;
+    subpasses.Reserve(m_Subpasses.GetSize());
     for (const SubpassBuilder &subpass : m_Subpasses)
         subpasses.Append(subpass.m_Description);
 
-    TKit::StaticArray8<VkSubpassDependency> dependencies;
+    TKit::StackArray<VkSubpassDependency> dependencies;
+    dependencies.Reserve(m_Dependencies.GetSize());
     for (const DependencyBuilder &dependency : m_Dependencies)
         dependencies.Append(dependency.m_Dependency);
 

@@ -2,10 +2,10 @@
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
+#include "tkit/multiprocessing/topology.hpp"
 
 namespace VKit::Core
 {
-
 struct Capabilities
 {
     TKit::ArenaArray<VkExtensionProperties> AvailableExtensions{};
@@ -62,6 +62,7 @@ u32 GetLayerCount()
 {
     return s_Capabilities.AvailableLayers.GetSize();
 }
+
 } // namespace VKit::Core
 
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
@@ -93,6 +94,12 @@ static void attempt(const char *p_LoaderPath)
 
 static Specs s_Specs{};
 static TKit::FixedArray<u8, TKIT_MAX_THREADS> s_ProvidedAllocators{};
+
+const Allocation &GetAllocation()
+{
+    static thread_local u32 threadIndex = TKit::Topology::GetThreadIndex();
+    return s_Specs.Allocators[threadIndex];
+}
 
 Result<> Initialize(const Specs &p_Specs)
 {

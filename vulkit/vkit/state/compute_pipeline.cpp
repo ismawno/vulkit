@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/compute_pipeline.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit
 {
@@ -40,7 +41,8 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, con
 Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Specs> p_Specs,
                                  const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
-    TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
+    TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos;
+    pipelineInfos.Reserve(p_Specs.GetSize());
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
@@ -49,7 +51,7 @@ Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<c
     }
 
     const u32 count = p_Specs.GetSize();
-    TKit::StaticArray32<VkPipeline> pipelines{count};
+    TKit::StackArray<VkPipeline> pipelines{count};
     const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
 

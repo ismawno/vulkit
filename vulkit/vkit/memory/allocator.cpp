@@ -8,15 +8,15 @@ namespace VKit
 {
 Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs)
 {
-    const Instance &instance = p_Device.GetInfo().Instance;
-    const PhysicalDevice &physicalDevice = p_Device.GetInfo().PhysicalDevice;
+    const Instance *instance = p_Device.GetInfo().Instance;
+    const PhysicalDevice *physicalDevice = p_Device.GetInfo().PhysicalDevice;
 
-    const Vulkan::InstanceTable &itable = instance.GetInfo().Table;
+    const Vulkan::InstanceTable &itable = instance->GetInfo().Table;
     const Vulkan::DeviceTable &dtable = p_Device.GetInfo().Table;
 
     VmaVulkanFunctions functions{};
     functions.vkGetInstanceProcAddr = Vulkan::vkGetInstanceProcAddr;
-    functions.vkGetDeviceProcAddr = instance.GetInfo().Table.vkGetDeviceProcAddr;
+    functions.vkGetDeviceProcAddr = instance->GetInfo().Table.vkGetDeviceProcAddr;
     functions.vkGetPhysicalDeviceProperties = itable.vkGetPhysicalDeviceProperties;
     functions.vkGetPhysicalDeviceMemoryProperties = itable.vkGetPhysicalDeviceMemoryProperties;
     functions.vkAllocateMemory = dtable.vkAllocateMemory;
@@ -34,7 +34,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
     functions.vkCreateImage = dtable.vkCreateImage;
     functions.vkDestroyImage = dtable.vkDestroyImage;
     functions.vkCmdCopyBuffer = dtable.vkCmdCopyBuffer;
-    const u32 version = p_Device.GetInfo().PhysicalDevice.GetInfo().ApiVersion;
+    const u32 version = physicalDevice->GetInfo().ApiVersion;
 #if VMA_DEDICATED_ALLOCATION || VMA_VULKAN_VERSION >= 1001000
     if (version >= VKIT_MAKE_VERSION(0, 1, 1, 0))
     {
@@ -80,12 +80,12 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 #endif
 
     VmaAllocatorCreateInfo allocatorInfo{};
-    allocatorInfo.physicalDevice = physicalDevice;
+    allocatorInfo.physicalDevice = *physicalDevice;
     allocatorInfo.device = p_Device;
-    allocatorInfo.instance = instance;
-    allocatorInfo.vulkanApiVersion = instance.GetInfo().ApplicationVersion;
+    allocatorInfo.instance = *instance;
+    allocatorInfo.vulkanApiVersion = instance->GetInfo().ApplicationVersion;
     allocatorInfo.preferredLargeHeapBlockSize = p_Specs.PreferredLargeHeapBlockSize;
-    allocatorInfo.pAllocationCallbacks = instance.GetInfo().AllocationCallbacks;
+    allocatorInfo.pAllocationCallbacks = instance->GetInfo().AllocationCallbacks;
     allocatorInfo.pDeviceMemoryCallbacks = p_Specs.DeviceMemoryCallbacks;
     allocatorInfo.pHeapSizeLimit = p_Specs.HeapSizeLimit;
 #if VMA_EXTERNAL_MEMORY

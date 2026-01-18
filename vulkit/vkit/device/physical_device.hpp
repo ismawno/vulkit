@@ -111,7 +111,7 @@ class PhysicalDevice
 
         VKIT_NO_DISCARD Result<PhysicalDevice> Select() const;
 
-        VKIT_NO_DISCARD Result<TKit::ArenaArray<Result<PhysicalDevice>>> Enumerate() const;
+        VKIT_NO_DISCARD Result<TKit::TierArray<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(DeviceType p_Type);
@@ -156,8 +156,8 @@ class PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::ArenaArray<std::string> m_RequiredExtensions;
-        TKit::ArenaArray<std::string> m_RequestedExtensions;
+        TKit::TierArray<std::string> m_RequiredExtensions;
+        TKit::TierArray<std::string> m_RequestedExtensions;
 
         DeviceFeatures m_RequiredFeatures{};
     };
@@ -169,11 +169,11 @@ class PhysicalDevice
         u32 ApiVersion;
 
         TKit::FixedArray<u32, Queue_Count> FamilyIndices;
-        TKit::ArenaArray<VkQueueFamilyProperties> QueueFamilies;
+        TKit::TierArray<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::ArenaArray<std::string> EnabledExtensions;
-        TKit::ArenaArray<std::string> AvailableExtensions;
+        TKit::TierArray<std::string> EnabledExtensions;
+        TKit::TierArray<std::string> AvailableExtensions;
 
         DeviceFeatures EnabledFeatures{};
         DeviceFeatures AvailableFeatures{};

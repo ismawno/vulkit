@@ -7,7 +7,7 @@
 
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
-#include "tkit/container/span.hpp"
+#include "tkit/container/tier_array.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit
@@ -85,11 +85,11 @@ class Instance
         u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
         u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
-        TKit::ArenaArray<const char *> m_RequiredExtensions{};
-        TKit::ArenaArray<const char *> m_RequestedExtensions{};
+        TKit::TierArray<const char *> m_RequiredExtensions{};
+        TKit::TierArray<const char *> m_RequestedExtensions{};
 
-        TKit::ArenaArray<const char *> m_RequiredLayers{};
-        TKit::ArenaArray<const char *> m_RequestedLayers{};
+        TKit::TierArray<const char *> m_RequiredLayers{};
+        TKit::TierArray<const char *> m_RequestedLayers{};
 
         bool m_RequireValidationLayers = false;
         bool m_RequestValidationLayers = false;
@@ -106,8 +106,8 @@ class Instance
         const char *ApplicationName;
         const char *EngineName;
 
-        TKit::ArenaArray<const char *> EnabledExtensions;
-        TKit::ArenaArray<const char *> EnabledLayers;
+        TKit::TierArray<const char *> EnabledExtensions;
+        TKit::TierArray<const char *> EnabledLayers;
 
         Vulkan::InstanceTable Table;
 

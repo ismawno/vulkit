@@ -768,9 +768,9 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance, const u32 p_MaxEx
         m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
 }
 
-Result<TKit::ArenaArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
+Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
 {
-    using EnumerateResult = Result<TKit::ArenaArray<Result<PhysicalDevice>>>;
+    using EnumerateResult = Result<TKit::TierArray<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
@@ -800,7 +800,7 @@ Result<TKit::ArenaArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enume
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(Error_NoDeviceFound);
 
-    TKit::ArenaArray<Result<PhysicalDevice>> devices;
+    TKit::TierArray<Result<PhysicalDevice>> devices;
     devices.Reserve(vkdevices.GetSize());
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {

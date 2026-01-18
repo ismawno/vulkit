@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/presentation/swap_chain.hpp"
+#include "tkit/container/stack_array.hpp"
 
 #ifndef VK_KHR_surface
 #    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"
@@ -30,14 +31,20 @@ static Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPrese
 Result<SwapChain> SwapChain::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();
-    const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice.GetInfo();
+    const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice->GetInfo();
     if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX || devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(Error_MissingQueue);
 
     const auto checkFlags = [this](const SwapChainBuilderFlags p_Flags) -> bool { return m_Flags & p_Flags; };
 
-    TKit::StaticArray16<VkSurfaceFormatKHR> imageFormats = m_SurfaceFormats;
-    TKit::StaticArray8<VkPresentModeKHR> presentModes = m_PresentModes;
+    TKit::StackArray<VkSurfaceFormatKHR> imageFormats;
+    imageFormats.Reserve(m_SurfaceFormats.GetCapacity() + 1);
+    imageFormats = m_SurfaceFormats;
+
+    TKit::StackArray<VkPresentModeKHR> presentModes;
+    presentModes.Reserve(presentModes.GetCapacity() + 2);
+    presentModes = m_PresentModes;
+
     if (imageFormats.IsEmpty())
         imageFormats.Append(VkSurfaceFormatKHR{VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR});
     if (presentModes.IsEmpty())
@@ -139,7 +146,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<SwapChain>::Error(result);
 
-    TKit::StaticArray8<DeviceImage> finalImages;
+    TKit::TierArray<DeviceImage> finalImages;
     SwapChain::Info info{};
     info.Extent = extent;
     info.SurfaceFormat = surfaceFormat;
@@ -163,7 +170,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
         return Result<SwapChain>::Error(result);
     }
 
-    TKit::StaticArray8<VkImage> images;
+    TKit::StackArray<VkImage> images;
     images.Resize(imageCount);
 
     result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData());

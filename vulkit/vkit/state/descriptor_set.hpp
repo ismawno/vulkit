@@ -31,7 +31,7 @@ class DescriptorSet
         ProxyDevice m_Device;
         const DescriptorSetLayout *m_Layout;
 
-        TKit::StaticArray16<VkWriteDescriptorSet> m_Writes;
+        TKit::TierArray<VkWriteDescriptorSet> m_Writes;
     };
 
     DescriptorSet() = default;
