@@ -15,7 +15,7 @@ const char *ToString(const QueueType p_Type)
         return "Transfer";
     case Queue_Present:
         return "Present";
-    default:
+    case Queue_Count:
         return "Unknown";
     }
     return "Unknown";

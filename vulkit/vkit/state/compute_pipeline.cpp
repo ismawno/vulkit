@@ -40,7 +40,7 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, con
 Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Specs> p_Specs,
                                  const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
-    TKit::Array32<VkComputePipelineCreateInfo> pipelineInfos;
+    TKit::StaticArray32<VkComputePipelineCreateInfo> pipelineInfos;
     for (const Specs &specs : p_Specs)
     {
         const auto result = createPipelineInfo(specs);
@@ -49,7 +49,7 @@ Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<c
     }
 
     const u32 count = p_Specs.GetSize();
-    TKit::Array32<VkPipeline> pipelines{count};
+    TKit::StaticArray32<VkPipeline> pipelines{count};
     const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
 

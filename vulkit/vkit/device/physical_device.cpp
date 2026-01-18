@@ -385,16 +385,16 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         return JudgeResult::Error(
             result, TKit::Format("Failed to get the number of device extensions for the device: {}", name));
 
-    TKit::Array256<VkExtensionProperties> extensionsProps{extensionCount};
+    TKit::StaticArray256<VkExtensionProperties> extensionsProps{extensionCount};
     result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(result, TKit::Format("Failed to get the device extensions for the device: {}", name));
 
-    TKit::Array256<std::string> availableExtensions;
+    TKit::StaticArray256<std::string> availableExtensions;
     for (const VkExtensionProperties &extension : extensionsProps)
         availableExtensions.Append(extension.extensionName);
 
-    TKit::Array256<std::string> enabledExtensions;
+    TKit::StaticArray256<std::string> enabledExtensions;
     for (const std::string &extension : m_RequiredExtensions)
     {
         if (!contains(availableExtensions, extension))
@@ -426,7 +426,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     u32 familyCount;
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
 
-    TKit::Array8<VkQueueFamilyProperties> families{familyCount};
+    TKit::StaticArray8<VkQueueFamilyProperties> families{familyCount};
     table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
 
     const auto compatibleQueueIndex = [&](const VkQueueFlags p_Flags) -> u32 {
@@ -762,9 +762,9 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance) : m_Instance(p_In
         m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
 }
 
-Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
+Result<TKit::StaticArray4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate() const
 {
-    using EnumerateResult = Result<TKit::Array4<Result<PhysicalDevice>>>;
+    using EnumerateResult = Result<TKit::StaticArray4<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
     if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
@@ -777,7 +777,7 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
                                       "capabilities to enable surface creation. The instance must be headless");
 #endif
 
-    TKit::Array4<VkPhysicalDevice> vkdevices;
+    TKit::StaticArray4<VkPhysicalDevice> vkdevices;
 
     const Vulkan::InstanceTable *table = &m_Instance->GetInfo().Table;
 
@@ -794,7 +794,7 @@ Result<TKit::Array4<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumerate
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(Error_NoDeviceFound);
 
-    TKit::Array4<Result<PhysicalDevice>> devices;
+    TKit::StaticArray4<Result<PhysicalDevice>> devices;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice);

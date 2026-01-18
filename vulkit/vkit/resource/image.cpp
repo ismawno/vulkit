@@ -18,9 +18,9 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
     case VK_IMAGE_TYPE_3D:
         return VK_IMAGE_VIEW_TYPE_3D;
     default:
-        break;
+        TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unrecognized vulkan image type");
+        return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
     }
-    return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
 }
 VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags p_Flags)
 {
@@ -352,9 +352,6 @@ VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat p_Format)
             "[VULKIT][DEVICE-IMAGE] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
         return 0;
     }
-    TKIT_LOG_WARNING(
-        "[VULKIT][DEVICE-IMAGE] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
-    return 0;
 }
 
 VkDeviceSize DeviceImage::ComputeSize(const u32 p_Width, const u32 p_Height, const u32 p_Mip, const u32 p_Depth) const

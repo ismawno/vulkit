@@ -41,6 +41,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
     {
     case Error_VulkanError:
         return "VulkanError";
+    case Error_BadSynchronization:
+        return "BadSynchronization";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
     case Error_BadInput:
@@ -71,7 +73,7 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "FileNotFound";
     case Error_Unknown:
         return "Unknown";
-    default:
+    case Error_Count:
         return "Unknown";
     }
     return "Unknown";

@@ -103,7 +103,7 @@ Result<Instance> Instance::Builder::Build() const
             return Result<Instance>::Error(Error_MissingLayer,
                                            TKit::Format("The required layer '{}' is not suported", layer));
 
-    TKit::Array64<const char *> extensions;
+    TKit::StaticArray64<const char *> extensions;
     for (const char *extension : m_RequiredExtensions)
         if (!contains(extensions, extension))
             extensions.Append(extension);
@@ -116,7 +116,7 @@ Result<Instance> Instance::Builder::Build() const
             extensions.Append(extension);
     }
 
-    TKit::Array16<const char *> layers;
+    TKit::StaticArray16<const char *> layers;
     for (const char *layer : m_RequiredLayers)
         if (!contains(layers, layer))
             layers.Append(layer);

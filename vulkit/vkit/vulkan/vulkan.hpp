@@ -2,7 +2,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/result.hpp"
-#include "tkit/container/array.hpp"
+#include "tkit/container/static_array.hpp"
 #include "tkit/preprocessor/utils.hpp"
 #include <vulkan/vulkan.h>
 #include <functional>
@@ -255,7 +255,7 @@ class DeletionQueue
     }
 
   private:
-    TKit::Array1024<std::function<void()>> m_Deleters;
+    TKit::StaticArray1024<std::function<void()>> m_Deleters;
 };
 
 } // namespace VKit

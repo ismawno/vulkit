@@ -22,7 +22,7 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
 
     const auto fileSize = file.tellg();
 
-    TKit::Array<char, MaxShaderSize> code(static_cast<u32>(fileSize));
+    TKit::StaticArray<char, MaxShaderSize> code(static_cast<u32>(fileSize));
     file.seekg(0);
     file.read(code.GetData(), fileSize);
     const u32 *spv = reinterpret_cast<const u32 *>(code.GetData());

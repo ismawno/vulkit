@@ -16,8 +16,8 @@ class LogicalDevice
   public:
     struct QueuePriorities
     {
-        TKit::Array16<f32> RequiredPriorities;
-        TKit::Array16<f32> RequestedPriorities;
+        TKit::StaticArray16<f32> RequiredPriorities;
+        TKit::StaticArray16<f32> RequestedPriorities;
     };
 
     class Builder
@@ -41,7 +41,7 @@ class LogicalDevice
         const Instance *m_Instance;
         const PhysicalDevice *m_PhysicalDevice;
 
-        TKit::Array8<QueuePriorities> m_Priorities;
+        TKit::StaticArray8<QueuePriorities> m_Priorities;
     };
 
     struct Info
@@ -49,9 +49,9 @@ class LogicalDevice
         Instance Instance;
         PhysicalDevice PhysicalDevice;
         Vulkan::DeviceTable Table;
-        TKit::Array<Queue *, MaxQueueCount> Queues;
+        TKit::StaticArray<Queue *, MaxQueueCount> Queues;
         // may contain duplicates!
-        TKit::FixedArray<TKit::Array<Queue *, MaxQueueCount>, Queue_Count> QueuesPerType;
+        TKit::FixedArray<TKit::StaticArray<Queue *, MaxQueueCount>, Queue_Count> QueuesPerType;
     };
 
     LogicalDevice() = default;

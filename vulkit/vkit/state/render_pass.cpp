@@ -9,11 +9,11 @@ Result<RenderPass> RenderPass::Builder::Build() const
     if (m_Subpasses.IsEmpty())
         return Result<RenderPass>::Error(Error_BadInput, "Render must have at least one subpass");
 
-    TKit::Array16<Attachment> attachments;
-    TKit::Array16<VkAttachmentDescription> attDescriptions;
+    TKit::StaticArray16<Attachment> attachments;
+    TKit::StaticArray16<VkAttachmentDescription> attDescriptions;
     for (const AttachmentBuilder &attachment : m_Attachments)
     {
-        TKit::Array16<VkFormat> formats = attachment.m_Formats;
+        TKit::StaticArray16<VkFormat> formats = attachment.m_Formats;
         if (formats.IsEmpty())
         {
             if (attachment.m_Attachment.Flags & DeviceImageFlag_ColorAttachment)
@@ -43,11 +43,11 @@ Result<RenderPass> RenderPass::Builder::Build() const
         attDescriptions.Append(att.Description);
     }
 
-    TKit::Array8<VkSubpassDescription> subpasses;
+    TKit::StaticArray8<VkSubpassDescription> subpasses;
     for (const SubpassBuilder &subpass : m_Subpasses)
         subpasses.Append(subpass.m_Description);
 
-    TKit::Array8<VkSubpassDependency> dependencies;
+    TKit::StaticArray8<VkSubpassDependency> dependencies;
     for (const DependencyBuilder &dependency : m_Dependencies)
         dependencies.Append(dependency.m_Dependency);
 

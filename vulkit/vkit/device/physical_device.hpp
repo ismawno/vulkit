@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PHYSICAL_DEVICE"
 #endif
 
-#include "tkit/container/array.hpp"
+#include "tkit/container/static_array.hpp"
 #include "vkit/vulkan/instance.hpp"
 #include "vkit/execution/queue.hpp"
 
@@ -99,8 +99,8 @@ class PhysicalDevice
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
-        TKit::Array128<VkSurfaceFormatKHR> Formats;
-        TKit::Array8<VkPresentModeKHR> PresentModes;
+        TKit::StaticArray128<VkSurfaceFormatKHR> Formats;
+        TKit::StaticArray8<VkPresentModeKHR> PresentModes;
     };
 #endif
 
@@ -111,7 +111,7 @@ class PhysicalDevice
 
         VKIT_NO_DISCARD Result<PhysicalDevice> Select() const;
 
-        VKIT_NO_DISCARD Result<TKit::Array4<Result<PhysicalDevice>>> Enumerate() const;
+        VKIT_NO_DISCARD Result<TKit::StaticArray4<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *p_Name);
         Selector &PreferType(DeviceType p_Type);
@@ -156,8 +156,8 @@ class PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::Array256<std::string> m_RequiredExtensions;
-        TKit::Array256<std::string> m_RequestedExtensions;
+        TKit::StaticArray256<std::string> m_RequiredExtensions;
+        TKit::StaticArray256<std::string> m_RequestedExtensions;
 
         DeviceFeatures m_RequiredFeatures{};
     };
@@ -169,11 +169,11 @@ class PhysicalDevice
         u32 ApiVersion;
 
         TKit::FixedArray<u32, Queue_Count> FamilyIndices;
-        TKit::Array8<VkQueueFamilyProperties> QueueFamilies;
+        TKit::StaticArray8<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::Array256<std::string> EnabledExtensions;
-        TKit::Array256<std::string> AvailableExtensions;
+        TKit::StaticArray256<std::string> EnabledExtensions;
+        TKit::StaticArray256<std::string> AvailableExtensions;
 
         DeviceFeatures EnabledFeatures{};
         DeviceFeatures AvailableFeatures{};

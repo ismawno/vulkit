@@ -176,7 +176,7 @@ TEST_CASE("Core::Initialize - Basic Initialization", "[core][init]")
         REQUIRE(result);
 
         // Should have at least some extensions available
-        CHECK_FALSE(VKit::Core::AvailableExtensions.IsEmpty());
+        CHECK_FALSE(VKit::Core::GetExtensionCount() == 0);
 
         VKit::Core::Terminate();
     }
@@ -235,17 +235,17 @@ TEST_CASE("Core::IsExtensionSupported", "[core][extensions]")
 
     SECTION("GetExtension returns nullptr for unsupported")
     {
-        const VkExtensionProperties *ext = VKit::Core::GetExtension("VK_FAKE_nonexistent_extension");
+        const VkExtensionProperties *ext = VKit::Core::GetExtensionByName("VK_FAKE_nonexistent_extension");
         CHECK(ext == nullptr);
     }
 
     SECTION("GetExtension returns valid pointer for supported extension")
     {
         // Find any available extension
-        if (!VKit::Core::AvailableExtensions.IsEmpty())
+        if (VKit::Core::GetExtensionCount() != 0)
         {
-            const char *extName = VKit::Core::AvailableExtensions[0].extensionName;
-            const VkExtensionProperties *ext = VKit::Core::GetExtension(extName);
+            const char *extName = VKit::Core::GetExtensionByIndex(0).extensionName;
+            const VkExtensionProperties *ext = VKit::Core::GetExtensionByName(extName);
             REQUIRE(ext != nullptr);
             CHECK(std::strcmp(ext->extensionName, extName) == 0);
         }
@@ -278,16 +278,16 @@ TEST_CASE("Core::IsLayerSupported", "[core][layers]")
 
     SECTION("GetLayer returns nullptr for unsupported")
     {
-        const VkLayerProperties *layer = VKit::Core::GetLayer("VK_LAYER_FAKE_nonexistent");
+        const VkLayerProperties *layer = VKit::Core::GetLayerByName("VK_LAYER_FAKE_nonexistent");
         CHECK(layer == nullptr);
     }
 
     SECTION("GetLayer returns valid pointer for supported layer")
     {
-        if (!VKit::Core::AvailableLayers.IsEmpty())
+        if (VKit::Core::GetLayerCount() != 0)
         {
-            const char *layerName = VKit::Core::AvailableLayers[0].layerName;
-            const VkLayerProperties *layer = VKit::Core::GetLayer(layerName);
+            const char *layerName = VKit::Core::GetLayerByIndex(0).layerName;
+            const VkLayerProperties *layer = VKit::Core::GetLayerByName(layerName);
             REQUIRE(layer != nullptr);
             CHECK(std::strcmp(layer->layerName, layerName) == 0);
         }
@@ -340,6 +340,7 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
 
     SECTION("Instance with validation layers requested")
     {
+        VKit::Core::Initialize();
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Validated App")
                                 .SetHeadless(true)
@@ -356,6 +357,7 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
         INFO("Validation layers enabled: " << hasValidation);
 
         instance.Destroy();
+        VKit::Core::Terminate();
     }
 }
 
@@ -422,13 +424,12 @@ TEST_CASE("Instance::Builder - Extension Handling", "[instance][builder][extensi
     SECTION("Request available extension")
     {
         // Find an available extension to request
-        if (VKit::Core::AvailableExtensions.IsEmpty())
+        if (VKit::Core::GetExtensionCount() == 0)
         {
             SKIP("No extensions available for testing");
         }
 
-        const char *extName = VKit::Core::AvailableExtensions[0].extensionName;
-
+        const char *extName = VKit::Core::GetExtensionByIndex(0).extensionName;
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Extension Test")
                                 .RequestExtension(extName)
@@ -1055,7 +1056,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
         VKit::LogicalDevice device = result.GetValue();
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
-        const auto &queues = device.GetInfo().Queues[VKit::Queue_Graphics];
+        const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
         CHECK_FALSE(queues.IsEmpty());
 
         device.Destroy();
@@ -1075,7 +1076,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
         // Graphics should definitely exist
-        CHECK_FALSE(device.GetInfo().Queues[VKit::Queue_Graphics].IsEmpty());
+        CHECK_FALSE(device.GetInfo().QueuesPerType[VKit::Queue_Graphics].IsEmpty());
 
         device.Destroy();
     }
@@ -1090,7 +1091,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
         if (result)
         {
             VKit::LogicalDevice device = result.GetValue();
-            const auto &queues = device.GetInfo().Queues[VKit::Queue_Graphics];
+            const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
             INFO("Created " << queues.GetSize() << " graphics queue(s)");
             device.Destroy();
         }
@@ -1398,7 +1399,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
 
     SECTION("Can access graphics queue")
     {
-        const auto &queues = device.GetInfo().Queues[VKit::Queue_Graphics];
+        const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
         REQUIRE_FALSE(queues.IsEmpty());
 
         VKit::Queue *queue = queues[0];
@@ -1408,7 +1409,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
 
     SECTION("Queue family indices are valid")
     {
-        const auto &queues = device.GetInfo().Queues[VKit::Queue_Graphics];
+        const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
         if (!queues.IsEmpty())
         {
             VKit::Queue *queue = queues[0];
@@ -1419,7 +1420,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
 
     SECTION("Queue operations work")
     {
-        const auto &queues = device.GetInfo().Queues[VKit::Queue_Graphics];
+        const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
         REQUIRE_FALSE(queues.IsEmpty());
 
         VKit::Queue *queue = queues[0];
@@ -1489,7 +1490,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
 
     // Verify everything is set up correctly
     CHECK(device.GetHandle() != VK_NULL_HANDLE);
-    CHECK_FALSE(device.GetInfo().Queues[VKit::Queue_Graphics].IsEmpty());
+    CHECK_FALSE(device.GetInfo().QueuesPerType[VKit::Queue_Graphics].IsEmpty());
 
     // Can perform basic operations
     auto waitResult = device.WaitIdle();

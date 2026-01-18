@@ -83,11 +83,11 @@ class Instance
         u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
         u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 
-        TKit::Array64<const char *> m_RequiredExtensions;
-        TKit::Array64<const char *> m_RequestedExtensions;
+        TKit::StaticArray64<const char *> m_RequiredExtensions;
+        TKit::StaticArray64<const char *> m_RequestedExtensions;
 
-        TKit::Array16<const char *> m_RequiredLayers;
-        TKit::Array16<const char *> m_RequestedLayers;
+        TKit::StaticArray16<const char *> m_RequiredLayers;
+        TKit::StaticArray16<const char *> m_RequestedLayers;
 
         bool m_RequireValidationLayers = false;
         bool m_RequestValidationLayers = false;
@@ -104,8 +104,8 @@ class Instance
         const char *ApplicationName;
         const char *EngineName;
 
-        TKit::Array64<const char *> EnabledExtensions;
-        TKit::Array16<const char *> EnabledLayers;
+        TKit::StaticArray64<const char *> EnabledExtensions;
+        TKit::StaticArray16<const char *> EnabledLayers;
 
         Vulkan::InstanceTable Table;
 

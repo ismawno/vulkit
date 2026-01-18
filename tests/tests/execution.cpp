@@ -88,19 +88,19 @@ class TestContext
 
     VKit::Queue *GetGraphicsQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().Queues[VKit::Queue_Graphics];
+        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Graphics];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
     VKit::Queue *GetComputeQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().Queues[VKit::Queue_Compute];
+        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Compute];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
     VKit::Queue *GetTransferQueue()
     {
-        const auto &queues = m_LogicalDevice.GetInfo().Queues[VKit::Queue_Transfer];
+        const auto &queues = m_LogicalDevice.GetInfo().QueuesPerType[VKit::Queue_Transfer];
         return queues.IsEmpty() ? nullptr : queues[0];
     }
 
@@ -734,6 +734,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
+        queue->NextTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -764,6 +765,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
         submitInfo.commandBufferCount = count;
         submitInfo.pCommandBuffers = cmds.GetData();
 
+        queue->NextTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -796,6 +798,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
             submit.pCommandBuffers = &cmds[i];
         }
 
+        queue->NextTimelineValue();
         auto submitResult = queue->Submit(TKit::Span<const VkSubmitInfo>(submitInfos.GetData(), batchCount));
         REQUIRE(submitResult);
 
@@ -844,6 +847,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
+        queue->NextTimelineValue();
         auto submitResult = queue->Submit(submitInfo, fence);
         REQUIRE(submitResult);
 
@@ -882,6 +886,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &cmd;
 
+            queue->NextTimelineValue();
             auto submitResult = queue->Submit(submitInfo, fence);
             REQUIRE(submitResult);
 
@@ -935,6 +940,7 @@ TEST_CASE("Queue::WaitIdle", "[queue][wait]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
+        queue->NextTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -1011,6 +1017,7 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
             submitInfo.commandBufferCount = buffersPerBatch;
             submitInfo.pCommandBuffers = cmds.GetData();
 
+            queue->NextTimelineValue();
             auto submitResult = queue->Submit(submitInfo);
             REQUIRE(submitResult);
 

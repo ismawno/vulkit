@@ -99,12 +99,12 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<
     if (p_Builders.GetSize() == 0)
         return Result<>::Error(Error_BadInput, "Specs and pipelines must not be empty");
 
-    TKit::Array32<VkGraphicsPipelineCreateInfo> pipelineInfos;
+    TKit::StaticArray32<VkGraphicsPipelineCreateInfo> pipelineInfos;
     for (const Builder &builder : p_Builders)
         pipelineInfos.Append(builder.CreatePipelineInfo());
 
     const u32 count = p_Builders.GetSize();
-    TKit::Array32<VkPipeline> pipelines{count};
+    TKit::StaticArray32<VkPipeline> pipelines{count};
     const VkResult result = p_Device.Table->CreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
                                                                     p_Device.AllocationCallbacks, pipelines.GetData());
 
