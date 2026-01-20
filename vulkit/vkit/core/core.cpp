@@ -93,7 +93,14 @@ static void attempt(const char *p_LoaderPath)
 }
 
 static Specs s_Specs{};
-static TKit::FixedArray<u8, TKIT_MAX_THREADS> s_ProvidedAllocators{};
+struct DefaultAllocation
+{
+    TKit::Storage<TKit::ArenaAllocator> Arena{};
+    TKit::Storage<TKit::StackAllocator> Stack{};
+    TKit::Storage<TKit::TierAllocator> Tier{};
+    u8 IsProvided;
+};
+static TKit::FixedArray<DefaultAllocation, TKIT_MAX_THREADS> s_DefaultAlloc{};
 
 const Allocation &GetAllocation()
 {
@@ -141,36 +148,46 @@ Result<> Initialize(const Specs &p_Specs)
     s_Specs = p_Specs;
     for (u32 i = 0; i < TKIT_MAX_THREADS; ++i)
     {
-        s_ProvidedAllocators[i] = 0;
         Allocation &alloc = s_Specs.Allocators[i];
+        DefaultAllocation &defAlloc = s_DefaultAlloc[i];
+        s_DefaultAlloc[i].IsProvided = 0;
         if (alloc.Arena)
-            s_ProvidedAllocators[i] |= 1 << 0;
+            s_DefaultAlloc[i].IsProvided |= 1 << 0;
         else
-            alloc.Arena = new TKit::ArenaAllocator{static_cast<u32>(i == 0 ? 4_mib : 4_kib)};
+        {
+            defAlloc.Arena.Construct(static_cast<u32>(i == 0 ? 4_mib : 4_kib));
+            alloc.Arena = defAlloc.Arena.Get();
+        }
 
         if (alloc.Stack)
-            s_ProvidedAllocators[i] |= 1 << 1;
+            s_DefaultAlloc[i].IsProvided |= 1 << 1;
         else
-            alloc.Stack = new TKit::StackAllocator{static_cast<u32>(i == 0 ? 4_mib : 4_kib)};
+        {
+            defAlloc.Stack.Construct(static_cast<u32>(i == 0 ? 4_mib : 4_kib));
+            alloc.Stack = defAlloc.Stack.Get();
+        }
 
         if (alloc.Tier)
-            s_ProvidedAllocators[i] |= 1 << 2;
+            s_DefaultAlloc[i].IsProvided |= 1 << 2;
         else
-            alloc.Tier = new TKit::TierAllocator{alloc.Arena, 64, static_cast<u32>(i == 0 ? 4_mib : 4_kib)};
+        {
+            defAlloc.Tier.Construct(alloc.Arena, 64, static_cast<u32>(i == 0 ? 4_mib : 4_kib));
+            alloc.Tier = defAlloc.Tier.Get();
+        }
     }
-    if (!(s_ProvidedAllocators[0] & 1))
+    if (!(s_DefaultAlloc[0].IsProvided & 1))
         TKit::Memory::PushArena(s_Specs.Allocators[0].Arena);
     else if (!TKit::Memory::GetArena())
         return Result<>::Error(Error_BadInput,
                                "If the main thread arena allocator is provided by the user (allocator at index 0), it "
                                "must have been pushed using TKit::Memory::PushArena(), as vulkit depends on it");
-    if (!(s_ProvidedAllocators[0] & 2))
+    if (!(s_DefaultAlloc[0].IsProvided & 2))
         TKit::Memory::PushStack(s_Specs.Allocators[0].Stack);
     else if (!TKit::Memory::GetStack())
         return Result<>::Error(Error_BadInput,
                                "If the main thread stack allocator is provided by the user (allocator at index 0), it "
                                "must have been pushed using TKit::Memory::PushStack(), as vulkit depends on it");
-    if (!(s_ProvidedAllocators[0] & 4))
+    if (!(s_DefaultAlloc[0].IsProvided & 4))
         TKit::Memory::PushTier(s_Specs.Allocators[0].Tier);
     else if (!TKit::Memory::GetTier())
         return Result<>::Error(Error_BadInput,
@@ -211,21 +228,22 @@ void Terminate()
     FreeLibrary(reinterpret_cast<HMODULE>(s_Library));
 #endif
     s_Library = nullptr;
-    if (!(s_ProvidedAllocators[0] & 1))
+    if (!(s_DefaultAlloc[0].IsProvided & 1))
         TKit::Memory::PopArena();
-    if (!(s_ProvidedAllocators[0] & 2))
+    if (!(s_DefaultAlloc[0].IsProvided & 2))
         TKit::Memory::PopStack();
-    if (!(s_ProvidedAllocators[0] & 4))
+    if (!(s_DefaultAlloc[0].IsProvided & 4))
         TKit::Memory::PopTier();
+
     s_Capabilities = {};
     for (u32 i = 0; i < TKIT_MAX_THREADS; ++i)
     {
-        if (!(s_ProvidedAllocators[i] & 1))
-            delete s_Specs.Allocators[i].Arena;
-        if (!(s_ProvidedAllocators[i] & 2))
-            delete s_Specs.Allocators[i].Stack;
-        if (!(s_ProvidedAllocators[i] & 4))
-            delete s_Specs.Allocators[i].Tier;
+        if (!(s_DefaultAlloc[i].IsProvided & 1))
+            s_DefaultAlloc[i].Arena.Destruct();
+        if (!(s_DefaultAlloc[i].IsProvided & 2))
+            s_DefaultAlloc[i].Stack.Destruct();
+        if (!(s_DefaultAlloc[i].IsProvided & 4))
+            s_DefaultAlloc[i].Tier.Destruct();
     }
 }
 } // namespace VKit::Core
