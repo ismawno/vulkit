@@ -109,9 +109,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pEnabledFeatures = nullptr;
+    VkPhysicalDeviceFeatures2KHR fchain;
     if (v11 || prop2)
     {
-        const VkPhysicalDeviceFeatures2KHR fchain = devInfo.EnabledFeatures.CreateChain(devInfo.ApiVersion);
+        fchain = devInfo.EnabledFeatures.CreateChain(devInfo.ApiVersion);
         createInfo.pNext = &fchain;
     }
     else
