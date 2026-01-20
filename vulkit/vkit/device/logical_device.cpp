@@ -132,7 +132,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     createInfo.enabledLayerCount = instanceInfo.EnabledLayers.GetSize();
     createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.GetData();
 
-    const Vulkan::InstanceTable *itable = &instanceInfo.Table;
+    const Vulkan::InstanceTable *itable = instanceInfo.Table;
 
     VkDevice device;
     const VkResult result =
@@ -140,22 +140,22 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result);
 
-    const Vulkan::DeviceTable table = Vulkan::DeviceTable::Create(device, m_Instance->GetInfo().Table);
+    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+    Vulkan::DeviceTable *table =
+        alloc->Create<Vulkan::DeviceTable>(Vulkan::DeviceTable::Create(device, *m_Instance->GetInfo().Table));
 
     Info info{};
     info.Instance = m_Instance;
     info.PhysicalDevice = m_PhysicalDevice;
     info.Table = table;
 
-    ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, &table};
-    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
-
+    ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, table};
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
             if (p_Index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][p_Index]->GetFamily() == p_Family)
                 return info.QueuesPerType[i][p_Index];
         VkQueue q;
-        table.GetDeviceQueue(pdevice, p_Family, p_Index, &q);
+        table->GetDeviceQueue(pdevice, p_Family, p_Index, &q);
         return info.Queues.Append(alloc->Create<Queue>(pdevice, q, p_Family));
     };
 
@@ -184,7 +184,8 @@ void LogicalDevice::Destroy()
             q->DestroyTimeline();
             alloc->Destroy(q);
         }
-        m_Info.Table.DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
+        m_Info.Table->DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
+        TKit::Memory::GetTier()->Destroy(m_Info.Table);
         m_Device = VK_NULL_HANDLE;
     }
 }
@@ -212,7 +213,7 @@ Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p
                                                     const VkImageTiling p_Tiling,
                                                     const VkFormatFeatureFlags p_Features) const
 {
-    const Vulkan::InstanceTable *table = &m_Info.Instance->GetInfo().Table;
+    const Vulkan::InstanceTable *table = m_Info.Instance->GetInfo().Table;
 
     for (const VkFormat format : p_Candidates)
     {
@@ -232,7 +233,7 @@ ProxyDevice LogicalDevice::CreateProxy() const
     ProxyDevice proxy;
     proxy.Device = m_Device;
     proxy.AllocationCallbacks = m_Info.Instance->GetInfo().AllocationCallbacks;
-    proxy.Table = &m_Info.Table;
+    proxy.Table = m_Info.Table;
     return proxy;
 }
 

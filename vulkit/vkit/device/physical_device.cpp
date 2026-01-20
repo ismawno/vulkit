@@ -358,7 +358,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 {
     using JudgeResult = Result<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
-    const Vulkan::InstanceTable *table = &instanceInfo.Table;
+    const Vulkan::InstanceTable *table = instanceInfo.Table;
 
     VkPhysicalDeviceProperties quickProperties;
     table->GetPhysicalDeviceProperties(p_Device, &quickProperties);
@@ -785,7 +785,7 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
 
     TKit::StackArray<VkPhysicalDevice> vkdevices;
 
-    const Vulkan::InstanceTable *table = &m_Instance->GetInfo().Table;
+    const Vulkan::InstanceTable *table = m_Instance->GetInfo().Table;
 
     u32 deviceCount = 0;
     VkResult result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr);

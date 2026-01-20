@@ -109,7 +109,7 @@ class Instance
         TKit::TierArray<const char *> EnabledExtensions;
         TKit::TierArray<const char *> EnabledLayers;
 
-        Vulkan::InstanceTable Table;
+        Vulkan::InstanceTable *Table;
 
         u32 ApplicationVersion;
         u32 EngineVersion;

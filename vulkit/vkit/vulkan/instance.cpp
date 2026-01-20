@@ -259,23 +259,24 @@ Result<Instance> Instance::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<Instance>::Error(result);
 
-    const Vulkan::InstanceTable table = Vulkan::InstanceTable::Create(vkinstance);
+    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+    Vulkan::InstanceTable *table = alloc->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
 
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
     if (validationLayers)
     {
-        result = table.CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
+        result = table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
         if (result != VK_SUCCESS)
         {
-            table.DestroyInstance(vkinstance, m_AllocationCallbacks);
+            table->DestroyInstance(vkinstance, m_AllocationCallbacks);
             return Result<Instance>::Error(result);
         }
     }
 #else
     if (validationLayers)
     {
-        table.DestroyInstance(vkinstance, m_AllocationCallbacks);
+        table->DestroyInstance(vkinstance, m_AllocationCallbacks);
         return Result<Instance>::Error(Error_MissingLayer,
                                        "Validation layers (along with the debug utils extension) are not suported");
     }
@@ -321,11 +322,12 @@ void Instance::Destroy()
 
     if ((m_Info.Flags & InstanceFlag_HasValidationLayers) && m_Info.DebugMessenger)
     {
-        m_Info.Table.DestroyDebugUtilsMessengerEXT(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
+        m_Info.Table->DestroyDebugUtilsMessengerEXT(m_Instance, m_Info.DebugMessenger, m_Info.AllocationCallbacks);
         m_Info.DebugMessenger = VK_NULL_HANDLE;
     }
 
-    m_Info.Table.DestroyInstance(m_Instance, m_Info.AllocationCallbacks);
+    m_Info.Table->DestroyInstance(m_Instance, m_Info.AllocationCallbacks);
+    TKit::Memory::GetTier()->Destroy(m_Info.Table);
     m_Instance = VK_NULL_HANDLE;
 }
 
@@ -334,7 +336,7 @@ Instance::Proxy Instance::CreateProxy() const
     Proxy proxy;
     proxy.Instance = m_Instance;
     proxy.AllocationCallbacks = m_Info.AllocationCallbacks;
-    proxy.Table = &m_Info.Table;
+    proxy.Table = m_Info.Table;
     return proxy;
 }
 
