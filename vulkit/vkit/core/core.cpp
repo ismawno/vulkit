@@ -91,14 +91,8 @@ static void attempt(const char *p_LoaderPath)
     TKIT_LOG_WARNING_IF(!s_Library, "[VULKIT] Failed");
 }
 
-struct DefaultAllocation
-{
-    TKit::Storage<TKit::ArenaAllocator> Arena{};
-    TKit::Storage<TKit::StackAllocator> Stack{};
-    TKit::Storage<TKit::TierAllocator> Tier{};
-    u8 IsProvided;
-};
-static DefaultAllocation s_DefaultAlloc{};
+u8 s_DefaultAlloc = 0;
+Allocation s_Allocation{};
 
 Result<> Initialize(const Specs &p_Specs)
 {
@@ -137,36 +131,37 @@ Result<> Initialize(const Specs &p_Specs)
 
     Vulkan::Load(s_Library);
 
-    s_DefaultAlloc.IsProvided = 0;
-    if (p_Specs.Allocators.Arena)
+    // these are purposefully leaked
+    if (!p_Specs.Allocators.Arena)
     {
-        s_DefaultAlloc.IsProvided |= 1 << 0;
-        if (!TKit::Memory::GetArena())
-            return Result<>::Error(Error_BadInput, "If the arena allocator is provided by the user, it must have been "
-                                                   "pushed using TKit::Memory::PushArena(), as vulkit depends on it");
+        if (!s_Allocation.Arena)
+            s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
+        TKit::Memory::PushArena(s_Allocation.Arena);
+        s_DefaultAlloc |= 1 << 0;
     }
-    else
-        TKit::Memory::PushArena(s_DefaultAlloc.Arena.Construct(4_mib));
-
-    if (p_Specs.Allocators.Stack)
+    else if (!TKit::Memory::GetArena())
+        return Result<>::Error(Error_BadInput, "If the arena allocator is provided by the user, it must have been "
+                                               "pushed using TKit::Memory::PushArena(), as vulkit depends on it");
+    if (!p_Specs.Allocators.Stack)
     {
-        s_DefaultAlloc.IsProvided |= 1 << 1;
-        if (!TKit::Memory::GetStack())
-            return Result<>::Error(Error_BadInput, "If the stack allocator is provided by the user, it must have been "
-                                                   "pushed using TKit::Memory::PushStack(), as vulkit depends on it");
+        if (!s_Allocation.Stack)
+            s_Allocation.Stack = new TKit::StackAllocator(4_mib);
+        TKit::Memory::PushStack(s_Allocation.Stack);
+        s_DefaultAlloc |= 1 << 1;
     }
-    else
-        TKit::Memory::PushStack(s_DefaultAlloc.Stack.Construct(4_mib));
-
-    if (p_Specs.Allocators.Tier)
+    else if (!TKit::Memory::GetStack())
+        return Result<>::Error(Error_BadInput, "If the stack allocator is provided by the user, it must have been "
+                                               "pushed using TKit::Memory::PushStack(), as vulkit depends on it");
+    if (!p_Specs.Allocators.Tier)
     {
-        s_DefaultAlloc.IsProvided |= 1 << 2;
-        if (!TKit::Memory::GetTier())
-            return Result<>::Error(Error_BadInput, "If the tier allocator is provided by the user, it must have been "
-                                                   "pushed using TKit::Memory::PushTier(), as vulkit depends on it");
+        if (!s_Allocation.Tier)
+            s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
+        TKit::Memory::PushTier(s_Allocation.Tier);
+        s_DefaultAlloc |= 1 << 2;
     }
-    else
-        TKit::Memory::PushTier(s_DefaultAlloc.Tier.Construct(64, 256_kib));
+    else if (!TKit::Memory::GetTier())
+        return Result<>::Error(Error_BadInput, "If the tier allocator is provided by the user, it must have been "
+                                               "pushed using TKit::Memory::PushTier(), as vulkit depends on it");
 
     u32 extensionCount = 0;
     VkResult result;
@@ -203,20 +198,11 @@ void Terminate()
 #endif
     s_Library = nullptr;
     s_Capabilities = {};
-    if (!(s_DefaultAlloc.IsProvided & 4))
-    {
+    if (s_DefaultAlloc & 4)
         TKit::Memory::PopTier();
-        s_DefaultAlloc.Tier.Destruct();
-    }
-    if (!(s_DefaultAlloc.IsProvided & 2))
-    {
+    if (s_DefaultAlloc & 2)
         TKit::Memory::PopStack();
-        s_DefaultAlloc.Stack.Destruct();
-    }
-    if (!(s_DefaultAlloc.IsProvided & 1))
-    {
+    if (s_DefaultAlloc & 1)
         TKit::Memory::PopArena();
-        s_DefaultAlloc.Arena.Destruct();
-    }
 }
 } // namespace VKit::Core

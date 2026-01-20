@@ -40,9 +40,9 @@ struct WarningShutter : Catch::EventListenerBase
 
     void testCaseEnded(const Catch::TestCaseStats &) override
     {
-        TKIT_IGNORE_DEBUG_LOGS(true);
+        // TKIT_IGNORE_DEBUG_LOGS(false);
         TKIT_IGNORE_INFO_LOGS(false);
-        TKIT_IGNORE_WARNING_LOGS(true);
+        TKIT_IGNORE_WARNING_LOGS(false);
     }
 };
 
