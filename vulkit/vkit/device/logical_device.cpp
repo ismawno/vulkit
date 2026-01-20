@@ -170,7 +170,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         }
     }
 
-    return Result<LogicalDevice>::Ok(device, std::move(info));
+    return Result<LogicalDevice>::Ok(device, info);
 }
 
 void LogicalDevice::Destroy()
