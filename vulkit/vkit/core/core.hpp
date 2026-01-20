@@ -9,6 +9,7 @@
 
 namespace VKit
 {
+using Flags = u8;
 struct Allocation
 {
     TKit::ArenaAllocator *Arena = nullptr;

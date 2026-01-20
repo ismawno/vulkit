@@ -158,9 +158,24 @@ Result<> Initialize(const Specs &p_Specs)
         else
             alloc.Tier = new TKit::TierAllocator{alloc.Arena, 64, static_cast<u32>(i == 0 ? 4_mib : 4_kib)};
     }
-    TKit::Memory::PushArena(s_Specs.Allocators[0].Arena);
-    TKit::Memory::PushStack(s_Specs.Allocators[0].Stack);
-    TKit::Memory::PushTier(s_Specs.Allocators[0].Tier);
+    if (!(s_ProvidedAllocators[0] & 1))
+        TKit::Memory::PushArena(s_Specs.Allocators[0].Arena);
+    else if (!TKit::Memory::GetArena())
+        return Result<>::Error(Error_BadInput,
+                               "If the main thread arena allocator is provided by the user (allocator at index 0), it "
+                               "must have been pushed using TKit::Memory::PushArena(), as vulkit depends on it");
+    if (!(s_ProvidedAllocators[0] & 2))
+        TKit::Memory::PushStack(s_Specs.Allocators[0].Stack);
+    else if (!TKit::Memory::GetStack())
+        return Result<>::Error(Error_BadInput,
+                               "If the main thread stack allocator is provided by the user (allocator at index 0), it "
+                               "must have been pushed using TKit::Memory::PushStack(), as vulkit depends on it");
+    if (!(s_ProvidedAllocators[0] & 4))
+        TKit::Memory::PushTier(s_Specs.Allocators[0].Tier);
+    else if (!TKit::Memory::GetTier())
+        return Result<>::Error(Error_BadInput,
+                               "If the main thread tier allocator is provided by the user (allocator at index 0), it "
+                               "must have been pushed using TKit::Memory::PushTier(), as vulkit depends on it");
 
     u32 extensionCount = 0;
     VkResult result;
@@ -196,9 +211,12 @@ void Terminate()
     FreeLibrary(reinterpret_cast<HMODULE>(s_Library));
 #endif
     s_Library = nullptr;
-    TKit::Memory::PopArena();
-    TKit::Memory::PopStack();
-    TKit::Memory::PopTier();
+    if (!(s_ProvidedAllocators[0] & 1))
+        TKit::Memory::PopArena();
+    if (!(s_ProvidedAllocators[0] & 2))
+        TKit::Memory::PopStack();
+    if (!(s_ProvidedAllocators[0] & 4))
+        TKit::Memory::PopTier();
     s_Capabilities = {};
     for (u32 i = 0; i < TKIT_MAX_THREADS; ++i)
     {
