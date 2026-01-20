@@ -2,7 +2,6 @@
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
-#include "tkit/multiprocessing/topology.hpp"
 
 namespace VKit::Core
 {
@@ -92,7 +91,6 @@ static void attempt(const char *p_LoaderPath)
     TKIT_LOG_WARNING_IF(!s_Library, "[VULKIT] Failed");
 }
 
-static Specs s_Specs{};
 struct DefaultAllocation
 {
     TKit::Storage<TKit::ArenaAllocator> Arena{};
@@ -100,13 +98,7 @@ struct DefaultAllocation
     TKit::Storage<TKit::TierAllocator> Tier{};
     u8 IsProvided;
 };
-static TKit::FixedArray<DefaultAllocation, TKIT_MAX_THREADS> s_DefaultAlloc{};
-
-const Allocation &GetAllocation()
-{
-    static thread_local u32 threadIndex = TKit::Topology::GetThreadIndex();
-    return s_Specs.Allocators[threadIndex];
-}
+static DefaultAllocation s_DefaultAlloc{};
 
 Result<> Initialize(const Specs &p_Specs)
 {
@@ -145,54 +137,36 @@ Result<> Initialize(const Specs &p_Specs)
 
     Vulkan::Load(s_Library);
 
-    s_Specs = p_Specs;
-    for (u32 i = 0; i < TKIT_MAX_THREADS; ++i)
+    s_DefaultAlloc.IsProvided = 0;
+    if (p_Specs.Allocators.Arena)
     {
-        Allocation &alloc = s_Specs.Allocators[i];
-        DefaultAllocation &defAlloc = s_DefaultAlloc[i];
-        s_DefaultAlloc[i].IsProvided = 0;
-        if (alloc.Arena)
-            s_DefaultAlloc[i].IsProvided |= 1 << 0;
-        else
-        {
-            defAlloc.Arena.Construct(static_cast<u32>(i == 0 ? 4_mib : 4_kib));
-            alloc.Arena = defAlloc.Arena.Get();
-        }
-
-        if (alloc.Stack)
-            s_DefaultAlloc[i].IsProvided |= 1 << 1;
-        else
-        {
-            defAlloc.Stack.Construct(static_cast<u32>(i == 0 ? 4_mib : 4_kib));
-            alloc.Stack = defAlloc.Stack.Get();
-        }
-
-        if (alloc.Tier)
-            s_DefaultAlloc[i].IsProvided |= 1 << 2;
-        else
-        {
-            defAlloc.Tier.Construct(alloc.Arena, 64, static_cast<u32>(i == 0 ? 4_mib : 4_kib));
-            alloc.Tier = defAlloc.Tier.Get();
-        }
+        s_DefaultAlloc.IsProvided |= 1 << 0;
+        if (!TKit::Memory::GetArena())
+            return Result<>::Error(Error_BadInput, "If the arena allocator is provided by the user, it must have been "
+                                                   "pushed using TKit::Memory::PushArena(), as vulkit depends on it");
     }
-    if (!(s_DefaultAlloc[0].IsProvided & 1))
-        TKit::Memory::PushArena(s_Specs.Allocators[0].Arena);
-    else if (!TKit::Memory::GetArena())
-        return Result<>::Error(Error_BadInput,
-                               "If the main thread arena allocator is provided by the user (allocator at index 0), it "
-                               "must have been pushed using TKit::Memory::PushArena(), as vulkit depends on it");
-    if (!(s_DefaultAlloc[0].IsProvided & 2))
-        TKit::Memory::PushStack(s_Specs.Allocators[0].Stack);
-    else if (!TKit::Memory::GetStack())
-        return Result<>::Error(Error_BadInput,
-                               "If the main thread stack allocator is provided by the user (allocator at index 0), it "
-                               "must have been pushed using TKit::Memory::PushStack(), as vulkit depends on it");
-    if (!(s_DefaultAlloc[0].IsProvided & 4))
-        TKit::Memory::PushTier(s_Specs.Allocators[0].Tier);
-    else if (!TKit::Memory::GetTier())
-        return Result<>::Error(Error_BadInput,
-                               "If the main thread tier allocator is provided by the user (allocator at index 0), it "
-                               "must have been pushed using TKit::Memory::PushTier(), as vulkit depends on it");
+    else
+        TKit::Memory::PushArena(s_DefaultAlloc.Arena.Construct(4_mib));
+
+    if (p_Specs.Allocators.Stack)
+    {
+        s_DefaultAlloc.IsProvided |= 1 << 1;
+        if (!TKit::Memory::GetStack())
+            return Result<>::Error(Error_BadInput, "If the stack allocator is provided by the user, it must have been "
+                                                   "pushed using TKit::Memory::PushStack(), as vulkit depends on it");
+    }
+    else
+        TKit::Memory::PushStack(s_DefaultAlloc.Stack.Construct(4_mib));
+
+    if (p_Specs.Allocators.Tier)
+    {
+        s_DefaultAlloc.IsProvided |= 1 << 2;
+        if (!TKit::Memory::GetTier())
+            return Result<>::Error(Error_BadInput, "If the tier allocator is provided by the user, it must have been "
+                                                   "pushed using TKit::Memory::PushTier(), as vulkit depends on it");
+    }
+    else
+        TKit::Memory::PushTier(s_DefaultAlloc.Tier.Construct(64, 256_kib));
 
     u32 extensionCount = 0;
     VkResult result;
@@ -228,22 +202,21 @@ void Terminate()
     FreeLibrary(reinterpret_cast<HMODULE>(s_Library));
 #endif
     s_Library = nullptr;
-    if (!(s_DefaultAlloc[0].IsProvided & 1))
-        TKit::Memory::PopArena();
-    if (!(s_DefaultAlloc[0].IsProvided & 2))
-        TKit::Memory::PopStack();
-    if (!(s_DefaultAlloc[0].IsProvided & 4))
-        TKit::Memory::PopTier();
-
     s_Capabilities = {};
-    for (u32 i = 0; i < TKIT_MAX_THREADS; ++i)
+    if (!(s_DefaultAlloc.IsProvided & 4))
     {
-        if (!(s_DefaultAlloc[i].IsProvided & 1))
-            s_DefaultAlloc[i].Arena.Destruct();
-        if (!(s_DefaultAlloc[i].IsProvided & 2))
-            s_DefaultAlloc[i].Stack.Destruct();
-        if (!(s_DefaultAlloc[i].IsProvided & 4))
-            s_DefaultAlloc[i].Tier.Destruct();
+        TKit::Memory::PopTier();
+        s_DefaultAlloc.Tier.Destruct();
+    }
+    if (!(s_DefaultAlloc.IsProvided & 2))
+    {
+        TKit::Memory::PopStack();
+        s_DefaultAlloc.Stack.Destruct();
+    }
+    if (!(s_DefaultAlloc.IsProvided & 1))
+    {
+        TKit::Memory::PopArena();
+        s_DefaultAlloc.Arena.Destruct();
     }
 }
 } // namespace VKit::Core

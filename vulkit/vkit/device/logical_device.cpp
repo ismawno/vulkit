@@ -147,13 +147,15 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     info.Table = table;
 
     ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, &table};
+    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+
     const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
         for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
             if (p_Index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][p_Index]->GetFamily() == p_Family)
                 return info.QueuesPerType[i][p_Index];
         VkQueue q;
         table.GetDeviceQueue(pdevice, p_Family, p_Index, &q);
-        return info.Queues.Append(Core::GetAllocation().Tier->Create<Queue>(pdevice, q, p_Family));
+        return info.Queues.Append(alloc->Create<Queue>(pdevice, q, p_Family));
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -175,10 +177,11 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
+        TKit::TierAllocator *alloc = TKit::Memory::GetTier();
         for (VKit::Queue *q : m_Info.Queues)
         {
             q->DestroyTimeline();
-            Core::GetAllocation().Tier->Destroy(q);
+            alloc->Destroy(q);
         }
         m_Info.Table.DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
         m_Device = VK_NULL_HANDLE;
