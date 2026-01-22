@@ -7,8 +7,7 @@ namespace VKit
 Result<RenderPass> RenderPass::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();
-    if (m_Subpasses.IsEmpty())
-        return Result<RenderPass>::Error(Error_BadInput, "Render must have at least one subpass");
+    TKIT_ASSERT(!m_Subpasses.IsEmpty(), "[VULKIT][RENDER-PASS] Render pass must have at least one subpass");
 
     TKit::StackArray<Attachment> attachments;
     attachments.Reserve(m_Attachments.GetSize());

@@ -93,11 +93,10 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
 Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Builder> p_Builders,
                                   const TKit::Span<GraphicsPipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
-    if (p_Builders.GetSize() != p_Pipelines.GetSize())
-        return Result<>::Error(Error_BadInput, TKit::Format("Specs size ({}) and pipelines ({}) size must be equal",
-                                                            p_Builders.GetSize(), p_Pipelines.GetSize()));
-    if (p_Builders.GetSize() == 0)
-        return Result<>::Error(Error_BadInput, "Specs and pipelines must not be empty");
+    TKIT_ASSERT(p_Builders.GetSize() == p_Pipelines.GetSize(),
+                "[VULKIT][PIPELINE] Specs size ({}) and pipelines ({}) size must be equal", p_Builders.GetSize(),
+                p_Pipelines.GetSize());
+    TKIT_ASSERT(!p_Builders.IsEmpty(), "[VULKIT][PIPELINE] Specs and pipelines must not be empty");
 
     TKit::StackArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
     pipelineInfos.Reserve(p_Builders.GetSize());

@@ -300,8 +300,9 @@ Result<Instance> Instance::Builder::Build() const
     if (properties2Support)
         info.Flags |= InstanceFlag_Properties2Extension;
 
-    TKIT_ASSERT((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger),
-                "[VULKIT][INSTANCE] The debug messenger must be available if validation layers are enabled");
+    if (!((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger)))
+        return Result<Instance>::Error(Error_MissingLayer,
+                                       "The debug messenger must be available if validation layers are enabled");
 
     return Result<Instance>::Ok(vkinstance, info);
 }

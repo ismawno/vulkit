@@ -5,12 +5,10 @@
 namespace VKit
 {
 
-static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipeline::Specs &p_Specs)
+static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipeline::Specs &p_Specs)
 {
-    if (!p_Specs.Layout)
-        return Result<VkComputePipelineCreateInfo>::Error(Error_BadInput, "Pipeline layout must be provided");
-    if (!p_Specs.ComputeShader)
-        return Result<VkComputePipelineCreateInfo>::Error(Error_BadInput, "Compute shader must be provided");
+    TKIT_ASSERT(p_Specs.Layout, "[VULKIT][PIPELINE] Pipeline layout must be provided");
+    TKIT_ASSERT(p_Specs.ComputeShader, "[VULKIT][PIPELINE] Compute shader must be provided");
 
     VkComputePipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -25,10 +23,7 @@ static Result<VkComputePipelineCreateInfo> createPipelineInfo(const ComputePipel
 
 Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, const Specs &p_Specs)
 {
-    const auto presult = createPipelineInfo(p_Specs);
-    TKIT_RETURN_ON_ERROR(presult);
-
-    const VkComputePipelineCreateInfo &pipelineInfo = presult.GetValue();
+    const VkComputePipelineCreateInfo pipelineInfo = createPipelineInfo(p_Specs);
 
     VkPipeline pipeline;
     const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo,
@@ -41,14 +36,10 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, con
 Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Specs> p_Specs,
                                  const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
 {
-    TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos;
+    TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos{};
     pipelineInfos.Reserve(p_Specs.GetSize());
     for (const Specs &specs : p_Specs)
-    {
-        const auto result = createPipelineInfo(specs);
-        TKIT_RETURN_ON_ERROR(result);
-        pipelineInfos.Append(result.GetValue());
-    }
+        pipelineInfos.Append(createPipelineInfo(specs));
 
     const u32 count = p_Specs.GetSize();
     TKit::StackArray<VkPipeline> pipelines{count};

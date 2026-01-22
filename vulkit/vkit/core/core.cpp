@@ -136,32 +136,35 @@ Result<> Initialize(const Specs &p_Specs)
     {
         if (!s_Allocation.Arena)
             s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
-        TKit::Memory::PushArena(s_Allocation.Arena);
         s_DefaultAlloc |= 1 << 0;
     }
-    else if (!TKit::Memory::GetArena())
-        return Result<>::Error(Error_BadInput, "If the arena allocator is provided by the user, it must have been "
-                                               "pushed using TKit::Memory::PushArena(), as vulkit depends on it");
+    else
+        s_Allocation.Arena = p_Specs.Allocators.Arena;
+
+    if (TKit::Memory::GetArena() != s_Allocation.Arena)
+        TKit::Memory::PushArena(s_Allocation.Arena);
+
     if (!p_Specs.Allocators.Stack)
     {
         if (!s_Allocation.Stack)
             s_Allocation.Stack = new TKit::StackAllocator(4_mib);
-        TKit::Memory::PushStack(s_Allocation.Stack);
         s_DefaultAlloc |= 1 << 1;
     }
-    else if (!TKit::Memory::GetStack())
-        return Result<>::Error(Error_BadInput, "If the stack allocator is provided by the user, it must have been "
-                                               "pushed using TKit::Memory::PushStack(), as vulkit depends on it");
+    else
+        s_Allocation.Stack = p_Specs.Allocators.Stack;
+    if (TKit::Memory::GetStack() != s_Allocation.Stack)
+        TKit::Memory::PushStack(s_Allocation.Stack);
+
     if (!p_Specs.Allocators.Tier)
     {
         if (!s_Allocation.Tier)
             s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
-        TKit::Memory::PushTier(s_Allocation.Tier);
         s_DefaultAlloc |= 1 << 2;
     }
-    else if (!TKit::Memory::GetTier())
-        return Result<>::Error(Error_BadInput, "If the tier allocator is provided by the user, it must have been "
-                                               "pushed using TKit::Memory::PushTier(), as vulkit depends on it");
+    else
+        s_Allocation.Tier = p_Specs.Allocators.Tier;
+    if (TKit::Memory::GetTier() != s_Allocation.Tier)
+        TKit::Memory::PushTier(s_Allocation.Tier);
 
     u32 extensionCount = 0;
     VkResult result;

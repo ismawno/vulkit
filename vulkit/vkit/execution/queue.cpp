@@ -45,11 +45,11 @@ void Queue::DestroyTimeline()
 
 Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fence)
 {
-    if (m_TimelineCounter <= m_TimelineSubmissions)
-        return Result<>::Error(Error_BadSynchronization,
-                               "When submitting work from the submit queue methods, NextTimelineValue() must have been "
-                               "called prior to that and the value returned must be used as a signal semaphore value "
-                               "for the next submission (this last part is not checked)");
+    TKIT_ASSERT(
+        m_TimelineCounter > m_TimelineSubmissions,
+        "[VULKIT][QUEUE] When submitting work from the submit queue methods, NextTimelineValue() must have been "
+        "called prior to that and the value returned must be used as a signal semaphore value "
+        "for the next submission (this last part is not checked)");
 
     const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
     if (result != VK_SUCCESS)
@@ -62,11 +62,11 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fe
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
 Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> p_Info, const VkFence p_Fence)
 {
-    if (m_TimelineCounter <= m_TimelineSubmissions)
-        return Result<>::Error(Error_BadSynchronization,
-                               "When submitting work from the submit queue methods, NextTimelineValue() must have been "
-                               "called prior to that and the value returned must be used as a signal semaphore value "
-                               "for the next submission (this last part is not checked)");
+    TKIT_ASSERT(
+        m_TimelineCounter > m_TimelineSubmissions,
+        "[VULKIT][QUEUE] When submitting work from the submit queue methods, NextTimelineValue() must have been "
+        "called prior to that and the value returned must be used as a signal semaphore value "
+        "for the next submission (this last part is not checked)");
 
     const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
     if (result != VK_SUCCESS)
