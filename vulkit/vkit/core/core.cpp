@@ -91,7 +91,7 @@ static void attempt(const char *p_LoaderPath)
     TKIT_LOG_WARNING_IF(!s_Library, "[VULKIT] Failed");
 }
 
-u8 s_DefaultAlloc = 0;
+u8 s_PushedAlloc = 0;
 Allocation s_Allocation{};
 
 Result<> Initialize(const Specs &p_Specs)
@@ -132,39 +132,38 @@ Result<> Initialize(const Specs &p_Specs)
     Vulkan::Load(s_Library);
 
     // these are purposefully leaked
-    if (!p_Specs.Allocators.Arena)
-    {
-        if (!s_Allocation.Arena)
-            s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
-        s_DefaultAlloc |= 1 << 0;
-    }
-    else
+    if (p_Specs.Allocators.Arena)
         s_Allocation.Arena = p_Specs.Allocators.Arena;
+    else if (!s_Allocation.Arena)
+        s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
 
     if (TKit::Memory::GetArena() != s_Allocation.Arena)
+    {
         TKit::Memory::PushArena(s_Allocation.Arena);
-
-    if (!p_Specs.Allocators.Stack)
-    {
-        if (!s_Allocation.Stack)
-            s_Allocation.Stack = new TKit::StackAllocator(4_mib);
-        s_DefaultAlloc |= 1 << 1;
+        s_PushedAlloc |= 1 << 0;
     }
-    else
+
+    if (p_Specs.Allocators.Stack)
         s_Allocation.Stack = p_Specs.Allocators.Stack;
-    if (TKit::Memory::GetStack() != s_Allocation.Stack)
-        TKit::Memory::PushStack(s_Allocation.Stack);
+    else if (!s_Allocation.Stack)
+        s_Allocation.Stack = new TKit::StackAllocator(4_mib);
 
-    if (!p_Specs.Allocators.Tier)
+    if (TKit::Memory::GetStack() != s_Allocation.Stack)
     {
-        if (!s_Allocation.Tier)
-            s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
-        s_DefaultAlloc |= 1 << 2;
+        TKit::Memory::PushStack(s_Allocation.Stack);
+        s_PushedAlloc |= 1 << 1;
     }
-    else
+
+    if (p_Specs.Allocators.Tier)
         s_Allocation.Tier = p_Specs.Allocators.Tier;
+    else if (!s_Allocation.Tier)
+        s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
+
     if (TKit::Memory::GetTier() != s_Allocation.Tier)
+    {
         TKit::Memory::PushTier(s_Allocation.Tier);
+        s_PushedAlloc |= 1 << 2;
+    }
 
     u32 extensionCount = 0;
     VkResult result;
@@ -201,11 +200,11 @@ void Terminate()
 #endif
     s_Library = nullptr;
     s_Capabilities = {};
-    if (s_DefaultAlloc & 4)
+    if (s_PushedAlloc & 4)
         TKit::Memory::PopTier();
-    if (s_DefaultAlloc & 2)
+    if (s_PushedAlloc & 2)
         TKit::Memory::PopStack();
-    if (s_DefaultAlloc & 1)
+    if (s_PushedAlloc & 1)
         TKit::Memory::PopArena();
 }
 } // namespace VKit::Core
