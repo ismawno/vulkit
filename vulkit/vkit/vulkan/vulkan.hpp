@@ -141,6 +141,7 @@ enum ErrorCode : u8
     Error_BadInput,
     Error_VersionMismatch,
     Error_NoSurfaceCapabilities,
+    Error_WindowRejected,
     Error_RejectedDevice,
     Error_MissingQueue,
     Error_MissingExtension,

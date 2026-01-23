@@ -53,6 +53,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "VulkanLibraryNotFound";
     case Error_BadInput:
         return "BadInput";
+    case Error_WindowRejected:
+        return "WindowRejected";
     case Error_VersionMismatch:
         return "VersionMismatch";
     case Error_NoSurfaceCapabilities:
