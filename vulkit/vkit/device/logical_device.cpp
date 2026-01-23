@@ -101,8 +101,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
-        return Result<LogicalDevice>::Error(Error_MissingExtension,
-                                            "The 'VK_KHR_get_physical_device_properties2' extension is not supported");
+        return Result<LogicalDevice>::Error(
+            Error_MissingExtension,
+            "[VULKIT][L-DEVICE] The 'VK_KHR_get_physical_device_properties2' extension is not supported");
 #endif
 
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)

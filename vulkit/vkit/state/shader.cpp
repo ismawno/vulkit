@@ -15,7 +15,8 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
 {
     std::ifstream file{p_SpirvPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
-        return Result<Shader>::Error(Error_FileNotFound, TKit::Format("File at path '{}' not found", p_SpirvPath));
+        return Result<Shader>::Error(Error_FileNotFound,
+                                     TKit::Format("[VULKIT][SHADER] File at path '{}' not found", p_SpirvPath));
 
     const auto fileSize = file.tellg();
 

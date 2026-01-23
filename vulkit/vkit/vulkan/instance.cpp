@@ -78,11 +78,10 @@ Result<Instance> Instance::Builder::Build() const
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
         if (version < p_Version)
-            return Result<u32>::Error(
-                Error_VersionMismatch,
-                TKit::Format(
-                    "The vulkan instance version {}.{}.{} found is not supported. The required version is {}.{}.{}",
-                    VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(p_Version)));
+            return Result<u32>::Error(Error_VersionMismatch,
+                                      TKit::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
+                                                   "not supported. The required version is {}.{}.{}",
+                                                   VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(p_Version)));
 
         return p_IsRequested ? p_Version : version;
     };
@@ -106,13 +105,14 @@ Result<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequiredExtensions)
         if (!Core::IsExtensionSupported(extension))
-            return Result<Instance>::Error(Error_MissingExtension,
-                                           TKit::Format("The required extension '{}' is not suported", extension));
+            return Result<Instance>::Error(
+                Error_MissingExtension,
+                TKit::Format("[VULKIT][INSTANCE] The required extension '{}' is not suported", extension));
 
     for (const char *layer : m_RequiredLayers)
         if (!Core::IsLayerSupported(layer))
-            return Result<Instance>::Error(Error_MissingLayer,
-                                           TKit::Format("The required layer '{}' is not suported", layer));
+            return Result<Instance>::Error(
+                Error_MissingLayer, TKit::Format("[VULKIT][INSTANCE] The required layer '{}' is not suported", layer));
 
     TKit::StackArray<const char *> extensions;
     extensions.Reserve(m_RequiredExtensions.GetCapacity());
@@ -149,8 +149,9 @@ Result<Instance> Instance::Builder::Build() const
             Core::IsExtensionSupported("VK_EXT_debug_utils") && Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
 
         if (!validationLayers && m_RequireValidationLayers)
-            return Result<Instance>::Error(Error_MissingLayer,
-                                           "Validation layers (along with the debug utils extension) are not suported");
+            return Result<Instance>::Error(
+                Error_MissingLayer,
+                "[VULKIT][INSTANCE] Validation layers (along with the debug utils extension) are not suported");
 
         TKIT_LOG_WARNING_IF(
             !validationLayers && m_RequestValidationLayers,
@@ -188,7 +189,9 @@ Result<Instance> Instance::Builder::Build() const
         const auto generateError = [](const char *p_Extension) -> Result<Instance> {
             return Result<Instance>::Error(
                 Error_MissingExtension,
-                TKit::Format("The extension '{}', required for windowing capabilities, is not suported", p_Extension));
+                TKit::Format(
+                    "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
+                    p_Extension));
         };
 
         if (!checkWindowingSupport("VK_KHR_surface"))
@@ -277,8 +280,9 @@ Result<Instance> Instance::Builder::Build() const
     if (validationLayers)
     {
         table->DestroyInstance(vkinstance, m_AllocationCallbacks);
-        return Result<Instance>::Error(Error_MissingLayer,
-                                       "Validation layers (along with the debug utils extension) are not suported");
+        return Result<Instance>::Error(
+            Error_MissingLayer,
+            "[VULKIT][INSTANCE] Validation layers (along with the debug utils extension) are not suported");
     }
 #endif
 
@@ -301,8 +305,9 @@ Result<Instance> Instance::Builder::Build() const
         info.Flags |= InstanceFlag_Properties2Extension;
 
     if (!((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger)))
-        return Result<Instance>::Error(Error_MissingLayer,
-                                       "The debug messenger must be available if validation layers are enabled");
+        return Result<Instance>::Error(
+            Error_MissingLayer,
+            "[VULKIT][INSTANCE] The debug messenger must be available if validation layers are enabled");
 
     return Result<Instance>::Ok(vkinstance, info);
 }

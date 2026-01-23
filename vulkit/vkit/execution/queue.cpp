@@ -23,10 +23,8 @@ const char *ToString(const QueueType p_Type)
 
 Result<u64> Queue::UpdateCompletedTimeline()
 {
-    if (!m_Timeline)
-        return Result<u64>::Error(Error_MissingFeature,
-                                  "To query completed submissions of a queue it must have a "
-                                  "timeline semaphore assigned with TakeTimelineSemaphoreOwnership()");
+    TKIT_ASSERT(m_Timeline, "[VULKIT][QUEUE] To query completed submissions of a queue it must have a "
+                            "timeline semaphore assigned with TakeTimelineSemaphoreOwnership()");
 
     const VkResult result = m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &m_CompletedTimeline);
     if (result != VK_SUCCESS)
