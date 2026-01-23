@@ -159,7 +159,8 @@ enum ErrorCode : u8
 template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&p_Result)
 {
     TKIT_ASSERT(p_Result, "[VULKIT][RESULT] {}", p_Result.GetError().ToString());
-    return p_Result.GetValue();
+    if constexpr (!std::same_as<T, void>)
+        return p_Result.GetValue();
 }
 
 #ifdef TKIT_ENABLE_ASSERTS
