@@ -79,6 +79,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "BadImageCount";
     case Error_FileNotFound:
         return "FileNotFound";
+    case Error_EntryPointNotFound:
+        return "EntryPointNotFound";
     case Error_Unknown:
         return "Unknown";
     case Error_Count:
