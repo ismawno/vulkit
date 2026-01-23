@@ -81,8 +81,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "FileNotFound";
     case Error_EntryPointNotFound:
         return "EntryPointNotFound";
-    case Error_ShaderCompilationError:
-        return "ShaderCompilationError";
+    case Error_ShaderCompilationFailed:
+        return "ShaderCompilationFailed";
     case Error_Unknown:
         return "Unknown";
     case Error_Count:

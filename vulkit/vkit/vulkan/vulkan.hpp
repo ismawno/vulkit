@@ -153,7 +153,7 @@ enum ErrorCode : u8
     Error_BadImageCount,
     Error_FileNotFound,
     Error_EntryPointNotFound,
-    Error_ShaderCompilationError,
+    Error_ShaderCompilationFailed,
     Error_BadSynchronization,
     Error_Unknown,
     Error_Count
