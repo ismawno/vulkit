@@ -23,6 +23,12 @@ std::string Error::ToString() const
         str += TKit::Format(" - Message: '{}'", m_FormattedMessage);
     return str;
 }
+#ifdef TKIT_ENABLE_ASSERTS
+void CheckExpression(const VkResult p_Result)
+{
+    TKIT_ASSERT(p_Result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(p_Result));
+}
+#endif
 
 void DeletionQueue::Push(std::function<void()> &&p_Deleter)
 {

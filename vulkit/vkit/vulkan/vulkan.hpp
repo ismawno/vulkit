@@ -126,16 +126,11 @@
 #ifdef TKIT_ENABLE_ASSERTS
 #    define VKIT_CHECK_RESULT(p_Result)                                                                                \
         TKIT_ASSERT(VKit::IsSuccessful(p_Result), "[VULKIT][RESULT] {}", VKit::ResultToString(p_Result))
-#    define VKIT_CHECK_EXPRESSION(p_Expression)                                                                        \
-        {                                                                                                              \
-            const auto __vkit_result = p_Expression;                                                                   \
-            TKIT_ASSERT(VKit::IsSuccessful(__vkit_result), "[VULKIT][RESULT] {}",                                      \
-                        VKit::ResultToString(__vkit_result));                                                          \
-        }
 #else
 #    define VKIT_CHECK_RESULT(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_CHECK_EXPRESSION(p_Expression) p_Expression
 #endif
+
+#define VKIT_CHECK_EXPRESSION(p_Expression) VKit::CheckExpression(p_Expression)
 
 namespace VKit
 {
@@ -160,6 +155,20 @@ enum ErrorCode : u8
     Error_Unknown,
     Error_Count
 };
+
+template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&p_Result)
+{
+    TKIT_ASSERT(p_Result, "[VULKIT][RESULT] {}", p_Result.GetError().ToString());
+    return p_Result.GetValue();
+}
+
+#ifdef TKIT_ENABLE_ASSERTS
+void CheckExpression(VkResult p_Result);
+#else
+inline void CheckExpression(const VkResult)
+{
+}
+#endif
 
 const char *VulkanResultToString(VkResult p_Result);
 const char *ErrorCodeToString(ErrorCode p_Code);
