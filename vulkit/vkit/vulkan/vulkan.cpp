@@ -51,6 +51,8 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
         return "BadSynchronization";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
+    case Error_InitializationFailed:
+        return "InitializationFailed";
     case Error_BadInput:
         return "BadInput";
     case Error_RejectedWindow:
