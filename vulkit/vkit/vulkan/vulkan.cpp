@@ -40,6 +40,10 @@ void DeletionQueue::Flush()
         m_Deleters[i - 1]();
     m_Deleters.Clear();
 }
+void DeletionQueue::Clear()
+{
+    m_Deleters.Clear();
+}
 
 const char *ErrorCodeToString(const ErrorCode p_Code)
 {
