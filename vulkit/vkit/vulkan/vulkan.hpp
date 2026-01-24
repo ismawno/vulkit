@@ -254,7 +254,13 @@ template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
 
 class DeletionQueue
 {
+    TKIT_NON_COPYABLE(DeletionQueue)
   public:
+    ~DeletionQueue()
+    {
+        Flush();
+    }
+
     void Push(std::function<void()> &&p_Deleter);
     void Flush();
 
