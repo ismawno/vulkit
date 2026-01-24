@@ -256,6 +256,7 @@ class DeletionQueue
 {
     TKIT_NON_COPYABLE(DeletionQueue)
   public:
+    DeletionQueue() = default;
     ~DeletionQueue()
     {
         Flush();
