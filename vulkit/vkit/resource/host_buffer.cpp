@@ -14,8 +14,9 @@ HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize inst
 void HostBuffer::Write(const void *data, const VkBufferCopy &copy)
 {
     TKIT_ASSERT(m_Size >= copy.size + copy.dstOffset,
-                "[VULKIT][HOST-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Size,
-                copy.size + copy.dstOffset);
+                "[VULKIT][HOST-BUFFER] Copy size ({}) must be smaller or equal than the buffer size ({}) minus "
+                "destination offset ({})",
+                copy.size, m_Size, copy.dstOffset);
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
     const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;

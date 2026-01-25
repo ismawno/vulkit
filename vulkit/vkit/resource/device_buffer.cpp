@@ -179,8 +179,9 @@ void DeviceBuffer::Write(const void *data, const VkBufferCopy &copy)
 {
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot copy to unmapped buffer");
     TKIT_ASSERT(m_Info.Size >= copy.size + copy.dstOffset,
-                "[VULKIT][DEVICE-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Info.Size,
-                copy.size + copy.dstOffset);
+                "[VULKIT][DEVICE-BUFFER] Copy size ({}) must be smaller or equal than the buffer size ({}) minus "
+                "destination offset ({})",
+                copy.size, m_Info.Size, copy.dstOffset);
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
     const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;
