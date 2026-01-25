@@ -5,7 +5,8 @@
 namespace VKit
 {
 HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize instanceSize, const VkDeviceSize alignment)
-    : m_InstanceCount(instanceCount), m_InstanceSize(instanceSize), m_Size(instanceCount * instanceSize)
+    : m_InstanceCount(instanceCount), m_InstanceSize(instanceSize), m_Size(instanceCount * instanceSize),
+      m_Alignment(alignment)
 {
     m_Data = TKit::Memory::AllocateAligned(m_Size, alignment);
 }
