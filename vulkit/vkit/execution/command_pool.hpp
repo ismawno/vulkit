@@ -34,6 +34,16 @@ class CommandPool
     VKIT_NO_DISCARD Result<VkCommandBuffer> BeginSingleTimeCommands() const;
     VKIT_NO_DISCARD Result<> EndSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue queue) const;
 
+    template <typename F> VKIT_NO_DISCARD Result<> ImmediateSubmission(const VkQueue queue, F &&fun) const
+    {
+        const auto result = BeginSingleTimeCommands();
+        TKIT_RETURN_ON_ERROR(result);
+
+        const VkCommandBuffer cmd = result.GetValue();
+        std::forward<F>(fun)(cmd);
+        return EndSingleTimeCommands(cmd, queue);
+    }
+
     const ProxyDevice &GetDevice() const
     {
         return m_Device;
