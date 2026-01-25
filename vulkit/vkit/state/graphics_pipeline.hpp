@@ -26,18 +26,18 @@ class GraphicsPipeline
     class ColorAttachmentBuilder
     {
       public:
-        ColorAttachmentBuilder(Builder *p_Builder);
+        ColorAttachmentBuilder(Builder *builder);
 
         ColorAttachmentBuilder &EnableBlending();
         ColorAttachmentBuilder &DisableBlending();
 
-        ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags p_Mask);
+        ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags mask);
 
-        ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor p_SrcColor, VkBlendFactor p_DstColor);
-        ColorAttachmentBuilder &SetColorBlendOperation(VkBlendOp p_ColorOp);
+        ColorAttachmentBuilder &SetColorBlendFactors(VkBlendFactor srcColor, VkBlendFactor dstColor);
+        ColorAttachmentBuilder &SetColorBlendOperation(VkBlendOp colorOp);
 
-        ColorAttachmentBuilder &SetAlphaBlendFactors(VkBlendFactor p_SrcAlpha, VkBlendFactor p_DstAlpha);
-        ColorAttachmentBuilder &SetAlphaBlendOperation(VkBlendOp p_AlphaOp);
+        ColorAttachmentBuilder &SetAlphaBlendFactors(VkBlendFactor srcAlpha, VkBlendFactor dstAlpha);
+        ColorAttachmentBuilder &SetAlphaBlendOperation(VkBlendOp alphaOp);
 
         Builder &EndColorAttachment();
 
@@ -58,9 +58,9 @@ class GraphicsPipeline
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout, VkRenderPass p_RenderPass, u32 p_Subpass = 0);
-        Builder(const ProxyDevice &p_Device, VkPipelineLayout p_Layout,
-                const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo);
+        Builder(const ProxyDevice &device, VkPipelineLayout layout, VkRenderPass renderPass, u32 subpass = 0);
+        Builder(const ProxyDevice &device, VkPipelineLayout layout,
+                const VkPipelineRenderingCreateInfoKHR &renderingInfo);
 
         /**
          * @brief Builds the graphics pipeline based on the current settings.
@@ -87,18 +87,18 @@ class GraphicsPipeline
         VkGraphicsPipelineCreateInfo CreatePipelineInfo() const;
 
         Builder &Bake();
-        Builder &SetBasePipeline(VkPipeline p_BasePipeline);
-        Builder &SetBasePipelineIndex(i32 p_BasePipelineIndex);
-        Builder &SetCache(VkPipelineCache p_Cache);
+        Builder &SetBasePipeline(VkPipeline basePipeline);
+        Builder &SetBasePipelineIndex(i32 basePipelineIndex);
+        Builder &SetCache(VkPipelineCache cache);
 
         // Input Assembly
-        Builder &SetTopology(VkPrimitiveTopology p_Topology);
+        Builder &SetTopology(VkPrimitiveTopology topology);
         Builder &EnablePrimitiveRestart();
         Builder &DisablePrimitiveRestart();
 
         // Viewport and Scissor
-        Builder &AddViewport(VkViewport p_Viewport, VkRect2D p_Scissor);
-        Builder &SetViewportCount(u32 p_ViewportCount);
+        Builder &AddViewport(VkViewport viewport, VkRect2D scissor);
+        Builder &SetViewportCount(u32 viewportCount);
 
         // Rasterization
         Builder &EnableRasterizerDiscard();
@@ -107,11 +107,11 @@ class GraphicsPipeline
         Builder &DisableRasterizerDiscard();
         Builder &DisableDepthClamp();
         Builder &DisableDepthBias();
-        Builder &SetPolygonMode(VkPolygonMode p_Mode);
-        Builder &SetLineWidth(f32 p_Width);
-        Builder &SetCullMode(VkCullModeFlags p_Mode);
-        Builder &SetFrontFace(VkFrontFace p_FrontFace);
-        Builder &SetDepthBias(f32 p_ConstantFactor, f32 p_Clamp, f32 p_SlopeFactor);
+        Builder &SetPolygonMode(VkPolygonMode mode);
+        Builder &SetLineWidth(f32 width);
+        Builder &SetCullMode(VkCullModeFlags mode);
+        Builder &SetFrontFace(VkFrontFace frontFace);
+        Builder &SetDepthBias(f32 constantFactor, f32 clamp, f32 slopeFactor);
 
         // Multisampling
         Builder &EnableSampleShading();
@@ -120,17 +120,17 @@ class GraphicsPipeline
         Builder &DisableSampleShading();
         Builder &DisableAlphaToCoverage();
         Builder &DisableAlphaToOne();
-        Builder &SetSampleCount(VkSampleCountFlagBits p_SampleCount);
-        Builder &SetMinSampleShading(f32 p_MinSampleShading);
-        Builder &SetSampleMask(const VkSampleMask *p_SampleMask);
+        Builder &SetSampleCount(VkSampleCountFlagBits sampleCount);
+        Builder &SetMinSampleShading(f32 minSampleShading);
+        Builder &SetSampleMask(const VkSampleMask *sampleMask);
 
         // Color Blending
         Builder &EnableLogicOperation();
         Builder &DisableLogicOperation();
-        Builder &SetLogicOperation(VkLogicOp p_Operation);
-        Builder &SetBlendConstants(const f32 *p_Constants);
-        Builder &SetBlendConstants(f32 p_C1, f32 p_C2, f32 p_C3, f32 p_C4);
-        Builder &SetBlendConstant(u32 p_Index, f32 p_Value);
+        Builder &SetLogicOperation(VkLogicOp operation);
+        Builder &SetBlendConstants(const f32 *constants);
+        Builder &SetBlendConstants(f32 c1, f32 c2, f32 c3, f32 c4);
+        Builder &SetBlendConstant(u32 index, f32 value);
         Builder &AddDefaultColorAttachment();
         ColorAttachmentBuilder &BeginColorAttachment();
 
@@ -143,32 +143,32 @@ class GraphicsPipeline
         Builder &DisableDepthWrite();
         Builder &DisableDepthBoundsTest();
         Builder &DisableStencilTest();
-        Builder &SetDepthCompareOperation(VkCompareOp p_Op);
-        Builder &SetDepthBounds(f32 p_Min, f32 p_Max);
-        Builder &SetStencilFailOperation(VkStencilOp p_FailOp, StencilOperationFlags p_Flags);
-        Builder &SetStencilPassOperation(VkStencilOp p_PassOp, StencilOperationFlags p_Flags);
-        Builder &SetStencilDepthFailOperation(VkStencilOp p_DepthFailOp, StencilOperationFlags p_Flags);
-        Builder &SetStencilCompareOperation(VkCompareOp p_CompareOp, StencilOperationFlags p_Flags);
-        Builder &SetStencilCompareMask(u32 p_Mask, StencilOperationFlags p_Flags);
-        Builder &SetStencilWriteMask(u32 p_Mask, StencilOperationFlags p_Flags);
-        Builder &SetStencilReference(u32 p_Reference, StencilOperationFlags p_Flags);
+        Builder &SetDepthCompareOperation(VkCompareOp op);
+        Builder &SetDepthBounds(f32 min, f32 max);
+        Builder &SetStencilFailOperation(VkStencilOp failOp, StencilOperationFlags flags);
+        Builder &SetStencilPassOperation(VkStencilOp passOp, StencilOperationFlags flags);
+        Builder &SetStencilDepthFailOperation(VkStencilOp depthFailOp, StencilOperationFlags flags);
+        Builder &SetStencilCompareOperation(VkCompareOp compareOp, StencilOperationFlags flags);
+        Builder &SetStencilCompareMask(u32 mask, StencilOperationFlags flags);
+        Builder &SetStencilWriteMask(u32 mask, StencilOperationFlags flags);
+        Builder &SetStencilReference(u32 reference, StencilOperationFlags flags);
 
         // Vertex Input
-        Builder &AddBindingDescription(VkVertexInputRate p_InputRate, u32 p_Stride);
-        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate p_InputRate)
+        Builder &AddBindingDescription(VkVertexInputRate inputRate, u32 stride);
+        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate inputRate)
         {
-            AddBindingDescription(p_InputRate, sizeof(T));
+            AddBindingDescription(inputRate, sizeof(T));
             return *this;
         }
-        Builder &AddAttributeDescription(u32 p_Binding, VkFormat p_Format, u32 p_Offset);
+        Builder &AddAttributeDescription(u32 binding, VkFormat format, u32 offset);
 
         // Shader Stages
-        Builder &AddShaderStage(VkShaderModule p_Module, VkShaderStageFlagBits p_Stage,
-                                VkPipelineShaderStageCreateFlags p_Flags = 0,
-                                const VkSpecializationInfo *p_Info = nullptr, const char *p_EntryPoint = "main");
+        Builder &AddShaderStage(VkShaderModule module, VkShaderStageFlagBits stage,
+                                VkPipelineShaderStageCreateFlags flags = 0, const VkSpecializationInfo *info = nullptr,
+                                const char *entryPoint = "main");
 
         // Dynamic State
-        Builder &AddDynamicState(VkDynamicState p_State);
+        Builder &AddDynamicState(VkDynamicState state);
 
       private:
         void initialize();
@@ -206,19 +206,18 @@ class GraphicsPipeline
         friend class ColorAttachmentBuilder;
     };
 
-    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &p_Device, TKit::Span<const Builder> p_Builders,
-                                           TKit::Span<GraphicsPipeline> p_Pipelines,
-                                           VkPipelineCache p_Cache = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &device, TKit::Span<const Builder> builders,
+                                           TKit::Span<GraphicsPipeline> pipelines,
+                                           VkPipelineCache cache = VK_NULL_HANDLE);
 
     GraphicsPipeline() = default;
-    GraphicsPipeline(const ProxyDevice &p_Device, const VkPipeline p_Pipeline)
-        : m_Device(p_Device), m_Pipeline(p_Pipeline)
+    GraphicsPipeline(const ProxyDevice &device, const VkPipeline pipeline) : m_Device(device), m_Pipeline(pipeline)
     {
     }
 
     void Destroy();
 
-    void Bind(VkCommandBuffer p_CommandBuffer) const;
+    void Bind(VkCommandBuffer commandBuffer) const;
 
     const ProxyDevice &GetDevice() const
     {

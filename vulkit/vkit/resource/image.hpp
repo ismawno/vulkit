@@ -26,7 +26,7 @@ enum DeviceImageFlagBits : DeviceImageFlags
 
 namespace VKit::Detail
 {
-VkImageAspectFlags InferAspectMask(const DeviceImageFlags p_Flags);
+VkImageAspectFlags InferAspectMask(const DeviceImageFlags flags);
 }
 
 namespace VKit
@@ -47,10 +47,10 @@ class DeviceImage
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent3D &p_Extent, VkFormat p_Format,
-                DeviceImageFlags p_Flags = 0);
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, const VkExtent2D &p_Extent, VkFormat p_Format,
-                DeviceImageFlags p_Flags = 0);
+        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent3D &extent, VkFormat format,
+                DeviceImageFlags flags = 0);
+        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent2D &extent, VkFormat format,
+                DeviceImageFlags flags = 0);
 
         /**
          * @brief Creates a vulkan image with the provided specification.
@@ -62,36 +62,26 @@ class DeviceImage
          */
         VKIT_NO_DISCARD Result<DeviceImage> Build() const;
 
-        Builder &SetImageType(VkImageType p_Type);
-        Builder &SetDepth(u32 p_Depth);
-        Builder &SetMipLevels(u32 p_Levels);
-        Builder &SetArrayLayers(u32 p_Layers);
-        Builder &SetTiling(VkImageTiling p_Tiling);
-        Builder &SetInitialLayout(VkImageLayout p_Layout);
-        Builder &SetSamples(VkSampleCountFlagBits p_Samples);
-        Builder &SetSharingMode(VkSharingMode p_Mode);
-        Builder &SetFlags(VkImageCreateFlags p_Flags);
-        Builder &SetUsage(VkImageUsageFlags p_Flags);
-        Builder &SetImageCreateInfo(const VkImageCreateInfo &p_Info);
-        template <typename T> Builder &AddNextToImageInfo(const T *p_Next)
-        {
-            const void *next = m_ImageInfo.pNext;
-            p_Next->pNext = next;
-            m_ImageInfo.pNext = p_Next;
-        }
-        template <typename T> Builder &AddNextToImageViewInfo(const T *p_Next)
-        {
-            const void *next = m_ViewInfo.pNext;
-            p_Next->pNext = next;
-            m_ViewInfo.pNext = p_Next;
-        }
+        Builder &SetImageType(VkImageType type);
+        Builder &SetDepth(u32 depth);
+        Builder &SetMipLevels(u32 levels);
+        Builder &SetArrayLayers(u32 layers);
+        Builder &SetTiling(VkImageTiling tiling);
+        Builder &SetInitialLayout(VkImageLayout layout);
+        Builder &SetSamples(VkSampleCountFlagBits samples);
+        Builder &SetSharingMode(VkSharingMode mode);
+        Builder &SetFlags(VkImageCreateFlags flags);
+        Builder &SetUsage(VkImageUsageFlags flags);
+        Builder &SetImageCreateInfo(const VkImageCreateInfo &info);
+        Builder &SetNextToImageInfo(const void *next);
+        Builder &SetNextToImageViewInfo(const void *next);
 
         const VkImageCreateInfo &GetImageInfo() const;
         const VkImageViewCreateInfo &GetImageViewInfo() const;
 
         Builder &WithImageView();
-        Builder &WithImageView(const VkImageViewCreateInfo &p_Info);
-        Builder &WithImageView(const VkImageSubresourceRange &p_Range);
+        Builder &WithImageView(const VkImageViewCreateInfo &info);
+        Builder &WithImageView(const VkImageSubresourceRange &range);
 
       private:
         ProxyDevice m_Device;
@@ -124,48 +114,47 @@ class DeviceImage
         VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
     };
 
-    static Info FromSwapChain(VkFormat p_Format, const VkExtent2D &p_Extent,
-                              DeviceImageFlags p_Flags = DeviceImageFlag_ColorAttachment);
+    static Info FromSwapChain(VkFormat format, const VkExtent2D &extent,
+                              DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
 
     DeviceImage() = default;
-    DeviceImage(const ProxyDevice &p_Device, const VkImage p_Image, const VkImageLayout p_Layout, const Info &p_Info,
-                const VkImageView p_ImageView = VK_NULL_HANDLE)
-        : m_Device(p_Device), m_Image(p_Image), m_ImageView(p_ImageView), m_Layout(p_Layout), m_Info(p_Info)
+    DeviceImage(const ProxyDevice &device, const VkImage image, const VkImageLayout layout, const Info &info,
+                const VkImageView imageView = VK_NULL_HANDLE)
+        : m_Device(device), m_Image(image), m_ImageView(imageView), m_Layout(layout), m_Info(info)
     {
     }
 
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView();
-    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &p_Info);
-    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &p_Range);
+    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &info);
+    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &range);
 
-    void TransitionLayout(VkCommandBuffer p_CommandBuffer, VkImageLayout p_Layout, const TransitionInfo &p_Info);
+    void TransitionLayout(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info);
 
-    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                       TKit::Span<const VkImageCopy> p_Copy);
-    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                        TKit::Span<const VkBufferImageCopy> p_Copy);
+    void CopyFromImage(VkCommandBuffer commandBuffer, const DeviceImage &source, TKit::Span<const VkImageCopy> copy);
+    void CopyFromBuffer(VkCommandBuffer commandBuffer, const DeviceBuffer &source,
+                        TKit::Span<const VkBufferImageCopy> copy);
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    void CopyFromImage2(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                        TKit::Span<const VkImageCopy2KHR> p_Copy, const void *p_Next = nullptr);
-    void CopyFromBuffer2(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                         TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next = nullptr);
+    void CopyFromImage2(VkCommandBuffer commandBuffer, const DeviceImage &source,
+                        TKit::Span<const VkImageCopy2KHR> copy, const void *next = nullptr);
+    void CopyFromBuffer2(VkCommandBuffer commandBuffer, const DeviceBuffer &source,
+                         TKit::Span<const VkBufferImageCopy2KHR> copy, const void *next = nullptr);
 #endif
 
-    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                           TKit::Span<const VkImageCopy> p_Copy);
-    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                            TKit::Span<const VkBufferImageCopy> p_Copy);
+    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &pool, VkQueue queue, const DeviceImage &source,
+                                           TKit::Span<const VkImageCopy> copy);
+    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &pool, VkQueue queue, const DeviceBuffer &source,
+                                            TKit::Span<const VkBufferImageCopy> copy);
 
-    VkDeviceSize ComputeSize(u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1) const;
-    VkDeviceSize ComputeSize(u32 p_Mip = 0) const;
-    static VkDeviceSize ComputeSize(VkFormat p_Format, u32 p_Width, u32 p_Height, u32 p_Mip = 0, u32 p_Depth = 1);
+    VkDeviceSize ComputeSize(u32 width, u32 height, u32 mip = 0, u32 depth = 1) const;
+    VkDeviceSize ComputeSize(u32 mip = 0) const;
+    static VkDeviceSize ComputeSize(VkFormat format, u32 width, u32 height, u32 mip = 0, u32 depth = 1);
 
     VkDeviceSize GetBytesPerPixel() const
     {
         return GetBytesPerPixel(m_Info.Format);
     }
-    static VkDeviceSize GetBytesPerPixel(VkFormat p_Format);
+    static VkDeviceSize GetBytesPerPixel(VkFormat format);
 
     void Destroy();
     void DestroyImageView();

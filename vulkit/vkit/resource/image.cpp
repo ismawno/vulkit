@@ -7,9 +7,9 @@
 namespace VKit
 {
 namespace Math = TKit::Math;
-static VkImageViewType getImageViewType(const VkImageType p_Type)
+static VkImageViewType getImageViewType(const VkImageType type)
 {
-    switch (p_Type)
+    switch (type)
     {
     case VK_IMAGE_TYPE_1D:
         return VK_IMAGE_VIEW_TYPE_1D;
@@ -22,91 +22,90 @@ static VkImageViewType getImageViewType(const VkImageType p_Type)
         return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
     }
 }
-VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags p_Flags)
+VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags flags)
 {
-    if (p_Flags & DeviceImageFlag_ColorAttachment)
+    if (flags & DeviceImageFlag_ColorAttachment)
         return VK_IMAGE_ASPECT_COLOR_BIT;
-    else if ((p_Flags & DeviceImageFlag_DepthAttachment) && (p_Flags & DeviceImageFlag_StencilAttachment))
+    else if ((flags & DeviceImageFlag_DepthAttachment) && (flags & DeviceImageFlag_StencilAttachment))
         return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-    else if (p_Flags & DeviceImageFlag_DepthAttachment)
+    else if (flags & DeviceImageFlag_DepthAttachment)
         return VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (p_Flags & DeviceImageFlag_StencilAttachment)
+    else if (flags & DeviceImageFlag_StencilAttachment)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
     TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
     return VK_IMAGE_ASPECT_NONE;
 }
-static VkImageSubresourceRange createRange(const VkImageCreateInfo &p_Info, const DeviceImageFlags p_Flags)
+static VkImageSubresourceRange createRange(const VkImageCreateInfo &info, const DeviceImageFlags flags)
 {
     VkImageSubresourceRange range{};
-    range.aspectMask |= Detail::InferAspectMask(p_Flags);
+    range.aspectMask |= Detail::InferAspectMask(flags);
 
     range.baseMipLevel = 0;
-    range.levelCount = p_Info.mipLevels;
+    range.levelCount = info.mipLevels;
     range.baseArrayLayer = 0;
-    range.layerCount = p_Info.arrayLayers;
+    range.layerCount = info.arrayLayers;
     return range;
 }
-DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, const VkExtent2D &p_Extent,
-                              const VkFormat p_Format, const DeviceImageFlags p_Flags)
-    : DeviceImage::Builder(p_Device, p_Allocator,
-                           VkExtent3D{.width = p_Extent.width, .height = p_Extent.height, .depth = 1}, p_Format,
-                           p_Flags)
+DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, const VkExtent2D &extent,
+                              const VkFormat format, const DeviceImageFlags flags)
+    : DeviceImage::Builder(device, allocator, VkExtent3D{.width = extent.width, .height = extent.height, .depth = 1},
+                           format, flags)
 {
 }
 
-static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage p_Image, const VkImageViewType p_Type,
-                                                        const VkImageSubresourceRange &p_Range)
+static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage image, const VkImageViewType type,
+                                                        const VkImageSubresourceRange &range)
 {
     VkImageViewCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    info.image = p_Image;
-    info.viewType = p_Type;
+    info.image = image;
+    info.viewType = type;
     info.format = VK_FORMAT_UNDEFINED;
-    info.subresourceRange = p_Range;
+    info.subresourceRange = range;
     return info;
 }
 
-DeviceImage::Builder::Builder(const ProxyDevice &p_Device, const VmaAllocator p_Allocator, const VkExtent3D &p_Extent,
-                              const VkFormat p_Format, const DeviceImageFlags p_Flags)
-    : m_Device(p_Device), m_Allocator(p_Allocator), m_Flags(p_Flags)
+DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, const VkExtent3D &extent,
+                              const VkFormat format, const DeviceImageFlags flags)
+    : m_Device(device), m_Allocator(allocator), m_Flags(flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     m_ImageInfo.imageType = VK_IMAGE_TYPE_2D;
-    m_ImageInfo.extent = p_Extent;
+    m_ImageInfo.extent = extent;
     m_ImageInfo.mipLevels = 1;
     m_ImageInfo.arrayLayers = 1;
-    m_ImageInfo.format = p_Format;
+    m_ImageInfo.format = format;
     m_ImageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     m_ImageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     m_ImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     m_ImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     m_ImageInfo.flags = 0;
-    if (p_Flags & DeviceImageFlag_ColorAttachment)
+    if (flags & DeviceImageFlag_ColorAttachment)
         m_ImageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    else if ((p_Flags & DeviceImageFlag_DepthAttachment) || (p_Flags & DeviceImageFlag_StencilAttachment))
+    else if ((flags & DeviceImageFlag_DepthAttachment) || (flags & DeviceImageFlag_StencilAttachment))
         m_ImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-    if (p_Flags & DeviceImageFlag_InputAttachment)
+    if (flags & DeviceImageFlag_InputAttachment)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-    if (p_Flags & DeviceImageFlag_Sampled)
+    if (flags & DeviceImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
-                                            createRange(m_ImageInfo, p_Flags));
+                                            createRange(m_ImageInfo, flags));
 }
 
-DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat p_Format, const VkExtent2D &p_Extent,
-                                             const DeviceImageFlags p_Flags)
+DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat format, const VkExtent2D &extent,
+                                             const DeviceImageFlags flags)
 {
     Info info;
     info.Allocation = VK_NULL_HANDLE;
     info.Allocator = VK_NULL_HANDLE;
-    info.Width = p_Extent.width;
-    info.Height = p_Extent.height;
+    info.Width = extent.width;
+    info.Height = extent.height;
     info.Depth = 1;
-    info.Format = p_Format;
-    info.Flags = p_Flags;
+    info.Format = format;
+    info.Flags = flags;
     return info;
 }
 
@@ -145,106 +144,105 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     return img;
 }
 
-Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &p_Info)
+Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &info)
 {
     const VkResult result =
-        m_Device.Table->CreateImageView(m_Device, &p_Info, m_Device.AllocationCallbacks, &m_ImageView);
+        m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView);
     if (result != VK_SUCCESS)
         return Result<VkImageView>::Error(result);
     return m_ImageView;
 }
 
-void DeviceImage::TransitionLayout(const VkCommandBuffer p_CommandBuffer, const VkImageLayout p_Layout,
-                                   const TransitionInfo &p_Info)
+void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
+                                   const TransitionInfo &info)
 {
-    if (m_Layout == p_Layout)
+    if (m_Layout == layout)
         return;
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     barrier.oldLayout = m_Layout;
-    barrier.newLayout = p_Layout;
-    barrier.srcQueueFamilyIndex = p_Info.SrcFamilyIndex;
-    barrier.dstQueueFamilyIndex = p_Info.DstFamilyIndex;
+    barrier.newLayout = layout;
+    barrier.srcQueueFamilyIndex = info.SrcFamilyIndex;
+    barrier.dstQueueFamilyIndex = info.DstFamilyIndex;
     barrier.image = m_Image;
-    barrier.subresourceRange = p_Info.Range;
-    barrier.srcAccessMask = p_Info.SrcAccess;
-    barrier.dstAccessMask = p_Info.DstAccess;
-    if (p_Info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
+    barrier.subresourceRange = info.Range;
+    barrier.srcAccessMask = info.SrcAccess;
+    barrier.dstAccessMask = info.DstAccess;
+    if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
         barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
 
-    m_Device.Table->CmdPipelineBarrier(p_CommandBuffer, p_Info.SrcStage, p_Info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
+    m_Device.Table->CmdPipelineBarrier(commandBuffer, info.SrcStage, info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
                                        &barrier);
-    m_Layout = p_Layout;
+    m_Layout = layout;
 }
 
-void DeviceImage::CopyFromImage(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                                const TKit::Span<const VkImageCopy> p_Copy)
+void DeviceImage::CopyFromImage(const VkCommandBuffer commandBuffer, const DeviceImage &source,
+                                const TKit::Span<const VkImageCopy> copy)
 {
-    m_Device.Table->CmdCopyImage(p_CommandBuffer, p_Source, p_Source.GetLayout(), m_Image, m_Layout, p_Copy.GetSize(),
-                                 p_Copy.GetData());
+    m_Device.Table->CmdCopyImage(commandBuffer, source, source.GetLayout(), m_Image, m_Layout, copy.GetSize(),
+                                 copy.GetData());
 }
-void DeviceImage::CopyFromBuffer(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                                 const TKit::Span<const VkBufferImageCopy> p_Copy)
+void DeviceImage::CopyFromBuffer(const VkCommandBuffer commandBuffer, const DeviceBuffer &source,
+                                 const TKit::Span<const VkBufferImageCopy> copy)
 {
-    m_Device.Table->CmdCopyBufferToImage(p_CommandBuffer, p_Source, m_Image, m_Layout, p_Copy.GetSize(),
-                                         p_Copy.GetData());
+    m_Device.Table->CmdCopyBufferToImage(commandBuffer, source, m_Image, m_Layout, copy.GetSize(), copy.GetData());
 }
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-void DeviceImage::CopyFromImage2(const VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                                 const TKit::Span<const VkImageCopy2KHR> p_Copy, const void *p_Next)
+void DeviceImage::CopyFromImage2(const VkCommandBuffer commandBuffer, const DeviceImage &source,
+                                 const TKit::Span<const VkImageCopy2KHR> copy, const void *next)
 {
     VkCopyImageInfo2KHR info{};
     info.sType = VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR;
-    info.pNext = p_Next;
+    info.pNext = next;
     info.srcImage = m_Image;
     info.srcImageLayout = m_Layout;
-    info.dstImage = p_Source;
-    info.dstImageLayout = p_Source.GetLayout();
-    info.pRegions = p_Copy.GetData();
-    info.regionCount = p_Copy.GetSize();
-    m_Device.Table->CmdCopyImage2KHR(p_CommandBuffer, &info);
+    info.dstImage = source;
+    info.dstImageLayout = source.GetLayout();
+    info.pRegions = copy.GetData();
+    info.regionCount = copy.GetSize();
+    m_Device.Table->CmdCopyImage2KHR(commandBuffer, &info);
 }
-void DeviceImage::CopyFromBuffer2(const VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                                  const TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next)
+void DeviceImage::CopyFromBuffer2(const VkCommandBuffer commandBuffer, const DeviceBuffer &source,
+                                  const TKit::Span<const VkBufferImageCopy2KHR> copy, const void *next)
 {
     VkCopyBufferToImageInfo2KHR info{};
     info.sType = VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR;
-    info.pNext = p_Next;
-    info.srcBuffer = p_Source;
+    info.pNext = next;
+    info.srcBuffer = source;
     info.dstImage = m_Image;
     info.dstImageLayout = m_Layout;
-    info.pRegions = p_Copy.GetData();
-    info.regionCount = p_Copy.GetSize();
-    m_Device.Table->CmdCopyBufferToImage2KHR(p_CommandBuffer, &info);
+    info.pRegions = copy.GetData();
+    info.regionCount = copy.GetSize();
+    m_Device.Table->CmdCopyBufferToImage2KHR(commandBuffer, &info);
 }
 #endif
 
-Result<> DeviceImage::CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                    const TKit::Span<const VkImageCopy> p_Copy)
+Result<> DeviceImage::CopyFromImage(CommandPool &pool, VkQueue queue, const DeviceImage &source,
+                                    const TKit::Span<const VkImageCopy> copy)
 {
-    const auto cres = p_Pool.BeginSingleTimeCommands();
+    const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromImage(cmd, p_Source, p_Copy);
-    return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
+    CopyFromImage(cmd, source, copy);
+    return pool.EndSingleTimeCommands(cmd, queue);
 }
 
-Result<> DeviceImage::CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                     const TKit::Span<const VkBufferImageCopy> p_Copy)
+Result<> DeviceImage::CopyFromBuffer(CommandPool &pool, VkQueue queue, const DeviceBuffer &source,
+                                     const TKit::Span<const VkBufferImageCopy> copy)
 {
-    const auto cres = p_Pool.BeginSingleTimeCommands();
+    const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
     const VkCommandBuffer cmd = cres.GetValue();
-    CopyFromBuffer(cmd, p_Source, p_Copy);
-    return p_Pool.EndSingleTimeCommands(cmd, p_Queue);
+    CopyFromBuffer(cmd, source, copy);
+    return pool.EndSingleTimeCommands(cmd, queue);
 }
 
-VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat p_Format)
+VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat format)
 {
-    switch (p_Format)
+    switch (format)
     {
     case VK_FORMAT_R8_UNORM:
     case VK_FORMAT_R8_SNORM:
@@ -354,22 +352,22 @@ VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat p_Format)
     }
 }
 
-VkDeviceSize DeviceImage::ComputeSize(const u32 p_Width, const u32 p_Height, const u32 p_Mip, const u32 p_Depth) const
+VkDeviceSize DeviceImage::ComputeSize(const u32 width, const u32 height, const u32 mip, const u32 depth) const
 {
-    return ComputeSize(m_Info.Format, p_Width, p_Height, p_Mip, p_Depth);
+    return ComputeSize(m_Info.Format, width, height, mip, depth);
 }
-VkDeviceSize DeviceImage::ComputeSize(const u32 p_Mip) const
+VkDeviceSize DeviceImage::ComputeSize(const u32 mip) const
 {
-    return ComputeSize(m_Info.Format, m_Info.Width, m_Info.Height, p_Mip, m_Info.Depth);
+    return ComputeSize(m_Info.Format, m_Info.Width, m_Info.Height, mip, m_Info.Depth);
 }
-VkDeviceSize DeviceImage::ComputeSize(const VkFormat p_Format, const u32 p_Width, const u32 p_Height, const u32 p_Mip,
-                                      const u32 p_Depth)
+VkDeviceSize DeviceImage::ComputeSize(const VkFormat format, const u32 pwidth, const u32 pheight, const u32 mip,
+                                      const u32 pdepth)
 {
-    const u32 width = Math::Max(1u, p_Width >> p_Mip);
-    const u32 height = Math::Max(1u, p_Height >> p_Mip);
-    const u32 depth = Math::Max(1u, p_Depth >> p_Mip);
+    const u32 width = Math::Max(1u, pwidth >> mip);
+    const u32 height = Math::Max(1u, pheight >> mip);
+    const u32 depth = Math::Max(1u, pdepth >> mip);
 
-    const VkDeviceSize ppixel = GetBytesPerPixel(p_Format);
+    const VkDeviceSize ppixel = GetBytesPerPixel(format);
     const u32 rowTexels = width;
     const u32 imgTexels = height;
 
@@ -393,70 +391,70 @@ void DeviceImage::DestroyImageView()
         m_Device.Table->DestroyImageView(m_Device, m_ImageView, m_Device.AllocationCallbacks);
     m_ImageView = VK_NULL_HANDLE;
 }
-DeviceImage::Builder &DeviceImage::Builder::SetImageType(const VkImageType p_Type)
+DeviceImage::Builder &DeviceImage::Builder::SetImageType(const VkImageType type)
 {
-    m_ImageInfo.imageType = p_Type;
+    m_ImageInfo.imageType = type;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetDepth(const u32 p_Depth)
+DeviceImage::Builder &DeviceImage::Builder::SetDepth(const u32 depth)
 {
-    m_ImageInfo.extent.depth = p_Depth;
+    m_ImageInfo.extent.depth = depth;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetMipLevels(const u32 p_Levels)
+DeviceImage::Builder &DeviceImage::Builder::SetMipLevels(const u32 levels)
 {
-    m_ImageInfo.mipLevels = p_Levels;
-    m_ViewInfo.subresourceRange.levelCount = p_Levels;
+    m_ImageInfo.mipLevels = levels;
+    m_ViewInfo.subresourceRange.levelCount = levels;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetArrayLayers(const u32 p_Layers)
+DeviceImage::Builder &DeviceImage::Builder::SetArrayLayers(const u32 layers)
 {
-    m_ImageInfo.arrayLayers = p_Layers;
-    m_ViewInfo.subresourceRange.layerCount = p_Layers;
+    m_ImageInfo.arrayLayers = layers;
+    m_ViewInfo.subresourceRange.layerCount = layers;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetTiling(const VkImageTiling p_Tiling)
+DeviceImage::Builder &DeviceImage::Builder::SetTiling(const VkImageTiling tiling)
 {
-    m_ImageInfo.tiling = p_Tiling;
+    m_ImageInfo.tiling = tiling;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetInitialLayout(const VkImageLayout p_Layout)
+DeviceImage::Builder &DeviceImage::Builder::SetInitialLayout(const VkImageLayout layout)
 {
-    m_ImageInfo.initialLayout = p_Layout;
+    m_ImageInfo.initialLayout = layout;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetSamples(const VkSampleCountFlagBits p_Samples)
+DeviceImage::Builder &DeviceImage::Builder::SetSamples(const VkSampleCountFlagBits samples)
 {
-    m_ImageInfo.samples = p_Samples;
+    m_ImageInfo.samples = samples;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetSharingMode(const VkSharingMode p_Mode)
+DeviceImage::Builder &DeviceImage::Builder::SetSharingMode(const VkSharingMode mode)
 {
-    m_ImageInfo.sharingMode = p_Mode;
+    m_ImageInfo.sharingMode = mode;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetFlags(const VkImageCreateFlags p_Flags)
+DeviceImage::Builder &DeviceImage::Builder::SetFlags(const VkImageCreateFlags flags)
 {
-    m_ImageInfo.flags = p_Flags;
+    m_ImageInfo.flags = flags;
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::SetUsage(const VkImageUsageFlags p_Flags)
+DeviceImage::Builder &DeviceImage::Builder::SetUsage(const VkImageUsageFlags flags)
 {
-    m_ImageInfo.usage = p_Flags;
+    m_ImageInfo.usage = flags;
     return *this;
 }
-DeviceImage::Builder &DeviceImage::Builder::SetImageCreateInfo(const VkImageCreateInfo &p_Info)
+DeviceImage::Builder &DeviceImage::Builder::SetImageCreateInfo(const VkImageCreateInfo &info)
 {
-    m_ImageInfo = p_Info;
+    m_ImageInfo = info;
     return *this;
 }
 
@@ -465,18 +463,29 @@ DeviceImage::Builder &DeviceImage::Builder::WithImageView()
     m_ViewInfo.format = m_ImageInfo.format;
     return *this;
 }
-DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageViewCreateInfo &p_Info)
+DeviceImage::Builder &DeviceImage::Builder::SetNextToImageInfo(const void *next)
 {
-    TKIT_ASSERT(!p_Info.image,
-                "[VULKIT][DEVICE-IMAGE] The image must be set to null when passing a image view create info because it "
-                "will be replaced with the newly created image");
-    m_ViewInfo = p_Info;
+    m_ImageInfo.pNext = next;
     return *this;
 }
-DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageSubresourceRange &p_Range)
+DeviceImage::Builder &DeviceImage::Builder::SetNextToImageViewInfo(const void *next)
+{
+    m_ViewInfo.pNext = next;
+    return *this;
+}
+
+DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageViewCreateInfo &info)
+{
+    TKIT_ASSERT(!info.image,
+                "[VULKIT][DEVICE-IMAGE] The image must be set to null when passing a image view create info because it "
+                "will be replaced with the newly created image");
+    m_ViewInfo = info;
+    return *this;
+}
+DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageSubresourceRange &range)
 {
     m_ViewInfo.format = m_ImageInfo.format;
-    m_ViewInfo.subresourceRange = p_Range;
+    m_ViewInfo.subresourceRange = range;
     return *this;
 }
 

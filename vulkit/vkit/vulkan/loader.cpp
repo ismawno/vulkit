@@ -63,3202 +63,3190 @@ VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *
 }
 #endif
 
-InstanceTable InstanceTable::Create(const VkInstance p_Instance)
+InstanceTable InstanceTable::Create(const VkInstance instance)
 {
     InstanceTable table{};
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyInstance =
-        reinterpret_cast<PFN_vkDestroyInstance>(GetInstanceProcAddr(p_Instance, "vkDestroyInstance"));
+        reinterpret_cast<PFN_vkDestroyInstance>(GetInstanceProcAddr(instance, "vkDestroyInstance"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkEnumeratePhysicalDevices =
-        reinterpret_cast<PFN_vkEnumeratePhysicalDevices>(GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDevices"));
+        reinterpret_cast<PFN_vkEnumeratePhysicalDevices>(GetInstanceProcAddr(instance, "vkEnumeratePhysicalDevices"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceProcAddr =
-        reinterpret_cast<PFN_vkGetDeviceProcAddr>(GetInstanceProcAddr(p_Instance, "vkGetDeviceProcAddr"));
+        reinterpret_cast<PFN_vkGetDeviceProcAddr>(GetInstanceProcAddr(instance, "vkGetDeviceProcAddr"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceQueueFamilyProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceMemoryProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkGetPhysicalDeviceFeatures = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures"));
+    table.vkGetPhysicalDeviceFeatures =
+        reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures>(GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceImageFormatProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(GetInstanceProcAddr(p_Instance, "vkCreateDevice"));
+    table.vkCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(GetInstanceProcAddr(instance, "vkCreateDevice"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkEnumerateDeviceLayerProperties = reinterpret_cast<PFN_vkEnumerateDeviceLayerProperties>(
-        GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceLayerProperties"));
+        GetInstanceProcAddr(instance, "vkEnumerateDeviceLayerProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkEnumerateDeviceExtensionProperties = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(
-        GetInstanceProcAddr(p_Instance, "vkEnumerateDeviceExtensionProperties"));
+        GetInstanceProcAddr(instance, "vkEnumerateDeviceExtensionProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetPhysicalDeviceSparseImageFormatProperties =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties"));
 #endif
 #if defined(VK_KHR_android_surface)
     table.vkCreateAndroidSurfaceKHR =
-        reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateAndroidSurfaceKHR"));
+        reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(GetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR"));
 #endif
 #if defined(VK_OHOS_surface)
     table.vkCreateSurfaceOHOS =
-        reinterpret_cast<PFN_vkCreateSurfaceOHOS>(GetInstanceProcAddr(p_Instance, "vkCreateSurfaceOHOS"));
+        reinterpret_cast<PFN_vkCreateSurfaceOHOS>(GetInstanceProcAddr(instance, "vkCreateSurfaceOHOS"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetPhysicalDeviceDisplayPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetPhysicalDeviceDisplayPlanePropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetDisplayPlaneSupportedDisplaysKHR = reinterpret_cast<PFN_vkGetDisplayPlaneSupportedDisplaysKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneSupportedDisplaysKHR"));
+        GetInstanceProcAddr(instance, "vkGetDisplayPlaneSupportedDisplaysKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetDisplayModePropertiesKHR = reinterpret_cast<PFN_vkGetDisplayModePropertiesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetDisplayModePropertiesKHR"));
+        GetInstanceProcAddr(instance, "vkGetDisplayModePropertiesKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkCreateDisplayModeKHR =
-        reinterpret_cast<PFN_vkCreateDisplayModeKHR>(GetInstanceProcAddr(p_Instance, "vkCreateDisplayModeKHR"));
+        reinterpret_cast<PFN_vkCreateDisplayModeKHR>(GetInstanceProcAddr(instance, "vkCreateDisplayModeKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkGetDisplayPlaneCapabilitiesKHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilitiesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilitiesKHR"));
+        GetInstanceProcAddr(instance, "vkGetDisplayPlaneCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_display)
     table.vkCreateDisplayPlaneSurfaceKHR = reinterpret_cast<PFN_vkCreateDisplayPlaneSurfaceKHR>(
-        GetInstanceProcAddr(p_Instance, "vkCreateDisplayPlaneSurfaceKHR"));
+        GetInstanceProcAddr(instance, "vkCreateDisplayPlaneSurfaceKHR"));
 #endif
 #if defined(VK_KHR_surface)
     table.vkDestroySurfaceKHR =
-        reinterpret_cast<PFN_vkDestroySurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkDestroySurfaceKHR"));
+        reinterpret_cast<PFN_vkDestroySurfaceKHR>(GetInstanceProcAddr(instance, "vkDestroySurfaceKHR"));
 #endif
 #if defined(VK_KHR_surface)
     table.vkGetPhysicalDeviceSurfaceSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceSupportKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceSupportKHR"));
 #endif
 #if defined(VK_KHR_surface)
     table.vkGetPhysicalDeviceSurfaceCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_surface)
     table.vkGetPhysicalDeviceSurfaceFormatsKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormatsKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceFormatsKHR"));
 #endif
 #if defined(VK_KHR_surface)
     table.vkGetPhysicalDeviceSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfacePresentModesKHR"));
 #endif
 #if defined(VK_NN_vi_surface)
     table.vkCreateViSurfaceNN =
-        reinterpret_cast<PFN_vkCreateViSurfaceNN>(GetInstanceProcAddr(p_Instance, "vkCreateViSurfaceNN"));
+        reinterpret_cast<PFN_vkCreateViSurfaceNN>(GetInstanceProcAddr(instance, "vkCreateViSurfaceNN"));
 #endif
 #if defined(VK_KHR_wayland_surface)
     table.vkCreateWaylandSurfaceKHR =
-        reinterpret_cast<PFN_vkCreateWaylandSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateWaylandSurfaceKHR"));
+        reinterpret_cast<PFN_vkCreateWaylandSurfaceKHR>(GetInstanceProcAddr(instance, "vkCreateWaylandSurfaceKHR"));
 #endif
 #if defined(VK_KHR_wayland_surface)
     table.vkGetPhysicalDeviceWaylandPresentationSupportKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWaylandPresentationSupportKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceWaylandPresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_win32_surface)
     table.vkCreateWin32SurfaceKHR =
-        reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateWin32SurfaceKHR"));
+        reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(GetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"));
 #endif
 #if defined(VK_KHR_win32_surface)
     table.vkGetPhysicalDeviceWin32PresentationSupportKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceWin32PresentationSupportKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceWin32PresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_xlib_surface)
     table.vkCreateXlibSurfaceKHR =
-        reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateXlibSurfaceKHR"));
+        reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(GetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"));
 #endif
 #if defined(VK_KHR_xlib_surface)
     table.vkGetPhysicalDeviceXlibPresentationSupportKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXlibPresentationSupportKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceXlibPresentationSupportKHR"));
 #endif
 #if defined(VK_KHR_xcb_surface)
     table.vkCreateXcbSurfaceKHR =
-        reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(GetInstanceProcAddr(p_Instance, "vkCreateXcbSurfaceKHR"));
+        reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(GetInstanceProcAddr(instance, "vkCreateXcbSurfaceKHR"));
 #endif
 #if defined(VK_KHR_xcb_surface)
     table.vkGetPhysicalDeviceXcbPresentationSupportKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceXcbPresentationSupportKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceXcbPresentationSupportKHR"));
 #endif
 #if defined(VK_EXT_directfb_surface)
     table.vkCreateDirectFBSurfaceEXT =
-        reinterpret_cast<PFN_vkCreateDirectFBSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateDirectFBSurfaceEXT"));
+        reinterpret_cast<PFN_vkCreateDirectFBSurfaceEXT>(GetInstanceProcAddr(instance, "vkCreateDirectFBSurfaceEXT"));
 #endif
 #if defined(VK_EXT_directfb_surface)
     table.vkGetPhysicalDeviceDirectFBPresentationSupportEXT =
         reinterpret_cast<PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT"));
 #endif
 #if defined(VK_FUCHSIA_imagepipe_surface)
     table.vkCreateImagePipeSurfaceFUCHSIA = reinterpret_cast<PFN_vkCreateImagePipeSurfaceFUCHSIA>(
-        GetInstanceProcAddr(p_Instance, "vkCreateImagePipeSurfaceFUCHSIA"));
+        GetInstanceProcAddr(instance, "vkCreateImagePipeSurfaceFUCHSIA"));
 #endif
 #if defined(VK_GGP_stream_descriptor_surface)
     table.vkCreateStreamDescriptorSurfaceGGP = reinterpret_cast<PFN_vkCreateStreamDescriptorSurfaceGGP>(
-        GetInstanceProcAddr(p_Instance, "vkCreateStreamDescriptorSurfaceGGP"));
+        GetInstanceProcAddr(instance, "vkCreateStreamDescriptorSurfaceGGP"));
 #endif
 #if defined(VK_QNX_screen_surface)
     table.vkCreateScreenSurfaceQNX =
-        reinterpret_cast<PFN_vkCreateScreenSurfaceQNX>(GetInstanceProcAddr(p_Instance, "vkCreateScreenSurfaceQNX"));
+        reinterpret_cast<PFN_vkCreateScreenSurfaceQNX>(GetInstanceProcAddr(instance, "vkCreateScreenSurfaceQNX"));
 #endif
 #if defined(VK_QNX_screen_surface)
     table.vkGetPhysicalDeviceScreenPresentationSupportQNX =
         reinterpret_cast<PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceScreenPresentationSupportQNX"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceScreenPresentationSupportQNX"));
 #endif
 #if defined(VK_EXT_debug_report)
     table.vkCreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(
-        GetInstanceProcAddr(p_Instance, "vkCreateDebugReportCallbackEXT"));
+        GetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT"));
 #endif
 #if defined(VK_EXT_debug_report)
     table.vkDestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(
-        GetInstanceProcAddr(p_Instance, "vkDestroyDebugReportCallbackEXT"));
+        GetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT"));
 #endif
 #if defined(VK_EXT_debug_report)
     table.vkDebugReportMessageEXT =
-        reinterpret_cast<PFN_vkDebugReportMessageEXT>(GetInstanceProcAddr(p_Instance, "vkDebugReportMessageEXT"));
+        reinterpret_cast<PFN_vkDebugReportMessageEXT>(GetInstanceProcAddr(instance, "vkDebugReportMessageEXT"));
 #endif
 #if defined(VK_NV_external_memory_capabilities)
     table.vkGetPhysicalDeviceExternalImageFormatPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceFeatures2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceImageFormatProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceQueueFamilyProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceMemoryProperties2 = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceSparseImageFormatProperties2 =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceExternalBufferProperties =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferProperties>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferProperties"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalBufferProperties"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
     table.vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
     table.vkGetPhysicalDeviceSciBufAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciBufAttributesNV>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciBufAttributesNV"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSciBufAttributesNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceExternalSemaphoreProperties =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphoreProperties>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphoreProperties"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalSemaphoreProperties"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetPhysicalDeviceExternalFenceProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFenceProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFenceProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalFenceProperties"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     table.vkGetPhysicalDeviceSciSyncAttributesNV = reinterpret_cast<PFN_vkGetPhysicalDeviceSciSyncAttributesNV>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSciSyncAttributesNV"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSciSyncAttributesNV"));
 #endif
 #if defined(VK_EXT_direct_mode_display)
     table.vkReleaseDisplayEXT =
-        reinterpret_cast<PFN_vkReleaseDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkReleaseDisplayEXT"));
+        reinterpret_cast<PFN_vkReleaseDisplayEXT>(GetInstanceProcAddr(instance, "vkReleaseDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_xlib_display)
     table.vkAcquireXlibDisplayEXT =
-        reinterpret_cast<PFN_vkAcquireXlibDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkAcquireXlibDisplayEXT"));
+        reinterpret_cast<PFN_vkAcquireXlibDisplayEXT>(GetInstanceProcAddr(instance, "vkAcquireXlibDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_xlib_display)
     table.vkGetRandROutputDisplayEXT =
-        reinterpret_cast<PFN_vkGetRandROutputDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkGetRandROutputDisplayEXT"));
+        reinterpret_cast<PFN_vkGetRandROutputDisplayEXT>(GetInstanceProcAddr(instance, "vkGetRandROutputDisplayEXT"));
 #endif
 #if defined(VK_NV_acquire_winrt_display)
     table.vkAcquireWinrtDisplayNV =
-        reinterpret_cast<PFN_vkAcquireWinrtDisplayNV>(GetInstanceProcAddr(p_Instance, "vkAcquireWinrtDisplayNV"));
+        reinterpret_cast<PFN_vkAcquireWinrtDisplayNV>(GetInstanceProcAddr(instance, "vkAcquireWinrtDisplayNV"));
 #endif
 #if defined(VK_NV_acquire_winrt_display)
     table.vkGetWinrtDisplayNV =
-        reinterpret_cast<PFN_vkGetWinrtDisplayNV>(GetInstanceProcAddr(p_Instance, "vkGetWinrtDisplayNV"));
+        reinterpret_cast<PFN_vkGetWinrtDisplayNV>(GetInstanceProcAddr(instance, "vkGetWinrtDisplayNV"));
 #endif
 #if defined(VK_EXT_display_surface_counter)
     table.vkGetPhysicalDeviceSurfaceCapabilities2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkEnumeratePhysicalDeviceGroups = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroups>(
-        GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroups"));
+        GetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceGroups"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
     (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     table.vkGetPhysicalDevicePresentRectanglesKHR = reinterpret_cast<PFN_vkGetPhysicalDevicePresentRectanglesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDevicePresentRectanglesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDevicePresentRectanglesKHR"));
 #endif
 #if defined(VK_MVK_ios_surface)
     table.vkCreateIOSSurfaceMVK =
-        reinterpret_cast<PFN_vkCreateIOSSurfaceMVK>(GetInstanceProcAddr(p_Instance, "vkCreateIOSSurfaceMVK"));
+        reinterpret_cast<PFN_vkCreateIOSSurfaceMVK>(GetInstanceProcAddr(instance, "vkCreateIOSSurfaceMVK"));
 #endif
 #if defined(VK_MVK_macos_surface)
     table.vkCreateMacOSSurfaceMVK =
-        reinterpret_cast<PFN_vkCreateMacOSSurfaceMVK>(GetInstanceProcAddr(p_Instance, "vkCreateMacOSSurfaceMVK"));
+        reinterpret_cast<PFN_vkCreateMacOSSurfaceMVK>(GetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK"));
 #endif
 #if defined(VK_EXT_metal_surface)
     table.vkCreateMetalSurfaceEXT =
-        reinterpret_cast<PFN_vkCreateMetalSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateMetalSurfaceEXT"));
+        reinterpret_cast<PFN_vkCreateMetalSurfaceEXT>(GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"));
 #endif
 #if defined(VK_EXT_sample_locations)
     table.vkGetPhysicalDeviceMultisamplePropertiesEXT =
         reinterpret_cast<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT"));
 #endif
 #if defined(VK_KHR_get_surface_capabilities2)
     table.vkGetPhysicalDeviceSurfaceCapabilities2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
 #endif
 #if defined(VK_KHR_get_surface_capabilities2)
     table.vkGetPhysicalDeviceSurfaceFormats2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormats2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfaceFormats2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceFormats2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
     table.vkGetPhysicalDeviceDisplayProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayProperties2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayProperties2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
     table.vkGetPhysicalDeviceDisplayPlaneProperties2KHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
     table.vkGetDisplayModeProperties2KHR = reinterpret_cast<PFN_vkGetDisplayModeProperties2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetDisplayModeProperties2KHR"));
+        GetInstanceProcAddr(instance, "vkGetDisplayModeProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_display_properties2)
     table.vkGetDisplayPlaneCapabilities2KHR = reinterpret_cast<PFN_vkGetDisplayPlaneCapabilities2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetDisplayPlaneCapabilities2KHR"));
+        GetInstanceProcAddr(instance, "vkGetDisplayPlaneCapabilities2KHR"));
 #endif
 #if defined(VK_KHR_calibrated_timestamps)
     table.vkGetPhysicalDeviceCalibrateableTimeDomainsKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-        GetInstanceProcAddr(p_Instance, "vkCreateDebugUtilsMessengerEXT"));
+        GetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-        GetInstanceProcAddr(p_Instance, "vkDestroyDebugUtilsMessengerEXT"));
+        GetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkSubmitDebugUtilsMessageEXT = reinterpret_cast<PFN_vkSubmitDebugUtilsMessageEXT>(
-        GetInstanceProcAddr(p_Instance, "vkSubmitDebugUtilsMessageEXT"));
+        GetInstanceProcAddr(instance, "vkSubmitDebugUtilsMessageEXT"));
 #endif
 #if defined(VK_NV_cooperative_matrix)
     table.vkGetPhysicalDeviceCooperativeMatrixPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
     table.vkGetPhysicalDeviceSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT"));
 #endif
 #if defined(VK_KHR_performance_query)
     table.vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR =
         reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR>(
-            GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));
+            GetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));
 #endif
 #if defined(VK_KHR_performance_query)
     table.vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));
 #endif
 #if defined(VK_EXT_headless_surface)
     table.vkCreateHeadlessSurfaceEXT =
-        reinterpret_cast<PFN_vkCreateHeadlessSurfaceEXT>(GetInstanceProcAddr(p_Instance, "vkCreateHeadlessSurfaceEXT"));
+        reinterpret_cast<PFN_vkCreateHeadlessSurfaceEXT>(GetInstanceProcAddr(instance, "vkCreateHeadlessSurfaceEXT"));
 #endif
 #if defined(VK_NV_coverage_reduction_mode)
     table.vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkGetPhysicalDeviceToolProperties = reinterpret_cast<PFN_vkGetPhysicalDeviceToolProperties>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolProperties"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceToolProperties"));
 #endif
 #if defined(VK_KHR_object_refresh)
     table.vkGetPhysicalDeviceRefreshableObjectTypesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceRefreshableObjectTypesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceRefreshableObjectTypesKHR"));
 #endif
 #if defined(VK_KHR_fragment_shading_rate)
     table.vkGetPhysicalDeviceFragmentShadingRatesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkGetPhysicalDeviceVideoCapabilitiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkGetPhysicalDeviceVideoFormatPropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
     table.vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR"));
 #endif
 #if defined(VK_EXT_acquire_drm_display)
     table.vkAcquireDrmDisplayEXT =
-        reinterpret_cast<PFN_vkAcquireDrmDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkAcquireDrmDisplayEXT"));
+        reinterpret_cast<PFN_vkAcquireDrmDisplayEXT>(GetInstanceProcAddr(instance, "vkAcquireDrmDisplayEXT"));
 #endif
 #if defined(VK_EXT_acquire_drm_display)
     table.vkGetDrmDisplayEXT =
-        reinterpret_cast<PFN_vkGetDrmDisplayEXT>(GetInstanceProcAddr(p_Instance, "vkGetDrmDisplayEXT"));
+        reinterpret_cast<PFN_vkGetDrmDisplayEXT>(GetInstanceProcAddr(instance, "vkGetDrmDisplayEXT"));
 #endif
 #if defined(VK_NV_optical_flow)
     table.vkGetPhysicalDeviceOpticalFlowImageFormatsNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV"));
 #endif
 #if defined(VK_KHR_cooperative_matrix)
     table.vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR"));
 #endif
 #if defined(VK_NV_cooperative_matrix2)
     table.vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV"));
 #endif
 #if defined(VK_NV_cooperative_vector)
     table.vkGetPhysicalDeviceCooperativeVectorPropertiesNV =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkGetPhysicalDeviceExternalTensorPropertiesARM =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalTensorPropertiesARM"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalTensorPropertiesARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM =
         reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM =
         reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceFeatures2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFeatures2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceProperties2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceFormatProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceFormatProperties2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceFormatProperties2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceImageFormatProperties2KHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2KHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceImageFormatProperties2KHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceQueueFamilyProperties2KHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceMemoryProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceMemoryProperties2KHR>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceMemoryProperties2KHR"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties2KHR"));
 #endif
 #if defined(VK_KHR_get_physical_device_properties2)
     table.vkGetPhysicalDeviceSparseImageFormatProperties2KHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"));
 #endif
 #if defined(VK_KHR_external_memory_capabilities)
     table.vkGetPhysicalDeviceExternalBufferPropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalBufferPropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalBufferPropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_capabilities)
     table.vkGetPhysicalDeviceExternalSemaphorePropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_fence_capabilities)
     table.vkGetPhysicalDeviceExternalFencePropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
 #endif
 #if defined(VK_KHR_device_group_creation)
     table.vkEnumeratePhysicalDeviceGroupsKHR = reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroupsKHR>(
-        GetInstanceProcAddr(p_Instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
+        GetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
 #endif
 #if defined(VK_EXT_calibrated_timestamps)
     table.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT =
         reinterpret_cast<PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT>(
-            GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"));
+            GetInstanceProcAddr(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"));
 #endif
 #if defined(VK_EXT_tooling_info)
     table.vkGetPhysicalDeviceToolPropertiesEXT = reinterpret_cast<PFN_vkGetPhysicalDeviceToolPropertiesEXT>(
-        GetInstanceProcAddr(p_Instance, "vkGetPhysicalDeviceToolPropertiesEXT"));
+        GetInstanceProcAddr(instance, "vkGetPhysicalDeviceToolPropertiesEXT"));
 #endif
     return table;
 }
 
-DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_InstanceFuncs)
+DeviceTable DeviceTable::Create(const VkDevice device, const InstanceTable &instanceFuncs)
 {
     DeviceTable table{};
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDevice =
-        reinterpret_cast<PFN_vkDestroyDevice>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDevice"));
+        reinterpret_cast<PFN_vkDestroyDevice>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDevice"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceQueue =
-        reinterpret_cast<PFN_vkGetDeviceQueue>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceQueue"));
+        reinterpret_cast<PFN_vkGetDeviceQueue>(instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceQueue"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkQueueSubmit =
-        reinterpret_cast<PFN_vkQueueSubmit>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit"));
+    table.vkQueueSubmit = reinterpret_cast<PFN_vkQueueSubmit>(instanceFuncs.GetDeviceProcAddr(device, "vkQueueSubmit"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkQueueWaitIdle =
-        reinterpret_cast<PFN_vkQueueWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueWaitIdle"));
+        reinterpret_cast<PFN_vkQueueWaitIdle>(instanceFuncs.GetDeviceProcAddr(device, "vkQueueWaitIdle"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDeviceWaitIdle =
-        reinterpret_cast<PFN_vkDeviceWaitIdle>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDeviceWaitIdle"));
+        reinterpret_cast<PFN_vkDeviceWaitIdle>(instanceFuncs.GetDeviceProcAddr(device, "vkDeviceWaitIdle"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateMemory =
-        reinterpret_cast<PFN_vkAllocateMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateMemory"));
+        reinterpret_cast<PFN_vkAllocateMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkAllocateMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkFreeMemory =
-        reinterpret_cast<PFN_vkFreeMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeMemory"));
+    table.vkFreeMemory = reinterpret_cast<PFN_vkFreeMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkFreeMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkMapMemory = reinterpret_cast<PFN_vkMapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory"));
+    table.vkMapMemory = reinterpret_cast<PFN_vkMapMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkMapMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkUnmapMemory =
-        reinterpret_cast<PFN_vkUnmapMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory"));
+    table.vkUnmapMemory = reinterpret_cast<PFN_vkUnmapMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkUnmapMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkFlushMappedMemoryRanges = reinterpret_cast<PFN_vkFlushMappedMemoryRanges>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFlushMappedMemoryRanges"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkFlushMappedMemoryRanges"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkInvalidateMappedMemoryRanges = reinterpret_cast<PFN_vkInvalidateMappedMemoryRanges>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkInvalidateMappedMemoryRanges"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkInvalidateMappedMemoryRanges"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetDeviceMemoryCommitment = reinterpret_cast<PFN_vkGetDeviceMemoryCommitment>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryCommitment"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceMemoryCommitment"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetBufferMemoryRequirements = reinterpret_cast<PFN_vkGetBufferMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkBindBufferMemory =
-        reinterpret_cast<PFN_vkBindBufferMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory"));
+        reinterpret_cast<PFN_vkBindBufferMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkBindBufferMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageMemoryRequirements = reinterpret_cast<PFN_vkGetImageMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkBindImageMemory =
-        reinterpret_cast<PFN_vkBindImageMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory"));
+        reinterpret_cast<PFN_vkBindImageMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkBindImageMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSparseMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkQueueBindSparse =
-        reinterpret_cast<PFN_vkQueueBindSparse>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueBindSparse"));
+        reinterpret_cast<PFN_vkQueueBindSparse>(instanceFuncs.GetDeviceProcAddr(device, "vkQueueBindSparse"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreateFence =
-        reinterpret_cast<PFN_vkCreateFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFence"));
+    table.vkCreateFence = reinterpret_cast<PFN_vkCreateFence>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateFence"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyFence =
-        reinterpret_cast<PFN_vkDestroyFence>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFence"));
+        reinterpret_cast<PFN_vkDestroyFence>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyFence"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkResetFences =
-        reinterpret_cast<PFN_vkResetFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetFences"));
+    table.vkResetFences = reinterpret_cast<PFN_vkResetFences>(instanceFuncs.GetDeviceProcAddr(device, "vkResetFences"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetFenceStatus =
-        reinterpret_cast<PFN_vkGetFenceStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceStatus"));
+        reinterpret_cast<PFN_vkGetFenceStatus>(instanceFuncs.GetDeviceProcAddr(device, "vkGetFenceStatus"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkWaitForFences =
-        reinterpret_cast<PFN_vkWaitForFences>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForFences"));
+        reinterpret_cast<PFN_vkWaitForFences>(instanceFuncs.GetDeviceProcAddr(device, "vkWaitForFences"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateSemaphore =
-        reinterpret_cast<PFN_vkCreateSemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSemaphore"));
+        reinterpret_cast<PFN_vkCreateSemaphore>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateSemaphore"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroySemaphore =
-        reinterpret_cast<PFN_vkDestroySemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySemaphore"));
+        reinterpret_cast<PFN_vkDestroySemaphore>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroySemaphore"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreateEvent =
-        reinterpret_cast<PFN_vkCreateEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateEvent"));
+    table.vkCreateEvent = reinterpret_cast<PFN_vkCreateEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyEvent =
-        reinterpret_cast<PFN_vkDestroyEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyEvent"));
+        reinterpret_cast<PFN_vkDestroyEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetEventStatus =
-        reinterpret_cast<PFN_vkGetEventStatus>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetEventStatus"));
+        reinterpret_cast<PFN_vkGetEventStatus>(instanceFuncs.GetDeviceProcAddr(device, "vkGetEventStatus"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkSetEvent = reinterpret_cast<PFN_vkSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetEvent"));
+    table.vkSetEvent = reinterpret_cast<PFN_vkSetEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkSetEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkResetEvent =
-        reinterpret_cast<PFN_vkResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetEvent"));
+    table.vkResetEvent = reinterpret_cast<PFN_vkResetEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkResetEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateQueryPool =
-        reinterpret_cast<PFN_vkCreateQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateQueryPool"));
+        reinterpret_cast<PFN_vkCreateQueryPool>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateQueryPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyQueryPool =
-        reinterpret_cast<PFN_vkDestroyQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyQueryPool"));
+        reinterpret_cast<PFN_vkDestroyQueryPool>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyQueryPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkGetQueryPoolResults = reinterpret_cast<PFN_vkGetQueryPoolResults>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueryPoolResults"));
+    table.vkGetQueryPoolResults =
+        reinterpret_cast<PFN_vkGetQueryPoolResults>(instanceFuncs.GetDeviceProcAddr(device, "vkGetQueryPoolResults"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkResetQueryPool =
-        reinterpret_cast<PFN_vkResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPool"));
+        reinterpret_cast<PFN_vkResetQueryPool>(instanceFuncs.GetDeviceProcAddr(device, "vkResetQueryPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateBuffer =
-        reinterpret_cast<PFN_vkCreateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBuffer"));
+        reinterpret_cast<PFN_vkCreateBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyBuffer =
-        reinterpret_cast<PFN_vkDestroyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBuffer"));
+        reinterpret_cast<PFN_vkDestroyBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateBufferView =
-        reinterpret_cast<PFN_vkCreateBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBufferView"));
+        reinterpret_cast<PFN_vkCreateBufferView>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateBufferView"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyBufferView =
-        reinterpret_cast<PFN_vkDestroyBufferView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBufferView"));
+        reinterpret_cast<PFN_vkDestroyBufferView>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyBufferView"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreateImage =
-        reinterpret_cast<PFN_vkCreateImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImage"));
+    table.vkCreateImage = reinterpret_cast<PFN_vkCreateImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyImage =
-        reinterpret_cast<PFN_vkDestroyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImage"));
+        reinterpret_cast<PFN_vkDestroyImage>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetImageSubresourceLayout = reinterpret_cast<PFN_vkGetImageSubresourceLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSubresourceLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateImageView =
-        reinterpret_cast<PFN_vkCreateImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateImageView"));
+        reinterpret_cast<PFN_vkCreateImageView>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateImageView"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyImageView =
-        reinterpret_cast<PFN_vkDestroyImageView>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyImageView"));
+        reinterpret_cast<PFN_vkDestroyImageView>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyImageView"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateShaderModule =
-        reinterpret_cast<PFN_vkCreateShaderModule>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateShaderModule"));
+        reinterpret_cast<PFN_vkCreateShaderModule>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateShaderModule"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkDestroyShaderModule = reinterpret_cast<PFN_vkDestroyShaderModule>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyShaderModule"));
+    table.vkDestroyShaderModule =
+        reinterpret_cast<PFN_vkDestroyShaderModule>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyShaderModule"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreatePipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineCache"));
+    table.vkCreatePipelineCache =
+        reinterpret_cast<PFN_vkCreatePipelineCache>(instanceFuncs.GetDeviceProcAddr(device, "vkCreatePipelineCache"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkDestroyPipelineCache = reinterpret_cast<PFN_vkDestroyPipelineCache>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineCache"));
+    table.vkDestroyPipelineCache =
+        reinterpret_cast<PFN_vkDestroyPipelineCache>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPipelineCache"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkGetPipelineCacheData = reinterpret_cast<PFN_vkGetPipelineCacheData>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineCacheData"));
+    table.vkGetPipelineCacheData =
+        reinterpret_cast<PFN_vkGetPipelineCacheData>(instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineCacheData"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkMergePipelineCaches = reinterpret_cast<PFN_vkMergePipelineCaches>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMergePipelineCaches"));
+    table.vkMergePipelineCaches =
+        reinterpret_cast<PFN_vkMergePipelineCaches>(instanceFuncs.GetDeviceProcAddr(device, "vkMergePipelineCaches"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkCreatePipelineBinariesKHR = reinterpret_cast<PFN_vkCreatePipelineBinariesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineBinariesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreatePipelineBinariesKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkDestroyPipelineBinaryKHR = reinterpret_cast<PFN_vkDestroyPipelineBinaryKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineBinaryKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPipelineBinaryKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkGetPipelineKeyKHR =
-        reinterpret_cast<PFN_vkGetPipelineKeyKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineKeyKHR"));
+        reinterpret_cast<PFN_vkGetPipelineKeyKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineKeyKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkGetPipelineBinaryDataKHR = reinterpret_cast<PFN_vkGetPipelineBinaryDataKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineBinaryDataKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineBinaryDataKHR"));
 #endif
 #if defined(VK_KHR_pipeline_binary)
     table.vkReleaseCapturedPipelineDataKHR = reinterpret_cast<PFN_vkReleaseCapturedPipelineDataKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseCapturedPipelineDataKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleaseCapturedPipelineDataKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateGraphicsPipelines = reinterpret_cast<PFN_vkCreateGraphicsPipelines>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateGraphicsPipelines"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateGraphicsPipelines"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateComputePipelines = reinterpret_cast<PFN_vkCreateComputePipelines>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateComputePipelines"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateComputePipelines"));
 #endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     table.vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI =
         reinterpret_cast<PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyPipeline =
-        reinterpret_cast<PFN_vkDestroyPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipeline"));
+        reinterpret_cast<PFN_vkDestroyPipeline>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPipeline"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreatePipelineLayout = reinterpret_cast<PFN_vkCreatePipelineLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePipelineLayout"));
+    table.vkCreatePipelineLayout =
+        reinterpret_cast<PFN_vkCreatePipelineLayout>(instanceFuncs.GetDeviceProcAddr(device, "vkCreatePipelineLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyPipelineLayout = reinterpret_cast<PFN_vkDestroyPipelineLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPipelineLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPipelineLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateSampler =
-        reinterpret_cast<PFN_vkCreateSampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSampler"));
+        reinterpret_cast<PFN_vkCreateSampler>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateSampler"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroySampler =
-        reinterpret_cast<PFN_vkDestroySampler>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySampler"));
+        reinterpret_cast<PFN_vkDestroySampler>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroySampler"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateDescriptorSetLayout = reinterpret_cast<PFN_vkCreateDescriptorSetLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorSetLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDescriptorSetLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDescriptorSetLayout = reinterpret_cast<PFN_vkDestroyDescriptorSetLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorSetLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDescriptorSetLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCreateDescriptorPool = reinterpret_cast<PFN_vkCreateDescriptorPool>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorPool"));
+    table.vkCreateDescriptorPool =
+        reinterpret_cast<PFN_vkCreateDescriptorPool>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateDescriptorPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyDescriptorPool = reinterpret_cast<PFN_vkDestroyDescriptorPool>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorPool"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDescriptorPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkResetDescriptorPool = reinterpret_cast<PFN_vkResetDescriptorPool>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetDescriptorPool"));
+    table.vkResetDescriptorPool =
+        reinterpret_cast<PFN_vkResetDescriptorPool>(instanceFuncs.GetDeviceProcAddr(device, "vkResetDescriptorPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateDescriptorSets = reinterpret_cast<PFN_vkAllocateDescriptorSets>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateDescriptorSets"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkAllocateDescriptorSets"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkFreeDescriptorSets =
-        reinterpret_cast<PFN_vkFreeDescriptorSets>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeDescriptorSets"));
+        reinterpret_cast<PFN_vkFreeDescriptorSets>(instanceFuncs.GetDeviceProcAddr(device, "vkFreeDescriptorSets"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkUpdateDescriptorSets = reinterpret_cast<PFN_vkUpdateDescriptorSets>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSets"));
+    table.vkUpdateDescriptorSets =
+        reinterpret_cast<PFN_vkUpdateDescriptorSets>(instanceFuncs.GetDeviceProcAddr(device, "vkUpdateDescriptorSets"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateFramebuffer =
-        reinterpret_cast<PFN_vkCreateFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateFramebuffer"));
+        reinterpret_cast<PFN_vkCreateFramebuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateFramebuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyFramebuffer =
-        reinterpret_cast<PFN_vkDestroyFramebuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyFramebuffer"));
+        reinterpret_cast<PFN_vkDestroyFramebuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyFramebuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateRenderPass =
-        reinterpret_cast<PFN_vkCreateRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass"));
+        reinterpret_cast<PFN_vkCreateRenderPass>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateRenderPass"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyRenderPass =
-        reinterpret_cast<PFN_vkDestroyRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyRenderPass"));
+        reinterpret_cast<PFN_vkDestroyRenderPass>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyRenderPass"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkGetRenderAreaGranularity = reinterpret_cast<PFN_vkGetRenderAreaGranularity>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderAreaGranularity"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRenderAreaGranularity"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetRenderingAreaGranularity = reinterpret_cast<PFN_vkGetRenderingAreaGranularity>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularity"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRenderingAreaGranularity"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCreateCommandPool =
-        reinterpret_cast<PFN_vkCreateCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCommandPool"));
+        reinterpret_cast<PFN_vkCreateCommandPool>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateCommandPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkDestroyCommandPool =
-        reinterpret_cast<PFN_vkDestroyCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCommandPool"));
+        reinterpret_cast<PFN_vkDestroyCommandPool>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyCommandPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkResetCommandPool =
-        reinterpret_cast<PFN_vkResetCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandPool"));
+        reinterpret_cast<PFN_vkResetCommandPool>(instanceFuncs.GetDeviceProcAddr(device, "vkResetCommandPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkAllocateCommandBuffers = reinterpret_cast<PFN_vkAllocateCommandBuffers>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAllocateCommandBuffers"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkAllocateCommandBuffers"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkFreeCommandBuffers =
-        reinterpret_cast<PFN_vkFreeCommandBuffers>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkFreeCommandBuffers"));
+        reinterpret_cast<PFN_vkFreeCommandBuffers>(instanceFuncs.GetDeviceProcAddr(device, "vkFreeCommandBuffers"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkBeginCommandBuffer =
-        reinterpret_cast<PFN_vkBeginCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBeginCommandBuffer"));
+        reinterpret_cast<PFN_vkBeginCommandBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkBeginCommandBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkEndCommandBuffer =
-        reinterpret_cast<PFN_vkEndCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkEndCommandBuffer"));
+        reinterpret_cast<PFN_vkEndCommandBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkEndCommandBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkResetCommandBuffer =
-        reinterpret_cast<PFN_vkResetCommandBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetCommandBuffer"));
+        reinterpret_cast<PFN_vkResetCommandBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkResetCommandBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindPipeline =
-        reinterpret_cast<PFN_vkCmdBindPipeline>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindPipeline"));
+        reinterpret_cast<PFN_vkCmdBindPipeline>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindPipeline"));
 #endif
 #if defined(VK_EXT_attachment_feedback_loop_dynamic_state)
     table.vkCmdSetAttachmentFeedbackLoopEnableEXT = reinterpret_cast<PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAttachmentFeedbackLoopEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetAttachmentFeedbackLoopEnableEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetViewport =
-        reinterpret_cast<PFN_vkCmdSetViewport>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewport"));
+        reinterpret_cast<PFN_vkCmdSetViewport>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewport"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetScissor =
-        reinterpret_cast<PFN_vkCmdSetScissor>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissor"));
+        reinterpret_cast<PFN_vkCmdSetScissor>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetScissor"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetLineWidth =
-        reinterpret_cast<PFN_vkCmdSetLineWidth>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineWidth"));
+        reinterpret_cast<PFN_vkCmdSetLineWidth>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineWidth"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetDepthBias =
-        reinterpret_cast<PFN_vkCmdSetDepthBias>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias"));
+        reinterpret_cast<PFN_vkCmdSetDepthBias>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBias"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdSetBlendConstants = reinterpret_cast<PFN_vkCmdSetBlendConstants>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetBlendConstants"));
+    table.vkCmdSetBlendConstants =
+        reinterpret_cast<PFN_vkCmdSetBlendConstants>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetBlendConstants"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetDepthBounds =
-        reinterpret_cast<PFN_vkCmdSetDepthBounds>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBounds"));
+        reinterpret_cast<PFN_vkCmdSetDepthBounds>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBounds"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilCompareMask = reinterpret_cast<PFN_vkCmdSetStencilCompareMask>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilCompareMask"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilCompareMask"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilWriteMask = reinterpret_cast<PFN_vkCmdSetStencilWriteMask>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilWriteMask"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilWriteMask"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdSetStencilReference = reinterpret_cast<PFN_vkCmdSetStencilReference>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilReference"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilReference"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindDescriptorSets = reinterpret_cast<PFN_vkCmdBindDescriptorSets>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorSets"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBindIndexBuffer =
-        reinterpret_cast<PFN_vkCmdBindIndexBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer"));
+        reinterpret_cast<PFN_vkCmdBindIndexBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindIndexBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdBindVertexBuffers = reinterpret_cast<PFN_vkCmdBindVertexBuffers>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers"));
+    table.vkCmdBindVertexBuffers =
+        reinterpret_cast<PFN_vkCmdBindVertexBuffers>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindVertexBuffers"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdDraw = reinterpret_cast<PFN_vkCmdDraw>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDraw"));
+    table.vkCmdDraw = reinterpret_cast<PFN_vkCmdDraw>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDraw"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndexed =
-        reinterpret_cast<PFN_vkCmdDrawIndexed>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexed"));
+        reinterpret_cast<PFN_vkCmdDrawIndexed>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndexed"));
 #endif
 #if defined(VK_EXT_multi_draw)
     table.vkCmdDrawMultiEXT =
-        reinterpret_cast<PFN_vkCmdDrawMultiEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiEXT"));
+        reinterpret_cast<PFN_vkCmdDrawMultiEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMultiEXT"));
 #endif
 #if defined(VK_EXT_multi_draw)
     table.vkCmdDrawMultiIndexedEXT = reinterpret_cast<PFN_vkCmdDrawMultiIndexedEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMultiIndexedEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMultiIndexedEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndirect =
-        reinterpret_cast<PFN_vkCmdDrawIndirect>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirect"));
+        reinterpret_cast<PFN_vkCmdDrawIndirect>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndirect"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdDrawIndexedIndirect = reinterpret_cast<PFN_vkCmdDrawIndexedIndirect>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirect"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndexedIndirect"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdDispatch =
-        reinterpret_cast<PFN_vkCmdDispatch>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatch"));
+    table.vkCmdDispatch = reinterpret_cast<PFN_vkCmdDispatch>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatch"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdDispatchIndirect = reinterpret_cast<PFN_vkCmdDispatchIndirect>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchIndirect"));
+    table.vkCmdDispatchIndirect =
+        reinterpret_cast<PFN_vkCmdDispatchIndirect>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchIndirect"));
 #endif
 #if (defined(VK_HUAWEI_subpass_shading) && VK_HUAWEI_SUBPASS_SHADING_SPEC_VERSION >= 2)
     table.vkCmdSubpassShadingHUAWEI = reinterpret_cast<PFN_vkCmdSubpassShadingHUAWEI>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSubpassShadingHUAWEI"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSubpassShadingHUAWEI"));
 #endif
 #if defined(VK_HUAWEI_cluster_culling_shader)
-    table.vkCmdDrawClusterHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterHUAWEI>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawClusterHUAWEI"));
+    table.vkCmdDrawClusterHUAWEI =
+        reinterpret_cast<PFN_vkCmdDrawClusterHUAWEI>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawClusterHUAWEI"));
 #endif
 #if defined(VK_HUAWEI_cluster_culling_shader)
     table.vkCmdDrawClusterIndirectHUAWEI = reinterpret_cast<PFN_vkCmdDrawClusterIndirectHUAWEI>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawClusterIndirectHUAWEI"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawClusterIndirectHUAWEI"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
     table.vkCmdUpdatePipelineIndirectBufferNV = reinterpret_cast<PFN_vkCmdUpdatePipelineIndirectBufferNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdatePipelineIndirectBufferNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdUpdatePipelineIndirectBufferNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyBuffer =
-        reinterpret_cast<PFN_vkCmdCopyBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer"));
+        reinterpret_cast<PFN_vkCmdCopyBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyImage =
-        reinterpret_cast<PFN_vkCmdCopyImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage"));
+        reinterpret_cast<PFN_vkCmdCopyImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBlitImage =
-        reinterpret_cast<PFN_vkCmdBlitImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage"));
+        reinterpret_cast<PFN_vkCmdBlitImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBlitImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdCopyBufferToImage = reinterpret_cast<PFN_vkCmdCopyBufferToImage>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage"));
+    table.vkCmdCopyBufferToImage =
+        reinterpret_cast<PFN_vkCmdCopyBufferToImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBufferToImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdCopyImageToBuffer = reinterpret_cast<PFN_vkCmdCopyImageToBuffer>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer"));
+    table.vkCmdCopyImageToBuffer =
+        reinterpret_cast<PFN_vkCmdCopyImageToBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImageToBuffer"));
 #endif
 #if defined(VK_NV_copy_memory_indirect)
     table.vkCmdCopyMemoryIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryIndirectNV"));
 #endif
 #if defined(VK_KHR_copy_memory_indirect)
     table.vkCmdCopyMemoryIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryIndirectKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryIndirectKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryIndirectKHR"));
 #endif
 #if defined(VK_NV_copy_memory_indirect)
     table.vkCmdCopyMemoryToImageIndirectNV = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryToImageIndirectNV"));
 #endif
 #if defined(VK_KHR_copy_memory_indirect)
     table.vkCmdCopyMemoryToImageIndirectKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToImageIndirectKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToImageIndirectKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryToImageIndirectKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdUpdateBuffer =
-        reinterpret_cast<PFN_vkCmdUpdateBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdUpdateBuffer"));
+        reinterpret_cast<PFN_vkCmdUpdateBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdUpdateBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdFillBuffer =
-        reinterpret_cast<PFN_vkCmdFillBuffer>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdFillBuffer"));
+        reinterpret_cast<PFN_vkCmdFillBuffer>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdFillBuffer"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdClearColorImage =
-        reinterpret_cast<PFN_vkCmdClearColorImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearColorImage"));
+        reinterpret_cast<PFN_vkCmdClearColorImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdClearColorImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdClearDepthStencilImage = reinterpret_cast<PFN_vkCmdClearDepthStencilImage>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearDepthStencilImage"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdClearDepthStencilImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdClearAttachments = reinterpret_cast<PFN_vkCmdClearAttachments>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdClearAttachments"));
+    table.vkCmdClearAttachments =
+        reinterpret_cast<PFN_vkCmdClearAttachments>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdClearAttachments"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResolveImage =
-        reinterpret_cast<PFN_vkCmdResolveImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage"));
+        reinterpret_cast<PFN_vkCmdResolveImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResolveImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdSetEvent =
-        reinterpret_cast<PFN_vkCmdSetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent"));
+    table.vkCmdSetEvent = reinterpret_cast<PFN_vkCmdSetEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResetEvent =
-        reinterpret_cast<PFN_vkCmdResetEvent>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent"));
+        reinterpret_cast<PFN_vkCmdResetEvent>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResetEvent"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdWaitEvents =
-        reinterpret_cast<PFN_vkCmdWaitEvents>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents"));
+        reinterpret_cast<PFN_vkCmdWaitEvents>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdWaitEvents"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdPipelineBarrier =
-        reinterpret_cast<PFN_vkCmdPipelineBarrier>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier"));
+        reinterpret_cast<PFN_vkCmdPipelineBarrier>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPipelineBarrier"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBeginQuery =
-        reinterpret_cast<PFN_vkCmdBeginQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginQuery"));
+        reinterpret_cast<PFN_vkCmdBeginQuery>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginQuery"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
-    table.vkCmdEndQuery =
-        reinterpret_cast<PFN_vkCmdEndQuery>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndQuery"));
+    table.vkCmdEndQuery = reinterpret_cast<PFN_vkCmdEndQuery>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndQuery"));
 #endif
 #if defined(VK_EXT_conditional_rendering)
     table.vkCmdBeginConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdBeginConditionalRenderingEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginConditionalRenderingEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginConditionalRenderingEXT"));
 #endif
 #if defined(VK_EXT_conditional_rendering)
     table.vkCmdEndConditionalRenderingEXT = reinterpret_cast<PFN_vkCmdEndConditionalRenderingEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndConditionalRenderingEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndConditionalRenderingEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdResetQueryPool =
-        reinterpret_cast<PFN_vkCmdResetQueryPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetQueryPool"));
+        reinterpret_cast<PFN_vkCmdResetQueryPool>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResetQueryPool"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdWriteTimestamp =
-        reinterpret_cast<PFN_vkCmdWriteTimestamp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp"));
+        reinterpret_cast<PFN_vkCmdWriteTimestamp>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteTimestamp"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdCopyQueryPoolResults = reinterpret_cast<PFN_vkCmdCopyQueryPoolResults>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyQueryPoolResults"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyQueryPoolResults"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdPushConstants =
-        reinterpret_cast<PFN_vkCmdPushConstants>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants"));
+        reinterpret_cast<PFN_vkCmdPushConstants>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushConstants"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdBeginRenderPass =
-        reinterpret_cast<PFN_vkCmdBeginRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass"));
+        reinterpret_cast<PFN_vkCmdBeginRenderPass>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginRenderPass"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdNextSubpass =
-        reinterpret_cast<PFN_vkCmdNextSubpass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass"));
+        reinterpret_cast<PFN_vkCmdNextSubpass>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdNextSubpass"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdEndRenderPass =
-        reinterpret_cast<PFN_vkCmdEndRenderPass>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass"));
+        reinterpret_cast<PFN_vkCmdEndRenderPass>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRenderPass"));
 #endif
 #if defined(VKIT_API_VERSION_1_0)
     table.vkCmdExecuteCommands =
-        reinterpret_cast<PFN_vkCmdExecuteCommands>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteCommands"));
+        reinterpret_cast<PFN_vkCmdExecuteCommands>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdExecuteCommands"));
 #endif
 #if defined(VK_KHR_display_swapchain)
     table.vkCreateSharedSwapchainsKHR = reinterpret_cast<PFN_vkCreateSharedSwapchainsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSharedSwapchainsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateSharedSwapchainsKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
     table.vkCreateSwapchainKHR =
-        reinterpret_cast<PFN_vkCreateSwapchainKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSwapchainKHR"));
+        reinterpret_cast<PFN_vkCreateSwapchainKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateSwapchainKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySwapchainKHR"));
+    table.vkDestroySwapchainKHR =
+        reinterpret_cast<PFN_vkDestroySwapchainKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroySwapchainKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
     table.vkGetSwapchainImagesKHR = reinterpret_cast<PFN_vkGetSwapchainImagesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainImagesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSwapchainImagesKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
-    table.vkAcquireNextImageKHR = reinterpret_cast<PFN_vkAcquireNextImageKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireNextImageKHR"));
+    table.vkAcquireNextImageKHR =
+        reinterpret_cast<PFN_vkAcquireNextImageKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkAcquireNextImageKHR"));
 #endif
 #if defined(VK_KHR_swapchain)
     table.vkQueuePresentKHR =
-        reinterpret_cast<PFN_vkQueuePresentKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueuePresentKHR"));
+        reinterpret_cast<PFN_vkQueuePresentKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkQueuePresentKHR"));
 #endif
 #if defined(VK_EXT_debug_marker)
     table.vkDebugMarkerSetObjectNameEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectNameEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDebugMarkerSetObjectNameEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
     table.vkDebugMarkerSetObjectTagEXT = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDebugMarkerSetObjectTagEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDebugMarkerSetObjectTagEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
     table.vkCmdDebugMarkerBeginEXT = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerBeginEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDebugMarkerBeginEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
-    table.vkCmdDebugMarkerEndEXT = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerEndEXT"));
+    table.vkCmdDebugMarkerEndEXT =
+        reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDebugMarkerEndEXT"));
 #endif
 #if defined(VK_EXT_debug_marker)
     table.vkCmdDebugMarkerInsertEXT = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDebugMarkerInsertEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDebugMarkerInsertEXT"));
 #endif
 #if defined(VK_NV_external_memory_win32)
     table.vkGetMemoryWin32HandleNV = reinterpret_cast<PFN_vkGetMemoryWin32HandleNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryWin32HandleNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkCmdExecuteGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdExecuteGeneratedCommandsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkCmdPreprocessGeneratedCommandsNV = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPreprocessGeneratedCommandsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkCmdBindPipelineShaderGroupNV = reinterpret_cast<PFN_vkCmdBindPipelineShaderGroupNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindPipelineShaderGroupNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindPipelineShaderGroupNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkGetGeneratedCommandsMemoryRequirementsNV = reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetGeneratedCommandsMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkCreateIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateIndirectCommandsLayoutNV"));
 #endif
 #if defined(VK_NV_device_generated_commands)
     table.vkDestroyIndirectCommandsLayoutNV = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyIndirectCommandsLayoutNV"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkCmdExecuteGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdExecuteGeneratedCommandsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdExecuteGeneratedCommandsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdExecuteGeneratedCommandsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkCmdPreprocessGeneratedCommandsEXT = reinterpret_cast<PFN_vkCmdPreprocessGeneratedCommandsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPreprocessGeneratedCommandsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPreprocessGeneratedCommandsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkGetGeneratedCommandsMemoryRequirementsEXT =
         reinterpret_cast<PFN_vkGetGeneratedCommandsMemoryRequirementsEXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetGeneratedCommandsMemoryRequirementsEXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetGeneratedCommandsMemoryRequirementsEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkCreateIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkCreateIndirectCommandsLayoutEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectCommandsLayoutEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateIndirectCommandsLayoutEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkDestroyIndirectCommandsLayoutEXT = reinterpret_cast<PFN_vkDestroyIndirectCommandsLayoutEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectCommandsLayoutEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyIndirectCommandsLayoutEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkCreateIndirectExecutionSetEXT = reinterpret_cast<PFN_vkCreateIndirectExecutionSetEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateIndirectExecutionSetEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateIndirectExecutionSetEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkDestroyIndirectExecutionSetEXT = reinterpret_cast<PFN_vkDestroyIndirectExecutionSetEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyIndirectExecutionSetEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyIndirectExecutionSetEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkUpdateIndirectExecutionSetPipelineEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetPipelineEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetPipelineEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUpdateIndirectExecutionSetPipelineEXT"));
 #endif
 #if defined(VK_EXT_device_generated_commands)
     table.vkUpdateIndirectExecutionSetShaderEXT = reinterpret_cast<PFN_vkUpdateIndirectExecutionSetShaderEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateIndirectExecutionSetShaderEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUpdateIndirectExecutionSetShaderEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdPushDescriptorSet = reinterpret_cast<PFN_vkCmdPushDescriptorSet>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet"));
+    table.vkCmdPushDescriptorSet =
+        reinterpret_cast<PFN_vkCmdPushDescriptorSet>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSet"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkTrimCommandPool =
-        reinterpret_cast<PFN_vkTrimCommandPool>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTrimCommandPool"));
+        reinterpret_cast<PFN_vkTrimCommandPool>(instanceFuncs.GetDeviceProcAddr(device, "vkTrimCommandPool"));
 #endif
 #if defined(VK_KHR_external_memory_win32)
     table.vkGetMemoryWin32HandleKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandleKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_memory_win32)
     table.vkGetMemoryWin32HandlePropertiesKHR = reinterpret_cast<PFN_vkGetMemoryWin32HandlePropertiesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryWin32HandlePropertiesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryWin32HandlePropertiesKHR"));
 #endif
 #if defined(VK_KHR_external_memory_fd)
     table.vkGetMemoryFdKHR =
-        reinterpret_cast<PFN_vkGetMemoryFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryFdKHR"));
+        reinterpret_cast<PFN_vkGetMemoryFdKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryFdKHR"));
 #endif
 #if defined(VK_KHR_external_memory_fd)
     table.vkGetMemoryFdPropertiesKHR = reinterpret_cast<PFN_vkGetMemoryFdPropertiesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryFdPropertiesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryFdPropertiesKHR"));
 #endif
 #if defined(VK_FUCHSIA_external_memory)
     table.vkGetMemoryZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandleFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandleFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_external_memory)
     table.vkGetMemoryZirconHandlePropertiesFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryZirconHandlePropertiesFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryZirconHandlePropertiesFUCHSIA"));
 #endif
 #if defined(VK_NV_external_memory_rdma)
     table.vkGetMemoryRemoteAddressNV = reinterpret_cast<PFN_vkGetMemoryRemoteAddressNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryRemoteAddressNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryRemoteAddressNV"));
 #endif
 #if defined(VK_NV_external_memory_sci_buf)
     table.vkGetMemorySciBufNV =
-        reinterpret_cast<PFN_vkGetMemorySciBufNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemorySciBufNV"));
+        reinterpret_cast<PFN_vkGetMemorySciBufNV>(instanceFuncs.GetDeviceProcAddr(device, "vkGetMemorySciBufNV"));
 #endif
 #if defined(VK_KHR_external_semaphore_win32)
     table.vkGetSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkGetSemaphoreWin32HandleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreWin32HandleKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_win32)
     table.vkImportSemaphoreWin32HandleKHR = reinterpret_cast<PFN_vkImportSemaphoreWin32HandleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreWin32HandleKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_fd)
     table.vkGetSemaphoreFdKHR =
-        reinterpret_cast<PFN_vkGetSemaphoreFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreFdKHR"));
+        reinterpret_cast<PFN_vkGetSemaphoreFdKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreFdKHR"));
 #endif
 #if defined(VK_KHR_external_semaphore_fd)
-    table.vkImportSemaphoreFdKHR = reinterpret_cast<PFN_vkImportSemaphoreFdKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreFdKHR"));
+    table.vkImportSemaphoreFdKHR =
+        reinterpret_cast<PFN_vkImportSemaphoreFdKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkImportSemaphoreFdKHR"));
 #endif
 #if defined(VK_FUCHSIA_external_semaphore)
     table.vkGetSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetSemaphoreZirconHandleFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreZirconHandleFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_external_semaphore)
     table.vkImportSemaphoreZirconHandleFUCHSIA = reinterpret_cast<PFN_vkImportSemaphoreZirconHandleFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreZirconHandleFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportSemaphoreZirconHandleFUCHSIA"));
 #endif
 #if defined(VK_KHR_external_fence_win32)
     table.vkGetFenceWin32HandleKHR = reinterpret_cast<PFN_vkGetFenceWin32HandleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceWin32HandleKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetFenceWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_fence_win32)
     table.vkImportFenceWin32HandleKHR = reinterpret_cast<PFN_vkImportFenceWin32HandleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceWin32HandleKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportFenceWin32HandleKHR"));
 #endif
 #if defined(VK_KHR_external_fence_fd)
     table.vkGetFenceFdKHR =
-        reinterpret_cast<PFN_vkGetFenceFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceFdKHR"));
+        reinterpret_cast<PFN_vkGetFenceFdKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkGetFenceFdKHR"));
 #endif
 #if defined(VK_KHR_external_fence_fd)
     table.vkImportFenceFdKHR =
-        reinterpret_cast<PFN_vkImportFenceFdKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceFdKHR"));
+        reinterpret_cast<PFN_vkImportFenceFdKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkImportFenceFdKHR"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     table.vkGetFenceSciSyncFenceNV = reinterpret_cast<PFN_vkGetFenceSciSyncFenceNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceSciSyncFenceNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetFenceSciSyncFenceNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
-    table.vkGetFenceSciSyncObjNV = reinterpret_cast<PFN_vkGetFenceSciSyncObjNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFenceSciSyncObjNV"));
+    table.vkGetFenceSciSyncObjNV =
+        reinterpret_cast<PFN_vkGetFenceSciSyncObjNV>(instanceFuncs.GetDeviceProcAddr(device, "vkGetFenceSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     table.vkImportFenceSciSyncFenceNV = reinterpret_cast<PFN_vkImportFenceSciSyncFenceNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceSciSyncFenceNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportFenceSciSyncFenceNV"));
 #endif
 #if defined(VK_NV_external_sci_sync) || defined(VK_NV_external_sci_sync2)
     table.vkImportFenceSciSyncObjNV = reinterpret_cast<PFN_vkImportFenceSciSyncObjNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportFenceSciSyncObjNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportFenceSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync)
     table.vkGetSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkGetSemaphoreSciSyncObjNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreSciSyncObjNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync)
     table.vkImportSemaphoreSciSyncObjNV = reinterpret_cast<PFN_vkImportSemaphoreSciSyncObjNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkImportSemaphoreSciSyncObjNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkImportSemaphoreSciSyncObjNV"));
 #endif
 #if defined(VK_NV_external_sci_sync2)
     table.vkCreateSemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkCreateSemaphoreSciSyncPoolNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSemaphoreSciSyncPoolNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateSemaphoreSciSyncPoolNV"));
 #endif
 #if defined(VK_NV_external_sci_sync2)
     table.vkDestroySemaphoreSciSyncPoolNV = reinterpret_cast<PFN_vkDestroySemaphoreSciSyncPoolNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySemaphoreSciSyncPoolNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroySemaphoreSciSyncPoolNV"));
 #endif
 #if defined(VK_EXT_display_control)
     table.vkDisplayPowerControlEXT = reinterpret_cast<PFN_vkDisplayPowerControlEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDisplayPowerControlEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDisplayPowerControlEXT"));
 #endif
 #if defined(VK_EXT_display_control)
     table.vkRegisterDeviceEventEXT = reinterpret_cast<PFN_vkRegisterDeviceEventEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkRegisterDeviceEventEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkRegisterDeviceEventEXT"));
 #endif
 #if defined(VK_EXT_display_control)
     table.vkRegisterDisplayEventEXT = reinterpret_cast<PFN_vkRegisterDisplayEventEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkRegisterDisplayEventEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkRegisterDisplayEventEXT"));
 #endif
 #if defined(VK_EXT_display_control)
     table.vkGetSwapchainCounterEXT = reinterpret_cast<PFN_vkGetSwapchainCounterEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainCounterEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSwapchainCounterEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetDeviceGroupPeerMemoryFeatures = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeatures>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeatures"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceGroupPeerMemoryFeatures"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkBindBufferMemory2 =
-        reinterpret_cast<PFN_vkBindBufferMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory2"));
+        reinterpret_cast<PFN_vkBindBufferMemory2>(instanceFuncs.GetDeviceProcAddr(device, "vkBindBufferMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkBindImageMemory2 =
-        reinterpret_cast<PFN_vkBindImageMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory2"));
+        reinterpret_cast<PFN_vkBindImageMemory2>(instanceFuncs.GetDeviceProcAddr(device, "vkBindImageMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkCmdSetDeviceMask =
-        reinterpret_cast<PFN_vkCmdSetDeviceMask>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDeviceMask"));
+        reinterpret_cast<PFN_vkCmdSetDeviceMask>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDeviceMask"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
     (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     table.vkGetDeviceGroupPresentCapabilitiesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPresentCapabilitiesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPresentCapabilitiesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceGroupPresentCapabilitiesKHR"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
     (defined(VK_KHR_device_group) && defined(VK_KHR_surface))
     table.vkGetDeviceGroupSurfacePresentModesKHR = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceGroupSurfacePresentModesKHR"));
 #endif
 #if (defined(VK_KHR_swapchain) && defined(VKIT_API_VERSION_1_1)) ||                                                    \
     (defined(VK_KHR_device_group) && defined(VK_KHR_swapchain))
-    table.vkAcquireNextImage2KHR = reinterpret_cast<PFN_vkAcquireNextImage2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireNextImage2KHR"));
+    table.vkAcquireNextImage2KHR =
+        reinterpret_cast<PFN_vkAcquireNextImage2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkAcquireNextImage2KHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkCmdDispatchBase =
-        reinterpret_cast<PFN_vkCmdDispatchBase>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchBase"));
+        reinterpret_cast<PFN_vkCmdDispatchBase>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchBase"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkCreateDescriptorUpdateTemplate = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplate>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplate"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDescriptorUpdateTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkDestroyDescriptorUpdateTemplate = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplate>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplate"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDescriptorUpdateTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkUpdateDescriptorSetWithTemplate = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplate>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplate"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUpdateDescriptorSetWithTemplate"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdPushDescriptorSetWithTemplate = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSetWithTemplate"));
 #endif
 #if defined(VK_EXT_hdr_metadata)
     table.vkSetHdrMetadataEXT =
-        reinterpret_cast<PFN_vkSetHdrMetadataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetHdrMetadataEXT"));
+        reinterpret_cast<PFN_vkSetHdrMetadataEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkSetHdrMetadataEXT"));
 #endif
 #if defined(VK_KHR_shared_presentable_image)
     table.vkGetSwapchainStatusKHR = reinterpret_cast<PFN_vkGetSwapchainStatusKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainStatusKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSwapchainStatusKHR"));
 #endif
 #if defined(VK_GOOGLE_display_timing)
     table.vkGetRefreshCycleDurationGOOGLE = reinterpret_cast<PFN_vkGetRefreshCycleDurationGOOGLE>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRefreshCycleDurationGOOGLE"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRefreshCycleDurationGOOGLE"));
 #endif
 #if defined(VK_GOOGLE_display_timing)
     table.vkGetPastPresentationTimingGOOGLE = reinterpret_cast<PFN_vkGetPastPresentationTimingGOOGLE>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPastPresentationTimingGOOGLE"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPastPresentationTimingGOOGLE"));
 #endif
 #if defined(VK_NV_clip_space_w_scaling)
     table.vkCmdSetViewportWScalingNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportWScalingNV"));
 #endif
 #if defined(VK_EXT_discard_rectangles)
     table.vkCmdSetDiscardRectangleEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEXT"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
     table.vkCmdSetDiscardRectangleEnableEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEnableEXT"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_EXT_discard_rectangles) && VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2 && \
                                   VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION >= 2))
     table.vkCmdSetDiscardRectangleModeEXT = reinterpret_cast<PFN_vkCmdSetDiscardRectangleModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDiscardRectangleModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDiscardRectangleModeEXT"));
 #endif
 #if defined(VK_EXT_sample_locations)
     table.vkCmdSetSampleLocationsEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetSampleLocationsEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetBufferMemoryRequirements2 = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetImageMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageMemoryRequirements2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetImageSparseMemoryRequirements2 = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSparseMemoryRequirements2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkGetDeviceBufferMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceBufferMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkGetDeviceImageMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkGetDeviceImageSparseMemoryRequirements = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirements>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirements"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageSparseMemoryRequirements"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkCreateSamplerYcbcrConversion = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversion>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversion"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateSamplerYcbcrConversion"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkDestroySamplerYcbcrConversion = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversion>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversion"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroySamplerYcbcrConversion"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetDeviceQueue2 =
-        reinterpret_cast<PFN_vkGetDeviceQueue2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceQueue2"));
+        reinterpret_cast<PFN_vkGetDeviceQueue2>(instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceQueue2"));
 #endif
 #if defined(VK_EXT_validation_cache)
     table.vkCreateValidationCacheEXT = reinterpret_cast<PFN_vkCreateValidationCacheEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateValidationCacheEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateValidationCacheEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
     table.vkDestroyValidationCacheEXT = reinterpret_cast<PFN_vkDestroyValidationCacheEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyValidationCacheEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyValidationCacheEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
     table.vkGetValidationCacheDataEXT = reinterpret_cast<PFN_vkGetValidationCacheDataEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetValidationCacheDataEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetValidationCacheDataEXT"));
 #endif
 #if defined(VK_EXT_validation_cache)
     table.vkMergeValidationCachesEXT = reinterpret_cast<PFN_vkMergeValidationCachesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMergeValidationCachesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkMergeValidationCachesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_1)
     table.vkGetDescriptorSetLayoutSupport = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupport>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupport"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetLayoutSupport"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
     table.vkGetSwapchainGrallocUsageANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsageANDROID>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsageANDROID"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSwapchainGrallocUsageANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
     table.vkGetSwapchainGrallocUsage2ANDROID = reinterpret_cast<PFN_vkGetSwapchainGrallocUsage2ANDROID>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSwapchainGrallocUsage2ANDROID"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSwapchainGrallocUsage2ANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
-    table.vkAcquireImageANDROID = reinterpret_cast<PFN_vkAcquireImageANDROID>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireImageANDROID"));
+    table.vkAcquireImageANDROID =
+        reinterpret_cast<PFN_vkAcquireImageANDROID>(instanceFuncs.GetDeviceProcAddr(device, "vkAcquireImageANDROID"));
 #endif
 #if defined(VK_ANDROID_native_buffer)
     table.vkQueueSignalReleaseImageANDROID = reinterpret_cast<PFN_vkQueueSignalReleaseImageANDROID>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSignalReleaseImageANDROID"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueSignalReleaseImageANDROID"));
 #endif
 #if defined(VK_AMD_shader_info)
     table.vkGetShaderInfoAMD =
-        reinterpret_cast<PFN_vkGetShaderInfoAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderInfoAMD"));
+        reinterpret_cast<PFN_vkGetShaderInfoAMD>(instanceFuncs.GetDeviceProcAddr(device, "vkGetShaderInfoAMD"));
 #endif
 #if defined(VK_AMD_display_native_hdr)
     table.vkSetLocalDimmingAMD =
-        reinterpret_cast<PFN_vkSetLocalDimmingAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLocalDimmingAMD"));
+        reinterpret_cast<PFN_vkSetLocalDimmingAMD>(instanceFuncs.GetDeviceProcAddr(device, "vkSetLocalDimmingAMD"));
 #endif
 #if defined(VK_KHR_calibrated_timestamps)
     table.vkGetCalibratedTimestampsKHR = reinterpret_cast<PFN_vkGetCalibratedTimestampsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetCalibratedTimestampsKHR"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkSetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectNameEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkSetDebugUtilsObjectNameEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkSetDebugUtilsObjectTagEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectTagEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDebugUtilsObjectTagEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkSetDebugUtilsObjectTagEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkQueueBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueBeginDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueBeginDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueBeginDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkQueueEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueEndDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueEndDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueEndDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkQueueInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueInsertDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueInsertDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueInsertDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkCmdBeginDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdBeginDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkCmdEndDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdEndDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_debug_utils)
     table.vkCmdInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkCmdInsertDebugUtilsLabelEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdInsertDebugUtilsLabelEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdInsertDebugUtilsLabelEXT"));
 #endif
 #if defined(VK_EXT_external_memory_host)
     table.vkGetMemoryHostPointerPropertiesEXT = reinterpret_cast<PFN_vkGetMemoryHostPointerPropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryHostPointerPropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryHostPointerPropertiesEXT"));
 #endif
 #if defined(VK_AMD_buffer_marker)
     table.vkCmdWriteBufferMarkerAMD = reinterpret_cast<PFN_vkCmdWriteBufferMarkerAMD>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarkerAMD"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteBufferMarkerAMD"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkCreateRenderPass2 =
-        reinterpret_cast<PFN_vkCreateRenderPass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass2"));
+        reinterpret_cast<PFN_vkCreateRenderPass2>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdBeginRenderPass2 = reinterpret_cast<PFN_vkCmdBeginRenderPass2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2"));
+    table.vkCmdBeginRenderPass2 =
+        reinterpret_cast<PFN_vkCmdBeginRenderPass2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkCmdNextSubpass2 =
-        reinterpret_cast<PFN_vkCmdNextSubpass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass2"));
+        reinterpret_cast<PFN_vkCmdNextSubpass2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdNextSubpass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkCmdEndRenderPass2 =
-        reinterpret_cast<PFN_vkCmdEndRenderPass2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2"));
+        reinterpret_cast<PFN_vkCmdEndRenderPass2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRenderPass2"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkGetSemaphoreCounterValue = reinterpret_cast<PFN_vkGetSemaphoreCounterValue>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValue"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreCounterValue"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkWaitSemaphores =
-        reinterpret_cast<PFN_vkWaitSemaphores>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitSemaphores"));
+        reinterpret_cast<PFN_vkWaitSemaphores>(instanceFuncs.GetDeviceProcAddr(device, "vkWaitSemaphores"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkSignalSemaphore =
-        reinterpret_cast<PFN_vkSignalSemaphore>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSignalSemaphore"));
+        reinterpret_cast<PFN_vkSignalSemaphore>(instanceFuncs.GetDeviceProcAddr(device, "vkSignalSemaphore"));
 #endif
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
     table.vkGetAndroidHardwareBufferPropertiesANDROID =
         reinterpret_cast<PFN_vkGetAndroidHardwareBufferPropertiesANDROID>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAndroidHardwareBufferPropertiesANDROID"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetAndroidHardwareBufferPropertiesANDROID"));
 #endif
 #if defined(VK_ANDROID_external_memory_android_hardware_buffer)
     table.vkGetMemoryAndroidHardwareBufferANDROID = reinterpret_cast<PFN_vkGetMemoryAndroidHardwareBufferANDROID>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryAndroidHardwareBufferANDROID"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryAndroidHardwareBufferANDROID"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
-    table.vkCmdDrawIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndirectCount>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCount"));
+    table.vkCmdDrawIndirectCount =
+        reinterpret_cast<PFN_vkCmdDrawIndirectCount>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndirectCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkCmdDrawIndexedIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCount>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCount"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndexedIndirectCount"));
 #endif
 #if defined(VK_NV_device_diagnostic_checkpoints)
     table.vkCmdSetCheckpointNV =
-        reinterpret_cast<PFN_vkCmdSetCheckpointNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCheckpointNV"));
+        reinterpret_cast<PFN_vkCmdSetCheckpointNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCheckpointNV"));
 #endif
 #if defined(VK_NV_device_diagnostic_checkpoints)
     table.vkGetQueueCheckpointDataNV = reinterpret_cast<PFN_vkGetQueueCheckpointDataNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueueCheckpointDataNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetQueueCheckpointDataNV"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdBindTransformFeedbackBuffersEXT = reinterpret_cast<PFN_vkCmdBindTransformFeedbackBuffersEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindTransformFeedbackBuffersEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindTransformFeedbackBuffersEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdBeginTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdBeginTransformFeedbackEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginTransformFeedbackEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginTransformFeedbackEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdEndTransformFeedbackEXT = reinterpret_cast<PFN_vkCmdEndTransformFeedbackEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndTransformFeedbackEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndTransformFeedbackEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdBeginQueryIndexedEXT = reinterpret_cast<PFN_vkCmdBeginQueryIndexedEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginQueryIndexedEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginQueryIndexedEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdEndQueryIndexedEXT = reinterpret_cast<PFN_vkCmdEndQueryIndexedEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndQueryIndexedEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndQueryIndexedEXT"));
 #endif
 #if defined(VK_EXT_transform_feedback)
     table.vkCmdDrawIndirectByteCountEXT = reinterpret_cast<PFN_vkCmdDrawIndirectByteCountEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectByteCountEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndirectByteCountEXT"));
 #endif
 #if (defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2)
     table.vkCmdSetExclusiveScissorNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetExclusiveScissorNV"));
 #endif
 #if VK_HEADER_VERSION >= 241 && ((defined(VK_NV_scissor_exclusive) && VK_NV_SCISSOR_EXCLUSIVE_SPEC_VERSION >= 2))
     table.vkCmdSetExclusiveScissorEnableNV = reinterpret_cast<PFN_vkCmdSetExclusiveScissorEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExclusiveScissorEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetExclusiveScissorEnableNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
     table.vkCmdBindShadingRateImageNV = reinterpret_cast<PFN_vkCmdBindShadingRateImageNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindShadingRateImageNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindShadingRateImageNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
     table.vkCmdSetViewportShadingRatePaletteNV = reinterpret_cast<PFN_vkCmdSetViewportShadingRatePaletteNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportShadingRatePaletteNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportShadingRatePaletteNV"));
 #endif
 #if defined(VK_NV_shading_rate_image)
     table.vkCmdSetCoarseSampleOrderNV = reinterpret_cast<PFN_vkCmdSetCoarseSampleOrderNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoarseSampleOrderNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoarseSampleOrderNV"));
 #endif
 #if defined(VK_NV_mesh_shader)
     table.vkCmdDrawMeshTasksNV =
-        reinterpret_cast<PFN_vkCmdDrawMeshTasksNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksNV"));
+        reinterpret_cast<PFN_vkCmdDrawMeshTasksNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksNV"));
 #endif
 #if defined(VK_NV_mesh_shader)
     table.vkCmdDrawMeshTasksIndirectNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectNV"));
 #endif
 #if (defined(VK_NV_mesh_shader) &&                                                                                     \
      (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountNV = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectCountNV"));
 #endif
 #if defined(VK_EXT_mesh_shader)
-    table.vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksEXT"));
+    table.vkCmdDrawMeshTasksEXT =
+        reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksEXT"));
 #endif
 #if defined(VK_EXT_mesh_shader)
     table.vkCmdDrawMeshTasksIndirectEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectEXT"));
 #endif
 #if (defined(VK_EXT_mesh_shader) &&                                                                                    \
      (defined(VKIT_API_VERSION_1_2) || defined(VK_KHR_draw_indirect_count) || defined(VK_AMD_draw_indirect_count)))
     table.vkCmdDrawMeshTasksIndirectCountEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksIndirectCountEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawMeshTasksIndirectCountEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectCountEXT"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCompileDeferredNV =
-        reinterpret_cast<PFN_vkCompileDeferredNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCompileDeferredNV"));
+        reinterpret_cast<PFN_vkCompileDeferredNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCompileDeferredNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCreateAccelerationStructureNV = reinterpret_cast<PFN_vkCreateAccelerationStructureNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateAccelerationStructureNV"));
 #endif
 #if defined(VK_HUAWEI_invocation_mask)
     table.vkCmdBindInvocationMaskHUAWEI = reinterpret_cast<PFN_vkCmdBindInvocationMaskHUAWEI>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindInvocationMaskHUAWEI"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindInvocationMaskHUAWEI"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkDestroyAccelerationStructureKHR = reinterpret_cast<PFN_vkDestroyAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyAccelerationStructureKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkDestroyAccelerationStructureNV = reinterpret_cast<PFN_vkDestroyAccelerationStructureNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyAccelerationStructureNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyAccelerationStructureNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkGetAccelerationStructureMemoryRequirementsNV =
         reinterpret_cast<PFN_vkGetAccelerationStructureMemoryRequirementsNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureMemoryRequirementsNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetAccelerationStructureMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkBindAccelerationStructureMemoryNV = reinterpret_cast<PFN_vkBindAccelerationStructureMemoryNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindAccelerationStructureMemoryNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkBindAccelerationStructureMemoryNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCmdCopyAccelerationStructureNV = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCopyAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCopyAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureToMemoryKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyAccelerationStructureToMemoryKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureToMemoryKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCopyAccelerationStructureToMemoryKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyAccelerationStructureToMemoryKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCopyAccelerationStructureToMemoryKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryToAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCopyMemoryToAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCopyMemoryToAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdWriteAccelerationStructuresPropertiesKHR =
         reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCmdWriteAccelerationStructuresPropertiesNV =
         reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteAccelerationStructuresPropertiesNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteAccelerationStructuresPropertiesNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCmdBuildAccelerationStructureNV = reinterpret_cast<PFN_vkCmdBuildAccelerationStructureNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructureNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildAccelerationStructureNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkWriteAccelerationStructuresPropertiesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWriteAccelerationStructuresPropertiesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkWriteAccelerationStructuresPropertiesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkCmdTraceRaysKHR =
-        reinterpret_cast<PFN_vkCmdTraceRaysKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysKHR"));
+        reinterpret_cast<PFN_vkCmdTraceRaysKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdTraceRaysKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCmdTraceRaysNV =
-        reinterpret_cast<PFN_vkCmdTraceRaysNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysNV"));
+        reinterpret_cast<PFN_vkCmdTraceRaysNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdTraceRaysNV"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkGetRayTracingShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRayTracingShaderGroupHandlesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR =
         reinterpret_cast<PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkGetAccelerationStructureHandleNV = reinterpret_cast<PFN_vkGetAccelerationStructureHandleNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureHandleNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetAccelerationStructureHandleNV"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkCreateRayTracingPipelinesNV = reinterpret_cast<PFN_vkCreateRayTracingPipelinesNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateRayTracingPipelinesNV"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRayTracingPipelinesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateRayTracingPipelinesKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkCmdTraceRaysIndirectKHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirectKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirectKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdTraceRaysIndirectKHR"));
 #endif
 #if (defined(VK_KHR_ray_tracing_maintenance1) && defined(VK_KHR_ray_tracing_pipeline))
     table.vkCmdTraceRaysIndirect2KHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirect2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdTraceRaysIndirect2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdTraceRaysIndirect2KHR"));
 #endif
 #if defined(VK_NV_cluster_acceleration_structure)
     table.vkGetClusterAccelerationStructureBuildSizesNV =
         reinterpret_cast<PFN_vkGetClusterAccelerationStructureBuildSizesNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetClusterAccelerationStructureBuildSizesNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetClusterAccelerationStructureBuildSizesNV"));
 #endif
 #if defined(VK_NV_cluster_acceleration_structure)
     table.vkCmdBuildClusterAccelerationStructureIndirectNV =
         reinterpret_cast<PFN_vkCmdBuildClusterAccelerationStructureIndirectNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildClusterAccelerationStructureIndirectNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildClusterAccelerationStructureIndirectNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkGetDeviceAccelerationStructureCompatibilityKHR =
         reinterpret_cast<PFN_vkGetDeviceAccelerationStructureCompatibilityKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceAccelerationStructureCompatibilityKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceAccelerationStructureCompatibilityKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkGetRayTracingShaderGroupStackSizeKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupStackSizeKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupStackSizeKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRayTracingShaderGroupStackSizeKHR"));
 #endif
 #if defined(VK_KHR_ray_tracing_pipeline)
     table.vkCmdSetRayTracingPipelineStackSizeKHR = reinterpret_cast<PFN_vkCmdSetRayTracingPipelineStackSizeKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRayTracingPipelineStackSizeKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRayTracingPipelineStackSizeKHR"));
 #endif
 #if defined(VK_NVX_image_view_handle)
     table.vkGetImageViewHandleNVX = reinterpret_cast<PFN_vkGetImageViewHandleNVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewHandleNVX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageViewHandleNVX"));
 #endif
 #if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3)
     table.vkGetImageViewHandle64NVX = reinterpret_cast<PFN_vkGetImageViewHandle64NVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewHandle64NVX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageViewHandle64NVX"));
 #endif
 #if (defined(VK_NVX_image_view_handle) && VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 3 &&                                \
      VK_NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION >= 2)
     table.vkGetImageViewAddressNVX = reinterpret_cast<PFN_vkGetImageViewAddressNVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewAddressNVX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageViewAddressNVX"));
 #endif
 #if (defined(VK_EXT_full_screen_exclusive) && (defined(VK_KHR_device_group) || defined(VKIT_API_VERSION_1_1)))
     table.vkGetDeviceGroupSurfacePresentModes2EXT = reinterpret_cast<PFN_vkGetDeviceGroupSurfacePresentModes2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupSurfacePresentModes2EXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceGroupSurfacePresentModes2EXT"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
     table.vkAcquireFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkAcquireFullScreenExclusiveModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireFullScreenExclusiveModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkAcquireFullScreenExclusiveModeEXT"));
 #endif
 #if defined(VK_EXT_full_screen_exclusive)
     table.vkReleaseFullScreenExclusiveModeEXT = reinterpret_cast<PFN_vkReleaseFullScreenExclusiveModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseFullScreenExclusiveModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleaseFullScreenExclusiveModeEXT"));
 #endif
 #if defined(VK_KHR_performance_query)
     table.vkAcquireProfilingLockKHR = reinterpret_cast<PFN_vkAcquireProfilingLockKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquireProfilingLockKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkAcquireProfilingLockKHR"));
 #endif
 #if defined(VK_KHR_performance_query)
     table.vkReleaseProfilingLockKHR = reinterpret_cast<PFN_vkReleaseProfilingLockKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseProfilingLockKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleaseProfilingLockKHR"));
 #endif
 #if defined(VK_EXT_image_drm_format_modifier)
     table.vkGetImageDrmFormatModifierPropertiesEXT = reinterpret_cast<PFN_vkGetImageDrmFormatModifierPropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageDrmFormatModifierPropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageDrmFormatModifierPropertiesEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkGetBufferOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddress>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddress"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferOpaqueCaptureAddress"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkGetBufferDeviceAddress = reinterpret_cast<PFN_vkGetBufferDeviceAddress>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddress"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferDeviceAddress"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkInitializePerformanceApiINTEL = reinterpret_cast<PFN_vkInitializePerformanceApiINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkInitializePerformanceApiINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkInitializePerformanceApiINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkUninitializePerformanceApiINTEL = reinterpret_cast<PFN_vkUninitializePerformanceApiINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUninitializePerformanceApiINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUninitializePerformanceApiINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkCmdSetPerformanceMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceMarkerINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceMarkerINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPerformanceMarkerINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkCmdSetPerformanceStreamMarkerINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceStreamMarkerINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceStreamMarkerINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPerformanceStreamMarkerINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkCmdSetPerformanceOverrideINTEL = reinterpret_cast<PFN_vkCmdSetPerformanceOverrideINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPerformanceOverrideINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPerformanceOverrideINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkAcquirePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkAcquirePerformanceConfigurationINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAcquirePerformanceConfigurationINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkAcquirePerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkReleasePerformanceConfigurationINTEL = reinterpret_cast<PFN_vkReleasePerformanceConfigurationINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleasePerformanceConfigurationINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleasePerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkQueueSetPerformanceConfigurationINTEL = reinterpret_cast<PFN_vkQueueSetPerformanceConfigurationINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSetPerformanceConfigurationINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueSetPerformanceConfigurationINTEL"));
 #endif
 #if defined(VK_INTEL_performance_query)
     table.vkGetPerformanceParameterINTEL = reinterpret_cast<PFN_vkGetPerformanceParameterINTEL>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPerformanceParameterINTEL"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPerformanceParameterINTEL"));
 #endif
 #if defined(VKIT_API_VERSION_1_2)
     table.vkGetDeviceMemoryOpaqueCaptureAddress = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddress>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddress"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceMemoryOpaqueCaptureAddress"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
     table.vkGetPipelineExecutablePropertiesKHR = reinterpret_cast<PFN_vkGetPipelineExecutablePropertiesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutablePropertiesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineExecutablePropertiesKHR"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
     table.vkGetPipelineExecutableStatisticsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableStatisticsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutableStatisticsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineExecutableStatisticsKHR"));
 #endif
 #if defined(VK_KHR_pipeline_executable_properties)
     table.vkGetPipelineExecutableInternalRepresentationsKHR =
         reinterpret_cast<PFN_vkGetPipelineExecutableInternalRepresentationsKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineExecutableInternalRepresentationsKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineExecutableInternalRepresentationsKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdSetLineStipple =
-        reinterpret_cast<PFN_vkCmdSetLineStipple>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStipple"));
+        reinterpret_cast<PFN_vkCmdSetLineStipple>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineStipple"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCreateAccelerationStructureKHR = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateAccelerationStructureKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateAccelerationStructureKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildAccelerationStructuresKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkCmdBuildAccelerationStructuresIndirectKHR =
         reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresIndirectKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildAccelerationStructuresIndirectKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildAccelerationStructuresIndirectKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkBuildAccelerationStructuresKHR = reinterpret_cast<PFN_vkBuildAccelerationStructuresKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBuildAccelerationStructuresKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkBuildAccelerationStructuresKHR"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkGetAccelerationStructureDeviceAddressKHR = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureDeviceAddressKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetAccelerationStructureDeviceAddressKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
     table.vkCreateDeferredOperationKHR = reinterpret_cast<PFN_vkCreateDeferredOperationKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDeferredOperationKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDeferredOperationKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
     table.vkDestroyDeferredOperationKHR = reinterpret_cast<PFN_vkDestroyDeferredOperationKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDeferredOperationKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDeferredOperationKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
     table.vkGetDeferredOperationMaxConcurrencyKHR = reinterpret_cast<PFN_vkGetDeferredOperationMaxConcurrencyKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeferredOperationMaxConcurrencyKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeferredOperationMaxConcurrencyKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
     table.vkGetDeferredOperationResultKHR = reinterpret_cast<PFN_vkGetDeferredOperationResultKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeferredOperationResultKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeferredOperationResultKHR"));
 #endif
 #if defined(VK_KHR_deferred_host_operations)
     table.vkDeferredOperationJoinKHR = reinterpret_cast<PFN_vkDeferredOperationJoinKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDeferredOperationJoinKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDeferredOperationJoinKHR"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
     table.vkGetPipelineIndirectMemoryRequirementsNV = reinterpret_cast<PFN_vkGetPipelineIndirectMemoryRequirementsNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineIndirectMemoryRequirementsNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineIndirectMemoryRequirementsNV"));
 #endif
 #if defined(VK_NV_device_generated_commands_compute)
     table.vkGetPipelineIndirectDeviceAddressNV = reinterpret_cast<PFN_vkGetPipelineIndirectDeviceAddressNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelineIndirectDeviceAddressNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelineIndirectDeviceAddressNV"));
 #endif
 #if defined(VK_AMD_anti_lag)
     table.vkAntiLagUpdateAMD =
-        reinterpret_cast<PFN_vkAntiLagUpdateAMD>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkAntiLagUpdateAMD"));
+        reinterpret_cast<PFN_vkAntiLagUpdateAMD>(instanceFuncs.GetDeviceProcAddr(device, "vkAntiLagUpdateAMD"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetCullMode =
-        reinterpret_cast<PFN_vkCmdSetCullMode>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCullMode"));
+        reinterpret_cast<PFN_vkCmdSetCullMode>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCullMode"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetFrontFace =
-        reinterpret_cast<PFN_vkCmdSetFrontFace>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFrontFace"));
+        reinterpret_cast<PFN_vkCmdSetFrontFace>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetFrontFace"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetPrimitiveTopology = reinterpret_cast<PFN_vkCmdSetPrimitiveTopology>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopology"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPrimitiveTopology"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetViewportWithCount = reinterpret_cast<PFN_vkCmdSetViewportWithCount>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCount"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportWithCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetScissorWithCount = reinterpret_cast<PFN_vkCmdSetScissorWithCount>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCount"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetScissorWithCount"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkCmdBindIndexBuffer2 = reinterpret_cast<PFN_vkCmdBindIndexBuffer2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2"));
+    table.vkCmdBindIndexBuffer2 =
+        reinterpret_cast<PFN_vkCmdBindIndexBuffer2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindIndexBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdBindVertexBuffers2 = reinterpret_cast<PFN_vkCmdBindVertexBuffers2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindVertexBuffers2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetDepthTestEnable = reinterpret_cast<PFN_vkCmdSetDepthTestEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetDepthWriteEnable = reinterpret_cast<PFN_vkCmdSetDepthWriteEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthWriteEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdSetDepthCompareOp = reinterpret_cast<PFN_vkCmdSetDepthCompareOp>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOp"));
+    table.vkCmdSetDepthCompareOp =
+        reinterpret_cast<PFN_vkCmdSetDepthCompareOp>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthCompareOp"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetDepthBoundsTestEnable = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBoundsTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetStencilTestEnable = reinterpret_cast<PFN_vkCmdSetStencilTestEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilTestEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetStencilOp =
-        reinterpret_cast<PFN_vkCmdSetStencilOp>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilOp"));
+        reinterpret_cast<PFN_vkCmdSetStencilOp>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilOp"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     table.vkCmdSetPatchControlPointsEXT = reinterpret_cast<PFN_vkCmdSetPatchControlPointsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPatchControlPointsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPatchControlPointsEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetRasterizerDiscardEnable = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRasterizerDiscardEnable"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetDepthBiasEnable = reinterpret_cast<PFN_vkCmdSetDepthBiasEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBiasEnable"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     table.vkCmdSetLogicOpEXT =
-        reinterpret_cast<PFN_vkCmdSetLogicOpEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEXT"));
+        reinterpret_cast<PFN_vkCmdSetLogicOpEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLogicOpEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetPrimitiveRestartEnable = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnable>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnable"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPrimitiveRestartEnable"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && (defined(VK_KHR_maintenance2) || defined(VKIT_API_VERSION_1_1))) ||    \
     defined(VK_EXT_shader_object)
     table.vkCmdSetTessellationDomainOriginEXT = reinterpret_cast<PFN_vkCmdSetTessellationDomainOriginEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetTessellationDomainOriginEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetTessellationDomainOriginEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthClampEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClampEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClampEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthClampEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetPolygonModeEXT = reinterpret_cast<PFN_vkCmdSetPolygonModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPolygonModeEXT"));
+    table.vkCmdSetPolygonModeEXT =
+        reinterpret_cast<PFN_vkCmdSetPolygonModeEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPolygonModeEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetRasterizationSamplesEXT = reinterpret_cast<PFN_vkCmdSetRasterizationSamplesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizationSamplesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRasterizationSamplesEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
-    table.vkCmdSetSampleMaskEXT = reinterpret_cast<PFN_vkCmdSetSampleMaskEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleMaskEXT"));
+    table.vkCmdSetSampleMaskEXT =
+        reinterpret_cast<PFN_vkCmdSetSampleMaskEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetSampleMaskEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetAlphaToCoverageEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToCoverageEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAlphaToCoverageEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetAlphaToCoverageEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetAlphaToOneEnableEXT = reinterpret_cast<PFN_vkCmdSetAlphaToOneEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetAlphaToOneEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetAlphaToOneEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetLogicOpEnableEXT = reinterpret_cast<PFN_vkCmdSetLogicOpEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLogicOpEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLogicOpEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetColorBlendEnableEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetColorBlendEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetColorBlendEquationEXT = reinterpret_cast<PFN_vkCmdSetColorBlendEquationEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendEquationEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetColorBlendEquationEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state3) || defined(VK_EXT_shader_object)
     table.vkCmdSetColorWriteMaskEXT = reinterpret_cast<PFN_vkCmdSetColorWriteMaskEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorWriteMaskEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetColorWriteMaskEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_transform_feedback)) ||                                 \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_transform_feedback))
     table.vkCmdSetRasterizationStreamEXT = reinterpret_cast<PFN_vkCmdSetRasterizationStreamEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizationStreamEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRasterizationStreamEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) ||                         \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
     table.vkCmdSetConservativeRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetConservativeRasterizationModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetConservativeRasterizationModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetConservativeRasterizationModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_conservative_rasterization)) ||                         \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_conservative_rasterization))
     table.vkCmdSetExtraPrimitiveOverestimationSizeEXT =
         reinterpret_cast<PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_enable)) ||                                  \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_enable))
     table.vkCmdSetDepthClipEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthClipEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClipEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthClipEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_sample_locations)) ||                                   \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_sample_locations))
     table.vkCmdSetSampleLocationsEnableEXT = reinterpret_cast<PFN_vkCmdSetSampleLocationsEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetSampleLocationsEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetSampleLocationsEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_blend_operation_advanced)) ||                           \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_blend_operation_advanced))
     table.vkCmdSetColorBlendAdvancedEXT = reinterpret_cast<PFN_vkCmdSetColorBlendAdvancedEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorBlendAdvancedEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetColorBlendAdvancedEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_provoking_vertex)) ||                                   \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_provoking_vertex))
     table.vkCmdSetProvokingVertexModeEXT = reinterpret_cast<PFN_vkCmdSetProvokingVertexModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetProvokingVertexModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetProvokingVertexModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) ||                                 \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
     table.vkCmdSetLineRasterizationModeEXT = reinterpret_cast<PFN_vkCmdSetLineRasterizationModeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineRasterizationModeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineRasterizationModeEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_line_rasterization)) ||                                 \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_line_rasterization))
     table.vkCmdSetLineStippleEnableEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineStippleEnableEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_EXT_depth_clip_control)) ||                                 \
     (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clip_control))
     table.vkCmdSetDepthClipNegativeOneToOneEXT = reinterpret_cast<PFN_vkCmdSetDepthClipNegativeOneToOneEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClipNegativeOneToOneEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthClipNegativeOneToOneEXT"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_clip_space_w_scaling)) ||                                \
     (defined(VK_EXT_shader_object) && defined(VK_NV_clip_space_w_scaling))
     table.vkCmdSetViewportWScalingEnableNV = reinterpret_cast<PFN_vkCmdSetViewportWScalingEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWScalingEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportWScalingEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_viewport_swizzle)) ||                                    \
     (defined(VK_EXT_shader_object) && defined(VK_NV_viewport_swizzle))
     table.vkCmdSetViewportSwizzleNV = reinterpret_cast<PFN_vkCmdSetViewportSwizzleNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportSwizzleNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportSwizzleNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) ||                          \
     (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
     table.vkCmdSetCoverageToColorEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageToColorEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_fragment_coverage_to_color)) ||                          \
     (defined(VK_EXT_shader_object) && defined(VK_NV_fragment_coverage_to_color))
     table.vkCmdSetCoverageToColorLocationNV = reinterpret_cast<PFN_vkCmdSetCoverageToColorLocationNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageToColorLocationNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageToColorLocationNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
     (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     table.vkCmdSetCoverageModulationModeNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationModeNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationModeNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageModulationModeNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
     (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     table.vkCmdSetCoverageModulationTableEnableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageModulationTableEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_framebuffer_mixed_samples)) ||                           \
     (defined(VK_EXT_shader_object) && defined(VK_NV_framebuffer_mixed_samples))
     table.vkCmdSetCoverageModulationTableNV = reinterpret_cast<PFN_vkCmdSetCoverageModulationTableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageModulationTableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageModulationTableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_shading_rate_image)) ||                                  \
     (defined(VK_EXT_shader_object) && defined(VK_NV_shading_rate_image))
     table.vkCmdSetShadingRateImageEnableNV = reinterpret_cast<PFN_vkCmdSetShadingRateImageEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetShadingRateImageEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetShadingRateImageEnableNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_coverage_reduction_mode)) ||                             \
     (defined(VK_EXT_shader_object) && defined(VK_NV_coverage_reduction_mode))
     table.vkCmdSetCoverageReductionModeNV = reinterpret_cast<PFN_vkCmdSetCoverageReductionModeNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCoverageReductionModeNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCoverageReductionModeNV"));
 #endif
 #if (defined(VK_EXT_extended_dynamic_state3) && defined(VK_NV_representative_fragment_test)) ||                        \
     (defined(VK_EXT_shader_object) && defined(VK_NV_representative_fragment_test))
     table.vkCmdSetRepresentativeFragmentTestEnableNV = reinterpret_cast<PFN_vkCmdSetRepresentativeFragmentTestEnableNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRepresentativeFragmentTestEnableNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRepresentativeFragmentTestEnableNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCreatePrivateDataSlot = reinterpret_cast<PFN_vkCreatePrivateDataSlot>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlot"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreatePrivateDataSlot"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkDestroyPrivateDataSlot = reinterpret_cast<PFN_vkDestroyPrivateDataSlot>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlot"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPrivateDataSlot"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkSetPrivateData =
-        reinterpret_cast<PFN_vkSetPrivateData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetPrivateData"));
+        reinterpret_cast<PFN_vkSetPrivateData>(instanceFuncs.GetDeviceProcAddr(device, "vkSetPrivateData"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkGetPrivateData =
-        reinterpret_cast<PFN_vkGetPrivateData>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPrivateData"));
+        reinterpret_cast<PFN_vkGetPrivateData>(instanceFuncs.GetDeviceProcAddr(device, "vkGetPrivateData"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdCopyBuffer2 =
-        reinterpret_cast<PFN_vkCmdCopyBuffer2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2"));
+        reinterpret_cast<PFN_vkCmdCopyBuffer2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdCopyImage2 =
-        reinterpret_cast<PFN_vkCmdCopyImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage2"));
+        reinterpret_cast<PFN_vkCmdCopyImage2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdBlitImage2 =
-        reinterpret_cast<PFN_vkCmdBlitImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage2"));
+        reinterpret_cast<PFN_vkCmdBlitImage2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBlitImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdCopyBufferToImage2 = reinterpret_cast<PFN_vkCmdCopyBufferToImage2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBufferToImage2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdCopyImageToBuffer2 = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImageToBuffer2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdResolveImage2 =
-        reinterpret_cast<PFN_vkCmdResolveImage2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage2"));
+        reinterpret_cast<PFN_vkCmdResolveImage2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResolveImage2"));
 #endif
 #if defined(VK_KHR_object_refresh)
-    table.vkCmdRefreshObjectsKHR = reinterpret_cast<PFN_vkCmdRefreshObjectsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdRefreshObjectsKHR"));
+    table.vkCmdRefreshObjectsKHR =
+        reinterpret_cast<PFN_vkCmdRefreshObjectsKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdRefreshObjectsKHR"));
 #endif
 #if defined(VK_KHR_fragment_shading_rate)
     table.vkCmdSetFragmentShadingRateKHR = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetFragmentShadingRateKHR"));
 #endif
 #if defined(VK_NV_fragment_shading_rate_enums)
     table.vkCmdSetFragmentShadingRateEnumNV = reinterpret_cast<PFN_vkCmdSetFragmentShadingRateEnumNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFragmentShadingRateEnumNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetFragmentShadingRateEnumNV"));
 #endif
 #if defined(VK_KHR_acceleration_structure)
     table.vkGetAccelerationStructureBuildSizesKHR = reinterpret_cast<PFN_vkGetAccelerationStructureBuildSizesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureBuildSizesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetAccelerationStructureBuildSizesKHR"));
 #endif
 #if defined(VK_EXT_vertex_input_dynamic_state) || defined(VK_EXT_shader_object)
-    table.vkCmdSetVertexInputEXT = reinterpret_cast<PFN_vkCmdSetVertexInputEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetVertexInputEXT"));
+    table.vkCmdSetVertexInputEXT =
+        reinterpret_cast<PFN_vkCmdSetVertexInputEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetVertexInputEXT"));
 #endif
 #if defined(VK_EXT_color_write_enable)
     table.vkCmdSetColorWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetColorWriteEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetColorWriteEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetColorWriteEnableEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdSetEvent2 =
-        reinterpret_cast<PFN_vkCmdSetEvent2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent2"));
+        reinterpret_cast<PFN_vkCmdSetEvent2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetEvent2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdResetEvent2 =
-        reinterpret_cast<PFN_vkCmdResetEvent2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent2"));
+        reinterpret_cast<PFN_vkCmdResetEvent2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResetEvent2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdWaitEvents2 =
-        reinterpret_cast<PFN_vkCmdWaitEvents2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents2"));
+        reinterpret_cast<PFN_vkCmdWaitEvents2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdWaitEvents2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
-    table.vkCmdPipelineBarrier2 = reinterpret_cast<PFN_vkCmdPipelineBarrier2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2"));
+    table.vkCmdPipelineBarrier2 =
+        reinterpret_cast<PFN_vkCmdPipelineBarrier2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPipelineBarrier2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkQueueSubmit2 =
-        reinterpret_cast<PFN_vkQueueSubmit2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit2"));
+        reinterpret_cast<PFN_vkQueueSubmit2>(instanceFuncs.GetDeviceProcAddr(device, "vkQueueSubmit2"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdWriteTimestamp2 =
-        reinterpret_cast<PFN_vkCmdWriteTimestamp2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2"));
+        reinterpret_cast<PFN_vkCmdWriteTimestamp2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteTimestamp2"));
 #endif
 #if (defined(VK_AMD_buffer_marker) && (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
     table.vkCmdWriteBufferMarker2AMD = reinterpret_cast<PFN_vkCmdWriteBufferMarker2AMD>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteBufferMarker2AMD"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteBufferMarker2AMD"));
 #endif
 #if (defined(VK_NV_device_diagnostic_checkpoints) &&                                                                   \
      (defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)))
     table.vkGetQueueCheckpointData2NV = reinterpret_cast<PFN_vkGetQueueCheckpointData2NV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetQueueCheckpointData2NV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetQueueCheckpointData2NV"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCopyMemoryToImage =
-        reinterpret_cast<PFN_vkCopyMemoryToImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToImage"));
+        reinterpret_cast<PFN_vkCopyMemoryToImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyMemoryToImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCopyImageToMemory =
-        reinterpret_cast<PFN_vkCopyImageToMemory>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToMemory"));
+        reinterpret_cast<PFN_vkCopyImageToMemory>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyImageToMemory"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCopyImageToImage =
-        reinterpret_cast<PFN_vkCopyImageToImage>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToImage"));
+        reinterpret_cast<PFN_vkCopyImageToImage>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyImageToImage"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkTransitionImageLayout = reinterpret_cast<PFN_vkTransitionImageLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkTransitionImageLayout"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkCreateVideoSessionKHR = reinterpret_cast<PFN_vkCreateVideoSessionKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateVideoSessionKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkDestroyVideoSessionKHR = reinterpret_cast<PFN_vkDestroyVideoSessionKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyVideoSessionKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyVideoSessionKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkCreateVideoSessionParametersKHR = reinterpret_cast<PFN_vkCreateVideoSessionParametersKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateVideoSessionParametersKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkUpdateVideoSessionParametersKHR = reinterpret_cast<PFN_vkUpdateVideoSessionParametersKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateVideoSessionParametersKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUpdateVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
     table.vkGetEncodedVideoSessionParametersKHR = reinterpret_cast<PFN_vkGetEncodedVideoSessionParametersKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetEncodedVideoSessionParametersKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetEncodedVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkDestroyVideoSessionParametersKHR = reinterpret_cast<PFN_vkDestroyVideoSessionParametersKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyVideoSessionParametersKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyVideoSessionParametersKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkGetVideoSessionMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetVideoSessionMemoryRequirementsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetVideoSessionMemoryRequirementsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetVideoSessionMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkBindVideoSessionMemoryKHR = reinterpret_cast<PFN_vkBindVideoSessionMemoryKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindVideoSessionMemoryKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkBindVideoSessionMemoryKHR"));
 #endif
 #if defined(VK_KHR_video_decode_queue)
     table.vkCmdDecodeVideoKHR =
-        reinterpret_cast<PFN_vkCmdDecodeVideoKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecodeVideoKHR"));
+        reinterpret_cast<PFN_vkCmdDecodeVideoKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDecodeVideoKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkCmdBeginVideoCodingKHR = reinterpret_cast<PFN_vkCmdBeginVideoCodingKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginVideoCodingKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
     table.vkCmdControlVideoCodingKHR = reinterpret_cast<PFN_vkCmdControlVideoCodingKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdControlVideoCodingKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdControlVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_queue)
-    table.vkCmdEndVideoCodingKHR = reinterpret_cast<PFN_vkCmdEndVideoCodingKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndVideoCodingKHR"));
+    table.vkCmdEndVideoCodingKHR =
+        reinterpret_cast<PFN_vkCmdEndVideoCodingKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndVideoCodingKHR"));
 #endif
 #if defined(VK_KHR_video_encode_queue)
     table.vkCmdEncodeVideoKHR =
-        reinterpret_cast<PFN_vkCmdEncodeVideoKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEncodeVideoKHR"));
+        reinterpret_cast<PFN_vkCmdEncodeVideoKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEncodeVideoKHR"));
 #endif
 #if defined(VK_NV_memory_decompression)
     table.vkCmdDecompressMemoryNV = reinterpret_cast<PFN_vkCmdDecompressMemoryNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDecompressMemoryNV"));
 #endif
 #if defined(VK_NV_memory_decompression)
     table.vkCmdDecompressMemoryIndirectCountNV = reinterpret_cast<PFN_vkCmdDecompressMemoryIndirectCountNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDecompressMemoryIndirectCountNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDecompressMemoryIndirectCountNV"));
 #endif
 #if defined(VK_NV_partitioned_acceleration_structure)
     table.vkGetPartitionedAccelerationStructuresBuildSizesNV =
         reinterpret_cast<PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPartitionedAccelerationStructuresBuildSizesNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetPartitionedAccelerationStructuresBuildSizesNV"));
 #endif
 #if defined(VK_NV_partitioned_acceleration_structure)
     table.vkCmdBuildPartitionedAccelerationStructuresNV =
         reinterpret_cast<PFN_vkCmdBuildPartitionedAccelerationStructuresNV>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildPartitionedAccelerationStructuresNV"));
 #endif
 #if defined(VK_NVX_binary_import)
     table.vkCreateCuModuleNVX =
-        reinterpret_cast<PFN_vkCreateCuModuleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCuModuleNVX"));
+        reinterpret_cast<PFN_vkCreateCuModuleNVX>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateCuModuleNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkCreateCuFunctionNVX = reinterpret_cast<PFN_vkCreateCuFunctionNVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCuFunctionNVX"));
+    table.vkCreateCuFunctionNVX =
+        reinterpret_cast<PFN_vkCreateCuFunctionNVX>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateCuFunctionNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
     table.vkDestroyCuModuleNVX =
-        reinterpret_cast<PFN_vkDestroyCuModuleNVX>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCuModuleNVX"));
+        reinterpret_cast<PFN_vkDestroyCuModuleNVX>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyCuModuleNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkDestroyCuFunctionNVX = reinterpret_cast<PFN_vkDestroyCuFunctionNVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCuFunctionNVX"));
+    table.vkDestroyCuFunctionNVX =
+        reinterpret_cast<PFN_vkDestroyCuFunctionNVX>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyCuFunctionNVX"));
 #endif
 #if defined(VK_NVX_binary_import)
-    table.vkCmdCuLaunchKernelNVX = reinterpret_cast<PFN_vkCmdCuLaunchKernelNVX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCuLaunchKernelNVX"));
+    table.vkCmdCuLaunchKernelNVX =
+        reinterpret_cast<PFN_vkCmdCuLaunchKernelNVX>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCuLaunchKernelNVX"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetDescriptorSetLayoutSizeEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSizeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSizeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetLayoutSizeEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetDescriptorSetLayoutBindingOffsetEXT = reinterpret_cast<PFN_vkGetDescriptorSetLayoutBindingOffsetEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutBindingOffsetEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetLayoutBindingOffsetEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetDescriptorEXT =
-        reinterpret_cast<PFN_vkGetDescriptorEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorEXT"));
+        reinterpret_cast<PFN_vkGetDescriptorEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkCmdBindDescriptorBuffersEXT = reinterpret_cast<PFN_vkCmdBindDescriptorBuffersEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBuffersEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorBuffersEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkCmdSetDescriptorBufferOffsetsEXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsetsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsetsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDescriptorBufferOffsetsEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkCmdBindDescriptorBufferEmbeddedSamplersEXT =
         reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetBufferOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureDescriptorDataEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetImageOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetImageOpaqueCaptureDescriptorDataEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageOpaqueCaptureDescriptorDataEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetImageViewOpaqueCaptureDescriptorDataEXT =
         reinterpret_cast<PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageViewOpaqueCaptureDescriptorDataEXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetImageViewOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_descriptor_buffer)
     table.vkGetSamplerOpaqueCaptureDescriptorDataEXT = reinterpret_cast<PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSamplerOpaqueCaptureDescriptorDataEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSamplerOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if (defined(VK_EXT_descriptor_buffer) && (defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)))
     table.vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT =
         reinterpret_cast<PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT"));
 #endif
 #if defined(VK_EXT_pageable_device_local_memory)
     table.vkSetDeviceMemoryPriorityEXT = reinterpret_cast<PFN_vkSetDeviceMemoryPriorityEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetDeviceMemoryPriorityEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkSetDeviceMemoryPriorityEXT"));
 #endif
 #if defined(VK_KHR_present_wait2)
     table.vkWaitForPresent2KHR =
-        reinterpret_cast<PFN_vkWaitForPresent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresent2KHR"));
+        reinterpret_cast<PFN_vkWaitForPresent2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkWaitForPresent2KHR"));
 #endif
 #if defined(VK_KHR_present_wait)
     table.vkWaitForPresentKHR =
-        reinterpret_cast<PFN_vkWaitForPresentKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitForPresentKHR"));
+        reinterpret_cast<PFN_vkWaitForPresentKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkWaitForPresentKHR"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
     table.vkCreateBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkCreateBufferCollectionFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateBufferCollectionFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateBufferCollectionFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
     table.vkSetBufferCollectionBufferConstraintsFUCHSIA =
         reinterpret_cast<PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetBufferCollectionBufferConstraintsFUCHSIA"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkSetBufferCollectionBufferConstraintsFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
     table.vkSetBufferCollectionImageConstraintsFUCHSIA =
         reinterpret_cast<PFN_vkSetBufferCollectionImageConstraintsFUCHSIA>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetBufferCollectionImageConstraintsFUCHSIA"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkSetBufferCollectionImageConstraintsFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
     table.vkDestroyBufferCollectionFUCHSIA = reinterpret_cast<PFN_vkDestroyBufferCollectionFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyBufferCollectionFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyBufferCollectionFUCHSIA"));
 #endif
 #if defined(VK_FUCHSIA_buffer_collection)
     table.vkGetBufferCollectionPropertiesFUCHSIA = reinterpret_cast<PFN_vkGetBufferCollectionPropertiesFUCHSIA>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferCollectionPropertiesFUCHSIA"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferCollectionPropertiesFUCHSIA"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
     table.vkCreateCudaModuleNV =
-        reinterpret_cast<PFN_vkCreateCudaModuleNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCudaModuleNV"));
+        reinterpret_cast<PFN_vkCreateCudaModuleNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateCudaModuleNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkGetCudaModuleCacheNV = reinterpret_cast<PFN_vkGetCudaModuleCacheNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCudaModuleCacheNV"));
+    table.vkGetCudaModuleCacheNV =
+        reinterpret_cast<PFN_vkGetCudaModuleCacheNV>(instanceFuncs.GetDeviceProcAddr(device, "vkGetCudaModuleCacheNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkCreateCudaFunctionNV = reinterpret_cast<PFN_vkCreateCudaFunctionNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateCudaFunctionNV"));
+    table.vkCreateCudaFunctionNV =
+        reinterpret_cast<PFN_vkCreateCudaFunctionNV>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateCudaFunctionNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
-    table.vkDestroyCudaModuleNV = reinterpret_cast<PFN_vkDestroyCudaModuleNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCudaModuleNV"));
+    table.vkDestroyCudaModuleNV =
+        reinterpret_cast<PFN_vkDestroyCudaModuleNV>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyCudaModuleNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
     table.vkDestroyCudaFunctionNV = reinterpret_cast<PFN_vkDestroyCudaFunctionNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyCudaFunctionNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyCudaFunctionNV"));
 #endif
 #if defined(VK_NV_cuda_kernel_launch)
     table.vkCmdCudaLaunchKernelNV = reinterpret_cast<PFN_vkCmdCudaLaunchKernelNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCudaLaunchKernelNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCudaLaunchKernelNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdBeginRendering =
-        reinterpret_cast<PFN_vkCmdBeginRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRendering"));
+        reinterpret_cast<PFN_vkCmdBeginRendering>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginRendering"));
 #endif
 #if defined(VKIT_API_VERSION_1_3)
     table.vkCmdEndRendering =
-        reinterpret_cast<PFN_vkCmdEndRendering>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering"));
+        reinterpret_cast<PFN_vkCmdEndRendering>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRendering"));
 #endif
 #if defined(VK_EXT_fragment_density_map_offset)
-    table.vkCmdEndRendering2EXT = reinterpret_cast<PFN_vkCmdEndRendering2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRendering2EXT"));
+    table.vkCmdEndRendering2EXT =
+        reinterpret_cast<PFN_vkCmdEndRendering2EXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRendering2EXT"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     table.vkGetDescriptorSetLayoutHostMappingInfoVALVE =
         reinterpret_cast<PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE"));
 #endif
 #if defined(VK_VALVE_descriptor_set_host_mapping)
     table.vkGetDescriptorSetHostMappingVALVE = reinterpret_cast<PFN_vkGetDescriptorSetHostMappingVALVE>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetHostMappingVALVE"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetHostMappingVALVE"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCreateMicromapEXT =
-        reinterpret_cast<PFN_vkCreateMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateMicromapEXT"));
+        reinterpret_cast<PFN_vkCreateMicromapEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
-    table.vkCmdBuildMicromapsEXT = reinterpret_cast<PFN_vkCmdBuildMicromapsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBuildMicromapsEXT"));
+    table.vkCmdBuildMicromapsEXT =
+        reinterpret_cast<PFN_vkCmdBuildMicromapsEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBuildMicromapsEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkBuildMicromapsEXT =
-        reinterpret_cast<PFN_vkBuildMicromapsEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBuildMicromapsEXT"));
+        reinterpret_cast<PFN_vkBuildMicromapsEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkBuildMicromapsEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkDestroyMicromapEXT =
-        reinterpret_cast<PFN_vkDestroyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyMicromapEXT"));
+        reinterpret_cast<PFN_vkDestroyMicromapEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCmdCopyMicromapEXT =
-        reinterpret_cast<PFN_vkCmdCopyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMicromapEXT"));
+        reinterpret_cast<PFN_vkCmdCopyMicromapEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCopyMicromapEXT =
-        reinterpret_cast<PFN_vkCopyMicromapEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMicromapEXT"));
+        reinterpret_cast<PFN_vkCopyMicromapEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCmdCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCmdCopyMicromapToMemoryEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMicromapToMemoryEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMicromapToMemoryEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCopyMicromapToMemoryEXT = reinterpret_cast<PFN_vkCopyMicromapToMemoryEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMicromapToMemoryEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCopyMicromapToMemoryEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCmdCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCmdCopyMemoryToMicromapEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyMemoryToMicromapEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyMemoryToMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCopyMemoryToMicromapEXT = reinterpret_cast<PFN_vkCopyMemoryToMicromapEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToMicromapEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCopyMemoryToMicromapEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkCmdWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkCmdWriteMicromapsPropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteMicromapsPropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteMicromapsPropertiesEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkWriteMicromapsPropertiesEXT = reinterpret_cast<PFN_vkWriteMicromapsPropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWriteMicromapsPropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkWriteMicromapsPropertiesEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkGetDeviceMicromapCompatibilityEXT = reinterpret_cast<PFN_vkGetDeviceMicromapCompatibilityEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMicromapCompatibilityEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceMicromapCompatibilityEXT"));
 #endif
 #if defined(VK_EXT_opacity_micromap)
     table.vkGetMicromapBuildSizesEXT = reinterpret_cast<PFN_vkGetMicromapBuildSizesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMicromapBuildSizesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMicromapBuildSizesEXT"));
 #endif
 #if defined(VK_EXT_shader_module_identifier)
     table.vkGetShaderModuleIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleIdentifierEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderModuleIdentifierEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetShaderModuleIdentifierEXT"));
 #endif
 #if defined(VK_EXT_shader_module_identifier)
     table.vkGetShaderModuleCreateInfoIdentifierEXT = reinterpret_cast<PFN_vkGetShaderModuleCreateInfoIdentifierEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderModuleCreateInfoIdentifierEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetShaderModuleCreateInfoIdentifierEXT"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetImageSubresourceLayout2 = reinterpret_cast<PFN_vkGetImageSubresourceLayout2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSubresourceLayout2"));
 #endif
 #if defined(VK_EXT_pipeline_properties)
     table.vkGetPipelinePropertiesEXT = reinterpret_cast<PFN_vkGetPipelinePropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPipelinePropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetPipelinePropertiesEXT"));
 #endif
 #if defined(VK_EXT_metal_objects)
     table.vkExportMetalObjectsEXT = reinterpret_cast<PFN_vkExportMetalObjectsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkExportMetalObjectsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkExportMetalObjectsEXT"));
 #endif
 #if defined(VK_QCOM_tile_memory_heap)
     table.vkCmdBindTileMemoryQCOM = reinterpret_cast<PFN_vkCmdBindTileMemoryQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindTileMemoryQCOM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindTileMemoryQCOM"));
 #endif
 #if defined(VK_QCOM_tile_properties)
     table.vkGetFramebufferTilePropertiesQCOM = reinterpret_cast<PFN_vkGetFramebufferTilePropertiesQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetFramebufferTilePropertiesQCOM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetFramebufferTilePropertiesQCOM"));
 #endif
 #if defined(VK_QCOM_tile_properties)
     table.vkGetDynamicRenderingTilePropertiesQCOM = reinterpret_cast<PFN_vkGetDynamicRenderingTilePropertiesQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDynamicRenderingTilePropertiesQCOM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDynamicRenderingTilePropertiesQCOM"));
 #endif
 #if defined(VK_NV_optical_flow)
     table.vkCreateOpticalFlowSessionNV = reinterpret_cast<PFN_vkCreateOpticalFlowSessionNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateOpticalFlowSessionNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateOpticalFlowSessionNV"));
 #endif
 #if defined(VK_NV_optical_flow)
     table.vkDestroyOpticalFlowSessionNV = reinterpret_cast<PFN_vkDestroyOpticalFlowSessionNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyOpticalFlowSessionNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyOpticalFlowSessionNV"));
 #endif
 #if defined(VK_NV_optical_flow)
     table.vkBindOpticalFlowSessionImageNV = reinterpret_cast<PFN_vkBindOpticalFlowSessionImageNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindOpticalFlowSessionImageNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkBindOpticalFlowSessionImageNV"));
 #endif
 #if defined(VK_NV_optical_flow)
     table.vkCmdOpticalFlowExecuteNV = reinterpret_cast<PFN_vkCmdOpticalFlowExecuteNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdOpticalFlowExecuteNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdOpticalFlowExecuteNV"));
 #endif
 #if defined(VK_EXT_device_fault)
     table.vkGetDeviceFaultInfoEXT = reinterpret_cast<PFN_vkGetDeviceFaultInfoEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceFaultInfoEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT"));
 #endif
 #if defined(VK_EXT_depth_bias_control)
-    table.vkCmdSetDepthBias2EXT = reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBias2EXT"));
+    table.vkCmdSetDepthBias2EXT =
+        reinterpret_cast<PFN_vkCmdSetDepthBias2EXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBias2EXT"));
 #endif
 #if defined(VK_KHR_swapchain_maintenance1)
     table.vkReleaseSwapchainImagesKHR = reinterpret_cast<PFN_vkReleaseSwapchainImagesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleaseSwapchainImagesKHR"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkGetDeviceImageSubresourceLayout = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayout>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayout"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageSubresourceLayout"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
-    table.vkMapMemory2 =
-        reinterpret_cast<PFN_vkMapMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory2"));
+    table.vkMapMemory2 = reinterpret_cast<PFN_vkMapMemory2>(instanceFuncs.GetDeviceProcAddr(device, "vkMapMemory2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkUnmapMemory2 =
-        reinterpret_cast<PFN_vkUnmapMemory2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory2"));
+        reinterpret_cast<PFN_vkUnmapMemory2>(instanceFuncs.GetDeviceProcAddr(device, "vkUnmapMemory2"));
 #endif
 #if defined(VK_EXT_shader_object)
     table.vkCreateShadersEXT =
-        reinterpret_cast<PFN_vkCreateShadersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateShadersEXT"));
+        reinterpret_cast<PFN_vkCreateShadersEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateShadersEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
     table.vkDestroyShaderEXT =
-        reinterpret_cast<PFN_vkDestroyShaderEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyShaderEXT"));
+        reinterpret_cast<PFN_vkDestroyShaderEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyShaderEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
     table.vkGetShaderBinaryDataEXT = reinterpret_cast<PFN_vkGetShaderBinaryDataEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetShaderBinaryDataEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetShaderBinaryDataEXT"));
 #endif
 #if defined(VK_EXT_shader_object)
     table.vkCmdBindShadersEXT =
-        reinterpret_cast<PFN_vkCmdBindShadersEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindShadersEXT"));
+        reinterpret_cast<PFN_vkCmdBindShadersEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindShadersEXT"));
 #endif
 #if defined(VK_QNX_external_memory_screen_buffer)
     table.vkGetScreenBufferPropertiesQNX = reinterpret_cast<PFN_vkGetScreenBufferPropertiesQNX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetScreenBufferPropertiesQNX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetScreenBufferPropertiesQNX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
     table.vkGetExecutionGraphPipelineScratchSizeAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineScratchSizeAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineScratchSizeAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetExecutionGraphPipelineScratchSizeAMDX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
     table.vkGetExecutionGraphPipelineNodeIndexAMDX = reinterpret_cast<PFN_vkGetExecutionGraphPipelineNodeIndexAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExecutionGraphPipelineNodeIndexAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetExecutionGraphPipelineNodeIndexAMDX"));
 #endif
 #if defined(VK_AMDX_shader_enqueue)
     table.vkCreateExecutionGraphPipelinesAMDX = reinterpret_cast<PFN_vkCreateExecutionGraphPipelinesAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateExecutionGraphPipelinesAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateExecutionGraphPipelinesAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     table.vkCmdInitializeGraphScratchMemoryAMDX = reinterpret_cast<PFN_vkCmdInitializeGraphScratchMemoryAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdInitializeGraphScratchMemoryAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdInitializeGraphScratchMemoryAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
-    table.vkCmdDispatchGraphAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphAMDX"));
+    table.vkCmdDispatchGraphAMDX =
+        reinterpret_cast<PFN_vkCmdDispatchGraphAMDX>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchGraphAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     table.vkCmdDispatchGraphIndirectAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchGraphIndirectAMDX"));
 #endif
 #if VK_HEADER_VERSION >= 298 && (defined(VK_AMDX_shader_enqueue))
     table.vkCmdDispatchGraphIndirectCountAMDX = reinterpret_cast<PFN_vkCmdDispatchGraphIndirectCountAMDX>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchGraphIndirectCountAMDX"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchGraphIndirectCountAMDX"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdBindDescriptorSets2 = reinterpret_cast<PFN_vkCmdBindDescriptorSets2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorSets2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdPushConstants2 =
-        reinterpret_cast<PFN_vkCmdPushConstants2>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants2"));
+        reinterpret_cast<PFN_vkCmdPushConstants2>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushConstants2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdPushDescriptorSet2 = reinterpret_cast<PFN_vkCmdPushDescriptorSet2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSet2"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdPushDescriptorSetWithTemplate2 = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSetWithTemplate2"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
     table.vkCmdSetDescriptorBufferOffsets2EXT = reinterpret_cast<PFN_vkCmdSetDescriptorBufferOffsets2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDescriptorBufferOffsets2EXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDescriptorBufferOffsets2EXT"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_EXT_descriptor_buffer))
     table.vkCmdBindDescriptorBufferEmbeddedSamplers2EXT =
         reinterpret_cast<PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"));
 #endif
 #if defined(VK_NV_low_latency2)
     table.vkSetLatencySleepModeNV = reinterpret_cast<PFN_vkSetLatencySleepModeNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLatencySleepModeNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkSetLatencySleepModeNV"));
 #endif
 #if defined(VK_NV_low_latency2)
     table.vkLatencySleepNV =
-        reinterpret_cast<PFN_vkLatencySleepNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkLatencySleepNV"));
+        reinterpret_cast<PFN_vkLatencySleepNV>(instanceFuncs.GetDeviceProcAddr(device, "vkLatencySleepNV"));
 #endif
 #if defined(VK_NV_low_latency2)
     table.vkSetLatencyMarkerNV =
-        reinterpret_cast<PFN_vkSetLatencyMarkerNV>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetLatencyMarkerNV"));
+        reinterpret_cast<PFN_vkSetLatencyMarkerNV>(instanceFuncs.GetDeviceProcAddr(device, "vkSetLatencyMarkerNV"));
 #endif
 #if VK_HEADER_VERSION >= 271 && (defined(VK_NV_low_latency2))
-    table.vkGetLatencyTimingsNV = reinterpret_cast<PFN_vkGetLatencyTimingsNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetLatencyTimingsNV"));
+    table.vkGetLatencyTimingsNV =
+        reinterpret_cast<PFN_vkGetLatencyTimingsNV>(instanceFuncs.GetDeviceProcAddr(device, "vkGetLatencyTimingsNV"));
 #endif
 #if defined(VK_NV_low_latency2)
     table.vkQueueNotifyOutOfBandNV = reinterpret_cast<PFN_vkQueueNotifyOutOfBandNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueNotifyOutOfBandNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkQueueNotifyOutOfBandNV"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdSetRenderingAttachmentLocations = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocations>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocations"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRenderingAttachmentLocations"));
 #endif
 #if defined(VKIT_API_VERSION_1_4)
     table.vkCmdSetRenderingInputAttachmentIndices = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndices>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndices"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRenderingInputAttachmentIndices"));
 #endif
 #if (defined(VK_EXT_shader_object) && defined(VK_EXT_depth_clamp_control)) || defined(VK_EXT_depth_clamp_control)
     table.vkCmdSetDepthClampRangeEXT = reinterpret_cast<PFN_vkCmdSetDepthClampRangeEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthClampRangeEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthClampRangeEXT"));
 #endif
 #if defined(VK_EXT_external_memory_metal)
     table.vkGetMemoryMetalHandleEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandleEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandleEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryMetalHandleEXT"));
 #endif
 #if defined(VK_EXT_external_memory_metal)
     table.vkGetMemoryMetalHandlePropertiesEXT = reinterpret_cast<PFN_vkGetMemoryMetalHandlePropertiesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetMemoryMetalHandlePropertiesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetMemoryMetalHandlePropertiesEXT"));
 #endif
 #if defined(VK_NV_cooperative_vector)
     table.vkConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkConvertCooperativeVectorMatrixNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkConvertCooperativeVectorMatrixNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkConvertCooperativeVectorMatrixNV"));
 #endif
 #if defined(VK_NV_cooperative_vector)
     table.vkCmdConvertCooperativeVectorMatrixNV = reinterpret_cast<PFN_vkCmdConvertCooperativeVectorMatrixNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdConvertCooperativeVectorMatrixNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdConvertCooperativeVectorMatrixNV"));
 #endif
 #if defined(VK_QCOM_tile_shading)
-    table.vkCmdDispatchTileQCOM = reinterpret_cast<PFN_vkCmdDispatchTileQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchTileQCOM"));
+    table.vkCmdDispatchTileQCOM =
+        reinterpret_cast<PFN_vkCmdDispatchTileQCOM>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchTileQCOM"));
 #endif
 #if defined(VK_QCOM_tile_shading)
     table.vkCmdBeginPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdBeginPerTileExecutionQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginPerTileExecutionQCOM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginPerTileExecutionQCOM"));
 #endif
 #if defined(VK_QCOM_tile_shading)
     table.vkCmdEndPerTileExecutionQCOM = reinterpret_cast<PFN_vkCmdEndPerTileExecutionQCOM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndPerTileExecutionQCOM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndPerTileExecutionQCOM"));
 #endif
 #if defined(VK_NV_external_compute_queue)
     table.vkCreateExternalComputeQueueNV = reinterpret_cast<PFN_vkCreateExternalComputeQueueNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateExternalComputeQueueNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateExternalComputeQueueNV"));
 #endif
 #if defined(VK_NV_external_compute_queue)
     table.vkDestroyExternalComputeQueueNV = reinterpret_cast<PFN_vkDestroyExternalComputeQueueNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyExternalComputeQueueNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyExternalComputeQueueNV"));
 #endif
 #if defined(VK_NV_external_compute_queue)
     table.vkGetExternalComputeQueueDataNV = reinterpret_cast<PFN_vkGetExternalComputeQueueDataNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetExternalComputeQueueDataNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetExternalComputeQueueDataNV"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkCreateTensorARM =
-        reinterpret_cast<PFN_vkCreateTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorARM"));
+        reinterpret_cast<PFN_vkCreateTensorARM>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateTensorARM"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkDestroyTensorARM =
-        reinterpret_cast<PFN_vkDestroyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorARM"));
+        reinterpret_cast<PFN_vkDestroyTensorARM>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyTensorARM"));
 #endif
 #if defined(VK_ARM_tensors)
-    table.vkCreateTensorViewARM = reinterpret_cast<PFN_vkCreateTensorViewARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateTensorViewARM"));
+    table.vkCreateTensorViewARM =
+        reinterpret_cast<PFN_vkCreateTensorViewARM>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateTensorViewARM"));
 #endif
 #if defined(VK_ARM_tensors)
-    table.vkDestroyTensorViewARM = reinterpret_cast<PFN_vkDestroyTensorViewARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyTensorViewARM"));
+    table.vkDestroyTensorViewARM =
+        reinterpret_cast<PFN_vkDestroyTensorViewARM>(instanceFuncs.GetDeviceProcAddr(device, "vkDestroyTensorViewARM"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkGetTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetTensorMemoryRequirementsARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorMemoryRequirementsARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetTensorMemoryRequirementsARM"));
 #endif
 #if defined(VK_ARM_tensors)
-    table.vkBindTensorMemoryARM = reinterpret_cast<PFN_vkBindTensorMemoryARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindTensorMemoryARM"));
+    table.vkBindTensorMemoryARM =
+        reinterpret_cast<PFN_vkBindTensorMemoryARM>(instanceFuncs.GetDeviceProcAddr(device, "vkBindTensorMemoryARM"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkGetDeviceTensorMemoryRequirementsARM = reinterpret_cast<PFN_vkGetDeviceTensorMemoryRequirementsARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceTensorMemoryRequirementsARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceTensorMemoryRequirementsARM"));
 #endif
 #if defined(VK_ARM_tensors)
     table.vkCmdCopyTensorARM =
-        reinterpret_cast<PFN_vkCmdCopyTensorARM>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyTensorARM"));
+        reinterpret_cast<PFN_vkCmdCopyTensorARM>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyTensorARM"));
 #endif
 #if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
     table.vkGetTensorOpaqueCaptureDescriptorDataARM = reinterpret_cast<PFN_vkGetTensorOpaqueCaptureDescriptorDataARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorOpaqueCaptureDescriptorDataARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetTensorOpaqueCaptureDescriptorDataARM"));
 #endif
 #if (defined(VK_ARM_tensors) && defined(VK_EXT_descriptor_buffer))
     table.vkGetTensorViewOpaqueCaptureDescriptorDataARM =
         reinterpret_cast<PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetTensorViewOpaqueCaptureDescriptorDataARM"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetTensorViewOpaqueCaptureDescriptorDataARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkCreateDataGraphPipelinesARM = reinterpret_cast<PFN_vkCreateDataGraphPipelinesARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelinesARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDataGraphPipelinesARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkCreateDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkCreateDataGraphPipelineSessionARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDataGraphPipelineSessionARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDataGraphPipelineSessionARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetDataGraphPipelineSessionBindPointRequirementsARM =
         reinterpret_cast<PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionBindPointRequirementsARM"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDataGraphPipelineSessionBindPointRequirementsARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetDataGraphPipelineSessionMemoryRequirementsARM =
         reinterpret_cast<PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineSessionMemoryRequirementsARM"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDataGraphPipelineSessionMemoryRequirementsARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkBindDataGraphPipelineSessionMemoryARM = reinterpret_cast<PFN_vkBindDataGraphPipelineSessionMemoryARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindDataGraphPipelineSessionMemoryARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkBindDataGraphPipelineSessionMemoryARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkDestroyDataGraphPipelineSessionARM = reinterpret_cast<PFN_vkDestroyDataGraphPipelineSessionARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDataGraphPipelineSessionARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDataGraphPipelineSessionARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkCmdDispatchDataGraphARM = reinterpret_cast<PFN_vkCmdDispatchDataGraphARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchDataGraphARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchDataGraphARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetDataGraphPipelineAvailablePropertiesARM =
         reinterpret_cast<PFN_vkGetDataGraphPipelineAvailablePropertiesARM>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelineAvailablePropertiesARM"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDataGraphPipelineAvailablePropertiesARM"));
 #endif
 #if defined(VK_ARM_data_graph)
     table.vkGetDataGraphPipelinePropertiesARM = reinterpret_cast<PFN_vkGetDataGraphPipelinePropertiesARM>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDataGraphPipelinePropertiesARM"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDataGraphPipelinePropertiesARM"));
 #endif
 #if defined(VK_EXT_host_query_reset)
     table.vkResetQueryPoolEXT =
-        reinterpret_cast<PFN_vkResetQueryPoolEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkResetQueryPoolEXT"));
+        reinterpret_cast<PFN_vkResetQueryPoolEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkResetQueryPoolEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
     table.vkGetRenderingAreaGranularityKHR = reinterpret_cast<PFN_vkGetRenderingAreaGranularityKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRenderingAreaGranularityKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRenderingAreaGranularityKHR"));
 #endif
 #if defined(VK_KHR_push_descriptor)
     table.vkCmdPushDescriptorSetKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSetKHR"));
 #endif
 #if defined(VK_KHR_maintenance1)
     table.vkTrimCommandPoolKHR =
-        reinterpret_cast<PFN_vkTrimCommandPoolKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTrimCommandPoolKHR"));
+        reinterpret_cast<PFN_vkTrimCommandPoolKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkTrimCommandPoolKHR"));
 #endif
 #if defined(VK_KHR_device_group)
     table.vkGetDeviceGroupPeerMemoryFeaturesKHR = reinterpret_cast<PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceGroupPeerMemoryFeaturesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceGroupPeerMemoryFeaturesKHR"));
 #endif
 #if defined(VK_KHR_bind_memory2)
-    table.vkBindBufferMemory2KHR = reinterpret_cast<PFN_vkBindBufferMemory2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindBufferMemory2KHR"));
+    table.vkBindBufferMemory2KHR =
+        reinterpret_cast<PFN_vkBindBufferMemory2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkBindBufferMemory2KHR"));
 #endif
 #if defined(VK_KHR_bind_memory2)
-    table.vkBindImageMemory2KHR = reinterpret_cast<PFN_vkBindImageMemory2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkBindImageMemory2KHR"));
+    table.vkBindImageMemory2KHR =
+        reinterpret_cast<PFN_vkBindImageMemory2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkBindImageMemory2KHR"));
 #endif
 #if defined(VK_KHR_device_group)
-    table.vkCmdSetDeviceMaskKHR = reinterpret_cast<PFN_vkCmdSetDeviceMaskKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDeviceMaskKHR"));
+    table.vkCmdSetDeviceMaskKHR =
+        reinterpret_cast<PFN_vkCmdSetDeviceMaskKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDeviceMaskKHR"));
 #endif
 #if defined(VK_KHR_device_group)
     table.vkCmdDispatchBaseKHR =
-        reinterpret_cast<PFN_vkCmdDispatchBaseKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDispatchBaseKHR"));
+        reinterpret_cast<PFN_vkCmdDispatchBaseKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdDispatchBaseKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
     table.vkCreateDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkCreateDescriptorUpdateTemplateKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateDescriptorUpdateTemplateKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateDescriptorUpdateTemplateKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
     table.vkDestroyDescriptorUpdateTemplateKHR = reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplateKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyDescriptorUpdateTemplateKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyDescriptorUpdateTemplateKHR"));
 #endif
 #if defined(VK_KHR_descriptor_update_template)
     table.vkUpdateDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplateKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUpdateDescriptorSetWithTemplateKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkUpdateDescriptorSetWithTemplateKHR"));
 #endif
 #if (defined(VK_KHR_push_descriptor) &&                                                                                \
      (defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_descriptor_update_template))) ||                                 \
     (defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor))
     table.vkCmdPushDescriptorSetWithTemplateKHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplateKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplateKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSetWithTemplateKHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
     table.vkGetBufferMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferMemoryRequirements2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
     table.vkGetImageMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageMemoryRequirements2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_get_memory_requirements2)
     table.vkGetImageSparseMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageSparseMemoryRequirements2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSparseMemoryRequirements2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSparseMemoryRequirements2KHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
     table.vkGetDeviceBufferMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceBufferMemoryRequirementsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceBufferMemoryRequirementsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceBufferMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
     table.vkGetDeviceImageMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirementsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageMemoryRequirementsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_maintenance4)
     table.vkGetDeviceImageSparseMemoryRequirementsKHR =
         reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirementsKHR>(
-            p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSparseMemoryRequirementsKHR"));
+            instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageSparseMemoryRequirementsKHR"));
 #endif
 #if defined(VK_KHR_sampler_ycbcr_conversion)
     table.vkCreateSamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkCreateSamplerYcbcrConversionKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateSamplerYcbcrConversionKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreateSamplerYcbcrConversionKHR"));
 #endif
 #if defined(VK_KHR_sampler_ycbcr_conversion)
     table.vkDestroySamplerYcbcrConversionKHR = reinterpret_cast<PFN_vkDestroySamplerYcbcrConversionKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroySamplerYcbcrConversionKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroySamplerYcbcrConversionKHR"));
 #endif
 #if defined(VK_KHR_maintenance3)
     table.vkGetDescriptorSetLayoutSupportKHR = reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupportKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDescriptorSetLayoutSupportKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDescriptorSetLayoutSupportKHR"));
 #endif
 #if defined(VK_EXT_calibrated_timestamps)
     table.vkGetCalibratedTimestampsEXT = reinterpret_cast<PFN_vkGetCalibratedTimestampsEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetCalibratedTimestampsEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetCalibratedTimestampsEXT"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCreateRenderPass2KHR = reinterpret_cast<PFN_vkCreateRenderPass2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreateRenderPass2KHR"));
+    table.vkCreateRenderPass2KHR =
+        reinterpret_cast<PFN_vkCreateRenderPass2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCreateRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
     table.vkCmdBeginRenderPass2KHR = reinterpret_cast<PFN_vkCmdBeginRenderPass2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderPass2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
     table.vkCmdNextSubpass2KHR =
-        reinterpret_cast<PFN_vkCmdNextSubpass2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdNextSubpass2KHR"));
+        reinterpret_cast<PFN_vkCmdNextSubpass2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdNextSubpass2KHR"));
 #endif
 #if defined(VK_KHR_create_renderpass2)
-    table.vkCmdEndRenderPass2KHR = reinterpret_cast<PFN_vkCmdEndRenderPass2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderPass2KHR"));
+    table.vkCmdEndRenderPass2KHR =
+        reinterpret_cast<PFN_vkCmdEndRenderPass2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRenderPass2KHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
     table.vkGetSemaphoreCounterValueKHR = reinterpret_cast<PFN_vkGetSemaphoreCounterValueKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetSemaphoreCounterValueKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetSemaphoreCounterValueKHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
     table.vkWaitSemaphoresKHR =
-        reinterpret_cast<PFN_vkWaitSemaphoresKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkWaitSemaphoresKHR"));
+        reinterpret_cast<PFN_vkWaitSemaphoresKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkWaitSemaphoresKHR"));
 #endif
 #if defined(VK_KHR_timeline_semaphore)
     table.vkSignalSemaphoreKHR =
-        reinterpret_cast<PFN_vkSignalSemaphoreKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSignalSemaphoreKHR"));
+        reinterpret_cast<PFN_vkSignalSemaphoreKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkSignalSemaphoreKHR"));
 #endif
 #if defined(VK_KHR_draw_indirect_count)
     table.vkCmdDrawIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndirectCountKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndirectCountKHR"));
 #endif
 #if defined(VK_AMD_draw_indirect_count)
     table.vkCmdDrawIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndirectCountAMD>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndirectCountAMD"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndirectCountAMD"));
 #endif
 #if defined(VK_KHR_draw_indirect_count)
     table.vkCmdDrawIndexedIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndexedIndirectCountKHR"));
 #endif
 #if defined(VK_AMD_draw_indirect_count)
     table.vkCmdDrawIndexedIndirectCountAMD = reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountAMD>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdDrawIndexedIndirectCountAMD"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdDrawIndexedIndirectCountAMD"));
 #endif
 #if defined(VK_NV_ray_tracing)
     table.vkGetRayTracingShaderGroupHandlesNV = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesNV>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetRayTracingShaderGroupHandlesNV"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetRayTracingShaderGroupHandlesNV"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
     table.vkGetBufferOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddressKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferOpaqueCaptureAddressKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferOpaqueCaptureAddressKHR"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
     table.vkGetBufferDeviceAddressKHR = reinterpret_cast<PFN_vkGetBufferDeviceAddressKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferDeviceAddressKHR"));
 #endif
 #if defined(VK_EXT_buffer_device_address)
     table.vkGetBufferDeviceAddressEXT = reinterpret_cast<PFN_vkGetBufferDeviceAddressEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetBufferDeviceAddressEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetBufferDeviceAddressEXT"));
 #endif
 #if defined(VK_KHR_buffer_device_address)
     table.vkGetDeviceMemoryOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"));
 #endif
 #if defined(VK_KHR_line_rasterization)
-    table.vkCmdSetLineStippleKHR = reinterpret_cast<PFN_vkCmdSetLineStippleKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleKHR"));
+    table.vkCmdSetLineStippleKHR =
+        reinterpret_cast<PFN_vkCmdSetLineStippleKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineStippleKHR"));
 #endif
 #if defined(VK_EXT_line_rasterization)
-    table.vkCmdSetLineStippleEXT = reinterpret_cast<PFN_vkCmdSetLineStippleEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetLineStippleEXT"));
+    table.vkCmdSetLineStippleEXT =
+        reinterpret_cast<PFN_vkCmdSetLineStippleEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetLineStippleEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetCullModeEXT =
-        reinterpret_cast<PFN_vkCmdSetCullModeEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetCullModeEXT"));
+        reinterpret_cast<PFN_vkCmdSetCullModeEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetCullModeEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetFrontFaceEXT =
-        reinterpret_cast<PFN_vkCmdSetFrontFaceEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetFrontFaceEXT"));
+        reinterpret_cast<PFN_vkCmdSetFrontFaceEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetFrontFaceEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetPrimitiveTopologyEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveTopologyEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveTopologyEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPrimitiveTopologyEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetViewportWithCountEXT = reinterpret_cast<PFN_vkCmdSetViewportWithCountEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetViewportWithCountEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetViewportWithCountEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetScissorWithCountEXT = reinterpret_cast<PFN_vkCmdSetScissorWithCountEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetScissorWithCountEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetScissorWithCountEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
     table.vkCmdBindIndexBuffer2KHR = reinterpret_cast<PFN_vkCmdBindIndexBuffer2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindIndexBuffer2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindIndexBuffer2KHR"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdBindVertexBuffers2EXT = reinterpret_cast<PFN_vkCmdBindVertexBuffers2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindVertexBuffers2EXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindVertexBuffers2EXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthTestEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthTestEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthWriteEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthWriteEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthWriteEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthWriteEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthCompareOpEXT = reinterpret_cast<PFN_vkCmdSetDepthCompareOpEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthCompareOpEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthCompareOpEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthBoundsTestEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBoundsTestEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBoundsTestEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBoundsTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetStencilTestEnableEXT = reinterpret_cast<PFN_vkCmdSetStencilTestEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilTestEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilTestEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state) || defined(VK_EXT_shader_object)
     table.vkCmdSetStencilOpEXT =
-        reinterpret_cast<PFN_vkCmdSetStencilOpEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetStencilOpEXT"));
+        reinterpret_cast<PFN_vkCmdSetStencilOpEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetStencilOpEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     table.vkCmdSetRasterizerDiscardEnableEXT = reinterpret_cast<PFN_vkCmdSetRasterizerDiscardEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRasterizerDiscardEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRasterizerDiscardEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     table.vkCmdSetDepthBiasEnableEXT = reinterpret_cast<PFN_vkCmdSetDepthBiasEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetDepthBiasEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetDepthBiasEnableEXT"));
 #endif
 #if defined(VK_EXT_extended_dynamic_state2) || defined(VK_EXT_shader_object)
     table.vkCmdSetPrimitiveRestartEnableEXT = reinterpret_cast<PFN_vkCmdSetPrimitiveRestartEnableEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetPrimitiveRestartEnableEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetPrimitiveRestartEnableEXT"));
 #endif
 #if defined(VK_EXT_private_data)
     table.vkCreatePrivateDataSlotEXT = reinterpret_cast<PFN_vkCreatePrivateDataSlotEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCreatePrivateDataSlotEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCreatePrivateDataSlotEXT"));
 #endif
 #if defined(VK_EXT_private_data)
     table.vkDestroyPrivateDataSlotEXT = reinterpret_cast<PFN_vkDestroyPrivateDataSlotEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkDestroyPrivateDataSlotEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkDestroyPrivateDataSlotEXT"));
 #endif
 #if defined(VK_EXT_private_data)
     table.vkSetPrivateDataEXT =
-        reinterpret_cast<PFN_vkSetPrivateDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkSetPrivateDataEXT"));
+        reinterpret_cast<PFN_vkSetPrivateDataEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkSetPrivateDataEXT"));
 #endif
 #if defined(VK_EXT_private_data)
     table.vkGetPrivateDataEXT =
-        reinterpret_cast<PFN_vkGetPrivateDataEXT>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetPrivateDataEXT"));
+        reinterpret_cast<PFN_vkGetPrivateDataEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkGetPrivateDataEXT"));
 #endif
 #if defined(VK_KHR_copy_commands2)
     table.vkCmdCopyBuffer2KHR =
-        reinterpret_cast<PFN_vkCmdCopyBuffer2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBuffer2KHR"));
+        reinterpret_cast<PFN_vkCmdCopyBuffer2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBuffer2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
     table.vkCmdCopyImage2KHR =
-        reinterpret_cast<PFN_vkCmdCopyImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImage2KHR"));
+        reinterpret_cast<PFN_vkCmdCopyImage2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
     table.vkCmdBlitImage2KHR =
-        reinterpret_cast<PFN_vkCmdBlitImage2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBlitImage2KHR"));
+        reinterpret_cast<PFN_vkCmdBlitImage2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBlitImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
     table.vkCmdCopyBufferToImage2KHR = reinterpret_cast<PFN_vkCmdCopyBufferToImage2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyBufferToImage2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyBufferToImage2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
     table.vkCmdCopyImageToBuffer2KHR = reinterpret_cast<PFN_vkCmdCopyImageToBuffer2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdCopyImageToBuffer2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdCopyImageToBuffer2KHR"));
 #endif
 #if defined(VK_KHR_copy_commands2)
-    table.vkCmdResolveImage2KHR = reinterpret_cast<PFN_vkCmdResolveImage2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResolveImage2KHR"));
+    table.vkCmdResolveImage2KHR =
+        reinterpret_cast<PFN_vkCmdResolveImage2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResolveImage2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkCmdSetEvent2KHR =
-        reinterpret_cast<PFN_vkCmdSetEvent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetEvent2KHR"));
+        reinterpret_cast<PFN_vkCmdSetEvent2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetEvent2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkCmdResetEvent2KHR =
-        reinterpret_cast<PFN_vkCmdResetEvent2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdResetEvent2KHR"));
+        reinterpret_cast<PFN_vkCmdResetEvent2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdResetEvent2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkCmdWaitEvents2KHR =
-        reinterpret_cast<PFN_vkCmdWaitEvents2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWaitEvents2KHR"));
+        reinterpret_cast<PFN_vkCmdWaitEvents2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdWaitEvents2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkCmdPipelineBarrier2KHR = reinterpret_cast<PFN_vkCmdPipelineBarrier2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPipelineBarrier2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPipelineBarrier2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkQueueSubmit2KHR =
-        reinterpret_cast<PFN_vkQueueSubmit2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkQueueSubmit2KHR"));
+        reinterpret_cast<PFN_vkQueueSubmit2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkQueueSubmit2KHR"));
 #endif
 #if defined(VK_KHR_synchronization2)
     table.vkCmdWriteTimestamp2KHR = reinterpret_cast<PFN_vkCmdWriteTimestamp2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdWriteTimestamp2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdWriteTimestamp2KHR"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyMemoryToImageEXT = reinterpret_cast<PFN_vkCopyMemoryToImageEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyMemoryToImageEXT"));
+    table.vkCopyMemoryToImageEXT =
+        reinterpret_cast<PFN_vkCopyMemoryToImageEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyMemoryToImageEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyImageToMemoryEXT = reinterpret_cast<PFN_vkCopyImageToMemoryEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToMemoryEXT"));
+    table.vkCopyImageToMemoryEXT =
+        reinterpret_cast<PFN_vkCopyImageToMemoryEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyImageToMemoryEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
-    table.vkCopyImageToImageEXT = reinterpret_cast<PFN_vkCopyImageToImageEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCopyImageToImageEXT"));
+    table.vkCopyImageToImageEXT =
+        reinterpret_cast<PFN_vkCopyImageToImageEXT>(instanceFuncs.GetDeviceProcAddr(device, "vkCopyImageToImageEXT"));
 #endif
 #if defined(VK_EXT_host_image_copy)
     table.vkTransitionImageLayoutEXT = reinterpret_cast<PFN_vkTransitionImageLayoutEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkTransitionImageLayoutEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkTransitionImageLayoutEXT"));
 #endif
 #if defined(VK_KHR_dynamic_rendering)
-    table.vkCmdBeginRenderingKHR = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBeginRenderingKHR"));
+    table.vkCmdBeginRenderingKHR =
+        reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdBeginRenderingKHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering)
     table.vkCmdEndRenderingKHR =
-        reinterpret_cast<PFN_vkCmdEndRenderingKHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdEndRenderingKHR"));
+        reinterpret_cast<PFN_vkCmdEndRenderingKHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdEndRenderingKHR"));
 #endif
 #if defined(VK_KHR_maintenance5)
     table.vkGetImageSubresourceLayout2KHR = reinterpret_cast<PFN_vkGetImageSubresourceLayout2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSubresourceLayout2KHR"));
 #endif
 #if defined(VK_EXT_host_image_copy) || defined(VK_EXT_image_compression_control)
     table.vkGetImageSubresourceLayout2EXT = reinterpret_cast<PFN_vkGetImageSubresourceLayout2EXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetImageSubresourceLayout2EXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetImageSubresourceLayout2EXT"));
 #endif
 #if defined(VK_EXT_swapchain_maintenance1)
     table.vkReleaseSwapchainImagesEXT = reinterpret_cast<PFN_vkReleaseSwapchainImagesEXT>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkReleaseSwapchainImagesEXT"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkReleaseSwapchainImagesEXT"));
 #endif
 #if defined(VK_KHR_maintenance5)
     table.vkGetDeviceImageSubresourceLayoutKHR = reinterpret_cast<PFN_vkGetDeviceImageSubresourceLayoutKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkGetDeviceImageSubresourceLayoutKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkGetDeviceImageSubresourceLayoutKHR"));
 #endif
 #if defined(VK_KHR_map_memory2)
     table.vkMapMemory2KHR =
-        reinterpret_cast<PFN_vkMapMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkMapMemory2KHR"));
+        reinterpret_cast<PFN_vkMapMemory2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkMapMemory2KHR"));
 #endif
 #if defined(VK_KHR_map_memory2)
     table.vkUnmapMemory2KHR =
-        reinterpret_cast<PFN_vkUnmapMemory2KHR>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkUnmapMemory2KHR"));
+        reinterpret_cast<PFN_vkUnmapMemory2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkUnmapMemory2KHR"));
 #endif
 #if defined(VK_KHR_maintenance6)
     table.vkCmdBindDescriptorSets2KHR = reinterpret_cast<PFN_vkCmdBindDescriptorSets2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdBindDescriptorSets2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdBindDescriptorSets2KHR"));
 #endif
 #if defined(VK_KHR_maintenance6)
-    table.vkCmdPushConstants2KHR = reinterpret_cast<PFN_vkCmdPushConstants2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushConstants2KHR"));
+    table.vkCmdPushConstants2KHR =
+        reinterpret_cast<PFN_vkCmdPushConstants2KHR>(instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushConstants2KHR"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
     table.vkCmdPushDescriptorSet2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSet2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSet2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSet2KHR"));
 #endif
 #if (defined(VK_KHR_maintenance6) && defined(VK_KHR_push_descriptor))
     table.vkCmdPushDescriptorSetWithTemplate2KHR = reinterpret_cast<PFN_vkCmdPushDescriptorSetWithTemplate2KHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdPushDescriptorSetWithTemplate2KHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdPushDescriptorSetWithTemplate2KHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering_local_read)
     table.vkCmdSetRenderingAttachmentLocationsKHR = reinterpret_cast<PFN_vkCmdSetRenderingAttachmentLocationsKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingAttachmentLocationsKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRenderingAttachmentLocationsKHR"));
 #endif
 #if defined(VK_KHR_dynamic_rendering_local_read)
     table.vkCmdSetRenderingInputAttachmentIndicesKHR = reinterpret_cast<PFN_vkCmdSetRenderingInputAttachmentIndicesKHR>(
-        p_InstanceFuncs.GetDeviceProcAddr(p_Device, "vkCmdSetRenderingInputAttachmentIndicesKHR"));
+        instanceFuncs.GetDeviceProcAddr(device, "vkCmdSetRenderingInputAttachmentIndicesKHR"));
 #endif
     return table;
 }
@@ -12024,14 +12012,14 @@ void DeviceTable::CmdSetRenderingInputAttachmentIndicesKHR(
 namespace VKit::Vulkan
 {
 
-void Load(void *p_Library)
+void Load(void *library)
 {
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
     Vulkan::vkGetInstanceProcAddr =
-        reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));
+        reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(library, "vkGetInstanceProcAddr"));
 #else
     Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(
-        GetProcAddress(reinterpret_cast<HMODULE>(p_Library), "vkGetInstanceProcAddr"));
+        GetProcAddress(reinterpret_cast<HMODULE>(library), "vkGetInstanceProcAddr"));
 #endif
 
 #if defined(VKIT_API_VERSION_1_0)

@@ -24,25 +24,25 @@ class RenderPass
     class AttachmentBuilder
     {
       public:
-        AttachmentBuilder(Builder *p_Builder, DeviceImageFlags p_Flags);
+        AttachmentBuilder(Builder *builder, DeviceImageFlags flags);
 
-        AttachmentBuilder &SetLoadOperation(VkAttachmentLoadOp p_Operation,
-                                            VkAttachmentLoadOp p_StencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
-        AttachmentBuilder &SetStoreOperation(VkAttachmentStoreOp p_Operation,
-                                             VkAttachmentStoreOp p_StencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM);
+        AttachmentBuilder &SetLoadOperation(VkAttachmentLoadOp operation,
+                                            VkAttachmentLoadOp stencilOperation = VK_ATTACHMENT_LOAD_OP_MAX_ENUM);
+        AttachmentBuilder &SetStoreOperation(VkAttachmentStoreOp operation,
+                                             VkAttachmentStoreOp stencilOperation = VK_ATTACHMENT_STORE_OP_MAX_ENUM);
 
-        AttachmentBuilder &SetStencilLoadOperation(VkAttachmentLoadOp p_Operation);
-        AttachmentBuilder &SetStencilStoreOperation(VkAttachmentStoreOp p_Operation);
+        AttachmentBuilder &SetStencilLoadOperation(VkAttachmentLoadOp operation);
+        AttachmentBuilder &SetStencilStoreOperation(VkAttachmentStoreOp operation);
 
-        AttachmentBuilder &RequestFormat(VkFormat p_Format);
-        AttachmentBuilder &AllowFormat(VkFormat p_Format);
+        AttachmentBuilder &RequestFormat(VkFormat format);
+        AttachmentBuilder &AllowFormat(VkFormat format);
 
-        AttachmentBuilder &SetLayouts(VkImageLayout p_InitialLayout, VkImageLayout p_FinalLayout);
-        AttachmentBuilder &SetInitialLayout(VkImageLayout p_Layout);
-        AttachmentBuilder &SetFinalLayout(VkImageLayout p_Layout);
+        AttachmentBuilder &SetLayouts(VkImageLayout initialLayout, VkImageLayout finalLayout);
+        AttachmentBuilder &SetInitialLayout(VkImageLayout layout);
+        AttachmentBuilder &SetFinalLayout(VkImageLayout layout);
 
-        AttachmentBuilder &SetSampleCount(VkSampleCountFlagBits p_SampleCount);
-        AttachmentBuilder &SetFlags(VkAttachmentDescriptionFlags p_Flags);
+        AttachmentBuilder &SetSampleCount(VkSampleCountFlagBits sampleCount);
+        AttachmentBuilder &SetFlags(VkAttachmentDescriptionFlags flags);
 
         Builder &EndAttachment();
 
@@ -57,20 +57,20 @@ class RenderPass
     class SubpassBuilder
     {
       public:
-        SubpassBuilder(Builder *p_Builder, VkPipelineBindPoint p_BindPoint);
+        SubpassBuilder(Builder *builder, VkPipelineBindPoint bindPoint);
 
-        SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex,
-                                           VkImageLayout p_Layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                           u32 p_ResolveIndex = TKIT_U32_MAX);
-        SubpassBuilder &AddColorAttachment(u32 p_AttachmentIndex, u32 p_ResolveIndex);
+        SubpassBuilder &AddColorAttachment(u32 attachmentIndex,
+                                           VkImageLayout layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                           u32 resolveIndex = TKIT_U32_MAX);
+        SubpassBuilder &AddColorAttachment(u32 attachmentIndex, u32 resolveIndex);
 
-        SubpassBuilder &AddInputAttachment(u32 p_AttachmentIndex, VkImageLayout p_Layout);
-        SubpassBuilder &AddPreserveAttachment(u32 p_AttachmentIndex);
+        SubpassBuilder &AddInputAttachment(u32 attachmentIndex, VkImageLayout layout);
+        SubpassBuilder &AddPreserveAttachment(u32 attachmentIndex);
 
-        SubpassBuilder &SetDepthStencilAttachment(u32 p_AttachmentIndex,
+        SubpassBuilder &SetDepthStencilAttachment(u32 attachmentIndex,
                                                   VkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-        SubpassBuilder &SetFlags(VkSubpassDescriptionFlags p_Flags);
+        SubpassBuilder &SetFlags(VkSubpassDescriptionFlags flags);
 
         Builder &EndSubpass();
 
@@ -89,12 +89,12 @@ class RenderPass
     class DependencyBuilder
     {
       public:
-        DependencyBuilder(Builder *p_Builder, u32 p_SourceSubpass, u32 p_DestinationSubpass);
+        DependencyBuilder(Builder *builder, u32 sourceSubpass, u32 destinationSubpass);
 
-        DependencyBuilder &SetStageMask(VkPipelineStageFlags p_SourceStage, VkPipelineStageFlags p_DestinationStage);
-        DependencyBuilder &SetAccessMask(VkAccessFlags p_SourceAccess, VkAccessFlags p_DestinationAccess);
+        DependencyBuilder &SetStageMask(VkPipelineStageFlags sourceStage, VkPipelineStageFlags destinationStage);
+        DependencyBuilder &SetAccessMask(VkAccessFlags sourceAccess, VkAccessFlags destinationAccess);
 
-        DependencyBuilder &SetFlags(VkDependencyFlags p_Flags);
+        DependencyBuilder &SetFlags(VkDependencyFlags flags);
 
         Builder &EndDependency();
 
@@ -109,22 +109,22 @@ class RenderPass
     class Builder
     {
       public:
-        Builder(const LogicalDevice *p_Device, const u32 p_ImageCount) : m_Device(p_Device), m_ImageCount(p_ImageCount)
+        Builder(const LogicalDevice *device, const u32 imageCount) : m_Device(device), m_ImageCount(imageCount)
         {
         }
 
         VKIT_NO_DISCARD Result<RenderPass> Build() const;
 
-        AttachmentBuilder &BeginAttachment(DeviceImageFlags p_Flags);
+        AttachmentBuilder &BeginAttachment(DeviceImageFlags flags);
 
-        SubpassBuilder &BeginSubpass(VkPipelineBindPoint p_BindPoint);
-        DependencyBuilder &BeginDependency(u32 p_SourceSubpass, u32 p_DestinationSubpass);
+        SubpassBuilder &BeginSubpass(VkPipelineBindPoint bindPoint);
+        DependencyBuilder &BeginDependency(u32 sourceSubpass, u32 destinationSubpass);
 
-        Builder &SetFlags(VkRenderPassCreateFlags p_Flags);
-        Builder &AddFlags(VkRenderPassCreateFlags p_Flags);
-        Builder &RemoveFlags(VkRenderPassCreateFlags p_Flags);
+        Builder &SetFlags(VkRenderPassCreateFlags flags);
+        Builder &AddFlags(VkRenderPassCreateFlags flags);
+        Builder &RemoveFlags(VkRenderPassCreateFlags flags);
 
-        Builder &SetAllocator(VmaAllocator p_Allocator);
+        Builder &SetAllocator(VmaAllocator allocator);
 
       private:
         const LogicalDevice *m_Device;
@@ -142,14 +142,14 @@ class RenderPass
       public:
         void Destroy();
 
-        VkImageView GetImageView(const u32 p_ImageIndex, const u32 p_AttachmentIndex) const
+        VkImageView GetImageView(const u32 imageIndex, const u32 attachmentIndex) const
         {
             const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
-            return m_Images[p_ImageIndex * attachmentCount + p_AttachmentIndex].GetImageView();
+            return m_Images[imageIndex * attachmentCount + attachmentIndex].GetImageView();
         }
-        VkFramebuffer GetFrameBuffer(const u32 p_ImageIndex) const
+        VkFramebuffer GetFrameBuffer(const u32 imageIndex) const
         {
-            return m_FrameBuffers[p_ImageIndex];
+            return m_FrameBuffers[imageIndex];
         }
 
       private:
@@ -168,8 +168,8 @@ class RenderPass
     };
 
     RenderPass() = default;
-    RenderPass(const ProxyDevice &p_Device, const VkRenderPass p_RenderPass, const Info &p_Info)
-        : m_Device(p_Device), m_RenderPass(p_RenderPass), m_Info(p_Info)
+    RenderPass(const ProxyDevice &device, const VkRenderPass renderPass, const Info &info)
+        : m_Device(device), m_RenderPass(renderPass), m_Info(info)
     {
     }
 
@@ -184,15 +184,15 @@ class RenderPass
      * `ImageFactory::CreateImage()` methods for more.
      *
      * @tparam F The type of the callback function used for creating image data.
-     * @param p_Extent The dimensions of the frame buffer.
-     * @param p_CreateImageData A callback function that generates image data for each attachment. Takes the image index
+     * @param extent The dimensions of the frame buffer.
+     * @param createImageData A callback function that generates image data for each attachment. Takes the image index
      * and attachment index as arguments.
-     * @param p_FrameBufferLayers The number of layers for each frame buffer (default: 1).
+     * @param frameBufferLayers The number of layers for each frame buffer (default: 1).
      * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
-    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &p_Extent, F &&p_CreateImageData,
-                                                      u32 p_FrameBufferLayers = 1)
+    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, F &&createImageData,
+                                                      u32 frameBufferLayers = 1)
     {
         Resources resources;
         resources.m_Device = m_Device;
@@ -202,7 +202,7 @@ class RenderPass
         {
             for (u32 j = 0; j < attachments.GetSize(); ++j)
             {
-                const auto imresult = std::forward<F>(p_CreateImageData)(i, j);
+                const auto imresult = std::forward<F>(createImageData)(i, j);
                 if (!imresult)
                 {
                     resources.Destroy();
@@ -219,9 +219,9 @@ class RenderPass
             frameBufferInfo.renderPass = m_RenderPass;
             frameBufferInfo.attachmentCount = attachments.GetSize();
             frameBufferInfo.pAttachments = attachments.GetData();
-            frameBufferInfo.width = p_Extent.width;
-            frameBufferInfo.height = p_Extent.height;
-            frameBufferInfo.layers = p_FrameBufferLayers;
+            frameBufferInfo.width = extent.width;
+            frameBufferInfo.height = extent.height;
+            frameBufferInfo.layers = frameBufferLayers;
 
             VkFramebuffer frameBuffer;
             const VkResult result = m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
@@ -238,9 +238,9 @@ class RenderPass
         return resources;
     }
 
-    const Attachment &GetAttachment(const u32 p_AttachmentIndex) const
+    const Attachment &GetAttachment(const u32 attachmentIndex) const
     {
-        return m_Info.Attachments[p_AttachmentIndex];
+        return m_Info.Attachments[attachmentIndex];
     }
     const Info &GetInfo() const
     {

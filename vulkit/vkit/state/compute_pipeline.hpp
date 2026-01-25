@@ -20,19 +20,19 @@ class ComputePipeline
         VkPipelineCache Cache = VK_NULL_HANDLE;
     };
 
-    static Result<ComputePipeline> Create(const ProxyDevice &p_Device, const Specs &p_Specs);
+    static Result<ComputePipeline> Create(const ProxyDevice &device, const Specs &specs);
 
-    static Result<> Create(const ProxyDevice &p_Device, TKit::Span<const Specs> p_Specs,
-                           TKit::Span<ComputePipeline> p_Pipelines, VkPipelineCache p_Cache = VK_NULL_HANDLE);
+    static Result<> Create(const ProxyDevice &device, TKit::Span<const Specs> specs,
+                           TKit::Span<ComputePipeline> pipelines, VkPipelineCache cache = VK_NULL_HANDLE);
 
     ComputePipeline() = default;
-    ComputePipeline(const ProxyDevice &p_Device, VkPipeline p_Pipeline) : m_Device(p_Device), m_Pipeline(p_Pipeline)
+    ComputePipeline(const ProxyDevice &device, VkPipeline pipeline) : m_Device(device), m_Pipeline(pipeline)
     {
     }
 
     void Destroy();
 
-    void Bind(VkCommandBuffer p_CommandBuffer) const;
+    void Bind(VkCommandBuffer commandBuffer) const;
 
     const ProxyDevice &GetDevice() const
     {

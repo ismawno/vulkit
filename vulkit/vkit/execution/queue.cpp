@@ -3,9 +3,9 @@
 
 namespace VKit
 {
-const char *ToString(const QueueType p_Type)
+const char *ToString(const QueueType type)
 {
-    switch (p_Type)
+    switch (type)
     {
     case Queue_Graphics:
         return "Graphics";
@@ -41,7 +41,7 @@ void Queue::DestroyTimeline()
     }
 }
 
-Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fence)
+Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> info, const VkFence fence)
 {
     TKIT_ASSERT(
         m_TimelineCounter > m_TimelineSubmissions,
@@ -49,7 +49,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fe
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, info.GetSize(), info.GetData(), fence);
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
 
@@ -58,7 +58,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> p_Info, const VkFence p_Fe
 }
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> p_Info, const VkFence p_Fence)
+Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkFence fence)
 {
     TKIT_ASSERT(
         m_TimelineCounter > m_TimelineSubmissions,
@@ -66,7 +66,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> p_Info, const V
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, p_Info.GetSize(), p_Info.GetData(), p_Fence);
+    const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, info.GetSize(), info.GetData(), fence);
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
 

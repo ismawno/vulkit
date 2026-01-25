@@ -6,13 +6,13 @@
 
 namespace VKit
 {
-Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs)
+Result<VmaAllocator> CreateAllocator(const LogicalDevice &device, const AllocatorSpecs &specs)
 {
-    const Instance *instance = p_Device.GetInfo().Instance;
-    const PhysicalDevice *physicalDevice = p_Device.GetInfo().PhysicalDevice;
+    const Instance *instance = device.GetInfo().Instance;
+    const PhysicalDevice *physicalDevice = device.GetInfo().PhysicalDevice;
 
     const Vulkan::InstanceTable *itable = instance->GetInfo().Table;
-    const Vulkan::DeviceTable *dtable = p_Device.GetInfo().Table;
+    const Vulkan::DeviceTable *dtable = device.GetInfo().Table;
 
     VmaVulkanFunctions functions{};
     functions.vkGetInstanceProcAddr = Vulkan::vkGetInstanceProcAddr;
@@ -81,18 +81,18 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 
     VmaAllocatorCreateInfo allocatorInfo{};
     allocatorInfo.physicalDevice = *physicalDevice;
-    allocatorInfo.device = p_Device;
+    allocatorInfo.device = device;
     allocatorInfo.instance = *instance;
     allocatorInfo.vulkanApiVersion = instance->GetInfo().ApplicationVersion;
-    allocatorInfo.preferredLargeHeapBlockSize = p_Specs.PreferredLargeHeapBlockSize;
+    allocatorInfo.preferredLargeHeapBlockSize = specs.PreferredLargeHeapBlockSize;
     allocatorInfo.pAllocationCallbacks = instance->GetInfo().AllocationCallbacks;
-    allocatorInfo.pDeviceMemoryCallbacks = p_Specs.DeviceMemoryCallbacks;
-    allocatorInfo.pHeapSizeLimit = p_Specs.HeapSizeLimit;
+    allocatorInfo.pDeviceMemoryCallbacks = specs.DeviceMemoryCallbacks;
+    allocatorInfo.pHeapSizeLimit = specs.HeapSizeLimit;
 #if VMA_EXTERNAL_MEMORY
-    allocatorInfo.pTypeExternalMemoryHandleTypes = p_Specs.ExternalMemoryHandleTypes;
+    allocatorInfo.pTypeExternalMemoryHandleTypes = specs.ExternalMemoryHandleTypes;
 #endif
     allocatorInfo.pVulkanFunctions = &functions;
-    allocatorInfo.flags = p_Specs.Flags;
+    allocatorInfo.flags = specs.Flags;
 
     VmaAllocator allocator;
     const VkResult result = vmaCreateAllocator(&allocatorInfo, &allocator);
@@ -101,8 +101,8 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const Alloca
 
     return allocator;
 }
-void DestroyAllocator(const VmaAllocator p_Allocator)
+void DestroyAllocator(const VmaAllocator allocator)
 {
-    vmaDestroyAllocator(p_Allocator);
+    vmaDestroyAllocator(allocator);
 }
 } // namespace VKit

@@ -54,7 +54,7 @@ enum DeviceFlagBits : DeviceFlags
 struct DeviceFeatures
 {
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-    VkPhysicalDeviceFeatures2KHR CreateChain(u32 p_ApiVersion);
+    VkPhysicalDeviceFeatures2KHR CreateChain(u32 apiVersion);
 #endif
 
     VkPhysicalDeviceFeatures Core{};
@@ -74,7 +74,7 @@ struct DeviceFeatures
 struct DeviceProperties
 {
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-    VkPhysicalDeviceProperties2KHR CreateChain(u32 p_ApiVersion);
+    VkPhysicalDeviceProperties2KHR CreateChain(u32 apiVersion);
 #endif
 
     VkPhysicalDeviceProperties Core{};
@@ -107,39 +107,39 @@ class PhysicalDevice
     class Selector
     {
       public:
-        Selector(const Instance *p_Instance, u32 p_MaxExtensions = 256);
+        Selector(const Instance *instance, u32 maxExtensions = 256);
 
         VKIT_NO_DISCARD Result<PhysicalDevice> Select() const;
 
         VKIT_NO_DISCARD Result<TKit::TierArray<Result<PhysicalDevice>>> Enumerate() const;
 
-        Selector &SetName(const char *p_Name);
-        Selector &PreferType(DeviceType p_Type);
+        Selector &SetName(const char *name);
+        Selector &PreferType(DeviceType type);
 
-        Selector &RequireApiVersion(u32 p_Version);
-        Selector &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Selector &RequireApiVersion(u32 version);
+        Selector &RequireApiVersion(u32 major, u32 minor, u32 patch);
 
-        Selector &RequestApiVersion(u32 p_Version);
-        Selector &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Selector &RequestApiVersion(u32 version);
+        Selector &RequestApiVersion(u32 major, u32 minor, u32 patch);
 
-        Selector &RequireExtension(const char *p_Extension);
-        Selector &RequestExtension(const char *p_Extension);
+        Selector &RequireExtension(const char *extension);
+        Selector &RequestExtension(const char *extension);
 
-        Selector &RequireMemory(const VkDeviceSize p_Size);
-        Selector &RequestMemory(const VkDeviceSize p_Size);
+        Selector &RequireMemory(const VkDeviceSize size);
+        Selector &RequestMemory(const VkDeviceSize size);
 
-        Selector &RequireFeatures(const DeviceFeatures &p_Features);
+        Selector &RequireFeatures(const DeviceFeatures &features);
 
-        Selector &SetFlags(DeviceSelectorFlags p_Flags);
-        Selector &AddFlags(DeviceSelectorFlags p_Flags);
-        Selector &RemoveFlags(DeviceSelectorFlags p_Flags);
+        Selector &SetFlags(DeviceSelectorFlags flags);
+        Selector &AddFlags(DeviceSelectorFlags flags);
+        Selector &RemoveFlags(DeviceSelectorFlags flags);
 
 #ifdef VK_KHR_surface
-        Selector &SetSurface(VkSurfaceKHR p_Surface);
+        Selector &SetSurface(VkSurfaceKHR surface);
 #endif
 
       private:
-        VKIT_NO_DISCARD Result<PhysicalDevice> judgeDevice(VkPhysicalDevice p_Device) const;
+        VKIT_NO_DISCARD Result<PhysicalDevice> judgeDevice(VkPhysicalDevice device) const;
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;
@@ -183,26 +183,26 @@ class PhysicalDevice
     };
 
     PhysicalDevice() = default;
-    PhysicalDevice(VkPhysicalDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
+    PhysicalDevice(VkPhysicalDevice device, const Info &info) : m_Device(device), m_Info(info)
     {
     }
 
-    bool AreFeaturesSupported(const DeviceFeatures &p_Features) const;
-    bool AreFeaturesEnabled(const DeviceFeatures &p_Features) const;
+    bool AreFeaturesSupported(const DeviceFeatures &features) const;
+    bool AreFeaturesEnabled(const DeviceFeatures &features) const;
 
-    bool EnableFeatures(const DeviceFeatures &p_Features);
+    bool EnableFeatures(const DeviceFeatures &features);
 
-    template <typename T> void EnableExtensionBoundFeature(T *p_Feature)
+    template <typename T> void EnableExtensionBoundFeature(T *feature)
     {
         void *next = m_Info.EnabledFeatures.Next;
-        p_Feature->pNext = next;
-        m_Info.EnabledFeatures.Next = p_Feature;
+        feature->pNext = next;
+        m_Info.EnabledFeatures.Next = feature;
     }
 
-    bool IsExtensionSupported(const char *p_Extension) const;
-    bool IsExtensionEnabled(const char *p_Extension) const;
+    bool IsExtensionSupported(const char *extension) const;
+    bool IsExtensionEnabled(const char *extension) const;
 
-    bool EnableExtension(const char *p_Extension);
+    bool EnableExtension(const char *extension);
 
     VkPhysicalDevice GetHandle() const
     {
@@ -214,8 +214,8 @@ class PhysicalDevice
     }
 
 #ifdef VK_KHR_surface
-    VKIT_NO_DISCARD Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &p_Instance,
-                                                                          VkSurfaceKHR p_Surface) const;
+    VKIT_NO_DISCARD Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &instance,
+                                                                          VkSurfaceKHR surface) const;
 #endif
 
     operator VkPhysicalDevice() const

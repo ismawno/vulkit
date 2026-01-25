@@ -172,9 +172,9 @@ static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan14Features::*, 
     &VkPhysicalDeviceVulkan14Features::pushDescriptor};
 #endif
 
-template <typename C, typename T> static bool contains(const C &p_Container, const T &p_Value)
+template <typename C, typename T> static bool contains(const C &container, const T &value)
 {
-    return std::find(p_Container.begin(), p_Container.end(), p_Value) != p_Container.end();
+    return std::find(container.begin(), container.end(), value) != container.end();
 }
 
 template <typename T> const auto &getMembers()
@@ -201,73 +201,73 @@ template <typename T> const auto &getMembers()
 #endif
 }
 
-template <typename T> static void orFeatures(T &p_Dst, const T &p_Src)
+template <typename T> static void orFeatures(T &dst, const T &src)
 {
     const auto &members = getMembers<T>();
     for (const auto member : members)
-        p_Dst.*member |= p_Src.*member;
+        dst.*member |= src.*member;
 }
 
-static void orFeatures(DeviceFeatures &p_Dst, const DeviceFeatures &p_Src)
+static void orFeatures(DeviceFeatures &dst, const DeviceFeatures &src)
 {
-    orFeatures(p_Dst.Core, p_Src.Core);
+    orFeatures(dst.Core, src.Core);
 #ifdef VKIT_API_VERSION_1_2
-    orFeatures(p_Dst.Vulkan11, p_Src.Vulkan11);
-    orFeatures(p_Dst.Vulkan12, p_Src.Vulkan12);
+    orFeatures(dst.Vulkan11, src.Vulkan11);
+    orFeatures(dst.Vulkan12, src.Vulkan12);
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    orFeatures(p_Dst.Vulkan13, p_Src.Vulkan13);
+    orFeatures(dst.Vulkan13, src.Vulkan13);
 #endif
 #ifdef VKIT_API_VERSION_1_4
-    orFeatures(p_Dst.Vulkan14, p_Src.Vulkan14);
+    orFeatures(dst.Vulkan14, src.Vulkan14);
 #endif
 }
 
-template <typename T> static bool compareFeatureStructs(const T &p_Supported, const T &p_Requested)
+template <typename T> static bool compareFeatureStructs(const T &supported, const T &requested)
 {
     const auto &members = getMembers<T>();
 
     for (const auto member : members)
-        if (!(p_Supported.*member) && p_Requested.*member)
+        if (!(supported.*member) && requested.*member)
             return false;
     return true;
 }
 
-static bool compareFeatures(const DeviceFeatures &p_Supported, const DeviceFeatures &p_Requested)
+static bool compareFeatures(const DeviceFeatures &supported, const DeviceFeatures &requested)
 {
-    if (!compareFeatureStructs(p_Supported.Core, p_Requested.Core))
+    if (!compareFeatureStructs(supported.Core, requested.Core))
         return false;
 #ifdef VKIT_API_VERSION_1_2
-    if (!compareFeatureStructs(p_Supported.Vulkan11, p_Requested.Vulkan11))
+    if (!compareFeatureStructs(supported.Vulkan11, requested.Vulkan11))
         return false;
-    if (!compareFeatureStructs(p_Supported.Vulkan12, p_Requested.Vulkan12))
+    if (!compareFeatureStructs(supported.Vulkan12, requested.Vulkan12))
         return false;
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (!compareFeatureStructs(p_Supported.Vulkan13, p_Requested.Vulkan13))
+    if (!compareFeatureStructs(supported.Vulkan13, requested.Vulkan13))
         return false;
 #endif
 #ifdef VKIT_API_VERSION_1_4
-    if (!compareFeatureStructs(p_Supported.Vulkan14, p_Requested.Vulkan14))
+    if (!compareFeatureStructs(supported.Vulkan14, requested.Vulkan14))
         return false;
 #endif
     return true;
 }
 
 #ifdef VK_KHR_surface
-static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *p_Table,
-                                                                             const VkPhysicalDevice p_Device,
-                                                                             const VkSurfaceKHR p_Surface)
+static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *table,
+                                                                             const VkPhysicalDevice device,
+                                                                             const VkSurfaceKHR surface)
 {
     using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
     u32 formatCount = 0;
     u32 modeCount = 0;
 
-    VkResult result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, nullptr);
+    VkResult result = table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
     if (result != VK_SUCCESS)
         return Res::Error(result);
 
-    result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount, nullptr);
+    result = table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, nullptr);
     if (result != VK_SUCCESS)
         return Res::Error(result);
 
@@ -275,19 +275,19 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
         return Res::Error(Error_NoSurfaceCapabilities);
 
     PhysicalDevice::SwapChainSupportDetails details;
-    result = p_Table->GetPhysicalDeviceSurfaceCapabilitiesKHR(p_Device, p_Surface, &details.Capabilities);
+    result = table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities);
     if (result != VK_SUCCESS)
         return Res::Error(result);
 
     details.Formats.Resize(formatCount);
     details.PresentModes.Resize(modeCount);
 
-    result = p_Table->GetPhysicalDeviceSurfaceFormatsKHR(p_Device, p_Surface, &formatCount, details.Formats.GetData());
+    result = table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result);
 
-    result = p_Table->GetPhysicalDeviceSurfacePresentModesKHR(p_Device, p_Surface, &modeCount,
-                                                              details.PresentModes.GetData());
+    result =
+        table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, details.PresentModes.GetData());
     if (result != VK_SUCCESS)
         return Res::Error(result);
 
@@ -296,51 +296,51 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
 #endif
 
 #if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
-template <typename T2, typename T1> void createChain(T2 &p_Chain, T1 &p_Properties, const u32 p_ApiVersion)
+template <typename T2, typename T1> void createChain(T2 &chain, T1 &properties, const u32 apiVersion)
 {
 #    ifndef VKIT_API_VERSION_1_2
-    chain.pNext = p_Properties.Next;
+    chain.pNext = properties.Next;
     return;
 #    else
-    if (p_ApiVersion < VKIT_API_VERSION_1_2)
+    if (apiVersion < VKIT_API_VERSION_1_2)
     {
-        p_Chain.pNext = p_Properties.Next;
+        chain.pNext = properties.Next;
         return;
     }
-    p_Chain.pNext = &p_Properties.Vulkan11;
-    p_Properties.Vulkan11.pNext = &p_Properties.Vulkan12;
-    p_Properties.Vulkan12.pNext = p_Properties.Next;
+    chain.pNext = &properties.Vulkan11;
+    properties.Vulkan11.pNext = &properties.Vulkan12;
+    properties.Vulkan12.pNext = properties.Next;
 #        ifdef VKIT_API_VERSION_1_3
-    if (p_ApiVersion >= VKIT_API_VERSION_1_3)
+    if (apiVersion >= VKIT_API_VERSION_1_3)
     {
-        p_Properties.Vulkan12.pNext = &p_Properties.Vulkan13;
-        p_Properties.Vulkan13.pNext = p_Properties.Next;
+        properties.Vulkan12.pNext = &properties.Vulkan13;
+        properties.Vulkan13.pNext = properties.Next;
     }
 #            ifdef VKIT_API_VERSION_1_4
-    if (p_ApiVersion >= VKIT_API_VERSION_1_4)
+    if (apiVersion >= VKIT_API_VERSION_1_4)
     {
-        p_Properties.Vulkan13.pNext = &p_Properties.Vulkan14;
-        p_Properties.Vulkan14.pNext = p_Properties.Next;
+        properties.Vulkan13.pNext = &properties.Vulkan14;
+        properties.Vulkan14.pNext = properties.Next;
     }
 #            endif
 #        endif
 #    endif
 }
-VkPhysicalDeviceFeatures2KHR DeviceFeatures::CreateChain(const u32 p_ApiVersion)
+VkPhysicalDeviceFeatures2KHR DeviceFeatures::CreateChain(const u32 apiVersion)
 {
     VkPhysicalDeviceFeatures2KHR features{};
     features.features = Core;
     features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-    createChain<VkPhysicalDeviceFeatures2KHR>(features, *this, p_ApiVersion);
+    createChain<VkPhysicalDeviceFeatures2KHR>(features, *this, apiVersion);
     return features;
 }
 
-VkPhysicalDeviceProperties2KHR DeviceProperties::CreateChain(const u32 p_ApiVersion)
+VkPhysicalDeviceProperties2KHR DeviceProperties::CreateChain(const u32 apiVersion)
 {
     VkPhysicalDeviceProperties2KHR properties{};
     properties.properties = Core;
     properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-    createChain<VkPhysicalDeviceProperties2KHR>(properties, *this, p_ApiVersion);
+    createChain<VkPhysicalDeviceProperties2KHR>(properties, *this, apiVersion);
     return properties;
 }
 #endif
@@ -354,14 +354,14 @@ Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
     return devices[0];
 }
 
-Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice p_Device) const
+Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice device) const
 {
     using JudgeResult = Result<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     const Vulkan::InstanceTable *table = instanceInfo.Table;
 
     VkPhysicalDeviceProperties quickProperties;
-    table->GetPhysicalDeviceProperties(p_Device, &quickProperties);
+    table->GetPhysicalDeviceProperties(device, &quickProperties);
     const char *name = quickProperties.deviceName;
 
     if (m_Name && strcmp(m_Name, name) != 0)
@@ -383,14 +383,14 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
     u32 extensionCount;
-    VkResult result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, nullptr);
+    VkResult result = table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             result,
             TKit::Format("[VULKIT][P-DEVICE] Failed to get the number of device extensions for the device: {}", name));
 
     TKit::StackArray<VkExtensionProperties> extensionsProps{extensionCount};
-    result = table->EnumerateDeviceExtensionProperties(p_Device, nullptr, &extensionCount, extensionsProps.GetData());
+    result = table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData());
     if (result != VK_SUCCESS)
         return JudgeResult::Error(
             result, TKit::Format("[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name));
@@ -423,7 +423,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         }
 
     DeviceSelectorFlags flags = m_Flags;
-    const auto checkFlags = [&flags](const DeviceSelectorFlags p_Flags) -> bool { return flags & p_Flags; };
+    const auto checkFlags = [&flags](const DeviceSelectorFlags pflags) -> bool { return pflags & flags; };
 
     if (checkFlags(DeviceSelectorFlag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
         enabledExtensions.Append("VK_KHR_portability_subset");
@@ -432,35 +432,35 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         enabledExtensions.Append("VK_KHR_swapchain");
 
     u32 familyCount;
-    table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, nullptr);
+    table->GetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
 
     TKit::StackArray<VkQueueFamilyProperties> families{familyCount};
-    table->GetPhysicalDeviceQueueFamilyProperties(p_Device, &familyCount, families.GetData());
+    table->GetPhysicalDeviceQueueFamilyProperties(device, &familyCount, families.GetData());
 
-    const auto compatibleQueueIndex = [&](const VkQueueFlags p_Flags) -> u32 {
+    const auto compatibleQueueIndex = [&](const VkQueueFlags flags) -> u32 {
         for (u32 i = 0; i < familyCount; ++i)
-            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags)
+            if (families[i].queueCount > 0 && (families[i].queueFlags & flags) == flags)
                 return i;
 
         return TKIT_U32_MAX;
     };
-    const auto dedicatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
-                                                              const VkQueueFlags p_ForbiddenFlags) -> u32 {
+    const auto dedicatedQueueIndex = [&families, familyCount](const VkQueueFlags flags,
+                                                              const VkQueueFlags forbiddenFlags) -> u32 {
         for (u32 i = 0; i < familyCount; ++i)
-            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
-                !(families[i].queueFlags & p_ForbiddenFlags))
+            if (families[i].queueCount > 0 && (families[i].queueFlags & flags) == flags &&
+                !(families[i].queueFlags & forbiddenFlags))
                 return i;
 
         return TKIT_U32_MAX;
     };
-    const auto separatedQueueIndex = [&families, familyCount](const VkQueueFlags p_Flags,
-                                                              const VkQueueFlags p_ForbiddenFlags) -> u32 {
+    const auto separatedQueueIndex = [&families, familyCount](const VkQueueFlags flags,
+                                                              const VkQueueFlags forbiddenFlags) -> u32 {
         u32 index = TKIT_U32_MAX;
         for (u32 i = 0; i < familyCount; ++i)
-            if (families[i].queueCount > 0 && (families[i].queueFlags & p_Flags) == p_Flags &&
+            if (families[i].queueCount > 0 && (families[i].queueFlags & flags) == flags &&
                 !(families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT))
             {
-                if (!(families[i].queueFlags & p_ForbiddenFlags))
+                if (!(families[i].queueFlags & forbiddenFlags))
                     return i;
                 index = i;
             }
@@ -468,14 +468,14 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     };
 
 #ifdef VK_KHR_surface
-    const auto presentQueueIndex = [familyCount, p_Device, &table](const VkSurfaceKHR p_Surface) -> u32 {
-        if (!p_Surface || !table->vkGetPhysicalDeviceSurfaceSupportKHR)
+    const auto presentQueueIndex = [familyCount, device, &table](const VkSurfaceKHR surface) -> u32 {
+        if (!surface || !table->vkGetPhysicalDeviceSurfaceSupportKHR)
             return TKIT_U32_MAX;
 
         for (u32 i = 0; i < familyCount; ++i)
         {
             VkBool32 presentSupport = VK_FALSE;
-            const VkResult result = table->GetPhysicalDeviceSurfaceSupportKHR(p_Device, i, p_Surface, &presentSupport);
+            const VkResult result = table->GetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
             if (result == VK_SUCCESS && presentSupport == VK_TRUE)
                 return i;
         }
@@ -552,9 +552,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         deviceFlags |= DeviceFlag_HasTransferQueue;
     }
 
-    const auto compareFlags = [&flags, deviceFlags](const DeviceSelectorFlags p_SelectorFlag,
-                                                    const DeviceFlags p_DeviceFlag) -> bool {
-        return !(flags & p_SelectorFlag) || (deviceFlags & p_DeviceFlag);
+    const auto compareFlags = [&flags, deviceFlags](const DeviceSelectorFlags selectorFlag,
+                                                    const DeviceFlags deviceFlag) -> bool {
+        return !(flags & selectorFlag) || (deviceFlags & deviceFlag);
     };
 
     if (!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue))
@@ -592,7 +592,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
     {
-        const auto qresult = querySwapChainSupport(table, p_Device, m_Surface);
+        const auto qresult = querySwapChainSupport(table, device, m_Surface);
         TKIT_RETURN_ON_ERROR(qresult);
     }
 #endif
@@ -637,13 +637,13 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
         if (v11)
         {
-            table->GetPhysicalDeviceFeatures2(p_Device, &fchain);
-            table->GetPhysicalDeviceProperties2(p_Device, &pchain);
+            table->GetPhysicalDeviceFeatures2(device, &fchain);
+            table->GetPhysicalDeviceProperties2(device, &pchain);
         }
         else
         {
-            table->GetPhysicalDeviceFeatures2KHR(p_Device, &fchain);
-            table->GetPhysicalDeviceProperties2KHR(p_Device, &pchain);
+            table->GetPhysicalDeviceFeatures2KHR(device, &fchain);
+            table->GetPhysicalDeviceProperties2KHR(device, &pchain);
         }
 
         features.Core = fchain.features;
@@ -651,12 +651,12 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     }
     else
     {
-        table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
-        table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
+        table->GetPhysicalDeviceFeatures(device, &features.Core);
+        table->GetPhysicalDeviceProperties(device, &properties.Core);
     }
 #else
-    table->GetPhysicalDeviceFeatures(p_Device, &features.Core);
-    table->GetPhysicalDeviceProperties(p_Device, &properties.Core);
+    table->GetPhysicalDeviceFeatures(device, &features.Core);
+    table->GetPhysicalDeviceProperties(device, &properties.Core);
 #endif
 
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
@@ -693,7 +693,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         fullySuitable = false;
     }
 
-    table->GetPhysicalDeviceMemoryProperties(p_Device, &properties.Memory);
+    table->GetPhysicalDeviceMemoryProperties(device, &properties.Memory);
 
     TKIT_ASSERT(m_RequestedMemory >= m_RequiredMemory,
                 "[VULKIT][P-DEVICE] Requested memory ({}) must be greater than or equal to required memory ({})",
@@ -764,10 +764,10 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     deviceInfo.EnabledFeatures = m_RequiredFeatures;
     deviceInfo.Properties = properties;
 
-    return JudgeResult::Ok(p_Device, deviceInfo);
+    return JudgeResult::Ok(device, deviceInfo);
 }
 
-PhysicalDevice::Selector::Selector(const Instance *p_Instance, const u32 p_MaxExtensions) : m_Instance(p_Instance)
+PhysicalDevice::Selector::Selector(const Instance *instance, const u32 maxExtensions) : m_Instance(instance)
 {
 #ifdef VKIT_API_VERSION_1_2
     m_RequiredFeatures.Vulkan11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
@@ -780,8 +780,8 @@ PhysicalDevice::Selector::Selector(const Instance *p_Instance, const u32 p_MaxEx
     m_RequiredFeatures.Vulkan14.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
 #endif
 
-    m_RequestedExtensions.Reserve(p_MaxExtensions);
-    m_RequiredExtensions.Reserve(p_MaxExtensions);
+    m_RequestedExtensions.Reserve(maxExtensions);
+    m_RequiredExtensions.Reserve(maxExtensions);
 
     if (!(m_Instance->GetInfo().Flags & InstanceFlag_Headless))
         m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
@@ -829,136 +829,136 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
         devices.Append(judgeResult);
     }
 
-    std::stable_partition(devices.begin(), devices.end(), [](const Result<PhysicalDevice> &p_Device) {
-        return p_Device && (p_Device.GetValue().GetInfo().Flags & DeviceFlag_Optimal);
+    std::stable_partition(devices.begin(), devices.end(), [](const Result<PhysicalDevice> &device) {
+        return device && (device.GetValue().GetInfo().Flags & DeviceFlag_Optimal);
     });
     return devices;
 }
 
-bool PhysicalDevice::AreFeaturesSupported(const DeviceFeatures &p_Features) const
+bool PhysicalDevice::AreFeaturesSupported(const DeviceFeatures &features) const
 {
-    return compareFeatures(m_Info.AvailableFeatures, p_Features);
+    return compareFeatures(m_Info.AvailableFeatures, features);
 }
-bool PhysicalDevice::AreFeaturesEnabled(const DeviceFeatures &p_Features) const
+bool PhysicalDevice::AreFeaturesEnabled(const DeviceFeatures &features) const
 {
-    return compareFeatures(m_Info.EnabledFeatures, p_Features);
+    return compareFeatures(m_Info.EnabledFeatures, features);
 }
-bool PhysicalDevice::EnableFeatures(const DeviceFeatures &p_Features)
+bool PhysicalDevice::EnableFeatures(const DeviceFeatures &features)
 {
-    if (!AreFeaturesSupported(p_Features))
+    if (!AreFeaturesSupported(features))
         return false;
 
-    orFeatures(m_Info.EnabledFeatures, p_Features);
+    orFeatures(m_Info.EnabledFeatures, features);
     return true;
 }
 
-bool PhysicalDevice::IsExtensionSupported(const char *p_Extension) const
+bool PhysicalDevice::IsExtensionSupported(const char *extension) const
 {
-    return contains(m_Info.AvailableExtensions, p_Extension);
+    return contains(m_Info.AvailableExtensions, extension);
 }
-bool PhysicalDevice::IsExtensionEnabled(const char *p_Extension) const
+bool PhysicalDevice::IsExtensionEnabled(const char *extension) const
 {
-    return contains(m_Info.EnabledExtensions, p_Extension);
+    return contains(m_Info.EnabledExtensions, extension);
 }
-bool PhysicalDevice::EnableExtension(const char *p_Extension)
+bool PhysicalDevice::EnableExtension(const char *extension)
 {
-    if (IsExtensionEnabled(p_Extension))
+    if (IsExtensionEnabled(extension))
         return true;
-    if (!IsExtensionSupported(p_Extension))
+    if (!IsExtensionSupported(extension))
         return false;
-    m_Info.EnabledExtensions.Append(p_Extension);
+    m_Info.EnabledExtensions.Append(extension);
     return true;
 }
 
 #ifdef VK_KHR_surface
-Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(
-    const Instance::Proxy &p_Instance, const VkSurfaceKHR p_Surface) const
+Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(const Instance::Proxy &instance,
+                                                                                      const VkSurfaceKHR surface) const
 {
-    return querySwapChainSupport(p_Instance.Table, m_Device, p_Surface);
+    return querySwapChainSupport(instance.Table, m_Device, surface);
 }
 #endif
 
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *p_Name)
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *name)
 {
-    m_Name = p_Name;
+    m_Name = name;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const DeviceType p_Type)
+PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const DeviceType type)
 {
-    m_PreferredType = p_Type;
+    m_PreferredType = type;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Version)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 version)
 {
-    m_RequiredApiVersion = p_Version;
+    m_RequiredApiVersion = version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequestedApiVersion = m_RequiredApiVersion;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireApiVersion(u32 major, u32 minor, u32 patch)
 {
-    return RequireApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return RequireApiVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Version)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 version)
 {
-    m_RequestedApiVersion = p_Version;
+    m_RequestedApiVersion = version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequiredApiVersion = m_RequestedApiVersion;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 major, u32 minor, u32 patch)
 {
-    return RequestApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return RequestApiVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *p_Extension)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *extension)
 {
-    m_RequiredExtensions.Append(p_Extension);
+    m_RequiredExtensions.Append(extension);
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *p_Extension)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *extension)
 {
-    m_RequestedExtensions.Append(p_Extension);
+    m_RequestedExtensions.Append(extension);
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize p_Size)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize size)
 {
-    m_RequiredMemory = p_Size;
+    m_RequiredMemory = size;
     if (m_RequestedMemory < m_RequiredMemory)
         m_RequestedMemory = m_RequiredMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDeviceSize p_Size)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequestMemory(const VkDeviceSize size)
 {
-    m_RequestedMemory = p_Size;
+    m_RequestedMemory = size;
     if (m_RequestedMemory < m_RequiredMemory)
         m_RequiredMemory = m_RequestedMemory;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const DeviceFeatures &p_Features)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RequireFeatures(const DeviceFeatures &features)
 {
     // void *next = m_RequiredFeatures.Next;
-    m_RequiredFeatures = p_Features;
+    m_RequiredFeatures = features;
     // m_RequiredFeatures.Next = next;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const DeviceSelectorFlags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetFlags(const DeviceSelectorFlags flags)
 {
-    m_Flags = p_Flags;
+    m_Flags = flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const DeviceSelectorFlags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::AddFlags(const DeviceSelectorFlags flags)
 {
-    m_Flags |= p_Flags;
+    m_Flags |= flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const DeviceSelectorFlags p_Flags)
+PhysicalDevice::Selector &PhysicalDevice::Selector::RemoveFlags(const DeviceSelectorFlags flags)
 {
-    m_Flags &= ~p_Flags;
+    m_Flags &= ~flags;
     return *this;
 }
-PhysicalDevice::Selector &PhysicalDevice::Selector::SetSurface(const VkSurfaceKHR p_Surface)
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetSurface(const VkSurfaceKHR surface)
 {
-    m_Surface = p_Surface;
+    m_Surface = surface;
     return *this;
 }
 

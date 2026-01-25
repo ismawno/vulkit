@@ -33,42 +33,42 @@ class SwapChain
     class Builder
     {
       public:
-        Builder(const LogicalDevice *p_Device, VkSurfaceKHR p_Surface) : m_Device(p_Device), m_Surface(p_Surface)
+        Builder(const LogicalDevice *device, VkSurfaceKHR surface) : m_Device(device), m_Surface(surface)
         {
         }
 
         VKIT_NO_DISCARD Result<SwapChain> Build() const;
 
-        Builder &RequestSurfaceFormat(VkSurfaceFormatKHR p_Format);
-        Builder &AllowSurfaceFormat(VkSurfaceFormatKHR p_Format);
+        Builder &RequestSurfaceFormat(VkSurfaceFormatKHR format);
+        Builder &AllowSurfaceFormat(VkSurfaceFormatKHR format);
 
-        Builder &RequestPresentMode(VkPresentModeKHR p_Mode);
-        Builder &AllowPresentMode(VkPresentModeKHR p_Mode);
+        Builder &RequestPresentMode(VkPresentModeKHR mode);
+        Builder &AllowPresentMode(VkPresentModeKHR mode);
 
-        Builder &RequestImageCount(u32 p_Images);
-        Builder &RequireImageCount(u32 p_Images);
+        Builder &RequestImageCount(u32 images);
+        Builder &RequireImageCount(u32 images);
 
-        Builder &RequestExtent(u32 p_Width, u32 p_Height);
-        Builder &RequestExtent(const VkExtent2D &p_Extent);
+        Builder &RequestExtent(u32 width, u32 height);
+        Builder &RequestExtent(const VkExtent2D &extent);
 
-        Builder &SetImageArrayLayers(u32 p_Layers);
+        Builder &SetImageArrayLayers(u32 layers);
 
-        Builder &SetFlags(SwapChainBuilderFlags p_Flags);
-        Builder &AddFlags(SwapChainBuilderFlags p_Flags);
-        Builder &RemoveFlags(SwapChainBuilderFlags p_Flags);
+        Builder &SetFlags(SwapChainBuilderFlags flags);
+        Builder &AddFlags(SwapChainBuilderFlags flags);
+        Builder &RemoveFlags(SwapChainBuilderFlags flags);
 
-        Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
-        Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
-        Builder &RemoveCreateFlags(VkSwapchainCreateFlagsKHR p_Flags);
+        Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR flags);
+        Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR flags);
+        Builder &RemoveCreateFlags(VkSwapchainCreateFlagsKHR flags);
 
-        Builder &SetImageUsageFlags(VkImageUsageFlags p_Flags);
-        Builder &AddImageUsageFlags(VkImageUsageFlags p_Flags);
-        Builder &RemoveImageUsageFlags(VkImageUsageFlags p_Flags);
+        Builder &SetImageUsageFlags(VkImageUsageFlags flags);
+        Builder &AddImageUsageFlags(VkImageUsageFlags flags);
+        Builder &RemoveImageUsageFlags(VkImageUsageFlags flags);
 
-        Builder &SetTransformBit(VkSurfaceTransformFlagBitsKHR p_Transform);
-        Builder &SetCompositeAlphaBit(VkCompositeAlphaFlagBitsKHR p_Alpha);
+        Builder &SetTransformBit(VkSurfaceTransformFlagBitsKHR transform);
+        Builder &SetCompositeAlphaBit(VkCompositeAlphaFlagBitsKHR alpha);
 
-        Builder &SetOldSwapChain(VkSwapchainKHR p_OldSwapChain);
+        Builder &SetOldSwapChain(VkSwapchainKHR oldSwapChain);
 
       private:
         const LogicalDevice *m_Device;
@@ -107,9 +107,9 @@ class SwapChain
     };
 
     SwapChain() = default;
-    SwapChain(const ProxyDevice &p_Device, VkSwapchainKHR p_SwapChain, const TKit::TierArray<DeviceImage> &p_Images,
-              const Info &p_Info)
-        : m_Device(p_Device), m_SwapChain(p_SwapChain), m_Images(p_Images), m_Info(p_Info)
+    SwapChain(const ProxyDevice &device, VkSwapchainKHR swapChain, const TKit::TierArray<DeviceImage> &images,
+              const Info &info)
+        : m_Device(device), m_SwapChain(swapChain), m_Images(images), m_Info(info)
     {
     }
 
@@ -124,13 +124,13 @@ class SwapChain
         return m_SwapChain;
     }
 
-    const DeviceImage &GetImage(const u32 p_Index) const
+    const DeviceImage &GetImage(const u32 index) const
     {
-        return m_Images[p_Index];
+        return m_Images[index];
     }
-    DeviceImage &GetImage(const u32 p_Index)
+    DeviceImage &GetImage(const u32 index)
     {
-        return m_Images[p_Index];
+        return m_Images[index];
     }
     u32 GetImageCount() const
     {

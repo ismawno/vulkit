@@ -15,22 +15,22 @@ class PipelineLayout
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device) : m_Device(p_Device)
+        Builder(const ProxyDevice &device) : m_Device(device)
         {
         }
 
         Result<PipelineLayout> Build() const;
 
-        Builder &AddDescriptorSetLayout(VkDescriptorSetLayout p_Layout);
-        Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Size, u32 p_Offset = 0);
-        template <typename T> Builder &AddPushConstantRange(VkShaderStageFlags p_Stages, u32 p_Offset = 0)
+        Builder &AddDescriptorSetLayout(VkDescriptorSetLayout layout);
+        Builder &AddPushConstantRange(VkShaderStageFlags stages, u32 size, u32 offset = 0);
+        template <typename T> Builder &AddPushConstantRange(VkShaderStageFlags stages, u32 offset = 0)
         {
-            return AddPushConstantRange(p_Stages, sizeof(T), p_Offset);
+            return AddPushConstantRange(stages, sizeof(T), offset);
         }
 
-        Builder &SetFlags(VkPipelineLayoutCreateFlags p_Flags);
-        Builder &AddFlags(VkPipelineLayoutCreateFlags p_Flags);
-        Builder &RemoveFlags(VkPipelineLayoutCreateFlags p_Flags);
+        Builder &SetFlags(VkPipelineLayoutCreateFlags flags);
+        Builder &AddFlags(VkPipelineLayoutCreateFlags flags);
+        Builder &RemoveFlags(VkPipelineLayoutCreateFlags flags);
 
       private:
         ProxyDevice m_Device;
@@ -47,8 +47,8 @@ class PipelineLayout
     };
 
     PipelineLayout() = default;
-    PipelineLayout(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout, const Info &p_Info)
-        : m_Device(p_Device), m_Layout(p_Layout), m_Info(p_Info)
+    PipelineLayout(const ProxyDevice &device, const VkPipelineLayout layout, const Info &info)
+        : m_Device(device), m_Layout(layout), m_Info(info)
     {
     }
 

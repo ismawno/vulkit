@@ -15,7 +15,7 @@ enum QueueType : u32
     Queue_Count,
 };
 
-const char *ToString(QueueType p_Type);
+const char *ToString(QueueType type);
 
 class LogicalDevice;
 
@@ -27,14 +27,14 @@ class Queue
   public:
     Queue() = default;
 
-    Queue(const ProxyDevice &p_Device, const VkQueue p_Queue, const u32 p_Family)
-        : m_Device(p_Device), m_Queue(p_Queue), m_Family(p_Family)
+    Queue(const ProxyDevice &device, const VkQueue queue, const u32 family)
+        : m_Device(device), m_Queue(queue), m_Family(family)
     {
     }
 
-    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD Result<> Submit(TKit::Span<const VkSubmitInfo> info, VkFence fence = VK_NULL_HANDLE);
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> p_Info, VkFence p_Fence = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD Result<> Submit2(TKit::Span<const VkSubmitInfo2KHR> info, VkFence fence = VK_NULL_HANDLE);
 #endif
 
     VKIT_NO_DISCARD Result<> WaitIdle() const;
@@ -78,12 +78,12 @@ class Queue
 
     void DestroyTimeline();
 
-    void TakeTimelineSemaphoreOwnership(const VkSemaphore p_Timeline, const u64 p_InitialSubmissionCount = 0)
+    void TakeTimelineSemaphoreOwnership(const VkSemaphore timeline, const u64 initialSubmissionCount = 0)
     {
         TKIT_ASSERT(!m_Timeline, "[ONYX] The current queue already has a timeline semaphore. Ensure the previous one "
                                  "is destroyed with DestroyTimelineSemaphore()");
-        m_Timeline = p_Timeline;
-        m_TimelineCounter = p_InitialSubmissionCount;
+        m_Timeline = timeline;
+        m_TimelineCounter = initialSubmissionCount;
     }
 
     VKIT_NO_DISCARD Result<u64> UpdateCompletedTimeline();

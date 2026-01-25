@@ -14,11 +14,11 @@ namespace VKit
 class Shader
 {
   public:
-    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &p_Device, std::string_view p_SpirvPath);
-    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &p_Device, const u32 *p_Spirv, size_t p_Size);
+    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, std::string_view spirvPath);
+    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, const u32 *spirv, size_t size);
 
     Shader() = default;
-    Shader(const ProxyDevice &p_Device, VkShaderModule p_Module) : m_Device(p_Device), m_Module(p_Module)
+    Shader(const ProxyDevice &device, VkShaderModule module) : m_Device(device), m_Module(module)
     {
     }
 

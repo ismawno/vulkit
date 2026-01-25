@@ -14,27 +14,27 @@ class HostBuffer
 {
   public:
     HostBuffer() = default;
-    HostBuffer(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize,
-               VkDeviceSize p_Alignment = alignof(std::max_align_t));
+    HostBuffer(VkDeviceSize instanceCount, VkDeviceSize instanceSize,
+               VkDeviceSize alignment = alignof(std::max_align_t));
 
-    template <typename T> static HostBuffer Create(const VkDeviceSize p_InstanceCount)
+    template <typename T> static HostBuffer Create(const VkDeviceSize instanceCount)
     {
-        return HostBuffer(p_InstanceCount, sizeof(T), alignof(T));
+        return HostBuffer(instanceCount, sizeof(T), alignof(T));
     }
 
-    const void *ReadAt(const u32 p_Index) const
+    const void *ReadAt(const u32 index) const
     {
-        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
+        TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
+        return static_cast<std::byte *>(m_Data) + m_InstanceSize * index;
     }
-    void *ReadAt(const u32 p_Index)
+    void *ReadAt(const u32 index)
     {
-        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_InstanceSize * p_Index;
+        TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
+        return static_cast<std::byte *>(m_Data) + m_InstanceSize * index;
     }
 
-    void Write(const void *p_Data, const VkBufferCopy &p_Copy);
-    void WriteAt(u32 p_Index, const void *p_Data);
+    void Write(const void *data, const VkBufferCopy &copy);
+    void WriteAt(u32 index, const void *data);
 
     void Destroy();
 
@@ -47,7 +47,7 @@ class HostBuffer
         return m_Data;
     }
 
-    void Resize(VkDeviceSize p_InstanceCount);
+    void Resize(VkDeviceSize instanceCount);
 
     operator bool() const
     {

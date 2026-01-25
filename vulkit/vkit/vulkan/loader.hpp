@@ -4,7 +4,7 @@
 namespace VKit::Vulkan
 {
 
-void Load(void *p_Library);
+void Load(void *library);
 
 #if defined(VKIT_API_VERSION_1_0)
 extern PFN_vkCreateInstance vkCreateInstance;
@@ -35,7 +35,7 @@ VKIT_NO_DISCARD VkResult EnumerateInstanceExtensionProperties(const char *pLayer
 
 struct InstanceTable
 {
-    static InstanceTable Create(VkInstance p_Instance);
+    static InstanceTable Create(VkInstance instance);
 #if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyInstance vkDestroyInstance = VK_NULL_HANDLE;
     void DestroyInstance(VkInstance instance, const VkAllocationCallbacks *pAllocator) const;
@@ -828,7 +828,7 @@ struct InstanceTable
 };
 struct DeviceTable
 {
-    static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);
+    static DeviceTable Create(VkDevice device, const InstanceTable &instanceFuncs);
 #if defined(VKIT_API_VERSION_1_0)
     PFN_vkDestroyDevice vkDestroyDevice = VK_NULL_HANDLE;
     void DestroyDevice(VkDevice device, const VkAllocationCallbacks *pAllocator) const;

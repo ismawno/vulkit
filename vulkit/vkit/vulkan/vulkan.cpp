@@ -7,9 +7,9 @@ namespace VKit
 {
 using namespace Detail;
 
-template <typename T> static std::string formatMessage(const VkResult p_Result, const T &p_Message)
+template <typename T> static std::string formatMessage(const VkResult result, const T &message)
 {
-    return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(p_Result), p_Message);
+    return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
 }
 
 std::string Error::ToString() const
@@ -24,15 +24,15 @@ std::string Error::ToString() const
     return str;
 }
 #ifdef TKIT_ENABLE_ASSERTS
-void CheckExpression(const VkResult p_Result)
+void CheckExpression(const VkResult result)
 {
-    TKIT_ASSERT(p_Result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(p_Result));
+    TKIT_ASSERT(result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(result));
 }
 #endif
 
-void DeletionQueue::Push(std::function<void()> &&p_Deleter)
+void DeletionQueue::Push(std::function<void()> &&deleter)
 {
-    m_Deleters.Append(std::move(p_Deleter));
+    m_Deleters.Append(std::move(deleter));
 }
 void DeletionQueue::Flush()
 {
@@ -45,9 +45,9 @@ void DeletionQueue::Clear()
     m_Deleters.Clear();
 }
 
-const char *ErrorCodeToString(const ErrorCode p_Code)
+const char *ErrorCodeToString(const ErrorCode code)
 {
-    switch (p_Code)
+    switch (code)
     {
     case Error_VulkanError:
         return "VulkanError";
@@ -97,9 +97,9 @@ const char *ErrorCodeToString(const ErrorCode p_Code)
     return "Unknown";
 }
 
-const char *VulkanResultToString(const VkResult p_Result)
+const char *VulkanResultToString(const VkResult result)
 {
-    switch (p_Result)
+    switch (result)
     {
     case VK_SUCCESS:
         return "VK_SUCCESS";

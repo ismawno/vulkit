@@ -35,14 +35,14 @@ void DescriptorPool::Destroy()
     }
 }
 
-Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Layout) const
+Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout layout) const
 {
     VkDescriptorSet set;
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = m_Pool;
     allocInfo.descriptorSetCount = 1;
-    allocInfo.pSetLayouts = &p_Layout;
+    allocInfo.pSetLayouts = &layout;
 
     const VkResult result = m_Device.Table->AllocateDescriptorSets(m_Device, &allocInfo, &set);
     if (result != VK_SUCCESS)
@@ -51,9 +51,9 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout p_Lay
     return DescriptorSet{m_Device, set};
 }
 
-Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> p_Sets) const
+Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> sets) const
 {
-    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, p_Sets.GetSize(), p_Sets.GetData());
+    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, sets.GetSize(), sets.GetData());
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
     return Result<>::Ok();
@@ -67,29 +67,29 @@ Result<> DescriptorPool::Reset()
     return Result<>::Ok();
 }
 
-DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 p_MaxSets)
+DescriptorPool::Builder &DescriptorPool::Builder::SetMaxSets(u32 maxSets)
 {
-    m_MaxSets = p_MaxSets;
+    m_MaxSets = maxSets;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags p_Flags)
+DescriptorPool::Builder &DescriptorPool::Builder::SetFlags(VkDescriptorPoolCreateFlags flags)
 {
-    m_Flags = p_Flags;
+    m_Flags = flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags p_Flags)
+DescriptorPool::Builder &DescriptorPool::Builder::AddFlags(VkDescriptorPoolCreateFlags flags)
 {
-    m_Flags |= p_Flags;
+    m_Flags |= flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags p_Flags)
+DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCreateFlags flags)
 {
-    m_Flags &= ~p_Flags;
+    m_Flags &= ~flags;
     return *this;
 }
-DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType p_Type, u32 p_Size)
+DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType type, u32 size)
 {
-    m_PoolSizes.Append(VkDescriptorPoolSize{p_Type, p_Size});
+    m_PoolSizes.Append(VkDescriptorPoolSize{type, size});
     return *this;
 }
 

@@ -13,26 +13,26 @@ namespace VKit
 class CommandPool
 {
   public:
-    VKIT_NO_DISCARD static Result<CommandPool> Create(const ProxyDevice &p_Device, u32 p_QueueFamilyIndex,
-                                                      VkCommandPoolCreateFlags p_Flags = 0);
+    VKIT_NO_DISCARD static Result<CommandPool> Create(const ProxyDevice &device, u32 queueFamilyIndex,
+                                                      VkCommandPoolCreateFlags flags = 0);
 
     CommandPool() = default;
-    CommandPool(const ProxyDevice &p_Device, const VkCommandPool p_Pool) : m_Device(p_Device), m_Pool(p_Pool)
+    CommandPool(const ProxyDevice &device, const VkCommandPool pool) : m_Device(device), m_Pool(pool)
     {
     }
 
     void Destroy();
 
     VKIT_NO_DISCARD Result<VkCommandBuffer> Allocate(
-        VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+        VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    VKIT_NO_DISCARD Result<> Allocate(TKit::Span<VkCommandBuffer> p_CommandBuffers,
-                                      VkCommandBufferLevel p_Level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+    VKIT_NO_DISCARD Result<> Allocate(TKit::Span<VkCommandBuffer> commandBuffers,
+                                      VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    void Deallocate(TKit::Span<const VkCommandBuffer> p_CommandBuffers) const;
-    VKIT_NO_DISCARD Result<> Reset(VkCommandPoolResetFlags p_Flags = 0) const;
+    void Deallocate(TKit::Span<const VkCommandBuffer> commandBuffers) const;
+    VKIT_NO_DISCARD Result<> Reset(VkCommandPoolResetFlags flags = 0) const;
     VKIT_NO_DISCARD Result<VkCommandBuffer> BeginSingleTimeCommands() const;
-    VKIT_NO_DISCARD Result<> EndSingleTimeCommands(VkCommandBuffer p_CommandBuffer, VkQueue p_Queue) const;
+    VKIT_NO_DISCARD Result<> EndSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue queue) const;
 
     const ProxyDevice &GetDevice() const
     {

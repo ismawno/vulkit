@@ -27,14 +27,14 @@ void DescriptorSetLayout::Destroy()
         m_Layout = VK_NULL_HANDLE;
     }
 }
-DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType p_Type,
-                                                                       VkShaderStageFlags p_StageFlags, u32 p_Count)
+DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(VkDescriptorType type,
+                                                                       VkShaderStageFlags stageFlags, u32 count)
 {
     VkDescriptorSetLayoutBinding binding{};
     binding.binding = m_Bindings.GetSize();
-    binding.descriptorType = p_Type;
-    binding.descriptorCount = p_Count;
-    binding.stageFlags = p_StageFlags;
+    binding.descriptorType = type;
+    binding.descriptorCount = count;
+    binding.stageFlags = stageFlags;
     m_Bindings.Append(binding);
     return *this;
 }

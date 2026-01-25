@@ -7,54 +7,54 @@
 
 namespace VKit
 {
-static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT p_MessageType)
+static const char *toString(const VkDebugUtilsMessageTypeFlagsEXT messageType)
 {
-    if (p_MessageType == 7)
+    if (messageType == 7)
         return "General | Validation | Performance";
-    if (p_MessageType == 6)
+    if (messageType == 6)
         return "Validation | Performance";
-    if (p_MessageType == 5)
+    if (messageType == 5)
         return "General | Performance";
-    if (p_MessageType == 4)
+    if (messageType == 4)
         return "Performance";
-    if (p_MessageType == 3)
+    if (messageType == 3)
         return "General | Validation";
-    if (p_MessageType == 2)
+    if (messageType == 2)
         return "Validation";
-    if (p_MessageType == 1)
+    if (messageType == 1)
         return "General";
     return "Unknown";
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMessageSeverityFlagBitsEXT p_Severity,
-                                                           const VkDebugUtilsMessageTypeFlagsEXT p_MessageType,
-                                                           const VkDebugUtilsMessengerCallbackDataEXT *p_CallbackData,
+static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                                           const VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                           const VkDebugUtilsMessengerCallbackDataEXT *callbackData,
                                                            void *)
 {
-    switch (p_Severity)
+    switch (severity)
     {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        TKIT_LOG_DEBUG("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_DEBUG("[VULKIT][{}] {}", toString(messageType), callbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        TKIT_FATAL("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_FATAL("[VULKIT][{}] {}", toString(messageType), callbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        TKIT_LOG_WARNING("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_WARNING("[VULKIT][{}] {}", toString(messageType), callbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(messageType), callbackData->pMessage);
         break;
     default:
-        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(p_MessageType), p_CallbackData->pMessage);
+        TKIT_LOG_INFO("[VULKIT][{}] {}", toString(messageType), callbackData->pMessage);
         break;
     }
     return VK_FALSE;
 }
 
-static bool contains(const TKit::Span<const char *const> p_Extensions, const char *p_Extension)
+static bool contains(const TKit::Span<const char *const> extensions, const char *extension)
 {
-    return std::find(p_Extensions.begin(), p_Extensions.end(), p_Extension) != p_Extensions.end();
+    return std::find(extensions.begin(), extensions.end(), extension) != extensions.end();
 }
 
 Instance::Builder::Builder()
@@ -68,7 +68,7 @@ Instance::Builder::Builder()
 
 Result<Instance> Instance::Builder::Build() const
 {
-    const auto checkApiVersion = [](const u32 p_Version, const bool p_IsRequested) -> Result<u32> {
+    const auto checkApiVersion = [](const u32 pversion, const bool isRequested) -> Result<u32> {
 #ifdef VKIT_API_VERSION_1_1
         u32 version;
         const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
@@ -77,13 +77,13 @@ Result<Instance> Instance::Builder::Build() const
 #else
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
-        if (version < p_Version)
+        if (version < pversion)
             return Result<u32>::Error(Error_VersionMismatch,
                                       TKit::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
                                                    "not supported. The required version is {}.{}.{}",
-                                                   VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(p_Version)));
+                                                   VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
 
-        return p_IsRequested ? p_Version : version;
+        return isRequested ? pversion : version;
     };
 
     TKIT_ASSERT(
@@ -178,20 +178,20 @@ Result<Instance> Instance::Builder::Build() const
 
     if (!m_Headless)
     {
-        const auto checkWindowingSupport = [&extensions](const char *p_Extension) -> bool {
-            if (!Core::IsExtensionSupported(p_Extension))
+        const auto checkWindowingSupport = [&extensions](const char *extension) -> bool {
+            if (!Core::IsExtensionSupported(extension))
                 return false;
-            if (!contains(extensions, p_Extension))
-                extensions.Append(p_Extension);
+            if (!contains(extensions, extension))
+                extensions.Append(extension);
             return true;
         };
 
-        const auto generateError = [](const char *p_Extension) -> Result<Instance> {
+        const auto generateError = [](const char *extension) -> Result<Instance> {
             return Result<Instance>::Error(
                 Error_MissingExtension,
                 TKit::Format(
                     "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
-                    p_Extension));
+                    extension));
         };
 
         if (!checkWindowingSupport("VK_KHR_surface"))
@@ -312,13 +312,13 @@ Result<Instance> Instance::Builder::Build() const
     return Result<Instance>::Ok(vkinstance, info);
 }
 
-bool Instance::IsExtensionEnabled(const char *p_Extension) const
+bool Instance::IsExtensionEnabled(const char *extension) const
 {
-    return contains(m_Info.EnabledExtensions, p_Extension);
+    return contains(m_Info.EnabledExtensions, extension);
 }
-bool Instance::IsLayerEnabled(const char *p_Layer) const
+bool Instance::IsLayerEnabled(const char *layer) const
 {
-    return contains(m_Info.EnabledLayers, p_Layer);
+    return contains(m_Info.EnabledLayers, layer);
 }
 
 void Instance::Destroy()
@@ -346,74 +346,74 @@ Instance::Proxy Instance::CreateProxy() const
     return proxy;
 }
 
-Instance::Builder &Instance::Builder::SetApplicationName(const char *p_Name)
+Instance::Builder &Instance::Builder::SetApplicationName(const char *name)
 {
-    m_ApplicationName = p_Name;
+    m_ApplicationName = name;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetEngineName(const char *p_Name)
+Instance::Builder &Instance::Builder::SetEngineName(const char *name)
 {
-    m_EngineName = p_Name;
+    m_EngineName = name;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Version)
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 version)
 {
-    m_ApplicationVersion = p_Version;
+    m_ApplicationVersion = version;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Version)
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 version)
 {
-    m_EngineVersion = p_Version;
+    m_EngineVersion = version;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+Instance::Builder &Instance::Builder::SetApplicationVersion(u32 major, u32 minor, u32 patch)
 {
-    return SetApplicationVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return SetApplicationVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-Instance::Builder &Instance::Builder::SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+Instance::Builder &Instance::Builder::SetEngineVersion(u32 major, u32 minor, u32 patch)
 {
-    return SetEngineVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return SetEngineVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Version)
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 version)
 {
-    m_RequiredApiVersion = p_Version;
+    m_RequiredApiVersion = version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequestedApiVersion = m_RequiredApiVersion;
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+Instance::Builder &Instance::Builder::RequireApiVersion(u32 major, u32 minor, u32 patch)
 {
-    return RequireApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return RequireApiVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Version)
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 version)
 {
-    m_RequestedApiVersion = p_Version;
+    m_RequestedApiVersion = version;
     if (m_RequestedApiVersion < m_RequiredApiVersion)
         m_RequiredApiVersion = m_RequestedApiVersion;
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch)
+Instance::Builder &Instance::Builder::RequestApiVersion(u32 major, u32 minor, u32 patch)
 {
-    return RequestApiVersion(VKIT_MAKE_VERSION(0, p_Major, p_Minor, p_Patch));
+    return RequestApiVersion(VKIT_MAKE_VERSION(0, major, minor, patch));
 }
-Instance::Builder &Instance::Builder::RequireExtension(const char *p_Extension)
+Instance::Builder &Instance::Builder::RequireExtension(const char *extension)
 {
-    m_RequiredExtensions.Append(p_Extension);
+    m_RequiredExtensions.Append(extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestExtension(const char *p_Extension)
+Instance::Builder &Instance::Builder::RequestExtension(const char *extension)
 {
-    m_RequestedExtensions.Append(p_Extension);
+    m_RequestedExtensions.Append(extension);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequireLayer(const char *p_Layer)
+Instance::Builder &Instance::Builder::RequireLayer(const char *layer)
 {
-    m_RequiredLayers.Append(p_Layer);
+    m_RequiredLayers.Append(layer);
     return *this;
 }
-Instance::Builder &Instance::Builder::RequestLayer(const char *p_Layer)
+Instance::Builder &Instance::Builder::RequestLayer(const char *layer)
 {
-    m_RequestedLayers.Append(p_Layer);
+    m_RequestedLayers.Append(layer);
     return *this;
 }
 Instance::Builder &Instance::Builder::RequireValidationLayers()
@@ -427,24 +427,24 @@ Instance::Builder &Instance::Builder::RequestValidationLayers()
     m_RequestValidationLayers = true;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback)
+Instance::Builder &Instance::Builder::SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT callback)
 {
-    m_DebugCallback = p_Callback;
+    m_DebugCallback = callback;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetHeadless(bool p_Headless)
+Instance::Builder &Instance::Builder::SetHeadless(bool headless)
 {
-    m_Headless = p_Headless;
+    m_Headless = headless;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *p_Data)
+Instance::Builder &Instance::Builder::SetDebugMessengerUserData(void *data)
 {
-    m_DebugMessengerUserData = p_Data;
+    m_DebugMessengerUserData = data;
     return *this;
 }
-Instance::Builder &Instance::Builder::SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks)
+Instance::Builder &Instance::Builder::SetAllocationCallbacks(const VkAllocationCallbacks *allocationCallbacks)
 {
-    m_AllocationCallbacks = p_AllocationCallbacks;
+    m_AllocationCallbacks = allocationCallbacks;
     return *this;
 }
 

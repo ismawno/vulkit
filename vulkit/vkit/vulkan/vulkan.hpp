@@ -14,10 +14,9 @@
 #endif
 
 #ifdef VK_MAKE_API_VERSION
-#    define VKIT_MAKE_VERSION(p_Variant, p_Major, p_Minor, p_Patch)                                                    \
-        VK_MAKE_API_VERSION(p_Variant, p_Major, p_Minor, p_Patch)
+#    define VKIT_MAKE_VERSION(variant, major, minor, patch) VK_MAKE_API_VERSION(variant, major, minor, patch)
 #elif defined(VK_MAKE_VERSION)
-#    define VKIT_MAKE_VERSION(p_Variant, p_Major, p_Minor, p_Patch) VK_MAKE_VERSION(p_Major, p_Minor, p_Patch)
+#    define VKIT_MAKE_VERSION(variant, major, minor, patch) VK_MAKE_VERSION(major, minor, patch)
 #endif
 
 #if defined(VK_API_VERSION_1_4) || defined(VK_VERSION_1_4)
@@ -41,91 +40,91 @@
 #endif
 
 #ifdef VK_API_VERSION_MAJOR
-#    define VKIT_API_VERSION_MAJOR(p_Version) VK_API_VERSION_MAJOR(p_Version)
+#    define VKIT_API_VERSION_MAJOR(version) VK_API_VERSION_MAJOR(version)
 #elif defined(VK_VERSION_MAJOR)
-#    define VKIT_API_VERSION_MAJOR(p_Version) VK_VERSION_MAJOR(p_Version)
+#    define VKIT_API_VERSION_MAJOR(version) VK_VERSION_MAJOR(version)
 #endif
 
 #ifdef VK_API_VERSION_MINOR
-#    define VKIT_API_VERSION_MINOR(p_Version) VK_API_VERSION_MINOR(p_Version)
+#    define VKIT_API_VERSION_MINOR(version) VK_API_VERSION_MINOR(version)
 #elif defined(VK_VERSION_MINOR)
-#    define VKIT_API_VERSION_MINOR(p_Version) VK_VERSION_MINOR(p_Version)
+#    define VKIT_API_VERSION_MINOR(version) VK_VERSION_MINOR(version)
 #endif
 
 #ifdef VK_API_VERSION_PATCH
-#    define VKIT_API_VERSION_PATCH(p_Version) VK_API_VERSION_PATCH(p_Version)
+#    define VKIT_API_VERSION_PATCH(version) VK_API_VERSION_PATCH(version)
 #elif defined(VK_VERSION_PATCH)
-#    define VKIT_API_VERSION_PATCH(p_Version) VK_VERSION_PATCH(p_Version)
+#    define VKIT_API_VERSION_PATCH(version) VK_VERSION_PATCH(version)
 #endif
 
 #ifdef VK_API_VERSION_VARIANT
-#    define VKIT_API_VERSION_VARIANT(p_Version) VK_API_VERSION_VARIANT(p_Version)
+#    define VKIT_API_VERSION_VARIANT(version) VK_API_VERSION_VARIANT(version)
 #elif defined(VK_VERSION_VARIANT)
-#    define VKIT_API_VERSION_VARIANT(p_Version) VK_VERSION_VARIANT(p_Version)
+#    define VKIT_API_VERSION_VARIANT(version) VK_VERSION_VARIANT(version)
 #endif
 
-#define VKIT_EXPAND_VERSION(p_Version)                                                                                 \
-    VKIT_API_VERSION_MAJOR(p_Version), VKIT_API_VERSION_MINOR(p_Version), VKIT_API_VERSION_PATCH(p_Version)
+#define VKIT_EXPAND_VERSION(version)                                                                                   \
+    VKIT_API_VERSION_MAJOR(version), VKIT_API_VERSION_MINOR(version), VKIT_API_VERSION_PATCH(version)
 
 #ifdef TKIT_ENABLE_DEBUG_LOGS
-#    define VKIT_LOG_RESULT_DEBUG(p_Result)                                                                            \
-        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(p_Result), "{}", VKit::ResultToString(p_Result))
-#    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression)                                                                    \
+#    define VKIT_LOG_RESULT_DEBUG(result)                                                                              \
+        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
+#    define VKIT_LOG_EXPRESSION_DEBUG(expression)                                                                      \
         {                                                                                                              \
-            const auto __vkit_result = p_Expression;                                                                   \
+            const auto __vkit_result = expression;                                                                     \
             TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));          \
         }
 #else
-#    define VKIT_LOG_RESULT_DEBUG(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_LOG_EXPRESSION_DEBUG(p_Expression) p_Expression
+#    define VKIT_LOG_RESULT_DEBUG(result) TKIT_UNUSED(result)
+#    define VKIT_LOG_EXPRESSION_DEBUG(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT_INFO(p_Result)                                                                             \
-        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(p_Result), "{}", VKit::ResultToString(p_Result))
-#    define VKIT_LOG_EXPRESSION_INFO(p_Expression)                                                                     \
+#    define VKIT_LOG_RESULT_INFO(result)                                                                               \
+        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
+#    define VKIT_LOG_EXPRESSION_INFO(expression)                                                                       \
         {                                                                                                              \
-            const auto __vkit_result = p_Expression;                                                                   \
+            const auto __vkit_result = expression;                                                                     \
             TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));           \
         }
 #else
-#    define VKIT_LOG_RESULT_INFO(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_LOG_EXPRESSION_INFO(p_Expression) p_Expression
+#    define VKIT_LOG_RESULT_INFO(result) TKIT_UNUSED(result)
+#    define VKIT_LOG_EXPRESSION_INFO(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_LOG_RESULT_WARNING(p_Result)                                                                          \
-        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(p_Result), "{}", VKit::ResultToString(p_Result))
-#    define VKIT_LOG_EXPRESSION_WARNING(p_Expression)                                                                  \
+#    define VKIT_LOG_RESULT_WARNING(result)                                                                            \
+        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
+#    define VKIT_LOG_EXPRESSION_WARNING(expression)                                                                    \
         {                                                                                                              \
-            const auto __vkit_result = p_Expression;                                                                   \
+            const auto __vkit_result = expression;                                                                     \
             TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));        \
         }
 #else
-#    define VKIT_LOG_RESULT_WARNING(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_LOG_EXPRESSION_WARNING(p_Expression) p_Expression
+#    define VKIT_LOG_RESULT_WARNING(result) TKIT_UNUSED(result)
+#    define VKIT_LOG_EXPRESSION_WARNING(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_ERROR_LOGS
-#    define VKIT_LOG_RESULT_ERROR(p_Result)                                                                            \
-        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(p_Result), "{}", VKit::ResultToString(p_Result))
-#    define VKIT_LOG_EXPRESSION_ERROR(p_Expression)                                                                    \
+#    define VKIT_LOG_RESULT_ERROR(result)                                                                              \
+        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
+#    define VKIT_LOG_EXPRESSION_ERROR(expression)                                                                      \
         {                                                                                                              \
-            const auto __vkit_result = p_Expression;                                                                   \
+            const auto __vkit_result = expression;                                                                     \
             TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));          \
         }
 #else
-#    define VKIT_LOG_RESULT_ERROR(p_Result) TKIT_UNUSED(p_Result)
-#    define VKIT_LOG_EXPRESSION_ERROR(p_Expression) p_Expression
+#    define VKIT_LOG_RESULT_ERROR(result) TKIT_UNUSED(result)
+#    define VKIT_LOG_EXPRESSION_ERROR(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_CHECK_RESULT(p_Result) TKIT_ASSERT(VKit::IsSuccessful(p_Result), "{}", VKit::ResultToString(p_Result))
+#    define VKIT_CHECK_RESULT(result) TKIT_ASSERT(VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
 #else
-#    define VKIT_CHECK_RESULT(p_Result) TKIT_UNUSED(p_Result)
+#    define VKIT_CHECK_RESULT(result) TKIT_UNUSED(result)
 #endif
 
-#define VKIT_CHECK_EXPRESSION(p_Expression) VKit::CheckExpression(p_Expression)
+#define VKIT_CHECK_EXPRESSION(expression) VKit::CheckExpression(expression)
 
 namespace VKit
 {
@@ -155,42 +154,42 @@ enum ErrorCode : u8
     Error_Count
 };
 
-template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&p_Result)
+template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&result)
 {
-    TKIT_ASSERT(p_Result, "{}", p_Result.GetError().ToString());
+    TKIT_ASSERT(result, "{}", result.GetError().ToString());
     if constexpr (!std::same_as<T, void>)
-        return p_Result.GetValue();
+        return result.GetValue();
 }
 
 #ifdef TKIT_ENABLE_ASSERTS
-void CheckExpression(VkResult p_Result);
+void CheckExpression(VkResult result);
 #else
 inline void CheckExpression(const VkResult)
 {
 }
 #endif
 
-const char *VulkanResultToString(VkResult p_Result);
-const char *ErrorCodeToString(ErrorCode p_Code);
+const char *VulkanResultToString(VkResult result);
+const char *ErrorCodeToString(ErrorCode code);
 
-template <typename T> bool IsSuccessful(const T &p_Result)
+template <typename T> bool IsSuccessful(const T &result)
 {
     using TT = std::remove_cvref_t<T>;
     if constexpr (std::same_as<TT, VkResult>)
-        return p_Result == VK_SUCCESS;
+        return result == VK_SUCCESS;
     else
-        return p_Result.IsOk();
+        return result.IsOk();
 }
 
-template <typename T> auto ResultToString(const T &p_Result)
+template <typename T> auto ResultToString(const T &result)
 {
     using TT = std::remove_cvref_t<T>;
     if constexpr (std::same_as<TT, VkResult>)
-        return VulkanResultToString(p_Result);
+        return VulkanResultToString(result);
     else
     {
-        TKIT_ASSERT(!p_Result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
-        return p_Result ? "Success" : p_Result.GetError().ToString();
+        TKIT_ASSERT(!result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
+        return result ? "Success" : result.GetError().ToString();
     }
 }
 } // namespace VKit
@@ -200,24 +199,24 @@ class Error
 {
   public:
     Error() = default;
-    Error(const ErrorCode p_Code, const std::string &p_Message) : m_FormattedMessage(p_Message), m_ErrorCode(p_Code)
+    Error(const ErrorCode code, const std::string &message) : m_FormattedMessage(message), m_ErrorCode(code)
     {
     }
-    Error(const ErrorCode p_Code, const char *p_Message) : m_CheapMessage(p_Message), m_ErrorCode(p_Code)
+    Error(const ErrorCode code, const char *message) : m_CheapMessage(message), m_ErrorCode(code)
     {
     }
-    Error(const VkResult p_Result, const std::string &p_Message)
-        : m_FormattedMessage(p_Message), m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
+    Error(const VkResult result, const std::string &message)
+        : m_FormattedMessage(message), m_ErrorCode(Error_VulkanError), m_VkResult(result)
     {
     }
-    Error(const VkResult p_Result, const char *p_Message)
-        : m_CheapMessage(p_Message), m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
+    Error(const VkResult result, const char *message)
+        : m_CheapMessage(message), m_ErrorCode(Error_VulkanError), m_VkResult(result)
     {
     }
-    Error(const ErrorCode p_Code) : m_ErrorCode(p_Code)
+    Error(const ErrorCode code) : m_ErrorCode(code)
     {
     }
-    Error(const VkResult p_Result) : m_ErrorCode(Error_VulkanError), m_VkResult(p_Result)
+    Error(const VkResult result) : m_ErrorCode(Error_VulkanError), m_VkResult(result)
     {
     }
 
@@ -262,13 +261,13 @@ class DeletionQueue
         Flush();
     }
 
-    void Push(std::function<void()> &&p_Deleter);
+    void Push(std::function<void()> &&deleter);
     void Flush();
     void Clear();
 
-    template <typename VKitObject> void SubmitForDeletion(VKitObject p_Object)
+    template <typename VKitObject> void SubmitForDeletion(VKitObject object)
     {
-        Push([=]() mutable { p_Object.Destroy(); });
+        Push([=]() mutable { object.Destroy(); });
     }
 
   private:

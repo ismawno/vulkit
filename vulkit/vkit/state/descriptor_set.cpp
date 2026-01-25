@@ -4,29 +4,28 @@
 
 namespace VKit
 {
-void DescriptorSet::Bind(const VkCommandBuffer p_CommandBuffer, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const TKit::Span<const u32> p_DynamicOffsets) const
+void DescriptorSet::Bind(const VkCommandBuffer commandBuffer, const VkPipelineBindPoint bindPoint,
+                         const VkPipelineLayout layout, const TKit::Span<const u32> dynamicOffsets) const
 {
-    Bind(m_Device, p_CommandBuffer, m_Set, p_BindPoint, p_Layout, 0, p_DynamicOffsets);
+    Bind(m_Device, commandBuffer, m_Set, bindPoint, layout, 0, dynamicOffsets);
 }
-void DescriptorSet::Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
-                         const TKit::Span<const VkDescriptorSet> p_Sets, const VkPipelineBindPoint p_BindPoint,
-                         const VkPipelineLayout p_Layout, const u32 p_FirstSet,
-                         const TKit::Span<const u32> p_DynamicOffsets)
+void DescriptorSet::Bind(const ProxyDevice &device, const VkCommandBuffer commandBuffer,
+                         const TKit::Span<const VkDescriptorSet> sets, const VkPipelineBindPoint bindPoint,
+                         const VkPipelineLayout layout, const u32 firstSet, const TKit::Span<const u32> dynamicOffsets)
 {
-    p_Device.Table->CmdBindDescriptorSets(p_CommandBuffer, p_BindPoint, p_Layout, p_FirstSet, p_Sets.GetSize(),
-                                          p_Sets.GetData(), p_DynamicOffsets.GetSize(), p_DynamicOffsets.GetData());
+    device.Table->CmdBindDescriptorSets(commandBuffer, bindPoint, layout, firstSet, sets.GetSize(), sets.GetData(),
+                                        dynamicOffsets.GetSize(), dynamicOffsets.GetData());
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo)
+void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBufferInfo &bufferInfo)
 {
-    const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[p_Binding];
+    const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
 
     VkWriteDescriptorSet write{};
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
-    write.dstBinding = p_Binding;
-    write.pBufferInfo = &p_BufferInfo;
+    write.dstBinding = binding;
+    write.pBufferInfo = &bufferInfo;
 
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
@@ -34,20 +33,20 @@ void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const VkDescriptorB
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 p_Binding, const DeviceBuffer &p_Buffer)
+void DescriptorSet::Writer::WriteBuffer(const u32 binding, const DeviceBuffer &buffer)
 {
-    WriteBuffer(p_Binding, p_Buffer.CreateDescriptorInfo());
+    WriteBuffer(binding, buffer.CreateDescriptorInfo());
 }
 
-void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo)
+void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImageInfo &imageInfo)
 {
-    const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[p_Binding];
+    const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
 
     VkWriteDescriptorSet write{};
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
-    write.dstBinding = p_Binding;
-    write.pImageInfo = &p_ImageInfo;
+    write.dstBinding = binding;
+    write.pImageInfo = &imageInfo;
 
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
@@ -55,10 +54,10 @@ void DescriptorSet::Writer::WriteImage(const u32 p_Binding, const VkDescriptorIm
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::Overwrite(const VkDescriptorSet p_Set)
+void DescriptorSet::Writer::Overwrite(const VkDescriptorSet set)
 {
     for (VkWriteDescriptorSet &write : m_Writes)
-        write.dstSet = p_Set;
+        write.dstSet = set;
     m_Device.Table->UpdateDescriptorSets(m_Device, m_Writes.GetSize(), m_Writes.GetData(), 0, nullptr);
 }
 

@@ -8,21 +8,21 @@
 
 namespace VKit
 {
-static Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> p_Requested,
-                                               const TKit::Span<const VkSurfaceFormatKHR> p_Supported)
+static Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceFormatKHR> requested,
+                                               const TKit::Span<const VkSurfaceFormatKHR> supported)
 {
-    for (const VkSurfaceFormatKHR &desired : p_Requested)
-        for (const VkSurfaceFormatKHR &supported : p_Supported)
+    for (const VkSurfaceFormatKHR &desired : requested)
+        for (const VkSurfaceFormatKHR &supported : supported)
             if (desired.format == supported.format && desired.colorSpace == supported.colorSpace)
                 return Result<VkSurfaceFormatKHR>::Ok(desired);
     return Result<VkSurfaceFormatKHR>::Error(Error_NoFormatSupported);
 }
 
-static Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> p_Requested,
-                                                  const TKit::Span<const VkPresentModeKHR> p_Supported)
+static Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPresentModeKHR> requested,
+                                                  const TKit::Span<const VkPresentModeKHR> supported)
 {
-    for (const VkPresentModeKHR &desired : p_Requested)
-        for (const VkPresentModeKHR &supported : p_Supported)
+    for (const VkPresentModeKHR &desired : requested)
+        for (const VkPresentModeKHR &supported : supported)
             if (desired == supported)
                 return desired;
     return Result<VkPresentModeKHR>::Error(Error_NoFormatSupported);
@@ -35,7 +35,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX || devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
         return Result<SwapChain>::Error(Error_MissingQueue);
 
-    const auto checkFlags = [this](const SwapChainBuilderFlags p_Flags) -> bool { return m_Flags & p_Flags; };
+    const auto checkFlags = [this](const SwapChainBuilderFlags flags) -> bool { return m_Flags & flags; };
 
     TKit::StackArray<VkSurfaceFormatKHR> imageFormats;
     imageFormats.Reserve(m_SurfaceFormats.GetCapacity() + 1);
@@ -60,10 +60,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
 
     const u32 mnic = support.Capabilities.minImageCount;
     const u32 mxic = support.Capabilities.maxImageCount;
-    const auto badImageCount = [=](const u32 p_Count) -> const char * {
-        if (p_Count < mnic)
+    const auto badImageCount = [=](const u32 count) -> const char * {
+        if (count < mnic)
             return "The requested image count is less than the minimum image count";
-        if (mxic > 0 && p_Count > mxic)
+        if (mxic > 0 && count > mxic)
             return "The requested image count is greater than the maximum image count";
         return nullptr;
     };
@@ -228,114 +228,114 @@ void SwapChain::Destroy()
         m_SwapChain = VK_NULL_HANDLE;
     }
 }
-SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR p_Format)
+SwapChain::Builder &SwapChain::Builder::RequestSurfaceFormat(const VkSurfaceFormatKHR format)
 {
-    m_SurfaceFormats.Insert(m_SurfaceFormats.begin(), p_Format);
+    m_SurfaceFormats.Insert(m_SurfaceFormats.begin(), format);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormatKHR p_Format)
+SwapChain::Builder &SwapChain::Builder::AllowSurfaceFormat(const VkSurfaceFormatKHR format)
 {
-    m_SurfaceFormats.Append(p_Format);
+    m_SurfaceFormats.Append(format);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR p_Mode)
+SwapChain::Builder &SwapChain::Builder::RequestPresentMode(const VkPresentModeKHR mode)
 {
-    m_PresentModes.Insert(m_PresentModes.begin(), p_Mode);
+    m_PresentModes.Insert(m_PresentModes.begin(), mode);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AllowPresentMode(const VkPresentModeKHR p_Mode)
+SwapChain::Builder &SwapChain::Builder::AllowPresentMode(const VkPresentModeKHR mode)
 {
-    m_PresentModes.Append(p_Mode);
+    m_PresentModes.Append(mode);
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestImageCount(const u32 p_Images)
+SwapChain::Builder &SwapChain::Builder::RequestImageCount(const u32 images)
 {
-    m_RequestedImages = p_Images;
+    m_RequestedImages = images;
     if (m_RequestedImages < m_RequiredImages)
         m_RequiredImages = m_RequestedImages;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequireImageCount(const u32 p_Images)
+SwapChain::Builder &SwapChain::Builder::RequireImageCount(const u32 images)
 {
-    m_RequiredImages = p_Images;
+    m_RequiredImages = images;
     if (m_RequestedImages < m_RequiredImages)
         m_RequestedImages = m_RequiredImages;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 p_Width, const u32 p_Height)
+SwapChain::Builder &SwapChain::Builder::RequestExtent(const u32 width, const u32 height)
 {
-    m_Extent.width = p_Width;
-    m_Extent.height = p_Height;
+    m_Extent.width = width;
+    m_Extent.height = height;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &p_Extent)
+SwapChain::Builder &SwapChain::Builder::RequestExtent(const VkExtent2D &extent)
 {
-    m_Extent = p_Extent;
+    m_Extent = extent;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetFlags(const SwapChainBuilderFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::SetFlags(const SwapChainBuilderFlags flags)
 {
-    m_Flags = p_Flags;
+    m_Flags = flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddFlags(const SwapChainBuilderFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::AddFlags(const SwapChainBuilderFlags flags)
 {
-    m_Flags |= p_Flags;
+    m_Flags |= flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveFlags(const SwapChainBuilderFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::RemoveFlags(const SwapChainBuilderFlags flags)
 {
-    m_Flags &= ~p_Flags;
+    m_Flags &= ~flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetImageArrayLayers(const u32 p_Layers)
+SwapChain::Builder &SwapChain::Builder::SetImageArrayLayers(const u32 layers)
 {
-    m_ImageArrayLayers = p_Layers;
+    m_ImageArrayLayers = layers;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
+SwapChain::Builder &SwapChain::Builder::SetCreateFlags(const VkSwapchainCreateFlagsKHR flags)
 {
-    m_CreateFlags = p_Flags;
+    m_CreateFlags = flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
+SwapChain::Builder &SwapChain::Builder::AddCreateFlags(const VkSwapchainCreateFlagsKHR flags)
 {
-    m_CreateFlags |= p_Flags;
+    m_CreateFlags |= flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveCreateFlags(const VkSwapchainCreateFlagsKHR p_Flags)
+SwapChain::Builder &SwapChain::Builder::RemoveCreateFlags(const VkSwapchainCreateFlagsKHR flags)
 {
-    m_CreateFlags &= ~p_Flags;
+    m_CreateFlags &= ~flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetImageUsageFlags(const VkImageUsageFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::SetImageUsageFlags(const VkImageUsageFlags flags)
 {
-    m_ImageUsage = p_Flags;
+    m_ImageUsage = flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::AddImageUsageFlags(const VkImageUsageFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::AddImageUsageFlags(const VkImageUsageFlags flags)
 {
-    m_ImageUsage |= p_Flags;
+    m_ImageUsage |= flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::RemoveImageUsageFlags(const VkImageUsageFlags p_Flags)
+SwapChain::Builder &SwapChain::Builder::RemoveImageUsageFlags(const VkImageUsageFlags flags)
 {
-    m_ImageUsage &= ~p_Flags;
+    m_ImageUsage &= ~flags;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetTransformBit(const VkSurfaceTransformFlagBitsKHR p_Transform)
+SwapChain::Builder &SwapChain::Builder::SetTransformBit(const VkSurfaceTransformFlagBitsKHR transform)
 {
-    m_TransformBit = p_Transform;
+    m_TransformBit = transform;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetCompositeAlphaBit(const VkCompositeAlphaFlagBitsKHR p_Alpha)
+SwapChain::Builder &SwapChain::Builder::SetCompositeAlphaBit(const VkCompositeAlphaFlagBitsKHR alpha)
 {
-    m_CompositeAlphaFlags = p_Alpha;
+    m_CompositeAlphaFlags = alpha;
     return *this;
 }
-SwapChain::Builder &SwapChain::Builder::SetOldSwapChain(const VkSwapchainKHR p_OldSwapChain)
+SwapChain::Builder &SwapChain::Builder::SetOldSwapChain(const VkSwapchainKHR oldSwapChain)
 {
-    m_OldSwapChain = p_OldSwapChain;
+    m_OldSwapChain = oldSwapChain;
     return *this;
 }
 

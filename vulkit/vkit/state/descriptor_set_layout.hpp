@@ -16,13 +16,13 @@ class DescriptorSetLayout
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device) : m_Device(p_Device)
+        Builder(const ProxyDevice &device) : m_Device(device)
         {
         }
 
         VKIT_NO_DISCARD Result<DescriptorSetLayout> Build() const;
 
-        Builder &AddBinding(VkDescriptorType p_Type, VkShaderStageFlags p_StageFlags, u32 p_Count = 1);
+        Builder &AddBinding(VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1);
 
       private:
         ProxyDevice m_Device;
@@ -30,9 +30,9 @@ class DescriptorSetLayout
     };
 
     DescriptorSetLayout() = default;
-    DescriptorSetLayout(const ProxyDevice &p_Device, const VkDescriptorSetLayout p_Layout,
-                        const TKit::TierArray<VkDescriptorSetLayoutBinding> &p_Bindings)
-        : m_Device(p_Device), m_Layout(p_Layout), m_Bindings{p_Bindings}
+    DescriptorSetLayout(const ProxyDevice &device, const VkDescriptorSetLayout layout,
+                        const TKit::TierArray<VkDescriptorSetLayoutBinding> &bindings)
+        : m_Device(device), m_Layout(layout), m_Bindings{bindings}
     {
     }
 

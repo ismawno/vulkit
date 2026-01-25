@@ -35,30 +35,30 @@ void PipelineLayout::Destroy()
     }
 }
 
-PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout p_Layout)
+PipelineLayout::Builder &PipelineLayout::Builder::AddDescriptorSetLayout(const VkDescriptorSetLayout layout)
 {
-    m_DescriptorSetLayouts.Append(p_Layout);
+    m_DescriptorSetLayouts.Append(layout);
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::AddPushConstantRange(const VkShaderStageFlags p_Stages,
-                                                                       const u32 p_Size, const u32 p_Offset)
+PipelineLayout::Builder &PipelineLayout::Builder::AddPushConstantRange(const VkShaderStageFlags stages, const u32 size,
+                                                                       const u32 offset)
 {
-    m_PushConstantRanges.Append(VkPushConstantRange{p_Stages, p_Offset, p_Size});
+    m_PushConstantRanges.Append(VkPushConstantRange{stages, offset, size});
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags p_Flags)
+PipelineLayout::Builder &PipelineLayout::Builder::SetFlags(const VkPipelineLayoutCreateFlags flags)
 {
-    m_Flags = p_Flags;
+    m_Flags = flags;
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::AddFlags(const VkPipelineLayoutCreateFlags p_Flags)
+PipelineLayout::Builder &PipelineLayout::Builder::AddFlags(const VkPipelineLayoutCreateFlags flags)
 {
-    m_Flags |= p_Flags;
+    m_Flags |= flags;
     return *this;
 }
-PipelineLayout::Builder &PipelineLayout::Builder::RemoveFlags(const VkPipelineLayoutCreateFlags p_Flags)
+PipelineLayout::Builder &PipelineLayout::Builder::RemoveFlags(const VkPipelineLayoutCreateFlags flags)
 {
-    m_Flags &= ~p_Flags;
+    m_Flags &= ~flags;
     return *this;
 }
 

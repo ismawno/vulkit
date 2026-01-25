@@ -13,44 +13,44 @@ struct Capabilities
 
 static Capabilities s_Capabilities{};
 
-const VkExtensionProperties *GetExtensionByName(const char *p_Name)
+const VkExtensionProperties *GetExtensionByName(const char *name)
 {
     for (const VkExtensionProperties &extension : s_Capabilities.AvailableExtensions)
-        if (strcmp(p_Name, extension.extensionName) == 0)
+        if (strcmp(name, extension.extensionName) == 0)
             return &extension;
     return nullptr;
 }
 
-const VkLayerProperties *GetLayerByName(const char *p_Name)
+const VkLayerProperties *GetLayerByName(const char *name)
 {
     for (const VkLayerProperties &layer : s_Capabilities.AvailableLayers)
-        if (strcmp(p_Name, layer.layerName) == 0)
+        if (strcmp(name, layer.layerName) == 0)
             return &layer;
     return nullptr;
 }
 
-bool IsExtensionSupported(const char *p_Name)
+bool IsExtensionSupported(const char *name)
 {
     for (const VkExtensionProperties &extension : s_Capabilities.AvailableExtensions)
-        if (strcmp(p_Name, extension.extensionName) == 0)
+        if (strcmp(name, extension.extensionName) == 0)
             return true;
     return false;
 }
 
-bool IsLayerSupported(const char *p_Name)
+bool IsLayerSupported(const char *name)
 {
     for (const VkLayerProperties &layer : s_Capabilities.AvailableLayers)
-        if (strcmp(p_Name, layer.layerName) == 0)
+        if (strcmp(name, layer.layerName) == 0)
             return true;
     return false;
 }
-const VkExtensionProperties &GetExtensionByIndex(const u32 p_Index)
+const VkExtensionProperties &GetExtensionByIndex(const u32 index)
 {
-    return s_Capabilities.AvailableExtensions[p_Index];
+    return s_Capabilities.AvailableExtensions[index];
 }
-const VkLayerProperties &GetLayerByIndex(const u32 p_Index)
+const VkLayerProperties &GetLayerByIndex(const u32 index)
 {
-    return s_Capabilities.AvailableLayers[p_Index];
+    return s_Capabilities.AvailableLayers[index];
 }
 
 u32 GetExtensionCount()
@@ -75,16 +75,16 @@ u32 GetLayerCount()
 namespace VKit::Core
 {
 static void *s_Library = nullptr;
-static void attempt(const char *p_LoaderPath)
+static void attempt(const char *loaderPath)
 {
     if (s_Library)
         return;
 
-    TKIT_LOG_INFO("[VULKIT] Attempting to load vulkan library. Trying: {}", p_LoaderPath);
+    TKIT_LOG_INFO("[VULKIT] Attempting to load vulkan library. Trying: {}", loaderPath);
 #ifdef TKIT_OS_WINDOWS
-    s_Library = reinterpret_cast<void *>(LoadLibraryA(p_LoaderPath));
+    s_Library = reinterpret_cast<void *>(LoadLibraryA(loaderPath));
 #else
-    s_Library = dlopen(p_LoaderPath, RTLD_NOW | RTLD_LOCAL);
+    s_Library = dlopen(loaderPath, RTLD_NOW | RTLD_LOCAL);
 #endif
 
     TKIT_LOG_INFO_IF(s_Library, "[VULKIT] Success");
@@ -94,13 +94,13 @@ static void attempt(const char *p_LoaderPath)
 u8 s_PushedAlloc = 0;
 Allocation s_Allocation{};
 
-Result<> Initialize(const Specs &p_Specs)
+Result<> Initialize(const Specs &specs)
 {
     if (s_Library)
         return Result<>::Ok();
 
-    if (p_Specs.LoaderPath)
-        attempt(p_Specs.LoaderPath);
+    if (specs.LoaderPath)
+        attempt(specs.LoaderPath);
 #if defined(TKIT_OS_APPLE)
     attempt("libvulkan.dylib");
     attempt("libvulkan.1.dylib");
@@ -133,8 +133,8 @@ Result<> Initialize(const Specs &p_Specs)
     Vulkan::Load(s_Library);
 
     // these are purposefully leaked
-    if (p_Specs.Allocators.Arena)
-        s_Allocation.Arena = p_Specs.Allocators.Arena;
+    if (specs.Allocators.Arena)
+        s_Allocation.Arena = specs.Allocators.Arena;
     else if (!s_Allocation.Arena)
         s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
 
@@ -144,8 +144,8 @@ Result<> Initialize(const Specs &p_Specs)
         s_PushedAlloc |= 1 << 0;
     }
 
-    if (p_Specs.Allocators.Stack)
-        s_Allocation.Stack = p_Specs.Allocators.Stack;
+    if (specs.Allocators.Stack)
+        s_Allocation.Stack = specs.Allocators.Stack;
     else if (!s_Allocation.Stack)
         s_Allocation.Stack = new TKit::StackAllocator(4_mib);
 
@@ -155,8 +155,8 @@ Result<> Initialize(const Specs &p_Specs)
         s_PushedAlloc |= 1 << 1;
     }
 
-    if (p_Specs.Allocators.Tier)
-        s_Allocation.Tier = p_Specs.Allocators.Tier;
+    if (specs.Allocators.Tier)
+        s_Allocation.Tier = specs.Allocators.Tier;
     else if (!s_Allocation.Tier)
         s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
 

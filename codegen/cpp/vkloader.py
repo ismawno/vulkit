@@ -518,7 +518,7 @@ hpp.include("vkit/vulkan/vulkan.hpp", quotes=True)
 with hpp.scope("namespace VKit::Vulkan", indent=0):
     hpp.spacing()
 
-    hpp("void Load(void *p_Library);")
+    hpp("void Load(void *library);")
     hpp.spacing()
 
     def codefn1(gen: CPPGenerator, fn: Function, /) -> None:
@@ -540,7 +540,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
         gen(fn.as_string(vk_prefix=False, no_discard=True, const=True))
 
     with hpp.scope("struct InstanceTable", closer="};"):
-        hpp("static InstanceTable Create(VkInstance p_Instance);")
+        hpp("static InstanceTable Create(VkInstance instance);")
         for fn in functions.values():
             if not fn.is_instance_function():
                 continue
@@ -550,7 +550,7 @@ with hpp.scope("namespace VKit::Vulkan", indent=0):
             hpp.spacing()
 
     with hpp.scope("struct DeviceTable", closer="};"):
-        hpp("static DeviceTable Create(VkDevice p_Device, const InstanceTable &p_InstanceFuncs);")
+        hpp("static DeviceTable Create(VkDevice device, const InstanceTable &instanceFuncs);")
         for fn in functions.values():
             if not fn.is_device_function():
                 continue
@@ -593,7 +593,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
         guard_if_needed(cpp, codefn3, guards, fn)
 
     cpp.spacing()
-    with cpp.scope("InstanceTable InstanceTable::Create(const VkInstance p_Instance)"):
+    with cpp.scope("InstanceTable InstanceTable::Create(const VkInstance instance)"):
         cpp("InstanceTable table{};")
         for fn in functions.values():
             if not fn.is_instance_function():
@@ -601,13 +601,13 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(p_Instance, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(GetInstanceProcAddr(instance, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")
 
     cpp.spacing()
-    with cpp.scope("DeviceTable DeviceTable::Create(const VkDevice p_Device, const InstanceTable &p_InstanceFuncs)"):
+    with cpp.scope("DeviceTable DeviceTable::Create(const VkDevice device, const InstanceTable &instanceFuncs)"):
         cpp("DeviceTable table{};")
         for fn in functions.values():
             if not fn.is_device_function():
@@ -615,7 +615,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
             guards = fn.parse_guards()
             guard_if_needed(
                 cpp,
-                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(p_InstanceFuncs.GetDeviceProcAddr(p_Device, "{fn.name}"));',
+                f'table.{fn.name} = reinterpret_cast<{fn.as_fn_pointer_type()}>(instanceFuncs.GetDeviceProcAddr(device, "{fn.name}"));',
                 guards,
             )
         cpp("return table;")
@@ -679,16 +679,16 @@ cpp("#endif", indent=0)
 
 with cpp.scope("namespace VKit::Vulkan", indent=0):
     cpp.spacing()
-    cpp("void Load(void *p_Library)")
+    cpp("void Load(void *library)")
 
     with cpp.scope():
         cpp("#if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)", indent=0)
         cpp(
-            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(p_Library, "vkGetInstanceProcAddr"));'
+            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(dlsym(library, "vkGetInstanceProcAddr"));'
         )
         cpp("#else", indent=0)
         cpp(
-            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(reinterpret_cast<HMODULE>(p_Library), "vkGetInstanceProcAddr"));'
+            'Vulkan::vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(reinterpret_cast<HMODULE>(library), "vkGetInstanceProcAddr"));'
         )
         cpp("#endif", indent=0)
 

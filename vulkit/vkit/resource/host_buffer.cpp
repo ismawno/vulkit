@@ -4,41 +4,40 @@
 
 namespace VKit
 {
-HostBuffer::HostBuffer(const VkDeviceSize p_InstanceCount, const VkDeviceSize p_InstanceSize,
-                       const VkDeviceSize p_Alignment)
-    : m_InstanceCount(p_InstanceCount), m_InstanceSize(p_InstanceSize), m_Size(p_InstanceCount * p_InstanceSize)
+HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize instanceSize, const VkDeviceSize alignment)
+    : m_InstanceCount(instanceCount), m_InstanceSize(instanceSize), m_Size(instanceCount * instanceSize)
 {
-    m_Data = TKit::Memory::AllocateAligned(m_Size, p_Alignment);
+    m_Data = TKit::Memory::AllocateAligned(m_Size, alignment);
 }
 
-void HostBuffer::Write(const void *p_Data, const VkBufferCopy &p_Copy)
+void HostBuffer::Write(const void *data, const VkBufferCopy &copy)
 {
-    TKIT_ASSERT(m_Size >= p_Copy.size + p_Copy.dstOffset,
+    TKIT_ASSERT(m_Size >= copy.size + copy.dstOffset,
                 "[VULKIT][HOST-BUFFER] Buffer slice ({}) is smaller than the data size ({})", m_Size,
-                p_Copy.size + p_Copy.dstOffset);
+                copy.size + copy.dstOffset);
 
-    std::byte *dst = static_cast<std::byte *>(m_Data) + p_Copy.dstOffset;
-    const std::byte *src = static_cast<const std::byte *>(p_Data) + p_Copy.srcOffset;
-    TKit::Memory::ForwardCopy(dst, src, p_Copy.size);
+    std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
+    const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;
+    TKit::Memory::ForwardCopy(dst, src, copy.size);
 }
 
-void HostBuffer::WriteAt(const u32 p_Index, const void *p_Data)
+void HostBuffer::WriteAt(const u32 index, const void *pdata)
 {
-    TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
+    TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
 
-    const VkDeviceSize size = m_InstanceSize * p_Index;
+    const VkDeviceSize size = m_InstanceSize * index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
-    TKit::Memory::ForwardCopy(data, p_Data, m_InstanceSize);
+    TKit::Memory::ForwardCopy(data, pdata, m_InstanceSize);
 }
 
-void HostBuffer::Resize(const VkDeviceSize p_InstanceCount)
+void HostBuffer::Resize(const VkDeviceSize instanceCount)
 {
-    const VkDeviceSize size = p_InstanceCount * m_InstanceSize;
+    const VkDeviceSize size = instanceCount * m_InstanceSize;
     void *data = TKit::Memory::AllocateAligned(size, m_Alignment);
     TKit::Memory::ForwardCopy(data, m_Data, m_Size);
     TKit::Memory::DeallocateAligned(m_Data);
     m_Size = size;
-    m_InstanceCount = p_InstanceCount;
+    m_InstanceCount = instanceCount;
 }
 
 void HostBuffer::Destroy()

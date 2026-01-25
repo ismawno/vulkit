@@ -35,28 +35,23 @@ class DeviceBuffer
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device, VmaAllocator p_Allocator, DeviceBufferFlags p_Flags = 0);
+        Builder(const ProxyDevice &device, VmaAllocator allocator, DeviceBufferFlags flags = 0);
 
         VKIT_NO_DISCARD Result<DeviceBuffer> Build() const;
 
-        Builder &SetSize(VkDeviceSize p_Size);
-        Builder &SetSize(VkDeviceSize p_InstanceCount, VkDeviceSize p_InstanceSize);
-        template <typename T> Builder &SetSize(const VkDeviceSize p_InstanceCount)
+        Builder &SetSize(VkDeviceSize size);
+        Builder &SetSize(VkDeviceSize instanceCount, VkDeviceSize instanceSize);
+        template <typename T> Builder &SetSize(const VkDeviceSize instanceCount)
         {
-            return SetSize(p_InstanceCount, sizeof(T));
+            return SetSize(instanceCount, sizeof(T));
         }
-        Builder &SetUsage(VkBufferUsageFlags p_Flags);
-        Builder &SetSharingMode(VkSharingMode p_Mode);
-        Builder &SetAllocationCreateInfo(const VmaAllocationCreateInfo &p_Info);
-        Builder &SetPerInstanceMinimumAlignment(VkDeviceSize p_Alignment);
+        Builder &SetUsage(VkBufferUsageFlags flags);
+        Builder &SetSharingMode(VkSharingMode mode);
+        Builder &SetAllocationCreateInfo(const VmaAllocationCreateInfo &info);
+        Builder &SetPerInstanceMinimumAlignment(VkDeviceSize alignment);
 
-        Builder &AddFamilyIndex(u32 p_Index);
-        template <typename T> Builder &AddNext(const T *p_Next)
-        {
-            const void *next = m_BufferInfo.pNext;
-            p_Next->pNext = next;
-            m_BufferInfo.pNext = p_Next;
-        }
+        Builder &AddFamilyIndex(u32 index);
+        Builder &SetNext(const void *next);
 
         const VkBufferCreateInfo &GetBufferInfo() const;
 
@@ -86,8 +81,8 @@ class DeviceBuffer
 
     DeviceBuffer() = default;
 
-    DeviceBuffer(const ProxyDevice &p_Device, const VkBuffer p_Buffer, const Info &p_Info, void *p_MappedData)
-        : m_Device(p_Device), m_Data(p_MappedData), m_Buffer(p_Buffer), m_Info(p_Info)
+    DeviceBuffer(const ProxyDevice &device, const VkBuffer buffer, const Info &info, void *mappedData)
+        : m_Device(device), m_Data(mappedData), m_Buffer(buffer), m_Info(info)
     {
     }
 
@@ -101,40 +96,39 @@ class DeviceBuffer
         return m_Data != nullptr;
     }
 
-    const void *ReadAt(const u32 p_Index) const
+    const void *ReadAt(const u32 index) const
     {
-        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+        TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
-    void *ReadAt(const u32 p_Index)
+    void *ReadAt(const u32 index)
     {
-        TKIT_CHECK_OUT_OF_BOUNDS(p_Index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * p_Index;
+        TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
 
-    void Write(const void *p_Data, const VkBufferCopy &p_Copy);
-    void WriteAt(u32 p_Index, const void *p_Data);
+    void Write(const void *data, const VkBufferCopy &copy);
+    void WriteAt(u32 index, const void *data);
 
-    void CopyFromBuffer(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                        TKit::Span<const VkBufferCopy> p_Copy);
-    void CopyFromImage(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                       TKit::Span<const VkBufferImageCopy> p_Copy);
+    void CopyFromBuffer(VkCommandBuffer commandBuffer, const DeviceBuffer &source, TKit::Span<const VkBufferCopy> copy);
+    void CopyFromImage(VkCommandBuffer commandBuffer, const DeviceImage &source,
+                       TKit::Span<const VkBufferImageCopy> copy);
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_copy_commands2)
-    void CopyFromBuffer2(VkCommandBuffer p_CommandBuffer, const DeviceBuffer &p_Source,
-                         TKit::Span<const VkBufferCopy2KHR> p_Copy, const void *p_Next = nullptr);
-    void CopyFromImage2(VkCommandBuffer p_CommandBuffer, const DeviceImage &p_Source,
-                        TKit::Span<const VkBufferImageCopy2KHR> p_Copy, const void *p_Next = nullptr);
+    void CopyFromBuffer2(VkCommandBuffer commandBuffer, const DeviceBuffer &source,
+                         TKit::Span<const VkBufferCopy2KHR> copy, const void *next = nullptr);
+    void CopyFromImage2(VkCommandBuffer commandBuffer, const DeviceImage &source,
+                        TKit::Span<const VkBufferImageCopy2KHR> copy, const void *next = nullptr);
 
 #endif
 
-    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &p_Pool, VkQueue p_Queue, const DeviceBuffer &p_Source,
-                                            TKit::Span<const VkBufferCopy> p_Copy);
-    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &p_Pool, VkQueue p_Queue, const DeviceImage &p_Source,
-                                           TKit::Span<const VkBufferImageCopy> p_Copy);
+    VKIT_NO_DISCARD Result<> CopyFromBuffer(CommandPool &pool, VkQueue queue, const DeviceBuffer &source,
+                                            TKit::Span<const VkBufferCopy> copy);
+    VKIT_NO_DISCARD Result<> CopyFromImage(CommandPool &pool, VkQueue queue, const DeviceImage &source,
+                                           TKit::Span<const VkBufferImageCopy> copy);
 
-    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &p_Pool, const VkQueue p_Queue, const void *p_Data,
-                                            const VkBufferCopy &p_Copy);
+    VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &pool, const VkQueue queue, const void *data,
+                                            const VkBufferCopy &copy);
 
     const void *GetData() const
     {
@@ -145,32 +139,32 @@ class DeviceBuffer
         return m_Data;
     }
 
-    VKIT_NO_DISCARD Result<> Flush(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
+    VKIT_NO_DISCARD Result<> Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
-    VKIT_NO_DISCARD Result<> FlushAt(u32 p_Index);
+    VKIT_NO_DISCARD Result<> FlushAt(u32 index);
 
-    VKIT_NO_DISCARD Result<> Invalidate(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0);
-    VKIT_NO_DISCARD Result<> InvalidateAt(u32 p_Index);
+    VKIT_NO_DISCARD Result<> Invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+    VKIT_NO_DISCARD Result<> InvalidateAt(u32 index);
 
-    template <typename Index> void BindAsIndexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const
+    template <typename Index> void BindAsIndexBuffer(VkCommandBuffer commandBuffer, VkDeviceSize offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
                       "[VULKIT][DEVICE-BUFFER] Index type must be u8, u16 or u32");
         if constexpr (std::is_same_v<Index, u8>)
-            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT8_EXT);
+            m_Device.Table->CmdBindIndexBuffer(commandBuffer, m_Buffer, offset, VK_INDEX_TYPE_UINT8_EXT);
         else if constexpr (std::is_same_v<Index, u16>)
-            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT16);
+            m_Device.Table->CmdBindIndexBuffer(commandBuffer, m_Buffer, offset, VK_INDEX_TYPE_UINT16);
         else if constexpr (std::is_same_v<Index, u32>)
-            m_Device.Table->CmdBindIndexBuffer(p_CommandBuffer, m_Buffer, p_Offset, VK_INDEX_TYPE_UINT32);
+            m_Device.Table->CmdBindIndexBuffer(commandBuffer, m_Buffer, offset, VK_INDEX_TYPE_UINT32);
     }
-    void BindAsVertexBuffer(VkCommandBuffer p_CommandBuffer, VkDeviceSize p_Offset = 0) const;
+    void BindAsVertexBuffer(VkCommandBuffer commandBuffer, VkDeviceSize offset = 0) const;
 
-    static void BindAsVertexBuffer(const ProxyDevice &p_Device, VkCommandBuffer p_CommandBuffer,
-                                   TKit::Span<const VkBuffer> p_Buffers, u32 p_FirstBinding = 0,
-                                   TKit::Span<const VkDeviceSize> p_Offsets = {});
+    static void BindAsVertexBuffer(const ProxyDevice &device, VkCommandBuffer commandBuffer,
+                                   TKit::Span<const VkBuffer> buffers, u32 firstBinding = 0,
+                                   TKit::Span<const VkDeviceSize> offsets = {});
 
-    VkDescriptorBufferInfo CreateDescriptorInfo(VkDeviceSize p_Size = VK_WHOLE_SIZE, VkDeviceSize p_Offset = 0) const;
-    VkDescriptorBufferInfo CreateDescriptorInfoAt(u32 p_Index) const;
+    VkDescriptorBufferInfo CreateDescriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
+    VkDescriptorBufferInfo CreateDescriptorInfoAt(u32 index) const;
 
     const ProxyDevice &GetDevice() const
     {

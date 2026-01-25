@@ -85,7 +85,7 @@ class CoreGuard
 class InstanceGuard
 {
   public:
-    InstanceGuard(VKit::Instance &&p_Instance) : m_Instance(std::move(p_Instance))
+    InstanceGuard(VKit::Instance &&instance) : m_Instance(std::move(instance))
     {
     }
 

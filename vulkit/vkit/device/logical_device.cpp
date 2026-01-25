@@ -5,25 +5,25 @@
 
 namespace VKit
 {
-LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const QueueType type, const u32 count, f32 priority)
 {
-    return RequireQueue(m_PhysicalDevice->GetInfo().FamilyIndices[p_Type], p_Count, p_Priority);
+    return RequireQueue(m_PhysicalDevice->GetInfo().FamilyIndices[type], count, priority);
 }
-LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType p_Type, const u32 p_Count, f32 p_Priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType type, const u32 count, f32 priority)
 {
-    return RequestQueue(m_PhysicalDevice->GetInfo().FamilyIndices[p_Type], p_Count, p_Priority);
+    return RequestQueue(m_PhysicalDevice->GetInfo().FamilyIndices[type], count, priority);
 }
 
-LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, const u32 count, f32 priority)
 {
-    for (u32 i = 0; i < p_Count; ++i)
-        m_Priorities[p_Family].RequiredPriorities.Append(p_Priority);
+    for (u32 i = 0; i < count; ++i)
+        m_Priorities[family].RequiredPriorities.Append(priority);
     return *this;
 }
-LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 p_Family, const u32 p_Count, f32 p_Priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 family, const u32 count, f32 priority)
 {
-    for (u32 i = 0; i < p_Count; ++i)
-        m_Priorities[p_Family].RequestedPriorities.Append(p_Priority);
+    for (u32 i = 0; i < count; ++i)
+        m_Priorities[family].RequestedPriorities.Append(priority);
     return *this;
 }
 
@@ -151,13 +151,13 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     info.Table = table;
 
     ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, table};
-    const auto createQueue = [&](const u32 p_Family, const u32 p_Index) -> Result<Queue *> {
+    const auto createQueue = [&](const u32 family, const u32 index) -> Result<Queue *> {
         for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
-            if (p_Index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][p_Index]->GetFamily() == p_Family)
-                return info.QueuesPerType[i][p_Index];
+            if (index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][index]->GetFamily() == family)
+                return info.QueuesPerType[i][index];
         VkQueue q;
-        table->GetDeviceQueue(pdevice, p_Family, p_Index, &q);
-        return info.Queues.Append(alloc->Create<Queue>(pdevice, q, p_Family));
+        table->GetDeviceQueue(pdevice, family, index, &q);
+        return info.Queues.Append(alloc->Create<Queue>(pdevice, q, family));
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -191,9 +191,9 @@ void LogicalDevice::Destroy()
     }
 }
 
-Result<> LogicalDevice::WaitIdle(const ProxyDevice &p_Device)
+Result<> LogicalDevice::WaitIdle(const ProxyDevice &device)
 {
-    const VkResult result = p_Device.Table->DeviceWaitIdle(p_Device);
+    const VkResult result = device.Table->DeviceWaitIdle(device);
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
     return Result<>::Ok();
@@ -204,26 +204,25 @@ Result<> LogicalDevice::WaitIdle() const
 }
 
 #ifdef VK_KHR_surface
-Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR p_Surface) const
+Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR surface) const
 {
-    return m_Info.PhysicalDevice->QuerySwapChainSupport(*m_Info.Instance, p_Surface);
+    return m_Info.PhysicalDevice->QuerySwapChainSupport(*m_Info.Instance, surface);
 }
 #endif
 
-Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates,
-                                                    const VkImageTiling p_Tiling,
-                                                    const VkFormatFeatureFlags p_Features) const
+Result<VkFormat> LogicalDevice::FindSupportedFormat(TKit::Span<const VkFormat> candidates, const VkImageTiling tiling,
+                                                    const VkFormatFeatureFlags features) const
 {
     const Vulkan::InstanceTable *table = m_Info.Instance->GetInfo().Table;
 
-    for (const VkFormat format : p_Candidates)
+    for (const VkFormat format : candidates)
     {
         VkFormatProperties props;
         table->GetPhysicalDeviceFormatProperties(*m_Info.PhysicalDevice, format, &props);
 
-        if (p_Tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & p_Features) == p_Features)
+        if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
             return format;
-        if (p_Tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & p_Features) == p_Features)
+        if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
             return format;
     }
     return Result<VkFormat>::Error(Error_NoFormatSupported);

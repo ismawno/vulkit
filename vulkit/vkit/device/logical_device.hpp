@@ -22,19 +22,19 @@ class LogicalDevice
     class Builder
     {
       public:
-        Builder(Instance *p_Instance, PhysicalDevice *p_PhysicalDevice)
-            : m_Instance(p_Instance), m_PhysicalDevice(p_PhysicalDevice),
-              m_Priorities(p_PhysicalDevice->GetInfo().QueueFamilies.GetSize())
+        Builder(Instance *instance, PhysicalDevice *physicalDevice)
+            : m_Instance(instance), m_PhysicalDevice(physicalDevice),
+              m_Priorities(physicalDevice->GetInfo().QueueFamilies.GetSize())
         {
         }
 
         VKIT_NO_DISCARD Result<LogicalDevice> Build() const;
 
-        Builder &RequireQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
-        Builder &RequestQueue(QueueType p_Type, u32 p_Count = 1, f32 p_Priority = 1.f);
+        Builder &RequireQueue(QueueType type, u32 count = 1, f32 priority = 1.f);
+        Builder &RequestQueue(QueueType type, u32 count = 1, f32 priority = 1.f);
 
-        Builder &RequireQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
-        Builder &RequestQueue(u32 p_Family, u32 p_Count = 1, f32 p_Priority = 1.f);
+        Builder &RequireQueue(u32 family, u32 count = 1, f32 priority = 1.f);
+        Builder &RequestQueue(u32 family, u32 count = 1, f32 priority = 1.f);
 
       private:
         Instance *m_Instance;
@@ -53,7 +53,7 @@ class LogicalDevice
     };
 
     LogicalDevice() = default;
-    LogicalDevice(const VkDevice p_Device, const Info &p_Info) : m_Device(p_Device), m_Info(p_Info)
+    LogicalDevice(const VkDevice device, const Info &info) : m_Device(device), m_Info(info)
     {
     }
 
@@ -66,12 +66,12 @@ class LogicalDevice
     }
 
 #ifdef VK_KHR_surface
-    VKIT_NO_DISCARD Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR p_Surface) const;
+    VKIT_NO_DISCARD Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR surface) const;
 #endif
-    VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> p_Candidates,
-                                                         VkImageTiling p_Tiling, VkFormatFeatureFlags p_Features) const;
+    VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> candidates, VkImageTiling tiling,
+                                                         VkFormatFeatureFlags features) const;
 
-    VKIT_NO_DISCARD static Result<> WaitIdle(const ProxyDevice &p_Device);
+    VKIT_NO_DISCARD static Result<> WaitIdle(const ProxyDevice &device);
     VKIT_NO_DISCARD Result<> WaitIdle() const;
 
     ProxyDevice CreateProxy() const;

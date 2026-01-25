@@ -18,17 +18,17 @@ class DescriptorPool
     class Builder
     {
       public:
-        Builder(const ProxyDevice &p_Device) : m_Device(p_Device)
+        Builder(const ProxyDevice &device) : m_Device(device)
         {
         }
 
         Result<DescriptorPool> Build() const;
 
-        Builder &SetMaxSets(u32 p_MaxSets);
-        Builder &SetFlags(VkDescriptorPoolCreateFlags p_Flags);
-        Builder &AddFlags(VkDescriptorPoolCreateFlags p_Flags);
-        Builder &RemoveFlags(VkDescriptorPoolCreateFlags p_Flags);
-        Builder &AddPoolSize(VkDescriptorType p_Type, u32 p_Size);
+        Builder &SetMaxSets(u32 maxSets);
+        Builder &SetFlags(VkDescriptorPoolCreateFlags flags);
+        Builder &AddFlags(VkDescriptorPoolCreateFlags flags);
+        Builder &RemoveFlags(VkDescriptorPoolCreateFlags flags);
+        Builder &AddPoolSize(VkDescriptorType type, u32 size);
 
       private:
         ProxyDevice m_Device;
@@ -45,8 +45,8 @@ class DescriptorPool
     };
 
     DescriptorPool() = default;
-    DescriptorPool(const ProxyDevice &p_Device, const VkDescriptorPool p_Pool, const Info &p_Info)
-        : m_Device(p_Device), m_Pool(p_Pool), m_Info(p_Info)
+    DescriptorPool(const ProxyDevice &device, const VkDescriptorPool pool, const Info &info)
+        : m_Device(device), m_Pool(pool), m_Info(info)
     {
     }
 
@@ -57,8 +57,8 @@ class DescriptorPool
         return m_Info;
     }
 
-    Result<DescriptorSet> Allocate(VkDescriptorSetLayout p_Layout) const;
-    Result<> Deallocate(TKit::Span<const VkDescriptorSet> p_Sets) const;
+    Result<DescriptorSet> Allocate(VkDescriptorSetLayout layout) const;
+    Result<> Deallocate(TKit::Span<const VkDescriptorSet> sets) const;
     Result<> Reset();
 
     const ProxyDevice &GetDevice() const

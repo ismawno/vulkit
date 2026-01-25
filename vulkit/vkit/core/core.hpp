@@ -23,17 +23,17 @@ struct Specs
 
 namespace VKit::Core
 {
-Result<> Initialize(const Specs &p_Specs = {});
+Result<> Initialize(const Specs &specs = {});
 void Terminate();
 
-bool IsExtensionSupported(const char *p_Name);
-bool IsLayerSupported(const char *p_Name);
+bool IsExtensionSupported(const char *name);
+bool IsLayerSupported(const char *name);
 
-const VkExtensionProperties *GetExtensionByName(const char *p_Name);
-const VkLayerProperties *GetLayerByName(const char *p_Name);
+const VkExtensionProperties *GetExtensionByName(const char *name);
+const VkLayerProperties *GetLayerByName(const char *name);
 
-const VkExtensionProperties &GetExtensionByIndex(u32 p_Index);
-const VkLayerProperties &GetLayerByIndex(u32 p_Index);
+const VkExtensionProperties &GetExtensionByIndex(u32 index);
+const VkLayerProperties &GetLayerByIndex(u32 index);
 
 u32 GetExtensionCount();
 u32 GetLayerCount();

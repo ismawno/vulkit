@@ -4,15 +4,15 @@
 
 namespace VKit
 {
-GraphicsPipeline::Builder::Builder(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout,
-                                   const VkRenderPass p_RenderPass, const u32 p_Subpass)
-    : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(p_RenderPass), m_Subpass(p_Subpass)
+GraphicsPipeline::Builder::Builder(const ProxyDevice &device, const VkPipelineLayout layout,
+                                   const VkRenderPass renderPass, const u32 subpass)
+    : m_Device(device), m_Layout(layout), m_RenderPass(renderPass), m_Subpass(subpass)
 {
     initialize();
 }
-GraphicsPipeline::Builder::Builder(const ProxyDevice &p_Device, const VkPipelineLayout p_Layout,
-                                   const VkPipelineRenderingCreateInfoKHR &p_RenderingInfo)
-    : m_Device(p_Device), m_Layout(p_Layout), m_RenderPass(VK_NULL_HANDLE), m_RenderingInfo(p_RenderingInfo)
+GraphicsPipeline::Builder::Builder(const ProxyDevice &device, const VkPipelineLayout layout,
+                                   const VkPipelineRenderingCreateInfoKHR &renderingInfo)
+    : m_Device(device), m_Layout(layout), m_RenderPass(VK_NULL_HANDLE), m_RenderingInfo(renderingInfo)
 {
     initialize();
 }
@@ -90,29 +90,29 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
 
-Result<> GraphicsPipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Builder> p_Builders,
-                                  const TKit::Span<GraphicsPipeline> p_Pipelines, const VkPipelineCache p_Cache)
+Result<> GraphicsPipeline::Create(const ProxyDevice &device, const TKit::Span<const Builder> builders,
+                                  const TKit::Span<GraphicsPipeline> pipelines, const VkPipelineCache cache)
 {
-    TKIT_ASSERT(p_Builders.GetSize() == p_Pipelines.GetSize(),
-                "[VULKIT][PIPELINE] Specs size ({}) and pipelines ({}) size must be equal", p_Builders.GetSize(),
-                p_Pipelines.GetSize());
-    TKIT_ASSERT(!p_Builders.IsEmpty(), "[VULKIT][PIPELINE] Specs and pipelines must not be empty");
+    TKIT_ASSERT(builders.GetSize() == pipelines.GetSize(),
+                "[VULKIT][PIPELINE] Specs size ({}) and pipelines ({}) size must be equal", builders.GetSize(),
+                pipelines.GetSize());
+    TKIT_ASSERT(!builders.IsEmpty(), "[VULKIT][PIPELINE] Specs and pipelines must not be empty");
 
     TKit::StackArray<VkGraphicsPipelineCreateInfo> pipelineInfos;
-    pipelineInfos.Reserve(p_Builders.GetSize());
-    for (const Builder &builder : p_Builders)
+    pipelineInfos.Reserve(builders.GetSize());
+    for (const Builder &builder : builders)
         pipelineInfos.Append(builder.CreatePipelineInfo());
 
-    const u32 count = p_Builders.GetSize();
-    TKit::StackArray<VkPipeline> pipelines{count};
-    const VkResult result = p_Device.Table->CreateGraphicsPipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
-                                                                    p_Device.AllocationCallbacks, pipelines.GetData());
+    const u32 count = builders.GetSize();
+    TKit::StackArray<VkPipeline> vkpipelines{count};
+    const VkResult result = device.Table->CreateGraphicsPipelines(device, cache, count, pipelineInfos.GetData(),
+                                                                  device.AllocationCallbacks, vkpipelines.GetData());
 
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
 
     for (u32 i = 0; i < count; ++i)
-        p_Pipelines[i] = GraphicsPipeline(p_Device, pipelines[i]);
+        pipelines[i] = GraphicsPipeline(device, vkpipelines[i]);
 
     return Result<>::Ok();
 }
@@ -125,9 +125,9 @@ void GraphicsPipeline::Destroy()
         m_Pipeline = VK_NULL_HANDLE;
     }
 }
-void GraphicsPipeline::Bind(VkCommandBuffer p_CommandBuffer) const
+void GraphicsPipeline::Bind(VkCommandBuffer commandBuffer) const
 {
-    m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+    m_Device.Table->CmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 }
 
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::Bake()
@@ -173,26 +173,26 @@ VkGraphicsPipelineCreateInfo GraphicsPipeline::Builder::CreatePipelineInfo() con
     return pipelineInfo;
 }
 
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipeline(const VkPipeline p_BasePipeline)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipeline(const VkPipeline basePipeline)
 {
-    m_BasePipeline = p_BasePipeline;
+    m_BasePipeline = basePipeline;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipelineIndex(const i32 p_BasePipelineIndex)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBasePipelineIndex(const i32 basePipelineIndex)
 {
-    m_BasePipelineIndex = p_BasePipelineIndex;
+    m_BasePipelineIndex = basePipelineIndex;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCache(const VkPipelineCache p_Cache)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCache(const VkPipelineCache cache)
 {
-    m_Cache = p_Cache;
+    m_Cache = cache;
     return *this;
 }
 
 // Input Assembly
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetTopology(const VkPrimitiveTopology p_Topology)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetTopology(const VkPrimitiveTopology topology)
 {
-    m_InputAssemblyInfo.topology = p_Topology;
+    m_InputAssemblyInfo.topology = topology;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart()
@@ -207,15 +207,15 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
 }
 
 // Viewport and Scissor
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport p_Viewport, const VkRect2D p_Scissor)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddViewport(const VkViewport viewport, const VkRect2D scissor)
 {
-    m_Viewports.Append(p_Viewport, p_Scissor);
+    m_Viewports.Append(viewport, scissor);
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 p_ViewportCount)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32 viewportCount)
 {
-    m_ViewportInfo.viewportCount = p_ViewportCount;
-    m_ViewportInfo.scissorCount = p_ViewportCount;
+    m_ViewportInfo.viewportCount = viewportCount;
+    m_ViewportInfo.scissorCount = viewportCount;
     m_ViewportInfo.pViewports = nullptr;
     m_ViewportInfo.pScissors = nullptr;
     return *this;
@@ -247,24 +247,24 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBias()
     m_RasterizationInfo.depthBiasEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode p_Mode)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode mode)
 {
-    m_RasterizationInfo.polygonMode = p_Mode;
+    m_RasterizationInfo.polygonMode = mode;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLineWidth(const f32 p_Width)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLineWidth(const f32 width)
 {
-    m_RasterizationInfo.lineWidth = p_Width;
+    m_RasterizationInfo.lineWidth = width;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCullMode(const VkCullModeFlags p_Mode)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetCullMode(const VkCullModeFlags mode)
 {
-    m_RasterizationInfo.cullMode = p_Mode;
+    m_RasterizationInfo.cullMode = mode;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetFrontFace(const VkFrontFace p_FrontFace)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetFrontFace(const VkFrontFace frontFace)
 {
-    m_RasterizationInfo.frontFace = p_FrontFace;
+    m_RasterizationInfo.frontFace = frontFace;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias()
@@ -272,12 +272,12 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias()
     m_RasterizationInfo.depthBiasEnable = VK_TRUE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 p_ConstantFactor, const f32 p_Clamp,
-                                                                   const f32 p_SlopeFactor)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 constantFactor, const f32 clamp,
+                                                                   const f32 slopeFactor)
 {
-    m_RasterizationInfo.depthBiasConstantFactor = p_ConstantFactor;
-    m_RasterizationInfo.depthBiasClamp = p_Clamp;
-    m_RasterizationInfo.depthBiasSlopeFactor = p_SlopeFactor;
+    m_RasterizationInfo.depthBiasConstantFactor = constantFactor;
+    m_RasterizationInfo.depthBiasClamp = clamp;
+    m_RasterizationInfo.depthBiasSlopeFactor = slopeFactor;
     return *this;
 }
 
@@ -292,19 +292,19 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableSampleShading()
     m_MultisampleInfo.sampleShadingEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits p_SampleCount)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits sampleCount)
 {
-    m_MultisampleInfo.rasterizationSamples = p_SampleCount;
+    m_MultisampleInfo.rasterizationSamples = sampleCount;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetMinSampleShading(const f32 p_MinSampleShading)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetMinSampleShading(const f32 minSampleShading)
 {
-    m_MultisampleInfo.minSampleShading = p_MinSampleShading;
+    m_MultisampleInfo.minSampleShading = minSampleShading;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleMask(const VkSampleMask *p_SampleMask)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleMask(const VkSampleMask *sampleMask)
 {
-    m_MultisampleInfo.pSampleMask = p_SampleMask;
+    m_MultisampleInfo.pSampleMask = sampleMask;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToCoverage()
@@ -339,31 +339,31 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableLogicOperation()
     m_ColorBlendInfo.logicOpEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp p_Operation)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp operation)
 {
-    m_ColorBlendInfo.logicOp = p_Operation;
+    m_ColorBlendInfo.logicOp = operation;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *p_Constants)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *constants)
 {
-    m_ColorBlendInfo.blendConstants[0] = p_Constants[0];
-    m_ColorBlendInfo.blendConstants[1] = p_Constants[1];
-    m_ColorBlendInfo.blendConstants[2] = p_Constants[2];
-    m_ColorBlendInfo.blendConstants[3] = p_Constants[3];
+    m_ColorBlendInfo.blendConstants[0] = constants[0];
+    m_ColorBlendInfo.blendConstants[1] = constants[1];
+    m_ColorBlendInfo.blendConstants[2] = constants[2];
+    m_ColorBlendInfo.blendConstants[3] = constants[3];
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 p_C1, const f32 p_C2, const f32 p_C3,
-                                                                        const f32 p_C4)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 c1, const f32 c2, const f32 c3,
+                                                                        const f32 c4)
 {
-    m_ColorBlendInfo.blendConstants[0] = p_C1;
-    m_ColorBlendInfo.blendConstants[1] = p_C2;
-    m_ColorBlendInfo.blendConstants[2] = p_C3;
-    m_ColorBlendInfo.blendConstants[3] = p_C4;
+    m_ColorBlendInfo.blendConstants[0] = c1;
+    m_ColorBlendInfo.blendConstants[1] = c2;
+    m_ColorBlendInfo.blendConstants[2] = c3;
+    m_ColorBlendInfo.blendConstants[3] = c4;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32 p_Index, const f32 p_Value)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstant(const u32 index, const f32 value)
 {
-    m_ColorBlendInfo.blendConstants[p_Index] = p_Value;
+    m_ColorBlendInfo.blendConstants[index] = value;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDefaultColorAttachment()
@@ -418,131 +418,130 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableStencilTest()
     m_DepthStencilInfo.stencilTestEnable = VK_FALSE;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp p_Op)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp op)
 {
-    m_DepthStencilInfo.depthCompareOp = p_Op;
+    m_DepthStencilInfo.depthCompareOp = op;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBounds(const f32 p_Min, const f32 p_Max)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBounds(const f32 min, const f32 max)
 {
-    m_DepthStencilInfo.minDepthBounds = p_Min;
-    m_DepthStencilInfo.maxDepthBounds = p_Max;
+    m_DepthStencilInfo.minDepthBounds = min;
+    m_DepthStencilInfo.maxDepthBounds = max;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilFailOperation(const VkStencilOp p_FailOp,
-                                                                              const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilFailOperation(const VkStencilOp failOp,
+                                                                              const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.failOp = p_FailOp;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.failOp = p_FailOp;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.failOp = failOp;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.failOp = failOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilPassOperation(const VkStencilOp p_PassOp,
-                                                                              const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilPassOperation(const VkStencilOp passOp,
+                                                                              const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.passOp = p_PassOp;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.passOp = p_PassOp;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.passOp = passOp;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.passOp = passOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilDepthFailOperation(const VkStencilOp p_DepthFailOp,
-                                                                                   const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilDepthFailOperation(const VkStencilOp depthFailOp,
+                                                                                   const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.depthFailOp = p_DepthFailOp;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.depthFailOp = p_DepthFailOp;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.depthFailOp = depthFailOp;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.depthFailOp = depthFailOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation(const VkCompareOp p_CompareOp,
-                                                                                 const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareOperation(const VkCompareOp compareOp,
+                                                                                 const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.compareOp = p_CompareOp;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.compareOp = p_CompareOp;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.compareOp = compareOp;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.compareOp = compareOp;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 p_Mask,
-                                                                            const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilCompareMask(const u32 mask,
+                                                                            const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.compareMask = p_Mask;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.compareMask = p_Mask;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.compareMask = mask;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.compareMask = mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 p_Mask,
-                                                                          const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilWriteMask(const u32 mask,
+                                                                          const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.writeMask = p_Mask;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.writeMask = p_Mask;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.writeMask = mask;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.writeMask = mask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 p_Reference,
-                                                                          const StencilOperationFlags p_Flags)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const u32 reference,
+                                                                          const StencilOperationFlags flags)
 {
-    if (p_Flags & StencilOperationFlag_Front)
-        m_DepthStencilInfo.front.reference = p_Reference;
-    if (p_Flags & StencilOperationFlag_Back)
-        m_DepthStencilInfo.back.reference = p_Reference;
+    if (flags & StencilOperationFlag_Front)
+        m_DepthStencilInfo.front.reference = reference;
+    if (flags & StencilOperationFlag_Back)
+        m_DepthStencilInfo.back.reference = reference;
     return *this;
 }
 
 // Vertex Input
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(const VkVertexInputRate p_InputRate,
-                                                                            const u32 p_Stride)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(const VkVertexInputRate inputRate,
+                                                                            const u32 stride)
 {
     VkVertexInputBindingDescription binding{};
     binding.binding = m_BindingDescriptions.GetSize();
-    binding.stride = p_Stride;
-    binding.inputRate = p_InputRate;
+    binding.stride = stride;
+    binding.inputRate = inputRate;
     m_BindingDescriptions.Append(binding);
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(const u32 p_Binding,
-                                                                              const VkFormat p_Format,
-                                                                              const u32 p_Offset)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(const u32 binding, const VkFormat format,
+                                                                              const u32 offset)
 {
     VkVertexInputAttributeDescription attribute{};
-    attribute.binding = p_Binding;
-    attribute.format = p_Format;
+    attribute.binding = binding;
+    attribute.format = format;
     attribute.location = m_AttributeDescriptions.GetSize();
-    attribute.offset = p_Offset;
+    attribute.offset = offset;
     m_AttributeDescriptions.Append(attribute);
     return *this;
 }
 
 // Shader Stages
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkShaderModule p_Module,
-                                                                     const VkShaderStageFlagBits p_Stage,
-                                                                     const VkPipelineShaderStageCreateFlags p_Flags,
-                                                                     const VkSpecializationInfo *p_Info,
-                                                                     const char *p_EntryPoint)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddShaderStage(const VkShaderModule module,
+                                                                     const VkShaderStageFlagBits pstage,
+                                                                     const VkPipelineShaderStageCreateFlags flags,
+                                                                     const VkSpecializationInfo *info,
+                                                                     const char *entryPoint)
 {
     VkPipelineShaderStageCreateInfo stage{};
     stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    stage.module = p_Module;
-    stage.stage = p_Stage;
-    stage.flags = p_Flags;
-    stage.pSpecializationInfo = p_Info;
-    stage.pName = p_EntryPoint;
+    stage.module = module;
+    stage.stage = pstage;
+    stage.flags = flags;
+    stage.pSpecializationInfo = info;
+    stage.pName = entryPoint;
     m_ShaderStages.Append(stage);
     return *this;
 }
 
 // Dynamic State
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState p_State)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddDynamicState(const VkDynamicState state)
 {
-    m_DynamicStates.Append(p_State);
+    m_DynamicStates.Append(state);
     return *this;
 }
 
-GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *p_Builder) : m_Builder(p_Builder)
+GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *builder) : m_Builder(builder)
 {
     m_ColorBlendAttachmentInfo.colorWriteMask =
         VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -566,35 +565,35 @@ GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuild
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorWriteMask(
-    const VkColorComponentFlags p_WriteMask)
+    const VkColorComponentFlags writeMask)
 {
-    m_ColorBlendAttachmentInfo.colorWriteMask = p_WriteMask;
+    m_ColorBlendAttachmentInfo.colorWriteMask = writeMask;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorBlendFactors(
-    const VkBlendFactor p_SrcColor, const VkBlendFactor p_DstColor)
+    const VkBlendFactor srcColor, const VkBlendFactor dstColor)
 {
-    m_ColorBlendAttachmentInfo.srcColorBlendFactor = p_SrcColor;
-    m_ColorBlendAttachmentInfo.dstColorBlendFactor = p_DstColor;
+    m_ColorBlendAttachmentInfo.srcColorBlendFactor = srcColor;
+    m_ColorBlendAttachmentInfo.dstColorBlendFactor = dstColor;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorBlendOperation(
-    const VkBlendOp p_ColorOp)
+    const VkBlendOp colorOp)
 {
-    m_ColorBlendAttachmentInfo.colorBlendOp = p_ColorOp;
+    m_ColorBlendAttachmentInfo.colorBlendOp = colorOp;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetAlphaBlendFactors(
-    const VkBlendFactor p_SrcAlpha, const VkBlendFactor p_DstAlpha)
+    const VkBlendFactor srcAlpha, const VkBlendFactor dstAlpha)
 {
-    m_ColorBlendAttachmentInfo.srcAlphaBlendFactor = p_SrcAlpha;
-    m_ColorBlendAttachmentInfo.dstAlphaBlendFactor = p_DstAlpha;
+    m_ColorBlendAttachmentInfo.srcAlphaBlendFactor = srcAlpha;
+    m_ColorBlendAttachmentInfo.dstAlphaBlendFactor = dstAlpha;
     return *this;
 }
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetAlphaBlendOperation(
-    const VkBlendOp p_AlphaOp)
+    const VkBlendOp alphaOp)
 {
-    m_ColorBlendAttachmentInfo.alphaBlendOp = p_AlphaOp;
+    m_ColorBlendAttachmentInfo.alphaBlendOp = alphaOp;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAttachment()

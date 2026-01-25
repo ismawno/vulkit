@@ -11,12 +11,12 @@ namespace VKit
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_view p_SpirvPath)
+Result<Shader> Shader::Create(const ProxyDevice &device, const std::string_view spirvPath)
 {
-    std::ifstream file{p_SpirvPath.data(), std::ios::ate | std::ios::binary};
+    std::ifstream file{spirvPath.data(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return Result<Shader>::Error(Error_FileNotFound,
-                                     TKit::Format("[VULKIT][SHADER] File at path '{}' not found", p_SpirvPath));
+                                     TKit::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
 
     const auto fileSize = file.tellg();
 
@@ -24,25 +24,24 @@ Result<Shader> Shader::Create(const ProxyDevice &p_Device, const std::string_vie
     file.seekg(0);
     file.read(code.GetData(), fileSize);
     const u32 *spv = reinterpret_cast<const u32 *>(code.GetData());
-    return Create(p_Device, spv, fileSize);
+    return Create(device, spv, fileSize);
 }
 
 TKIT_COMPILER_WARNING_IGNORE_POP()
 
-Result<Shader> Shader::Create(const ProxyDevice &p_Device, const u32 *p_Spirv, const size_t p_Size)
+Result<Shader> Shader::Create(const ProxyDevice &device, const u32 *spirv, const size_t size)
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = p_Size;
-    createInfo.pCode = p_Spirv;
+    createInfo.codeSize = size;
+    createInfo.pCode = spirv;
 
     VkShaderModule module;
-    const VkResult result =
-        p_Device.Table->CreateShaderModule(p_Device, &createInfo, p_Device.AllocationCallbacks, &module);
+    const VkResult result = device.Table->CreateShaderModule(device, &createInfo, device.AllocationCallbacks, &module);
     if (result != VK_SUCCESS)
         return Result<Shader>::Error(result);
 
-    return Result<Shader>::Ok(p_Device, module);
+    return Result<Shader>::Ok(device, module);
 }
 
 void Shader::Destroy()

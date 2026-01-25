@@ -17,15 +17,14 @@ class DescriptorSet
     class Writer
     {
       public:
-        Writer(const ProxyDevice &p_Device, const DescriptorSetLayout *p_Layout)
-            : m_Device(p_Device), m_Layout(p_Layout)
+        Writer(const ProxyDevice &device, const DescriptorSetLayout *layout) : m_Device(device), m_Layout(layout)
         {
         }
 
-        void WriteBuffer(u32 p_Binding, const VkDescriptorBufferInfo &p_BufferInfo);
-        void WriteBuffer(u32 p_Binding, const DeviceBuffer &p_Buffer);
-        void WriteImage(u32 p_Binding, const VkDescriptorImageInfo &p_ImageInfo);
-        void Overwrite(const VkDescriptorSet p_Set);
+        void WriteBuffer(u32 binding, const VkDescriptorBufferInfo &bufferInfo);
+        void WriteBuffer(u32 binding, const DeviceBuffer &buffer);
+        void WriteImage(u32 binding, const VkDescriptorImageInfo &imageInfo);
+        void Overwrite(const VkDescriptorSet set);
 
       private:
         ProxyDevice m_Device;
@@ -35,16 +34,16 @@ class DescriptorSet
     };
 
     DescriptorSet() = default;
-    DescriptorSet(const ProxyDevice &p_Device, const VkDescriptorSet p_Set) : m_Device(p_Device), m_Set(p_Set)
+    DescriptorSet(const ProxyDevice &device, const VkDescriptorSet set) : m_Device(device), m_Set(set)
     {
     }
 
-    void Bind(const VkCommandBuffer p_CommandBuffer, VkPipelineBindPoint p_BindPoint, VkPipelineLayout p_Layout,
-              TKit::Span<const u32> p_DynamicOffsets = {}) const;
+    void Bind(const VkCommandBuffer commandBuffer, VkPipelineBindPoint bindPoint, VkPipelineLayout layout,
+              TKit::Span<const u32> dynamicOffsets = {}) const;
 
-    static void Bind(const ProxyDevice &p_Device, const VkCommandBuffer p_CommandBuffer,
-                     TKit::Span<const VkDescriptorSet> p_Sets, VkPipelineBindPoint p_BindPoint,
-                     VkPipelineLayout p_Layout, u32 p_FirstSet = 0, TKit::Span<const u32> p_DynamicOffsets = {});
+    static void Bind(const ProxyDevice &device, const VkCommandBuffer commandBuffer,
+                     TKit::Span<const VkDescriptorSet> sets, VkPipelineBindPoint bindPoint, VkPipelineLayout layout,
+                     u32 firstSet = 0, TKit::Span<const u32> dynamicOffsets = {});
 
     const ProxyDevice &GetDevice() const
     {

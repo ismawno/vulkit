@@ -46,35 +46,35 @@ class Instance
 
         VKIT_NO_DISCARD Result<Instance> Build() const;
 
-        Builder &SetApplicationName(const char *p_Name);
-        Builder &SetEngineName(const char *p_Name);
+        Builder &SetApplicationName(const char *name);
+        Builder &SetEngineName(const char *name);
 
-        Builder &SetApplicationVersion(u32 p_Version);
-        Builder &SetEngineVersion(u32 p_Version);
+        Builder &SetApplicationVersion(u32 version);
+        Builder &SetEngineVersion(u32 version);
 
-        Builder &SetApplicationVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
-        Builder &SetEngineVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Builder &SetApplicationVersion(u32 major, u32 minor, u32 patch);
+        Builder &SetEngineVersion(u32 major, u32 minor, u32 patch);
 
-        Builder &RequireApiVersion(u32 p_Version);
-        Builder &RequireApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Builder &RequireApiVersion(u32 version);
+        Builder &RequireApiVersion(u32 major, u32 minor, u32 patch);
 
-        Builder &RequestApiVersion(u32 p_Version);
-        Builder &RequestApiVersion(u32 p_Major, u32 p_Minor, u32 p_Patch);
+        Builder &RequestApiVersion(u32 version);
+        Builder &RequestApiVersion(u32 major, u32 minor, u32 patch);
 
-        Builder &RequireExtension(const char *p_Extension);
-        Builder &RequestExtension(const char *p_Extension);
+        Builder &RequireExtension(const char *extension);
+        Builder &RequestExtension(const char *extension);
 
-        Builder &RequireLayer(const char *p_Layer);
-        Builder &RequestLayer(const char *p_Layer);
+        Builder &RequireLayer(const char *layer);
+        Builder &RequestLayer(const char *layer);
 
         Builder &RequireValidationLayers();
         Builder &RequestValidationLayers();
 
-        Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT p_Callback);
-        Builder &SetHeadless(bool p_Headless = true);
+        Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT callback);
+        Builder &SetHeadless(bool headless = true);
 
-        Builder &SetDebugMessengerUserData(void *p_Data);
-        Builder &SetAllocationCallbacks(const VkAllocationCallbacks *p_AllocationCallbacks);
+        Builder &SetDebugMessengerUserData(void *data);
+        Builder &SetAllocationCallbacks(const VkAllocationCallbacks *allocationCallbacks);
 
       private:
         const char *m_ApplicationName = nullptr;
@@ -122,12 +122,12 @@ class Instance
     };
 
     Instance() = default;
-    Instance(VkInstance p_Instance, const Info &p_Info) : m_Instance(p_Instance), m_Info(p_Info)
+    Instance(VkInstance instance, const Info &info) : m_Instance(instance), m_Info(info)
     {
     }
 
-    bool IsExtensionEnabled(const char *p_Extension) const;
-    bool IsLayerEnabled(const char *p_Layer) const;
+    bool IsExtensionEnabled(const char *extension) const;
+    bool IsLayerEnabled(const char *layer) const;
 
     void Destroy();
 

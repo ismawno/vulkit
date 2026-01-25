@@ -41,6 +41,6 @@ struct AllocatorSpecs
     VmaAllocatorCreateFlags Flags = 0;
 };
 
-VKIT_NO_DISCARD Result<VmaAllocator> CreateAllocator(const LogicalDevice &p_Device, const AllocatorSpecs &p_Specs = {});
-void DestroyAllocator(VmaAllocator p_Allocator);
+VKIT_NO_DISCARD Result<VmaAllocator> CreateAllocator(const LogicalDevice &device, const AllocatorSpecs &specs = {});
+void DestroyAllocator(VmaAllocator allocator);
 } // namespace VKit

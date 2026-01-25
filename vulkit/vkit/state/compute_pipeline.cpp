@@ -5,52 +5,52 @@
 namespace VKit
 {
 
-static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipeline::Specs &p_Specs)
+static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipeline::Specs &specs)
 {
-    TKIT_ASSERT(p_Specs.Layout, "[VULKIT][PIPELINE] Pipeline layout must be provided");
-    TKIT_ASSERT(p_Specs.ComputeShader, "[VULKIT][PIPELINE] Compute shader must be provided");
+    TKIT_ASSERT(specs.Layout, "[VULKIT][PIPELINE] Pipeline layout must be provided");
+    TKIT_ASSERT(specs.ComputeShader, "[VULKIT][PIPELINE] Compute shader must be provided");
 
     VkComputePipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-    pipelineInfo.layout = p_Specs.Layout;
+    pipelineInfo.layout = specs.Layout;
     pipelineInfo.stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     pipelineInfo.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    pipelineInfo.stage.module = p_Specs.ComputeShader;
-    pipelineInfo.stage.pName = p_Specs.EntryPoint;
+    pipelineInfo.stage.module = specs.ComputeShader;
+    pipelineInfo.stage.pName = specs.EntryPoint;
 
     return pipelineInfo;
 }
 
-Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &p_Device, const Specs &p_Specs)
+Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &device, const Specs &specs)
 {
-    const VkComputePipelineCreateInfo pipelineInfo = createPipelineInfo(p_Specs);
+    const VkComputePipelineCreateInfo pipelineInfo = createPipelineInfo(specs);
 
     VkPipeline pipeline;
-    const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Specs.Cache, 1, &pipelineInfo,
-                                                                   p_Device.AllocationCallbacks, &pipeline);
+    const VkResult result = device.Table->CreateComputePipelines(device, specs.Cache, 1, &pipelineInfo,
+                                                                 device.AllocationCallbacks, &pipeline);
     if (result != VK_SUCCESS)
         return Result<ComputePipeline>::Error(result);
 
-    return Result<ComputePipeline>::Ok(p_Device, pipeline);
+    return Result<ComputePipeline>::Ok(device, pipeline);
 }
-Result<> ComputePipeline::Create(const ProxyDevice &p_Device, const TKit::Span<const Specs> p_Specs,
-                                 const TKit::Span<ComputePipeline> p_Pipelines, const VkPipelineCache p_Cache)
+Result<> ComputePipeline::Create(const ProxyDevice &device, const TKit::Span<const Specs> specs,
+                                 const TKit::Span<ComputePipeline> pipelines, const VkPipelineCache cache)
 {
     TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos{};
-    pipelineInfos.Reserve(p_Specs.GetSize());
-    for (const Specs &specs : p_Specs)
+    pipelineInfos.Reserve(specs.GetSize());
+    for (const Specs &specs : specs)
         pipelineInfos.Append(createPipelineInfo(specs));
 
-    const u32 count = p_Specs.GetSize();
-    TKit::StackArray<VkPipeline> pipelines{count};
-    const VkResult result = p_Device.Table->CreateComputePipelines(p_Device, p_Cache, count, pipelineInfos.GetData(),
-                                                                   p_Device.AllocationCallbacks, pipelines.GetData());
+    const u32 count = specs.GetSize();
+    TKit::StackArray<VkPipeline> vkpipelines{count};
+    const VkResult result = device.Table->CreateComputePipelines(device, cache, count, pipelineInfos.GetData(),
+                                                                 device.AllocationCallbacks, vkpipelines.GetData());
 
     if (result != VK_SUCCESS)
         return Result<>::Error(result);
 
     for (u32 i = 0; i < count; ++i)
-        p_Pipelines[i] = ComputePipeline(p_Device, pipelines[i]);
+        pipelines[i] = ComputePipeline(device, vkpipelines[i]);
     return Result<>::Ok();
 }
 
@@ -63,9 +63,9 @@ void ComputePipeline::Destroy()
     }
 }
 
-void ComputePipeline::Bind(VkCommandBuffer p_CommandBuffer) const
+void ComputePipeline::Bind(VkCommandBuffer commandBuffer) const
 {
-    m_Device.Table->CmdBindPipeline(p_CommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
+    m_Device.Table->CmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_Pipeline);
 }
 
 } // namespace VKit
