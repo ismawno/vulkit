@@ -6,6 +6,7 @@
 #endif
 
 #include "vkit/state/descriptor_set_layout.hpp"
+#include "tkit/container/span.hpp"
 
 namespace VKit
 {

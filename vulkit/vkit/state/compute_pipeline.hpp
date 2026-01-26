@@ -5,7 +5,8 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_COMPUTE_PIPELINE"
 #endif
 
-#include "vkit/device/logical_device.hpp"
+#include "vkit/device/proxy_device.hpp"
+#include "tkit/container/span.hpp"
 
 namespace VKit
 {
@@ -20,10 +21,11 @@ class ComputePipeline
         VkPipelineCache Cache = VK_NULL_HANDLE;
     };
 
-    static Result<ComputePipeline> Create(const ProxyDevice &device, const Specs &specs);
+    VKIT_NO_DISCARD static Result<ComputePipeline> Create(const ProxyDevice &device, const Specs &specs);
 
-    static Result<> Create(const ProxyDevice &device, TKit::Span<const Specs> specs,
-                           TKit::Span<ComputePipeline> pipelines, VkPipelineCache cache = VK_NULL_HANDLE);
+    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &device, TKit::Span<const Specs> specs,
+                                           TKit::Span<ComputePipeline> pipelines,
+                                           VkPipelineCache cache = VK_NULL_HANDLE);
 
     ComputePipeline() = default;
     ComputePipeline(const ProxyDevice &device, VkPipeline pipeline) : m_Device(device), m_Pipeline(pipeline)

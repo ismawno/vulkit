@@ -23,7 +23,7 @@ struct Specs
 
 namespace VKit::Core
 {
-Result<> Initialize(const Specs &specs = {});
+VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
 void Terminate();
 
 bool IsExtensionSupported(const char *name);

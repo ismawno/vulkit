@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DESCRIPTORS"
 #endif
 
-#include "vkit/device/logical_device.hpp"
+#include "vkit/device/proxy_device.hpp"
 #include "vkit/state/descriptor_set.hpp"
 
 #include <vulkan/vulkan.h>
@@ -22,7 +22,7 @@ class DescriptorPool
         {
         }
 
-        Result<DescriptorPool> Build() const;
+        VKIT_NO_DISCARD Result<DescriptorPool> Build() const;
 
         Builder &SetMaxSets(u32 maxSets);
         Builder &SetFlags(VkDescriptorPoolCreateFlags flags);
@@ -57,9 +57,9 @@ class DescriptorPool
         return m_Info;
     }
 
-    Result<DescriptorSet> Allocate(VkDescriptorSetLayout layout) const;
-    Result<> Deallocate(TKit::Span<const VkDescriptorSet> sets) const;
-    Result<> Reset();
+    VKIT_NO_DISCARD Result<DescriptorSet> Allocate(VkDescriptorSetLayout layout) const;
+    VKIT_NO_DISCARD Result<> Deallocate(TKit::Span<const VkDescriptorSet> sets) const;
+    VKIT_NO_DISCARD Result<> Reset();
 
     const ProxyDevice &GetDevice() const
     {

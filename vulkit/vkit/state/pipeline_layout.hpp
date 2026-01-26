@@ -5,7 +5,7 @@
         "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PIPELINE_LAYOUT"
 #endif
 
-#include "vkit/device/logical_device.hpp"
+#include "vkit/device/proxy_device.hpp"
 
 namespace VKit
 {
@@ -19,7 +19,7 @@ class PipelineLayout
         {
         }
 
-        Result<PipelineLayout> Build() const;
+        VKIT_NO_DISCARD Result<PipelineLayout> Build() const;
 
         Builder &AddDescriptorSetLayout(VkDescriptorSetLayout layout);
         Builder &AddPushConstantRange(VkShaderStageFlags stages, u32 size, u32 offset = 0);
