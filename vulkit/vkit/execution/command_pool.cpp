@@ -44,8 +44,7 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> commandBuffers,
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel level) const
 {
     VkCommandBuffer commandBuffer;
-    const Result<> result = Allocate(commandBuffer, level);
-    TKIT_RETURN_ON_ERROR(result);
+    TKIT_RETURN_IF_FAILED(Allocate(commandBuffer, level));
     return commandBuffer;
 }
 
@@ -64,9 +63,8 @@ Result<> CommandPool::Reset(const VkCommandPoolResetFlags flags) const
 
 Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
 {
-    const Result<VkCommandBuffer> result = Allocate();
-    if (!result)
-        return result;
+    const auto result = Allocate();
+    TKIT_RETURN_ON_ERROR(result);
 
     const VkCommandBuffer commandBuffer = result.GetValue();
     VkCommandBufferBeginInfo beginInfo{};
@@ -75,7 +73,10 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
 
     const VkResult vkresult = m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo);
     if (vkresult != VK_SUCCESS)
+    {
+        Deallocate(commandBuffer);
         return Result<VkCommandBuffer>::Error(vkresult);
+    }
 
     return commandBuffer;
 }

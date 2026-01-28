@@ -160,6 +160,11 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         return info.Queues.Append(alloc->Create<Queue>(pdevice, q, family));
     };
 
+    const auto destroyQueues = [&] {
+        for (VKit::Queue *queue : info.Queues)
+            alloc->Destroy(queue);
+    };
+
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
     {
         const u32 findex = devInfo.FamilyIndices[i];
@@ -167,7 +172,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         for (u32 j = 0; j < count; ++j)
         {
             const auto result = createQueue(findex, j);
-            TKIT_RETURN_ON_ERROR(result);
+            TKIT_RETURN_ON_ERROR(result, destroyQueues());
             info.QueuesPerType[i].Append(result.GetValue());
         }
     }

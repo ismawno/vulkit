@@ -592,8 +592,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
     {
-        const auto qresult = querySwapChainSupport(table, device, m_Surface);
-        TKIT_RETURN_ON_ERROR(qresult);
+        TKIT_RETURN_IF_FAILED(querySwapChainSupport(table, device, m_Surface));
     }
 #endif
 
