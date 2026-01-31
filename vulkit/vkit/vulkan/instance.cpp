@@ -262,7 +262,7 @@ Result<Instance> Instance::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<Instance>::Error(result);
 
-    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+    TKit::TierAllocator *alloc = TKit::GetTier();
     Vulkan::InstanceTable *table = alloc->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
 
 #ifdef VK_EXT_debug_utils
@@ -333,7 +333,7 @@ void Instance::Destroy()
     }
 
     m_Info.Table->DestroyInstance(m_Instance, m_Info.AllocationCallbacks);
-    TKit::Memory::GetTier()->Destroy(m_Info.Table);
+    TKit::GetTier()->Destroy(m_Info.Table);
     m_Instance = VK_NULL_HANDLE;
 }
 

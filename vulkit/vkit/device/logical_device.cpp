@@ -141,7 +141,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     if (result != VK_SUCCESS)
         return Result<LogicalDevice>::Error(result);
 
-    TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+    TKit::TierAllocator *alloc = TKit::GetTier();
     Vulkan::DeviceTable *table =
         alloc->Create<Vulkan::DeviceTable>(Vulkan::DeviceTable::Create(device, *m_Instance->GetInfo().Table));
 
@@ -184,14 +184,14 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
-        TKit::TierAllocator *alloc = TKit::Memory::GetTier();
+        TKit::TierAllocator *alloc = TKit::GetTier();
         for (VKit::Queue *q : m_Info.Queues)
         {
             q->DestroyTimeline();
             alloc->Destroy(q);
         }
         m_Info.Table->DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
-        TKit::Memory::GetTier()->Destroy(m_Info.Table);
+        TKit::GetTier()->Destroy(m_Info.Table);
         m_Device = VK_NULL_HANDLE;
     }
 }

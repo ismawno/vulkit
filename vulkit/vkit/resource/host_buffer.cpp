@@ -8,7 +8,7 @@ HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize inst
     : m_InstanceCount(instanceCount), m_InstanceSize(instanceSize), m_Size(instanceCount * instanceSize),
       m_Alignment(alignment)
 {
-    m_Data = TKit::Memory::AllocateAligned(m_Size, alignment);
+    m_Data = TKit::AllocateAligned(m_Size, alignment);
 }
 
 void HostBuffer::Write(const void *data, const VkBufferCopy &copy)
@@ -20,7 +20,7 @@ void HostBuffer::Write(const void *data, const VkBufferCopy &copy)
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
     const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;
-    TKit::Memory::ForwardCopy(dst, src, copy.size);
+    TKit::ForwardCopy(dst, src, copy.size);
 }
 
 void HostBuffer::WriteAt(const u32 index, const void *pdata)
@@ -29,15 +29,15 @@ void HostBuffer::WriteAt(const u32 index, const void *pdata)
 
     const VkDeviceSize size = m_InstanceSize * index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
-    TKit::Memory::ForwardCopy(data, pdata, m_InstanceSize);
+    TKit::ForwardCopy(data, pdata, m_InstanceSize);
 }
 
 void HostBuffer::Resize(const VkDeviceSize instanceCount)
 {
     const VkDeviceSize size = instanceCount * m_InstanceSize;
-    void *data = TKit::Memory::AllocateAligned(size, m_Alignment);
-    TKit::Memory::ForwardCopy(data, m_Data, m_Size);
-    TKit::Memory::DeallocateAligned(m_Data);
+    void *data = TKit::AllocateAligned(size, m_Alignment);
+    TKit::ForwardCopy(data, m_Data, m_Size);
+    TKit::DeallocateAligned(m_Data);
     m_Data = data;
     m_Size = size;
     m_InstanceCount = instanceCount;
@@ -45,7 +45,7 @@ void HostBuffer::Resize(const VkDeviceSize instanceCount)
 
 void HostBuffer::Destroy()
 {
-    TKit::Memory::DeallocateAligned(m_Data);
+    TKit::DeallocateAligned(m_Data);
     m_Data = nullptr;
 }
 

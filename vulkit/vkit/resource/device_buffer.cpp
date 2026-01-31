@@ -185,7 +185,7 @@ void DeviceBuffer::Write(const void *data, const VkBufferCopy &copy)
 
     std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
     const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;
-    TKit::Memory::ForwardCopy(dst, src, copy.size);
+    TKit::ForwardCopy(dst, src, copy.size);
 }
 
 void DeviceBuffer::WriteAt(const u32 index, const void *pdata)
@@ -194,7 +194,7 @@ void DeviceBuffer::WriteAt(const u32 index, const void *pdata)
 
     const VkDeviceSize size = m_Info.InstanceAlignedSize * index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
-    TKit::Memory::ForwardCopy(data, pdata, m_Info.InstanceSize);
+    TKit::ForwardCopy(data, pdata, m_Info.InstanceSize);
 }
 
 void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer commandBuffer, const DeviceBuffer &source,

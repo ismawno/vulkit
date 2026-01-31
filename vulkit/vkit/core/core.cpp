@@ -138,9 +138,9 @@ Result<> Initialize(const Specs &specs)
     else if (!s_Allocation.Arena)
         s_Allocation.Arena = new TKit::ArenaAllocator(4_mib);
 
-    if (TKit::Memory::GetArena() != s_Allocation.Arena)
+    if (TKit::GetArena() != s_Allocation.Arena)
     {
-        TKit::Memory::PushArena(s_Allocation.Arena);
+        TKit::PushArena(s_Allocation.Arena);
         s_PushedAlloc |= 1 << 0;
     }
 
@@ -149,9 +149,9 @@ Result<> Initialize(const Specs &specs)
     else if (!s_Allocation.Stack)
         s_Allocation.Stack = new TKit::StackAllocator(4_mib);
 
-    if (TKit::Memory::GetStack() != s_Allocation.Stack)
+    if (TKit::GetStack() != s_Allocation.Stack)
     {
-        TKit::Memory::PushStack(s_Allocation.Stack);
+        TKit::PushStack(s_Allocation.Stack);
         s_PushedAlloc |= 1 << 1;
     }
 
@@ -160,9 +160,9 @@ Result<> Initialize(const Specs &specs)
     else if (!s_Allocation.Tier)
         s_Allocation.Tier = new TKit::TierAllocator(64, 256_kib);
 
-    if (TKit::Memory::GetTier() != s_Allocation.Tier)
+    if (TKit::GetTier() != s_Allocation.Tier)
     {
-        TKit::Memory::PushTier(s_Allocation.Tier);
+        TKit::PushTier(s_Allocation.Tier);
         s_PushedAlloc |= 1 << 2;
     }
 
@@ -202,10 +202,10 @@ void Terminate()
     s_Library = nullptr;
     s_Capabilities = {};
     if (s_PushedAlloc & 4)
-        TKit::Memory::PopTier();
+        TKit::PopTier();
     if (s_PushedAlloc & 2)
-        TKit::Memory::PopStack();
+        TKit::PopStack();
     if (s_PushedAlloc & 1)
-        TKit::Memory::PopArena();
+        TKit::PopArena();
 }
 } // namespace VKit::Core
