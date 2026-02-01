@@ -263,7 +263,7 @@ class DeletionQueue
 
     void Push(std::function<void()> &&deleter);
     void Flush();
-    void Clear();
+    void Dismiss();
 
     template <typename VKitObject> void SubmitForDeletion(VKitObject object)
     {

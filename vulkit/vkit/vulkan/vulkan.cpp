@@ -40,7 +40,7 @@ void DeletionQueue::Flush()
         m_Deleters[i - 1]();
     m_Deleters.Clear();
 }
-void DeletionQueue::Clear()
+void DeletionQueue::Dismiss()
 {
     m_Deleters.Clear();
 }
