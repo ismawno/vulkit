@@ -14,10 +14,9 @@ Result<DescriptorPool> DescriptorPool::Builder::Build() const
     poolInfo.flags = m_Flags;
 
     VkDescriptorPool pool;
-    const VkResult result =
-        m_Device.Table->CreateDescriptorPool(m_Device, &poolInfo, m_Device.AllocationCallbacks, &pool);
-    if (result != VK_SUCCESS)
-        return Result<DescriptorPool>::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        m_Device.Table->CreateDescriptorPool(m_Device, &poolInfo, m_Device.AllocationCallbacks, &pool),
+        Result<DescriptorPool>);
 
     DescriptorPool::Info info{};
     info.MaxSets = m_MaxSets;
@@ -44,26 +43,20 @@ Result<DescriptorSet> DescriptorPool::Allocate(const VkDescriptorSetLayout layou
     allocInfo.descriptorSetCount = 1;
     allocInfo.pSetLayouts = &layout;
 
-    const VkResult result = m_Device.Table->AllocateDescriptorSets(m_Device, &allocInfo, &set);
-    if (result != VK_SUCCESS)
-        return Result<DescriptorSet>::Error(result);
-
+    VKIT_RETURN_IF_FAILED(m_Device.Table->AllocateDescriptorSets(m_Device, &allocInfo, &set), Result<DescriptorSet>);
     return DescriptorSet{m_Device, set};
 }
 
 Result<> DescriptorPool::Deallocate(const TKit::Span<const VkDescriptorSet> sets) const
 {
-    const VkResult result = m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, sets.GetSize(), sets.GetData());
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->FreeDescriptorSets(m_Device, m_Pool, sets.GetSize(), sets.GetData()),
+                          Result<>);
     return Result<>::Ok();
 }
 
-Result<> DescriptorPool::Reset()
+Result<> DescriptorPool::Reset(VkDescriptorPoolResetFlags flags)
 {
-    const VkResult result = m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, 0);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->ResetDescriptorPool(m_Device, m_Pool, flags), Result<>);
     return Result<>::Ok();
 }
 

@@ -26,9 +26,8 @@ Result<u64> Queue::UpdateCompletedTimeline()
     TKIT_ASSERT(m_Timeline, "[VULKIT][QUEUE] To query completed submissions of a queue it must have a "
                             "timeline semaphore assigned with TakeTimelineSemaphoreOwnership()");
 
-    const VkResult result = m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &m_CompletedTimeline);
-    if (result != VK_SUCCESS)
-        return Result<u64>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &m_CompletedTimeline),
+                          Result<u64>);
     return m_CompletedTimeline;
 }
 
@@ -49,9 +48,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> info, const VkFence fence)
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    const VkResult result = m_Device.Table->QueueSubmit(m_Queue, info.GetSize(), info.GetData(), fence);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(m_Queue, info.GetSize(), info.GetData(), fence), Result<>);
 
     m_TimelineSubmissions = m_TimelineCounter;
     return Result<>::Ok();
@@ -66,9 +63,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkF
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    const VkResult result = m_Device.Table->QueueSubmit2KHR(m_Queue, info.GetSize(), info.GetData(), fence);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit2KHR(m_Queue, info.GetSize(), info.GetData(), fence), Result<>);
 
     m_TimelineSubmissions = m_TimelineCounter;
     return Result<>::Ok();
@@ -77,9 +72,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkF
 
 Result<> Queue::WaitIdle() const
 {
-    const VkResult result = m_Device.Table->QueueWaitIdle(m_Queue);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(m_Queue), Result<>);
     return Result<>::Ok();
 }
 } // namespace VKit

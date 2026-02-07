@@ -136,10 +136,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const Vulkan::InstanceTable *itable = instanceInfo.Table;
 
     VkDevice device;
-    const VkResult result =
-        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device);
-    if (result != VK_SUCCESS)
-        return Result<LogicalDevice>::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device),
+        Result<LogicalDevice>);
 
     TKit::TierAllocator *alloc = TKit::GetTier();
     Vulkan::DeviceTable *table =
@@ -150,7 +149,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     info.PhysicalDevice = m_PhysicalDevice;
     info.Table = table;
 
-    ProxyDevice pdevice{device, m_Instance->GetInfo().AllocationCallbacks, table};
+    ProxyDevice pdevice{device, instanceInfo.AllocationCallbacks, table};
     const auto createQueue = [&](const u32 family, const u32 index) -> Result<Queue *> {
         for (u32 i = 0; i < info.QueuesPerType.GetSize(); ++i)
             if (index < info.QueuesPerType[i].GetSize() && info.QueuesPerType[i][index]->GetFamily() == family)
@@ -160,9 +159,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         return info.Queues.Append(alloc->Create<Queue>(pdevice, q, family));
     };
 
-    const auto destroyQueues = [&] {
+    const auto cleanup = [&] {
         for (VKit::Queue *queue : info.Queues)
             alloc->Destroy(queue);
+        table->DestroyDevice(device, instanceInfo.AllocationCallbacks);
     };
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
@@ -172,7 +172,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         for (u32 j = 0; j < count; ++j)
         {
             const auto result = createQueue(findex, j);
-            TKIT_RETURN_ON_ERROR(result, destroyQueues());
+            TKIT_RETURN_ON_ERROR(result, cleanup());
             info.QueuesPerType[i].Append(result.GetValue());
         }
     }
@@ -198,9 +198,7 @@ void LogicalDevice::Destroy()
 
 Result<> LogicalDevice::WaitIdle(const ProxyDevice &device)
 {
-    const VkResult result = device.Table->DeviceWaitIdle(device);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(device.Table->DeviceWaitIdle(device), Result<>);
     return Result<>::Ok();
 }
 Result<> LogicalDevice::WaitIdle() const

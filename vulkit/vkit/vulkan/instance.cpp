@@ -71,9 +71,7 @@ Result<Instance> Instance::Builder::Build() const
     const auto checkApiVersion = [](const u32 pversion, const bool isRequested) -> Result<u32> {
 #ifdef VKIT_API_VERSION_1_1
         u32 version;
-        const VkResult result = Vulkan::EnumerateInstanceVersion(&version);
-        if (result != VK_SUCCESS)
-            return Result<u32>::Error(result);
+        VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceVersion(&version), Result<u32>);
 #else
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
@@ -258,33 +256,36 @@ Result<Instance> Instance::Builder::Build() const
 #endif
 
     VkInstance vkinstance;
-    VkResult result = Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance);
-    if (result != VK_SUCCESS)
-        return Result<Instance>::Error(result);
+    VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance), Result<Instance>);
 
     TKit::TierAllocator *alloc = TKit::GetTier();
     Vulkan::InstanceTable *table = alloc->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
 
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
-    if (validationLayers)
-    {
-        result = table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, nullptr, &debugMessenger);
-        if (result != VK_SUCCESS)
-        {
-            table->DestroyInstance(vkinstance, m_AllocationCallbacks);
-            return Result<Instance>::Error(result);
-        }
-    }
-#else
-    if (validationLayers)
-    {
+#endif
+
+    const auto cleanup = [&] {
+#ifdef VK_EXT_debug_utils
+        table->DestroyDebugUtilsMessengerEXT(vkinstance, debugMessenger, m_AllocationCallbacks);
+#endif
         table->DestroyInstance(vkinstance, m_AllocationCallbacks);
+        alloc->Destroy(table);
+    };
+
+    if (validationLayers)
+    {
+#ifdef VK_EXT_debug_utils
+        VKIT_RETURN_IF_FAILED(
+            table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, m_AllocationCallbacks, &debugMessenger),
+            Result<Instance>, cleanup());
+#else
+        cleanup();
         return Result<Instance>::Error(
             Error_MissingLayer,
             "[VULKIT][INSTANCE] Validation layers (along with the debug utils extension) are not suported");
-    }
 #endif
+    }
 
     Instance::Info info{};
     info.ApplicationName = m_ApplicationName;
@@ -305,9 +306,12 @@ Result<Instance> Instance::Builder::Build() const
         info.Flags |= InstanceFlag_Properties2Extension;
 
     if (!((validationLayers && debugMessenger) || (!validationLayers && !debugMessenger)))
+    {
+        cleanup();
         return Result<Instance>::Error(
             Error_MissingLayer,
             "[VULKIT][INSTANCE] The debug messenger must be available if validation layers are enabled");
+    }
 
     return Result<Instance>::Ok(vkinstance, info);
 }

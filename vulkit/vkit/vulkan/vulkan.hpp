@@ -126,6 +126,42 @@
 
 #define VKIT_CHECK_EXPRESSION(expression) VKit::CheckExpression(expression)
 
+#define VKIT_RETURN_IF_ERROR(vkresult, rtype, ...)                                                                     \
+    if (vkresult != VK_SUCCESS)                                                                                        \
+    {                                                                                                                  \
+        __VA_ARGS__;                                                                                                   \
+        return rtype::Error(vkresult);                                                                                 \
+    }
+
+#define VKIT_RETURN_IF_FAILED(expression, rtype, ...)                                                                  \
+    if (const VkResult __vkit_result = expression; __vkit_result != VK_SUCCESS)                                        \
+    {                                                                                                                  \
+        __VA_ARGS__;                                                                                                   \
+        return rtype::Error(__vkit_result);                                                                            \
+    }
+
+#define VKIT_RETURN_IF_ERROR_WITH_MESSAGE(vkresult, rtype, msg, ...)                                                   \
+    if (vkresult != VK_SUCCESS)                                                                                        \
+    {                                                                                                                  \
+        __VA_ARGS__;                                                                                                   \
+        return rtype::Error(vkresult, msg);                                                                            \
+    }
+
+#define VKIT_RETURN_IF_FAILED_WITH_MESSAGE(expression, rtype, msg, ...)                                                \
+    if (const VkResult __vkit_result = expression; __vkit_result != VK_SUCCESS)                                        \
+    {                                                                                                                  \
+        __VA_ARGS__;                                                                                                   \
+        return rtype::Error(__vkit_result, msg);                                                                       \
+    }
+
+#define VKIT_RETURN_IF_ERROR_FORMATTED(vkresult, rtype, ...)                                                           \
+    if (vkresult != VK_SUCCESS)                                                                                        \
+    return rtype::Error(vkresult, TKit::Format(__VA_ARGS__))
+
+#define VKIT_RETURN_IF_FAILED_FORMATTED(expression, rtype, ...)                                                        \
+    if (const VkResult __vkit_result = expression; __vkit_result != VK_SUCCESS)                                        \
+    return rtype::Error(__vkit_result, TKit::Format(__VA_ARGS__))
+
 namespace VKit
 {
 enum ErrorCode : u8

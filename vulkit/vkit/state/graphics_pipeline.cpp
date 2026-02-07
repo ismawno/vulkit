@@ -82,10 +82,9 @@ Result<GraphicsPipeline> GraphicsPipeline::Builder::Build() const
     const VkGraphicsPipelineCreateInfo pipelineInfo = CreatePipelineInfo();
 
     VkPipeline pipeline;
-    const VkResult result = m_Device.Table->CreateGraphicsPipelines(m_Device, m_Cache, 1, &pipelineInfo,
-                                                                    m_Device.AllocationCallbacks, &pipeline);
-    if (result != VK_SUCCESS)
-        return Result<GraphicsPipeline>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateGraphicsPipelines(m_Device, m_Cache, 1, &pipelineInfo,
+                                                                  m_Device.AllocationCallbacks, &pipeline),
+                          Result<GraphicsPipeline>);
 
     return Result<GraphicsPipeline>::Ok(m_Device, pipeline);
 }
@@ -105,11 +104,10 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &device, const TKit::Span<co
 
     const u32 count = builders.GetSize();
     TKit::StackArray<VkPipeline> vkpipelines{count};
-    const VkResult result = device.Table->CreateGraphicsPipelines(device, cache, count, pipelineInfos.GetData(),
-                                                                  device.AllocationCallbacks, vkpipelines.GetData());
 
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(device.Table->CreateGraphicsPipelines(device, cache, count, pipelineInfos.GetData(),
+                                                                device.AllocationCallbacks, vkpipelines.GetData()),
+                          Result<>);
 
     for (u32 i = 0; i < count; ++i)
         pipelines[i] = GraphicsPipeline(device, vkpipelines[i]);

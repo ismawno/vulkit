@@ -192,7 +192,7 @@ class RenderPass
      */
     template <typename F>
     VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, F &&createImageData,
-                                                      u32 frameBufferLayers = 1)
+                                                      const u32 frameBufferLayers = 1)
     {
         Resources resources;
         resources.m_Device = m_Device;
@@ -224,13 +224,9 @@ class RenderPass
             frameBufferInfo.layers = frameBufferLayers;
 
             VkFramebuffer frameBuffer;
-            const VkResult result = m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
-                                                                      m_Device.AllocationCallbacks, &frameBuffer);
-            if (result != VK_SUCCESS)
-            {
-                resources.Destroy();
-                return Result<Resources>::Error(result);
-            }
+            VKIT_RETURN_IF_FAILED(m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
+                                                                    m_Device.AllocationCallbacks, &frameBuffer),
+                                  Result<Resources>, resources.Destroy());
 
             resources.m_FrameBuffers.Append(frameBuffer);
         }

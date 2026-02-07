@@ -12,9 +12,8 @@ Result<CommandPool> CommandPool::Create(const ProxyDevice &device, const u32 que
     createInfo.flags = flags;
 
     VkCommandPool pool;
-    const VkResult result = device.Table->CreateCommandPool(device, &createInfo, device.AllocationCallbacks, &pool);
-    if (result != VK_SUCCESS)
-        return Result<CommandPool>::Error(result);
+    VKIT_RETURN_IF_FAILED(device.Table->CreateCommandPool(device, &createInfo, device.AllocationCallbacks, &pool),
+                          Result<CommandPool>);
 
     return Result<CommandPool>::Ok(device, pool);
 }
@@ -36,9 +35,8 @@ Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> commandBuffers,
     allocateInfo.level = level;
     allocateInfo.commandBufferCount = commandBuffers.GetSize();
 
-    const VkResult result = m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, commandBuffers.GetData());
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, commandBuffers.GetData()),
+                          Result<>);
     return Result<>::Ok();
 }
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel level) const
@@ -55,9 +53,7 @@ void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> commandBuff
 
 Result<> CommandPool::Reset(const VkCommandPoolResetFlags flags) const
 {
-    const VkResult result = m_Device.Table->ResetCommandPool(m_Device, m_Pool, flags);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->ResetCommandPool(m_Device, m_Pool, flags), Result<>);
     return Result<>::Ok();
 }
 
@@ -71,41 +67,25 @@ Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    const VkResult vkresult = m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo);
-    if (vkresult != VK_SUCCESS)
-    {
-        Deallocate(commandBuffer);
-        return Result<VkCommandBuffer>::Error(vkresult);
-    }
+    VKIT_RETURN_IF_FAILED(m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo), Result<VkCommandBuffer>,
+                          Deallocate(commandBuffer));
 
     return commandBuffer;
 }
 
 Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer commandBuffer, const VkQueue queue) const
 {
-    VkResult result = m_Device.Table->EndCommandBuffer(commandBuffer);
-    if (result != VK_SUCCESS)
-    {
-        Deallocate(commandBuffer);
-        return Result<>::Error(result);
-    }
+    VKIT_RETURN_IF_FAILED(m_Device.Table->EndCommandBuffer(commandBuffer), Result<>, Deallocate(commandBuffer));
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    result = m_Device.Table->QueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-    if (result != VK_SUCCESS)
-    {
-        Deallocate(commandBuffer);
-        return Result<>::Error(result);
-    }
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE), Result<>,
+                          Deallocate(commandBuffer));
 
-    result = m_Device.Table->QueueWaitIdle(queue);
-    Deallocate(commandBuffer);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(queue), Result<>, Deallocate(commandBuffer));
 
     return Result<>::Ok();
 }

@@ -167,26 +167,19 @@ Result<> Initialize(const Specs &specs)
     }
 
     u32 extensionCount = 0;
-    VkResult result;
-    result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr), Result<>);
 
     s_Capabilities.AvailableExtensions.Resize(extensionCount);
-    result = Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-                                                          s_Capabilities.AvailableExtensions.GetData());
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount,
+                                                                       s_Capabilities.AvailableExtensions.GetData()),
+                          Result<>);
 
     u32 layerCount = 0;
-    result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr);
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr), Result<>);
 
     s_Capabilities.AvailableLayers.Resize(layerCount);
-    result = Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities.AvailableLayers.GetData());
-    if (result != VK_SUCCESS)
-        return Result<>::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities.AvailableLayers.GetData()), Result<>);
 
     return Result<>::Ok();
 }

@@ -59,7 +59,7 @@ class DescriptorPool
 
     VKIT_NO_DISCARD Result<DescriptorSet> Allocate(VkDescriptorSetLayout layout) const;
     VKIT_NO_DISCARD Result<> Deallocate(TKit::Span<const VkDescriptorSet> sets) const;
-    VKIT_NO_DISCARD Result<> Reset();
+    VKIT_NO_DISCARD Result<> Reset(VkDescriptorPoolResetFlags flags = 0);
 
     const ProxyDevice &GetDevice() const
     {

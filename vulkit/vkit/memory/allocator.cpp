@@ -95,9 +95,7 @@ Result<VmaAllocator> CreateAllocator(const LogicalDevice &device, const Allocato
     allocatorInfo.flags = specs.Flags;
 
     VmaAllocator allocator;
-    const VkResult result = vmaCreateAllocator(&allocatorInfo, &allocator);
-    if (result != VK_SUCCESS)
-        return Result<VmaAllocator>::Error(result);
+    VKIT_RETURN_IF_FAILED(vmaCreateAllocator(&allocatorInfo, &allocator), Result<VmaAllocator>);
 
     return allocator;
 }

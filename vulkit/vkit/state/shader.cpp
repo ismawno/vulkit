@@ -37,9 +37,8 @@ Result<Shader> Shader::Create(const ProxyDevice &device, const u32 *spirv, const
     createInfo.pCode = spirv;
 
     VkShaderModule module;
-    const VkResult result = device.Table->CreateShaderModule(device, &createInfo, device.AllocationCallbacks, &module);
-    if (result != VK_SUCCESS)
-        return Result<Shader>::Error(result);
+    VKIT_RETURN_IF_FAILED(device.Table->CreateShaderModule(device, &createInfo, device.AllocationCallbacks, &module),
+                          Result<Shader>);
 
     return Result<Shader>::Ok(device, module);
 }

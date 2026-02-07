@@ -12,10 +12,10 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
     layoutInfo.pBindings = m_Bindings.GetData();
 
     VkDescriptorSetLayout layout;
-    const VkResult result =
-        m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
-    if (result != VK_SUCCESS)
-        return Result<DescriptorSetLayout>::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout),
+        Result<DescriptorSetLayout>);
+
     return Result<DescriptorSetLayout>::Ok(m_Device, layout, m_Bindings);
 }
 

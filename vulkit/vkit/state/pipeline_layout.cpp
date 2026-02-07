@@ -15,10 +15,9 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const
     layoutInfo.flags = m_Flags;
 
     VkPipelineLayout layout;
-    const VkResult result =
-        m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout);
-    if (result != VK_SUCCESS)
-        return Result<PipelineLayout>::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout),
+        Result<PipelineLayout>);
 
     PipelineLayout::Info info;
     info.DescriptorSetLayouts = m_DescriptorSetLayouts;

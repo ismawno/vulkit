@@ -142,9 +142,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     createInfo.flags = m_CreateFlags;
 
     VkSwapchainKHR swapChain;
-    VkResult result = proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain);
-    if (result != VK_SUCCESS)
-        return Result<SwapChain>::Error(result);
+    VKIT_RETURN_IF_FAILED(proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain),
+                          Result<SwapChain>);
 
     TKit::TierArray<DeviceImage> finalImages;
     SwapChain::Info info{};
@@ -155,7 +154,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto earlyDestroy = [proxy, swapChain, &checkFlags, &finalImages] {
+    const auto cleanup = [proxy, swapChain, &checkFlags, &finalImages] {
         if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
             for (DeviceImage &image : finalImages)
                 image.DestroyImageView();
@@ -163,22 +162,14 @@ Result<SwapChain> SwapChain::Builder::Build() const
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
     };
 
-    result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr);
-    if (result != VK_SUCCESS)
-    {
-        earlyDestroy();
-        return Result<SwapChain>::Error(result);
-    }
+    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr), Result<SwapChain>,
+                          cleanup());
 
     TKit::StackArray<VkImage> images;
     images.Resize(imageCount);
 
-    result = proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData());
-    if (result != VK_SUCCESS)
-    {
-        earlyDestroy();
-        return Result<SwapChain>::Error(result);
-    }
+    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData()),
+                          Result<SwapChain>, cleanup());
 
     finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
@@ -202,12 +193,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            result = proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &view);
-            if (result != VK_SUCCESS)
-            {
-                earlyDestroy();
-                return Result<SwapChain>::Error(result);
-            }
+            VKIT_RETURN_IF_FAILED(proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &view),
+                                  Result<SwapChain>, cleanup());
         }
         finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};
     }

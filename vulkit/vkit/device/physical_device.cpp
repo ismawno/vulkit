@@ -263,33 +263,24 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
     u32 formatCount = 0;
     u32 modeCount = 0;
 
-    VkResult result = table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-    if (result != VK_SUCCESS)
-        return Res::Error(result);
-
-    result = table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, nullptr);
-    if (result != VK_SUCCESS)
-        return Res::Error(result);
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr), Res);
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, nullptr), Res);
 
     if (formatCount == 0 || modeCount == 0)
         return Res::Error(Error_NoSurfaceCapabilities);
 
     PhysicalDevice::SwapChainSupportDetails details;
-    result = table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities);
-    if (result != VK_SUCCESS)
-        return Res::Error(result);
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities), Res);
 
     details.Formats.Resize(formatCount);
     details.PresentModes.Resize(modeCount);
 
-    result = table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.GetData());
-    if (result != VK_SUCCESS)
-        return Res::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.GetData()), Res);
 
-    result =
-        table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, details.PresentModes.GetData());
-    if (result != VK_SUCCESS)
-        return Res::Error(result);
+    VKIT_RETURN_IF_FAILED(
+        table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, details.PresentModes.GetData()),
+        Res);
 
     return details;
 }
@@ -383,17 +374,16 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
     u32 extensionCount;
-    VkResult result = table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
-    if (result != VK_SUCCESS)
-        return JudgeResult::Error(
-            result,
-            TKit::Format("[VULKIT][P-DEVICE] Failed to get the number of device extensions for the device: {}", name));
+
+    VKIT_RETURN_IF_FAILED_FORMATTED(
+        table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr), JudgeResult,
+        "[VULKIT][P-DEVICE] Failed to get the number of device extensions for the device: {}", name);
 
     TKit::StackArray<VkExtensionProperties> extensionsProps{extensionCount};
-    result = table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData());
-    if (result != VK_SUCCESS)
-        return JudgeResult::Error(
-            result, TKit::Format("[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name));
+
+    VKIT_RETURN_IF_FAILED_FORMATTED(
+        table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData()),
+        JudgeResult, "[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name);
 
     TKit::StackArray<std::string> availableExtensions;
     availableExtensions.Reserve(extensionsProps.GetSize());
@@ -808,14 +798,12 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
     const Vulkan::InstanceTable *table = m_Instance->GetInfo().Table;
 
     u32 deviceCount = 0;
-    VkResult result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr);
-    if (result != VK_SUCCESS)
-        return EnumerateResult::Error(result);
+    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr),
+                          EnumerateResult);
 
     vkdevices.Resize(deviceCount);
-    result = table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData());
-    if (result != VK_SUCCESS)
-        return EnumerateResult::Error(result);
+    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData()),
+                          EnumerateResult);
 
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(Error_NoDeviceFound);
