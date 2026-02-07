@@ -1,7 +1,8 @@
 #pragma once
 
 #ifndef VKIT_ENABLE_DEVICE_IMAGE
-#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_IMAGE"
+#    error                                                                                                             \
+        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_IMAGE"
 #endif
 
 #include "vkit/memory/allocator.hpp"
@@ -121,6 +122,7 @@ class DeviceImage
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &info);
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &range);
 
+    VkImageMemoryBarrier CreateTransitionLayoutBarrier(VkImageLayout layout, const TransitionInfo &info) const;
     void TransitionLayout(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info);
 
     void CopyFromImage(VkCommandBuffer commandBuffer, const DeviceImage &source, TKit::Span<const VkImageCopy> copy);

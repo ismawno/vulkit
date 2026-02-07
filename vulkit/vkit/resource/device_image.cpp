@@ -162,11 +162,9 @@ Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &in
     return m_ImageView;
 }
 
-void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
-                                   const TransitionInfo &info)
+VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLayout layout,
+                                                                const TransitionInfo &info) const
 {
-    if (m_Layout == layout)
-        return;
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     barrier.oldLayout = m_Layout;
@@ -179,7 +177,15 @@ void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const Vk
     barrier.dstAccessMask = info.DstAccess;
     if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
         barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
+    return barrier;
+}
 
+void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
+                                   const TransitionInfo &info)
+{
+    if (m_Layout == layout)
+        return;
+    const VkImageMemoryBarrier barrier = CreateTransitionLayoutBarrier(layout, info);
     m_Device.Table->CmdPipelineBarrier(commandBuffer, info.SrcStage, info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
                                        &barrier);
     m_Layout = layout;
