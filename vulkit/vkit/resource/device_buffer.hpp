@@ -5,9 +5,8 @@
         "[VULKIT][DEVICE-BUFFER] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_BUFFER"
 #endif
 
-#include "vkit/device/logical_device.hpp"
+#include "vkit/device/proxy_device.hpp"
 #include "vkit/memory/allocator.hpp"
-#include "tkit/container/span.hpp"
 
 namespace VKit
 {

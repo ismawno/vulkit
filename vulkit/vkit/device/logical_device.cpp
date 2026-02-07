@@ -1,6 +1,5 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/logical_device.hpp"
-#include "vkit/core/core.hpp"
 #include "tkit/container/stack_array.hpp"
 
 namespace VKit

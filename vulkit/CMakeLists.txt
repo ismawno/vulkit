@@ -28,6 +28,10 @@ if(VULKIT_ENABLE_HOST_BUFFER)
   list(APPEND SOURCES vkit/resource/host_buffer.cpp)
 endif()
 
+if(VULKIT_ENABLE_SAMPLER)
+  list(APPEND SOURCES vkit/resource/sampler.cpp)
+endif()
+
 if(VULKIT_ENABLE_DESCRIPTORS)
   list(APPEND SOURCES vkit/state/descriptor_pool.cpp
        vkit/state/descriptor_set_layout.cpp vkit/state/descriptor_set.cpp)
