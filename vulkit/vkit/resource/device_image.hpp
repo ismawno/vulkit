@@ -108,6 +108,20 @@ class DeviceImage
         VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
     };
 
+#if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+    struct TransitionInfo2
+    {
+        u32 SrcFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        u32 DstFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        VkAccessFlags2KHR SrcAccess = 0;
+        VkAccessFlags2KHR DstAccess = 0;
+        VkPipelineStageFlags2KHR SrcStage = 0;
+        VkPipelineStageFlags2KHR DstStage = 0;
+        // VK_IMAGE_ASPECT_NONE means one will be chosen automatically
+        VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
+    };
+#endif
+
     static Info FromSwapChain(VkFormat format, const VkExtent2D &extent,
                               DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
 
@@ -132,9 +146,10 @@ class DeviceImage
                         TKit::Span<const VkBufferImageCopy> copy);
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
-    VkImageMemoryBarrier2KHR CreateTransitionLayoutBarrier2(VkImageLayout layout, const TransitionInfo &info,
+    VkImageMemoryBarrier2KHR CreateTransitionLayoutBarrier2(VkImageLayout layout, const TransitionInfo2 &info,
                                                             const void *barrierNext = nullptr) const;
-    void TransitionLayout2(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info,
+
+    void TransitionLayout2(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo2 &info,
                            VkDependencyFlags flags = 0, const void *depNext = nullptr);
 
     void CopyFromImage2(VkCommandBuffer commandBuffer, const DeviceImage &source,

@@ -206,11 +206,11 @@ void DeviceImage::CopyFromBuffer(const VkCommandBuffer commandBuffer, const Devi
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
 VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkImageLayout layout,
-                                                                     const TransitionInfo &info,
+                                                                     const TransitionInfo2 &info,
                                                                      const void *barrierNext) const
 {
     VkImageMemoryBarrier2KHR barrier{};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR;
     barrier.oldLayout = m_Layout;
     barrier.newLayout = layout;
     barrier.srcQueueFamilyIndex = info.SrcFamilyIndex;
@@ -228,7 +228,7 @@ VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkIma
 }
 
 void DeviceImage::TransitionLayout2(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
-                                    const TransitionInfo &info, VkDependencyFlags flags, const void *depNext)
+                                    const TransitionInfo2 &info, VkDependencyFlags flags, const void *depNext)
 {
     if (m_Layout == layout)
         return;
