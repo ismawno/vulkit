@@ -57,8 +57,8 @@ if(VULKIT_ENABLE_COMMAND_POOL)
   list(APPEND SOURCES vkit/execution/command_pool.cpp)
 endif()
 
-if(VULKIT_ENABLE_IMAGE)
-  list(APPEND SOURCES vkit/resource/image.cpp)
+if(VULKIT_ENABLE_DEVICE_IMAGE)
+  list(APPEND SOURCES vkit/resource/device_image.cpp)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)
@@ -120,8 +120,8 @@ if(VULKIT_ENABLE_COMMAND_POOL)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_COMMAND_POOL)
 endif()
 
-if(VULKIT_ENABLE_IMAGE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_IMAGE)
+if(VULKIT_ENABLE_DEVICE_IMAGE)
+  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DEVICE_IMAGE)
 endif()
 
 if(VULKIT_ENABLE_RENDER_PASS)

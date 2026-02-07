@@ -6,7 +6,7 @@
 #endif
 
 #include "vkit/device/logical_device.hpp"
-#include "vkit/resource/image.hpp"
+#include "vkit/resource/device_image.hpp"
 
 #ifndef VK_KHR_surface
 #    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"

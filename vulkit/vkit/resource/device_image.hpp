@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_IMAGE
-#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_IMAGE"
+#ifndef VKIT_ENABLE_DEVICE_IMAGE
+#    error "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_IMAGE"
 #endif
 
 #include "vkit/memory/allocator.hpp"
@@ -33,15 +33,6 @@ VkImageAspectFlags InferAspectMask(const DeviceImageFlags flags);
 
 namespace VKit
 {
-
-struct HostImage
-{
-    u8 *Data;
-    u32 Width;
-    u32 Height;
-    u32 Depth;
-    u32 Channels;
-};
 
 class DeviceImage
 {

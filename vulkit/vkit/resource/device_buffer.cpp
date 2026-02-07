@@ -1,7 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/resource/device_buffer.hpp"
 #include "vkit/execution/command_pool.hpp"
-#include "vkit/resource/image.hpp"
+#include "vkit/resource/device_image.hpp"
 
 namespace VKit
 {
