@@ -155,10 +155,11 @@ class GraphicsPipeline
         Builder &SetStencilReference(u32 reference, StencilOperationFlags flags);
 
         // Vertex Input
-        Builder &AddBindingDescription(VkVertexInputRate inputRate, u32 stride);
-        template <typename T> Builder &AddBindingDescription(const VkVertexInputRate inputRate)
+        Builder &AddBindingDescription(u32 stride, VkVertexInputRate inputRate = VK_VERTEX_INPUT_RATE_VERTEX);
+        template <typename T>
+        Builder &AddBindingDescription(const VkVertexInputRate inputRate = VK_VERTEX_INPUT_RATE_VERTEX)
         {
-            AddBindingDescription(inputRate, sizeof(T));
+            AddBindingDescription(sizeof(T), inputRate);
             return *this;
         }
         Builder &AddAttributeDescription(u32 binding, VkFormat format, u32 offset);

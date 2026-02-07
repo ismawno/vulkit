@@ -492,8 +492,8 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetStencilReference(const 
 }
 
 // Vertex Input
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(const VkVertexInputRate inputRate,
-                                                                            const u32 stride)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(const u32 stride,
+                                                                            const VkVertexInputRate inputRate)
 {
     VkVertexInputBindingDescription binding{};
     binding.binding = m_BindingDescriptions.GetSize();
