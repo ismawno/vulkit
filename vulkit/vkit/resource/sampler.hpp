@@ -55,6 +55,24 @@ class Sampler
 
     void Destroy();
 
+    const ProxyDevice &GetDevice()
+    {
+        return m_Device;
+    }
+    VkSampler GetHandle() const
+    {
+        return m_Sampler;
+    }
+
+    operator VkSampler() const
+    {
+        return m_Sampler;
+    }
+    operator bool() const
+    {
+        return m_Sampler != VK_NULL_HANDLE;
+    }
+
   private:
     ProxyDevice m_Device{};
     VkSampler m_Sampler = VK_NULL_HANDLE;

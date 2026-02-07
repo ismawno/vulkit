@@ -32,6 +32,14 @@ Result<Sampler> Sampler::Builder::Build() const
     return Result<Sampler>::Ok(m_Device, sampler);
 }
 
+void Sampler::Destroy()
+{
+    if (m_Sampler)
+    {
+        m_Device.Table->DestroySampler(m_Device, m_Sampler, m_Device.AllocationCallbacks);
+        m_Sampler = VK_NULL_HANDLE;
+    }
+}
 Sampler::Builder &Sampler::Builder::SetFilters(const VkFilter mag, const VkFilter min)
 {
     m_Info.magFilter = mag;
