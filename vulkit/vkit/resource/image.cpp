@@ -90,6 +90,10 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     if (flags & DeviceImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+    if (flags & DeviceImageFlag_Source)
+        m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    if (flags & DeviceImageFlag_Destination)
+        m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
                                             createRange(m_ImageInfo, flags));
@@ -112,8 +116,16 @@ DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat format, const VkExte
 Result<DeviceImage> DeviceImage::Builder::Build() const
 {
     VmaAllocationCreateInfo allocInfo{};
-    allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-    allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    if (m_Flags & DeviceImageFlag_ForceHostVisible)
+    {
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
+        allocInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+    }
+    else
+    {
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+        allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    }
 
     VkImage image;
     VmaAllocation allocation;

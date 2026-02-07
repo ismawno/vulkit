@@ -19,7 +19,9 @@ enum DeviceImageFlagBits : DeviceImageFlags
     DeviceImageFlag_StencilAttachment = 1 << 2,
     DeviceImageFlag_InputAttachment = 1 << 3,
     DeviceImageFlag_Sampled = 1 << 4,
-    DeviceImageFlag_ForceHostVisible = 1 << 5
+    DeviceImageFlag_ForceHostVisible = 1 << 5,
+    DeviceImageFlag_Source = 1 << 6,
+    DeviceImageFlag_Destination = 1 << 7,
 };
 
 } // namespace VKit
