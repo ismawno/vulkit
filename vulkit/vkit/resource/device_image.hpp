@@ -122,14 +122,21 @@ class DeviceImage
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &info);
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &range);
 
-    VkImageMemoryBarrier CreateTransitionLayoutBarrier(VkImageLayout layout, const TransitionInfo &info) const;
-    void TransitionLayout(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info);
+    VkImageMemoryBarrier CreateTransitionLayoutBarrier(VkImageLayout layout, const TransitionInfo &info,
+                                                       const void *next = nullptr) const;
+    void TransitionLayout(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info,
+                          const void *barrierNext = nullptr);
 
     void CopyFromImage(VkCommandBuffer commandBuffer, const DeviceImage &source, TKit::Span<const VkImageCopy> copy);
     void CopyFromBuffer(VkCommandBuffer commandBuffer, const DeviceBuffer &source,
                         TKit::Span<const VkBufferImageCopy> copy);
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+    VkImageMemoryBarrier2KHR CreateTransitionLayoutBarrier2(VkImageLayout layout, const TransitionInfo &info,
+                                                            const void *barrierNext = nullptr) const;
+    void TransitionLayout2(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info,
+                           VkDependencyFlags flags = 0, const void *depNext = nullptr);
+
     void CopyFromImage2(VkCommandBuffer commandBuffer, const DeviceImage &source,
                         TKit::Span<const VkImageCopy2KHR> copy, const void *next = nullptr);
     void CopyFromBuffer2(VkCommandBuffer commandBuffer, const DeviceBuffer &source,

@@ -162,8 +162,8 @@ Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &in
     return m_ImageView;
 }
 
-VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLayout layout,
-                                                                const TransitionInfo &info) const
+VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLayout layout, const TransitionInfo &info,
+                                                                const void *barrierNext) const
 {
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -175,17 +175,18 @@ VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLay
     barrier.subresourceRange = info.Range;
     barrier.srcAccessMask = info.SrcAccess;
     barrier.dstAccessMask = info.DstAccess;
+    barrier.pNext = barrierNext;
     if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
         barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
     return barrier;
 }
 
 void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
-                                   const TransitionInfo &info)
+                                   const TransitionInfo &info, const void *barrierNext)
 {
     if (m_Layout == layout)
         return;
-    const VkImageMemoryBarrier barrier = CreateTransitionLayoutBarrier(layout, info);
+    const VkImageMemoryBarrier barrier = CreateTransitionLayoutBarrier(layout, info, barrierNext);
     m_Device.Table->CmdPipelineBarrier(commandBuffer, info.SrcStage, info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
                                        &barrier);
     m_Layout = layout;
@@ -204,6 +205,45 @@ void DeviceImage::CopyFromBuffer(const VkCommandBuffer commandBuffer, const Devi
 }
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
+VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkImageLayout layout,
+                                                                     const TransitionInfo &info,
+                                                                     const void *barrierNext) const
+{
+    VkImageMemoryBarrier2KHR barrier{};
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = m_Layout;
+    barrier.newLayout = layout;
+    barrier.srcQueueFamilyIndex = info.SrcFamilyIndex;
+    barrier.dstQueueFamilyIndex = info.DstFamilyIndex;
+    barrier.image = m_Image;
+    barrier.subresourceRange = info.Range;
+    barrier.srcAccessMask = info.SrcAccess;
+    barrier.dstAccessMask = info.DstAccess;
+    barrier.srcStageMask = info.SrcStage;
+    barrier.dstStageMask = info.DstStage;
+    barrier.pNext = barrierNext;
+    if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
+        barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
+    return barrier;
+}
+
+void DeviceImage::TransitionLayout2(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
+                                    const TransitionInfo &info, VkDependencyFlags flags, const void *depNext)
+{
+    if (m_Layout == layout)
+        return;
+    const VkImageMemoryBarrier2KHR barrier = CreateTransitionLayoutBarrier2(layout, info);
+
+    VkDependencyInfoKHR dep{};
+    dep.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR;
+    dep.imageMemoryBarrierCount = 1;
+    dep.pImageMemoryBarriers = &barrier;
+    dep.pNext = depNext;
+    dep.dependencyFlags = flags;
+
+    m_Device.Table->CmdPipelineBarrier2KHR(commandBuffer, &dep);
+    m_Layout = layout;
+}
 void DeviceImage::CopyFromImage2(const VkCommandBuffer commandBuffer, const DeviceImage &source,
                                  const TKit::Span<const VkImageCopy2KHR> copy, const void *next)
 {
