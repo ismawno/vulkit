@@ -12,25 +12,23 @@ namespace VKit
 class CommandPool;
 class DeviceBuffer;
 
-using DeviceImageFlags = u8;
+using DeviceImageFlags = u16;
 enum DeviceImageFlagBits : DeviceImageFlags
 {
-    DeviceImageFlag_ColorAttachment = 1 << 0,
-    DeviceImageFlag_DepthAttachment = 1 << 1,
-    DeviceImageFlag_StencilAttachment = 1 << 2,
-    DeviceImageFlag_InputAttachment = 1 << 3,
-    DeviceImageFlag_Sampled = 1 << 4,
-    DeviceImageFlag_ForceHostVisible = 1 << 5,
-    DeviceImageFlag_Source = 1 << 6,
-    DeviceImageFlag_Destination = 1 << 7,
+    DeviceImageFlag_Color = 1 << 0,
+    DeviceImageFlag_Depth = 1 << 1,
+    DeviceImageFlag_Stencil = 1 << 2,
+    DeviceImageFlag_ColorAttachment = 1 << 3,
+    DeviceImageFlag_DepthAttachment = 1 << 4,
+    DeviceImageFlag_StencilAttachment = 1 << 5,
+    DeviceImageFlag_InputAttachment = 1 << 6,
+    DeviceImageFlag_Sampled = 1 << 7,
+    DeviceImageFlag_ForceHostVisible = 1 << 8,
+    DeviceImageFlag_Source = 1 << 9,
+    DeviceImageFlag_Destination = 1 << 10,
 };
 
 } // namespace VKit
-
-namespace VKit::Detail
-{
-VkImageAspectFlags InferAspectMask(const DeviceImageFlags flags);
-}
 
 namespace VKit
 {
@@ -185,10 +183,7 @@ class DeviceImage
         return m_Image != VK_NULL_HANDLE;
     }
 
-    VkImageAspectFlags InferAspectMask() const
-    {
-        return Detail::InferAspectMask(m_Info.Flags);
-    }
+    VkImageAspectFlags InferAspectMask() const;
 
     const ProxyDevice &GetDevice() const
     {

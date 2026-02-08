@@ -22,15 +22,15 @@ static VkImageViewType getImageViewType(const VkImageType type)
         return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
     }
 }
-VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags flags)
+static VkImageAspectFlags inferAspectMask(const DeviceImageFlags flags)
 {
-    if (flags & DeviceImageFlag_ColorAttachment)
+    if (flags & DeviceImageFlag_Color)
         return VK_IMAGE_ASPECT_COLOR_BIT;
-    else if ((flags & DeviceImageFlag_DepthAttachment) && (flags & DeviceImageFlag_StencilAttachment))
+    else if ((flags & DeviceImageFlag_Depth) && (flags & DeviceImageFlag_Stencil))
         return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-    else if (flags & DeviceImageFlag_DepthAttachment)
+    else if (flags & DeviceImageFlag_Depth)
         return VK_IMAGE_ASPECT_DEPTH_BIT;
-    else if (flags & DeviceImageFlag_StencilAttachment)
+    else if (flags & DeviceImageFlag_Stencil)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
     TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
@@ -39,7 +39,7 @@ VkImageAspectFlags Detail::InferAspectMask(const DeviceImageFlags flags)
 static VkImageSubresourceRange createRange(const VkImageCreateInfo &info, const DeviceImageFlags flags)
 {
     VkImageSubresourceRange range{};
-    range.aspectMask |= Detail::InferAspectMask(flags);
+    range.aspectMask |= inferAspectMask(flags);
 
     range.baseMipLevel = 0;
     range.levelCount = info.mipLevels;
@@ -67,7 +67,7 @@ static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage image, con
 }
 
 DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, const VkExtent3D &extent,
-                              const VkFormat format, const DeviceImageFlags flags)
+                              const VkFormat format, DeviceImageFlags flags)
     : m_Device(device), m_Allocator(allocator), m_Flags(flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -81,10 +81,22 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
     m_ImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     m_ImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     m_ImageInfo.flags = 0;
+
     if (flags & DeviceImageFlag_ColorAttachment)
+    {
+        flags |= DeviceImageFlag_Color;
         m_ImageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    else if ((flags & DeviceImageFlag_DepthAttachment) || (flags & DeviceImageFlag_StencilAttachment))
-        m_ImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    }
+    if (flags & DeviceImageFlag_DepthAttachment)
+    {
+        flags |= DeviceImageFlag_Depth;
+        m_ImageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    }
+    if (flags & DeviceImageFlag_StencilAttachment)
+    {
+        flags |= DeviceImageFlag_Stencil;
+        m_ImageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    }
 
     if (flags & DeviceImageFlag_InputAttachment)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
@@ -97,6 +109,11 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
                                             createRange(m_ImageInfo, flags));
+}
+
+VkImageAspectFlags DeviceImage::InferAspectMask() const
+{
+    return inferAspectMask(m_Info.Flags);
 }
 
 DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat format, const VkExtent2D &extent,
@@ -177,7 +194,7 @@ VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLay
     barrier.dstAccessMask = info.DstAccess;
     barrier.pNext = barrierNext;
     if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
-        barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
+        barrier.subresourceRange.aspectMask = inferAspectMask(m_Info.Flags);
     return barrier;
 }
 
@@ -223,7 +240,7 @@ VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkIma
     barrier.dstStageMask = info.DstStage;
     barrier.pNext = barrierNext;
     if (info.Range.aspectMask == VK_IMAGE_ASPECT_NONE)
-        barrier.subresourceRange.aspectMask = Detail::InferAspectMask(m_Info.Flags);
+        barrier.subresourceRange.aspectMask = inferAspectMask(m_Info.Flags);
     return barrier;
 }
 
