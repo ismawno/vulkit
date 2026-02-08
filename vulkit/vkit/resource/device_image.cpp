@@ -67,7 +67,7 @@ static VkImageViewCreateInfo createDefaultImageViewInfo(const VkImage image, con
 }
 
 DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, const VkExtent3D &extent,
-                              const VkFormat format, DeviceImageFlags flags)
+                              const VkFormat format, const DeviceImageFlags flags)
     : m_Device(device), m_Allocator(allocator), m_Flags(flags)
 {
     m_ImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -82,33 +82,33 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
     m_ImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     m_ImageInfo.flags = 0;
 
-    if (flags & DeviceImageFlag_ColorAttachment)
+    if (m_Flags & DeviceImageFlag_ColorAttachment)
     {
-        flags |= DeviceImageFlag_Color;
+        m_Flags |= DeviceImageFlag_Color;
         m_ImageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
-    if (flags & DeviceImageFlag_DepthAttachment)
+    if (m_Flags & DeviceImageFlag_DepthAttachment)
     {
-        flags |= DeviceImageFlag_Depth;
+        m_Flags |= DeviceImageFlag_Depth;
         m_ImageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     }
-    if (flags & DeviceImageFlag_StencilAttachment)
+    if (m_Flags & DeviceImageFlag_StencilAttachment)
     {
-        flags |= DeviceImageFlag_Stencil;
+        m_Flags |= DeviceImageFlag_Stencil;
         m_ImageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     }
 
-    if (flags & DeviceImageFlag_InputAttachment)
+    if (m_Flags & DeviceImageFlag_InputAttachment)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-    if (flags & DeviceImageFlag_Sampled)
+    if (m_Flags & DeviceImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
-    if (flags & DeviceImageFlag_Source)
+    if (m_Flags & DeviceImageFlag_Source)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-    if (flags & DeviceImageFlag_Destination)
+    if (m_Flags & DeviceImageFlag_Destination)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
     m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
-                                            createRange(m_ImageInfo, flags));
+                                            createRange(m_ImageInfo, m_Flags));
 }
 
 VkImageAspectFlags DeviceImage::InferAspectMask() const
