@@ -116,9 +116,15 @@ VkImageAspectFlags DeviceImage::InferAspectMask() const
     return inferAspectMask(m_Info.Flags);
 }
 
-DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat format, const VkExtent2D &extent,
-                                             const DeviceImageFlags flags)
+DeviceImage::Info DeviceImage::FromSwapChain(const VkFormat format, const VkExtent2D &extent, DeviceImageFlags flags)
 {
+    if (flags & DeviceImageFlag_ColorAttachment)
+        flags |= DeviceImageFlag_Color;
+    if (flags & DeviceImageFlag_DepthAttachment)
+        flags |= DeviceImageFlag_Depth;
+    if (flags & DeviceImageFlag_StencilAttachment)
+        flags |= DeviceImageFlag_Stencil;
+
     Info info;
     info.Allocation = VK_NULL_HANDLE;
     info.Allocator = VK_NULL_HANDLE;
