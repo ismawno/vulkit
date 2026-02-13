@@ -57,6 +57,8 @@ const char *ErrorCodeToString(const ErrorCode code)
         return "VulkanLibraryNotFound";
     case Error_InitializationFailed:
         return "InitializationFailed";
+    case Error_LoadFailed:
+        return "LoadFailed";
     case Error_BadInput:
         return "BadInput";
     case Error_RejectedWindow:

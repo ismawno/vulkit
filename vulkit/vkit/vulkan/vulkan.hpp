@@ -169,6 +169,7 @@ enum ErrorCode : u8
     Error_VulkanError,
     Error_VulkanLibraryNotFound,
     Error_InitializationFailed,
+    Error_LoadFailed,
     Error_BadInput,
     Error_VersionMismatch,
     Error_NoSurfaceCapabilities,
