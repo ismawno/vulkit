@@ -33,16 +33,12 @@ struct WarningShutter : Catch::EventListenerBase
 
     void testCaseStarting(const Catch::TestCaseInfo &) override
     {
-        TKIT_IGNORE_DEBUG_LOGS(true);
-        TKIT_IGNORE_INFO_LOGS(true);
-        TKIT_IGNORE_WARNING_LOGS(true);
+        TKIT_LOGS_DISABLE(TKIT_DEBUG_LOGS_BIT | TKIT_INFO_LOGS_BIT | TKIT_WARNING_LOGS_BIT);
     }
 
     void testCaseEnded(const Catch::TestCaseStats &) override
     {
-        // TKIT_IGNORE_DEBUG_LOGS(false);
-        TKIT_IGNORE_INFO_LOGS(false);
-        TKIT_IGNORE_WARNING_LOGS(false);
+        TKIT_LOGS_ENABLE(TKIT_INFO_LOGS_BIT | TKIT_WARNING_LOGS_BIT);
     }
 };
 
