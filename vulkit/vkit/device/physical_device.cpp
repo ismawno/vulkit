@@ -711,12 +711,12 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             Error_InsufficientMemory,
             TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have device local memory", name));
     TKIT_LOG_WARNING_IF(!hasRequestedMemory,
-                        "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {} bytes", name,
+                        "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {:L} bytes", name,
                         m_RequestedMemory);
     if (!hasRequiredMemory)
         return JudgeResult::Error(
             Error_InsufficientMemory,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {} bytes", name,
+            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes", name,
                          m_RequiredMemory));
 
     fullySuitable &= hasRequestedMemory;
