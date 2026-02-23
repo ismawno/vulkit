@@ -52,6 +52,8 @@ class DescriptorPool
 
     void Destroy();
 
+    VKIT_SET_DEBUG_NAME(m_Pool, VK_OBJECT_TYPE_DESCRIPTOR_POOL)
+
     const Info &GetInfo() const
     {
         return m_Info;

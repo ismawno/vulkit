@@ -234,6 +234,8 @@ class RenderPass
         return resources;
     }
 
+    VKIT_SET_DEBUG_NAME(m_RenderPass, VK_OBJECT_TYPE_RENDER_PASS)
+
     const Attachment &GetAttachment(const u32 attachmentIndex) const
     {
         return m_Info.Attachments[attachmentIndex];

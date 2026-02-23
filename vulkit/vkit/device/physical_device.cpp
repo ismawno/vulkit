@@ -592,7 +592,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     const bool v11 = false;
 #endif
 
-    const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
+    const bool prop2 = m_Instance->IsExtensionEnabled("VK_KHR_get_physical_device_properties2");
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
         return JudgeResult::Error(
@@ -772,7 +772,7 @@ PhysicalDevice::Selector::Selector(const Instance *instance, const u32 maxExtens
     m_RequestedExtensions.Reserve(maxExtensions);
     m_RequiredExtensions.Reserve(maxExtensions);
 
-    if (!(m_Instance->GetInfo().Flags & InstanceFlag_Headless))
+    if (!m_Instance->GetInfo().Headless)
         m_Flags |= DeviceSelectorFlag_RequirePresentQueue;
 }
 

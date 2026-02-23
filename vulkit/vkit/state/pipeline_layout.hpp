@@ -54,6 +54,8 @@ class PipelineLayout
 
     void Destroy();
 
+    VKIT_SET_DEBUG_NAME(m_Layout, VK_OBJECT_TYPE_PIPELINE_LAYOUT)
+
     const Info &GetInfo() const
     {
         return m_Info;

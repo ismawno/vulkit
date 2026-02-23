@@ -5,7 +5,7 @@
 namespace VKit
 {
 
-static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipeline::Specs &specs)
+static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipelineSpecs &specs)
 {
     TKIT_ASSERT(specs.Layout, "[VULKIT][PIPELINE] Pipeline layout must be provided");
     TKIT_ASSERT(specs.ComputeShader, "[VULKIT][PIPELINE] Compute shader must be provided");
@@ -21,7 +21,7 @@ static VkComputePipelineCreateInfo createPipelineInfo(const ComputePipeline::Spe
     return pipelineInfo;
 }
 
-Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &device, const Specs &specs)
+Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &device, const ComputePipelineSpecs &specs)
 {
     const VkComputePipelineCreateInfo pipelineInfo = createPipelineInfo(specs);
 
@@ -32,12 +32,12 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &device, const
 
     return Result<ComputePipeline>::Ok(device, pipeline);
 }
-Result<> ComputePipeline::Create(const ProxyDevice &device, const TKit::Span<const Specs> specs,
+Result<> ComputePipeline::Create(const ProxyDevice &device, const TKit::Span<const ComputePipelineSpecs> specs,
                                  const TKit::Span<ComputePipeline> pipelines, const VkPipelineCache cache)
 {
     TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos{};
     pipelineInfos.Reserve(specs.GetSize());
-    for (const Specs &specs : specs)
+    for (const ComputePipelineSpecs &specs : specs)
         pipelineInfos.Append(createPipelineInfo(specs));
 
     const u32 count = specs.GetSize();

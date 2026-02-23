@@ -37,6 +37,7 @@ class DescriptorSetLayout
     }
 
     void Destroy();
+    VKIT_SET_DEBUG_NAME(m_Layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT)
 
     const TKit::TierArray<VkDescriptorSetLayoutBinding> &GetBindings() const
     {

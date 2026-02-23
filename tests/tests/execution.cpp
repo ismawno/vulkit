@@ -138,7 +138,7 @@ class TestContext
                                   .SetEngineName("VKit Test Engine")
                                   .RequireApiVersion(1, 0, 0)
                                   .RequestApiVersion(1, 2, 0)
-                                  .RequestValidationLayers()
+                                  .RequestLayer("VK_LAYER_KHRONOS_validation")
                                   .SetHeadless(true)
                                   .Build();
 

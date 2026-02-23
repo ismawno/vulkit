@@ -10,20 +10,20 @@
 
 namespace VKit
 {
+struct ComputePipelineSpecs
+{
+    VkPipelineLayout Layout = VK_NULL_HANDLE;
+    VkShaderModule ComputeShader = VK_NULL_HANDLE;
+    VkPipelineCache Cache = VK_NULL_HANDLE;
+    const char *EntryPoint = "main";
+};
+
 class ComputePipeline
 {
   public:
-    struct Specs
-    {
-        VkPipelineLayout Layout = VK_NULL_HANDLE;
-        VkShaderModule ComputeShader = VK_NULL_HANDLE;
-        const char *EntryPoint = "main";
-        VkPipelineCache Cache = VK_NULL_HANDLE;
-    };
+    VKIT_NO_DISCARD static Result<ComputePipeline> Create(const ProxyDevice &device, const ComputePipelineSpecs &specs);
 
-    VKIT_NO_DISCARD static Result<ComputePipeline> Create(const ProxyDevice &device, const Specs &specs);
-
-    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &device, TKit::Span<const Specs> specs,
+    VKIT_NO_DISCARD static Result<> Create(const ProxyDevice &device, TKit::Span<const ComputePipelineSpecs> specs,
                                            TKit::Span<ComputePipeline> pipelines,
                                            VkPipelineCache cache = VK_NULL_HANDLE);
 
@@ -35,6 +35,8 @@ class ComputePipeline
     void Destroy();
 
     void Bind(VkCommandBuffer commandBuffer) const;
+
+    VKIT_SET_DEBUG_NAME(m_Pipeline, VK_OBJECT_TYPE_PIPELINE)
 
     const ProxyDevice &GetDevice() const
     {

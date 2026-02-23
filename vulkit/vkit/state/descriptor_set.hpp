@@ -46,6 +46,8 @@ class DescriptorSet
                      TKit::Span<const VkDescriptorSet> sets, VkPipelineBindPoint bindPoint, VkPipelineLayout layout,
                      u32 firstSet = 0, TKit::Span<const u32> dynamicOffsets = {});
 
+    VKIT_SET_DEBUG_NAME(m_Set, VK_OBJECT_TYPE_DESCRIPTOR_SET)
+
     const ProxyDevice &GetDevice() const
     {
         return m_Device;

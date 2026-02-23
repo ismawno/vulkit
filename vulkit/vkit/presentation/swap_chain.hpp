@@ -115,6 +115,8 @@ class SwapChain
 
     void Destroy();
 
+    VKIT_SET_DEBUG_NAME(m_SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR)
+
     const ProxyDevice &GetDevice() const
     {
         return m_Device;

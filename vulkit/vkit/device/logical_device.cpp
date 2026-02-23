@@ -109,7 +109,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 #else
     const bool v11 = false;
 #endif
-    const bool prop2 = instanceInfo.Flags & InstanceFlag_Properties2Extension;
+    const bool prop2 = m_Instance->IsExtensionEnabled("VK_KHR_get_physical_device_properties2");
 #ifndef VK_KHR_get_physical_device_properties2
     if (prop2)
         return Result<LogicalDevice>::Error(

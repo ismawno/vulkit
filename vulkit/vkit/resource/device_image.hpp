@@ -185,6 +185,19 @@ class DeviceImage
 
     VkImageAspectFlags InferAspectMask() const;
 
+    VKIT_SET_DEBUG_NAME(m_Image, VK_OBJECT_TYPE_IMAGE)
+#ifdef VK_EXT_debug_utils
+    VKIT_NO_DISCARD Result<> SetImageViewName(const char *name)
+    {
+        TKIT_ASSERT(m_ImageView, "[ONYX][IMAGE] The image must have an image view to be able to set a name");
+        return m_Device.SetObjectName(m_ImageView, VK_OBJECT_TYPE_IMAGE_VIEW, name);
+    }
+#endif
+
+    bool HasImageView() const
+    {
+        return m_ImageView != VK_NULL_HANDLE;
+    }
     const ProxyDevice &GetDevice() const
     {
         return m_Device;

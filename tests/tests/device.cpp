@@ -134,7 +134,7 @@ VKit::Result<VKit::Instance> CreateValidatedInstance()
         .SetEngineVersion(1, 0, 0)
         .RequireApiVersion(1, 0, 0)
         .RequestApiVersion(1, 2, 0)
-        .RequireValidationLayers()
+        .RequireLayer("VK_LAYER_KHRONOS_validation")
         .SetHeadless(true)
         .Build();
 }
@@ -339,18 +339,12 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Validated App")
                                 .SetHeadless(true)
-                                .RequireValidationLayers()
+                                .RequireLayer("VK_LAYER_KHRONOS_validation")
                                 .Build();
 
         REQUIRE(result);
 
         VKit::Instance instance = result.GetValue();
-        const auto &info = instance.GetInfo();
-
-        // Validation layers may or may not be available
-        bool hasValidation = (info.Flags & VKit::InstanceFlag_HasValidationLayers) != 0;
-        INFO("Validation layers enabled: " << hasValidation);
-
         instance.Destroy();
     }
 }
@@ -511,7 +505,7 @@ TEST_CASE("Instance::Builder - Layer Handling", "[instance][builder][layers]")
     {
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Validation Layer Test")
-                                .RequireValidationLayers()
+                                .RequireLayer("VK_LAYER_KHRONOS_validation")
                                 .SetHeadless(true)
                                 .Build();
 
@@ -1445,7 +1439,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
                                   .SetEngineVersion(1, 0, 0)
                                   .RequireApiVersion(1, 0, 0)
                                   .RequestApiVersion(1, 2, 0)
-                                  .RequireValidationLayers()
+                                  .RequireLayer("VK_LAYER_KHRONOS_validation")
                                   .SetHeadless(true)
                                   .Build();
 

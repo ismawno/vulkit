@@ -218,6 +218,7 @@ class GraphicsPipeline
     }
 
     void Destroy();
+    VKIT_SET_DEBUG_NAME(m_Pipeline, VK_OBJECT_TYPE_PIPELINE)
 
     void Bind(VkCommandBuffer commandBuffer) const;
 

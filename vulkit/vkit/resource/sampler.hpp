@@ -55,6 +55,7 @@ class Sampler
 
     void Destroy();
 
+    VKIT_SET_DEBUG_NAME(m_Sampler, VK_OBJECT_TYPE_SAMPLER)
     const ProxyDevice &GetDevice()
     {
         return m_Device;

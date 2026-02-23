@@ -12,14 +12,6 @@
 
 namespace VKit
 {
-using InstanceFlags = u8;
-enum InstanceFlagBits : InstanceFlags
-{
-    InstanceFlag_Headless = 1 << 0,
-    InstanceFlag_HasValidationLayers = 1 << 1,
-    InstanceFlag_Properties2Extension = 1 << 2
-};
-
 class Instance
 {
   public:
@@ -67,13 +59,19 @@ class Instance
         Builder &RequireLayer(const char *layer);
         Builder &RequestLayer(const char *layer);
 
-        Builder &RequireValidationLayers();
-        Builder &RequestValidationLayers();
-
+#ifdef VK_EXT_debug_utils
         Builder &SetDebugCallback(PFN_vkDebugUtilsMessengerCallbackEXT callback);
+        Builder &SetDebugMessengerUserData(void *data);
+#endif
+#ifdef VK_EXT_validation_features
+        Builder &SetValidationFeature(VkValidationFeatureEnableEXT enable);
+        Builder &SetValidationFeature(VkValidationFeatureDisableEXT disable);
+#endif
+#ifdef VK_EXT_layer_settings
+        Builder &AddLayerSetting(VkLayerSettingEXT setting);
+#endif
         Builder &SetHeadless(bool headless = true);
 
-        Builder &SetDebugMessengerUserData(void *data);
         Builder &SetAllocationCallbacks(const VkAllocationCallbacks *allocationCallbacks);
 
       private:
@@ -91,14 +89,22 @@ class Instance
         TKit::TierArray<const char *> m_RequiredLayers{};
         TKit::TierArray<const char *> m_RequestedLayers{};
 
-        bool m_RequireValidationLayers = false;
-        bool m_RequestValidationLayers = false;
         bool m_Headless = false;
 
-        void *m_DebugMessengerUserData = nullptr;
         const VkAllocationCallbacks *m_AllocationCallbacks = nullptr;
 
+#ifdef VK_EXT_debug_utils
         PFN_vkDebugUtilsMessengerCallbackEXT m_DebugCallback = nullptr;
+        void *m_DebugMessengerUserData = nullptr;
+#endif
+
+#ifdef VK_EXT_validation_features
+        TKit::TierArray<VkValidationFeatureEnableEXT> m_EnabledValFeatures{};
+        TKit::TierArray<VkValidationFeatureDisableEXT> m_DisabledValFeatures{};
+#endif
+#ifdef VK_EXT_layer_settings
+        TKit::TierArray<VkLayerSettingEXT> m_LayerSettings{};
+#endif
     };
 
     struct Info
@@ -118,7 +124,7 @@ class Instance
         VkDebugUtilsMessengerEXT DebugMessenger;
         const VkAllocationCallbacks *AllocationCallbacks;
 
-        InstanceFlags Flags;
+        bool Headless;
     };
 
     Instance() = default;

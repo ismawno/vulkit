@@ -129,6 +129,8 @@ class DeviceBuffer
     VKIT_NO_DISCARD Result<> UploadFromHost(CommandPool &pool, const VkQueue queue, const void *data,
                                             const VkBufferCopy &copy);
 
+    VKIT_SET_DEBUG_NAME(m_Buffer, VK_OBJECT_TYPE_BUFFER)
+
     const void *GetData() const
     {
         return m_Data;

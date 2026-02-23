@@ -23,6 +23,7 @@ class Shader
     }
 
     void Destroy();
+    VKIT_SET_DEBUG_NAME(m_Module, VK_OBJECT_TYPE_SHADER_MODULE)
 
     const ProxyDevice &GetDevice() const
     {

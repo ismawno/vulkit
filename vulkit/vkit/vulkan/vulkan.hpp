@@ -162,6 +162,16 @@
     if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
     return rtype::Error(__vkit_result, TKit::Format(__VA_ARGS__))
 
+#ifdef VK_EXT_debug_utils
+#    define VKIT_SET_DEBUG_NAME(handle, objType)                                                                       \
+        VKIT_NO_DISCARD Result<> SetName(const char *name)                                                             \
+        {                                                                                                              \
+            return m_Device.SetObjectName(handle, objType, name);                                                      \
+        }
+#else
+#    define VKIT_SET_DEBUG_NAME(...)
+#endif
+
 namespace VKit
 {
 enum ErrorCode : u8

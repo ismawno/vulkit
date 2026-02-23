@@ -44,6 +44,8 @@ class CommandPool
         return EndSingleTimeCommands(cmd, queue);
     }
 
+    VKIT_SET_DEBUG_NAME(m_Pool, VK_OBJECT_TYPE_COMMAND_POOL)
+
     const ProxyDevice &GetDevice() const
     {
         return m_Device;

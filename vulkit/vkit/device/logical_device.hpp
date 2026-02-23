@@ -76,6 +76,18 @@ class LogicalDevice
 
     ProxyDevice CreateProxy() const;
 
+#ifdef VK_EXT_debug_utils
+    template <typename Handle>
+    VKIT_NO_DISCARD Result<> SetObjectName(const Handle handle, const VkObjectType objType, const char *name) const
+    {
+        return VKit::SetObjectName(m_Device, m_Info.Table, handle, objType, name);
+    }
+    VKIT_NO_DISCARD Result<> SetName(const char *name)
+    {
+        return SetObjectName(m_Device, VK_OBJECT_TYPE_DEVICE, name);
+    }
+#endif
+
     const Info &GetInfo() const
     {
         return m_Info;

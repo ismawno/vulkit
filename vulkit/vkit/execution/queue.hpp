@@ -42,6 +42,7 @@ class Queue
     {
         return m_Device;
     }
+    VKIT_SET_DEBUG_NAME(m_Queue, VK_OBJECT_TYPE_QUEUE)
 
     VkQueue GetHandle() const
     {
