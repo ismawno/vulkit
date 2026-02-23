@@ -229,7 +229,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
         fn("Queue label stack ({}):", callbackData->queueLabelCount);                                                  \
         for (u32 i = 0; i < callbackData->queueLabelCount; ++i)                                                        \
         {                                                                                                              \
-            fn("label[{}] -> {}", i, callbackData->pQueueLabels[i].pLabelName);                                        \
+            fn("    label[{}] -> {}", i, callbackData->pQueueLabels[i].pLabelName);                                    \
         }                                                                                                              \
     }                                                                                                                  \
     if (callbackData->cmdBufLabelCount != 0)                                                                           \
@@ -237,7 +237,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
         fn("CmdBuf label stack ({}):", callbackData->queueLabelCount);                                                 \
         for (u32 i = 0; i < callbackData->cmdBufLabelCount; ++i)                                                       \
         {                                                                                                              \
-            fn("label[{}] -> {}", i, callbackData->pCmdBufLabels[i].pLabelName);                                       \
+            fn("    label[{}] -> {}", i, callbackData->pCmdBufLabels[i].pLabelName);                                   \
         }                                                                                                              \
     }
 
