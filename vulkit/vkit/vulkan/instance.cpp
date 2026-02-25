@@ -275,9 +275,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 #undef PRINT_DEBUG_INFO
 }
 
-static bool contains(const TKit::Span<const char *const> extensions, const char *extension)
+static bool contains(const TKit::Span<const char *const> elements, const char *element)
 {
-    return std::find(extensions.begin(), extensions.end(), extension) != extensions.end();
+    return std::find(elements.begin(), elements.end(), element) != elements.end();
 }
 
 Instance::Builder::Builder()

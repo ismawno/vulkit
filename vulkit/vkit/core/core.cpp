@@ -2,6 +2,7 @@
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
+#include "tkit/container/stack_array.hpp"
 
 namespace VKit::Core
 {
@@ -11,11 +12,11 @@ struct Capabilities
     TKit::ArenaArray<VkLayerProperties> AvailableLayers{};
 };
 
-static Capabilities s_Capabilities{};
+static TKit::Storage<Capabilities> s_Capabilities{};
 
 const VkExtensionProperties *GetExtensionByName(const char *name)
 {
-    for (const VkExtensionProperties &extension : s_Capabilities.AvailableExtensions)
+    for (const VkExtensionProperties &extension : s_Capabilities->AvailableExtensions)
         if (strcmp(name, extension.extensionName) == 0)
             return &extension;
     return nullptr;
@@ -23,7 +24,7 @@ const VkExtensionProperties *GetExtensionByName(const char *name)
 
 const VkLayerProperties *GetLayerByName(const char *name)
 {
-    for (const VkLayerProperties &layer : s_Capabilities.AvailableLayers)
+    for (const VkLayerProperties &layer : s_Capabilities->AvailableLayers)
         if (strcmp(name, layer.layerName) == 0)
             return &layer;
     return nullptr;
@@ -31,7 +32,7 @@ const VkLayerProperties *GetLayerByName(const char *name)
 
 bool IsExtensionSupported(const char *name)
 {
-    for (const VkExtensionProperties &extension : s_Capabilities.AvailableExtensions)
+    for (const VkExtensionProperties &extension : s_Capabilities->AvailableExtensions)
         if (strcmp(name, extension.extensionName) == 0)
             return true;
     return false;
@@ -39,27 +40,27 @@ bool IsExtensionSupported(const char *name)
 
 bool IsLayerSupported(const char *name)
 {
-    for (const VkLayerProperties &layer : s_Capabilities.AvailableLayers)
+    for (const VkLayerProperties &layer : s_Capabilities->AvailableLayers)
         if (strcmp(name, layer.layerName) == 0)
             return true;
     return false;
 }
 const VkExtensionProperties &GetExtensionByIndex(const u32 index)
 {
-    return s_Capabilities.AvailableExtensions[index];
+    return s_Capabilities->AvailableExtensions[index];
 }
 const VkLayerProperties &GetLayerByIndex(const u32 index)
 {
-    return s_Capabilities.AvailableLayers[index];
+    return s_Capabilities->AvailableLayers[index];
 }
 
 u32 GetExtensionCount()
 {
-    return s_Capabilities.AvailableExtensions.GetSize();
+    return s_Capabilities->AvailableExtensions.GetSize();
 }
 u32 GetLayerCount()
 {
-    return s_Capabilities.AvailableLayers.GetSize();
+    return s_Capabilities->AvailableLayers.GetSize();
 }
 
 } // namespace VKit::Core
@@ -100,6 +101,7 @@ Result<> Initialize(const Specs &specs)
 {
     if (s_Library)
         return Result<>::Ok();
+    s_Capabilities.Construct();
 
     if (specs.LoaderPath)
         attempt(specs.LoaderPath);
@@ -168,20 +170,43 @@ Result<> Initialize(const Specs &specs)
         s_PushedAlloc |= 1 << 2;
     }
 
-    u32 extensionCount = 0;
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr), Result<>);
-
-    s_Capabilities.AvailableExtensions.Resize(extensionCount);
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-                                                                       s_Capabilities.AvailableExtensions.GetData()),
-                          Result<>);
-
-    u32 layerCount = 0;
+    u32 layerCount;
     VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr), Result<>);
 
-    s_Capabilities.AvailableLayers.Resize(layerCount);
+    s_Capabilities->AvailableLayers.Resize(layerCount);
     VKIT_RETURN_IF_FAILED(
-        Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities.AvailableLayers.GetData()), Result<>);
+        Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities->AvailableLayers.GetData()), Result<>);
+
+    TKit::StackArray<u32> counts{};
+    counts.Resize(1 + layerCount);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], nullptr), Result<>);
+
+    u32 extensionCount = counts[0];
+    for (u32 i = 0; i < layerCount; ++i)
+    {
+        VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(s_Capabilities->AvailableLayers[i].layerName,
+                                                                           &counts[i + 1], nullptr),
+                              Result<>);
+        extensionCount += counts[i + 1];
+    }
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0],
+                                                                       s_Capabilities->AvailableExtensions.GetData()),
+                          Result<>);
+
+    TKit::StackArray<VkExtensionProperties> extensions{};
+    extensions.Resize(extensionCount);
+    for (u32 i = 0; i < layerCount; ++i)
+        if (counts[i + 1] != 0)
+        {
+            VKIT_RETURN_IF_FAILED(
+                Vulkan::EnumerateInstanceExtensionProperties(s_Capabilities->AvailableLayers[i].layerName,
+                                                             &counts[i + 1], extensions.GetData() + counts[i]),
+                Result<>);
+        }
+    s_Capabilities->AvailableExtensions.Reserve(extensionCount);
+    for (u32 i = 0; i < extensionCount; ++i)
+        if (strcmp(extensions[i].extensionName, "") != 0 && !IsExtensionSupported(extensions[i].extensionName))
+            s_Capabilities->AvailableExtensions.Append(extensions[i]);
 
     return Result<>::Ok();
 }
@@ -195,7 +220,7 @@ void Terminate()
     FreeLibrary(reinterpret_cast<HMODULE>(s_Library));
 #endif
     s_Library = nullptr;
-    s_Capabilities = {};
+    s_Capabilities.Destruct();
     if (s_PushedAlloc & 4)
         TKit::PopTier();
     if (s_PushedAlloc & 2)
