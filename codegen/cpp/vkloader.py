@@ -581,7 +581,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
                     gen(f"{name}({', '.join(pnames)});")
 
             gen(
-                f"TKIT_ASSERT(Vulkan::{fn.name}, \"[VULKIT][LOADER] The function '{fn.name}' is not available for the instance or device being used, either because VKit::Core::Initialize() was not called or because the feature or extension bound to the function has not been enabled\");"
+                f"TKIT_ASSERT(Vulkan::{fn.name}, \"[VULKIT][LOADER] The function '{fn.name}' is not available for the instance or device being used, either because VKit::Initialize() was not called or because the feature or extension bound to the function has not been enabled\");"
             )
             write_fn(f"Vulkan::{fn.name}")
 
@@ -639,7 +639,7 @@ with cpp.scope("namespace VKit::Vulkan", indent=0):
                     gen(f"{name}({', '.join(pnames)});")
 
             gen(
-                f"TKIT_ASSERT(this->{fn.name}, \"[VULKIT][LOADER] The function '{fn.name}' is not available for the instance or device being used, either because VKit::Core::Initialize() was not called or because the feature or extension bound to the function has not been enabled\");"
+                f"TKIT_ASSERT(this->{fn.name}, \"[VULKIT][LOADER] The function '{fn.name}' is not available for the instance or device being used, either because VKit::Initialize() was not called or because the feature or extension bound to the function has not been enabled\");"
             )
             write_fn(f"this->{fn.name}")
 

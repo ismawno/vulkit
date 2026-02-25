@@ -72,8 +72,10 @@ u32 GetLayerCount()
 #    error "[VULKIT] Unsupported platform to load Vulkan library"
 #endif
 
-namespace VKit::Core
+namespace VKit
 {
+using namespace Core;
+
 static void *s_Library = nullptr;
 static void attempt(const char *loaderPath)
 {
@@ -201,4 +203,4 @@ void Terminate()
     if (s_PushedAlloc & 1)
         TKit::PopArena();
 }
-} // namespace VKit::Core
+} // namespace VKit

@@ -56,14 +56,14 @@ class CoreGuard
   public:
     CoreGuard()
     {
-        auto result = VKit::Core::Initialize();
+        auto result = VKit::Initialize();
         m_Valid = static_cast<bool>(result);
     }
 
     ~CoreGuard()
     {
         if (m_Valid)
-            VKit::Core::Terminate();
+            VKit::Terminate();
     }
 
     bool IsValid() const
@@ -145,62 +145,62 @@ VKit::Result<VKit::Instance> CreateValidatedInstance()
 // CORE TESTS
 // ============================================================================
 
-TEST_CASE("Core::Initialize - Basic Initialization", "[core][init]")
+TEST_CASE("Initialize - Basic Initialization", "[core][init]")
 {
     SECTION("Initialize succeeds on supported system")
     {
-        const auto result = VKit::Core::Initialize();
+        const auto result = VKit::Initialize();
         REQUIRE(result);
 
-        VKit::Core::Terminate();
+        VKit::Terminate();
     }
 
     SECTION("Double initialization is safe (idempotent)")
     {
-        const auto result1 = VKit::Core::Initialize();
+        const auto result1 = VKit::Initialize();
         REQUIRE(result1);
 
-        const auto result2 = VKit::Core::Initialize();
+        const auto result2 = VKit::Initialize();
         REQUIRE(result2);
 
-        VKit::Core::Terminate();
+        VKit::Terminate();
     }
 
     SECTION("Initialize populates available extensions")
     {
-        const auto result = VKit::Core::Initialize();
+        const auto result = VKit::Initialize();
         REQUIRE(result);
 
         // Should have at least some extensions available
         CHECK_FALSE(VKit::Core::GetExtensionCount() == 0);
 
-        VKit::Core::Terminate();
+        VKit::Terminate();
     }
 }
 
-TEST_CASE("Core::Terminate", "[core][terminate]")
+TEST_CASE("Terminate", "[core][terminate]")
 {
     SECTION("Terminate after initialization")
     {
-        const auto result = VKit::Core::Initialize();
+        const auto result = VKit::Initialize();
         REQUIRE(result);
 
-        VKit::Core::Terminate();
+        VKit::Terminate();
         // Should not crash
     }
 
     SECTION("Double terminate is safe")
     {
-        const auto result = VKit::Core::Initialize();
+        const auto result = VKit::Initialize();
         REQUIRE(result);
 
-        VKit::Core::Terminate();
-        VKit::Core::Terminate(); // Should not crash
+        VKit::Terminate();
+        VKit::Terminate(); // Should not crash
     }
 
     SECTION("Terminate without initialization is safe")
     {
-        VKit::Core::Terminate(); // Should not crash
+        VKit::Terminate(); // Should not crash
     }
 }
 
@@ -1426,7 +1426,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
 TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
 {
     // Step 1: Initialize Core
-    auto coreResult = VKit::Core::Initialize();
+    auto coreResult = VKit::Initialize();
 
     {
         REQUIRE(coreResult);
@@ -1457,7 +1457,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
         if (!physicalResult)
         {
             instance.Destroy();
-            VKit::Core::Terminate();
+            VKit::Terminate();
             SKIP("No physical device available");
         }
 
@@ -1493,5 +1493,5 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
         CHECK(device.GetHandle() == VK_NULL_HANDLE);
         CHECK(instance.GetHandle() == VK_NULL_HANDLE);
     }
-    VKit::Core::Terminate();
+    VKit::Terminate();
 }

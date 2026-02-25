@@ -124,7 +124,7 @@ class TestContext
     void Initialize()
     {
         // Initialize Vulkan Core
-        auto coreResult = VKit::Core::Initialize();
+        auto coreResult = VKit::Initialize();
         if (!coreResult)
         {
             m_ErrorMessage = "Failed to initialize Core: " + std::string(coreResult.GetError().GetMessage());
@@ -145,7 +145,7 @@ class TestContext
         if (!instanceResult)
         {
             m_ErrorMessage = "Failed to create Instance: " + std::string(instanceResult.GetError().GetMessage());
-            VKit::Core::Terminate();
+            VKit::Terminate();
             return;
         }
         m_Instance = new VKit::Instance(instanceResult.GetValue());
@@ -166,7 +166,7 @@ class TestContext
             m_Instance->Destroy();
             delete m_Instance;
             m_Instance = nullptr;
-            VKit::Core::Terminate();
+            VKit::Terminate();
             return;
         }
         m_PhysicalDevice = new VKit::PhysicalDevice(physicalResult.GetValue());
@@ -186,7 +186,7 @@ class TestContext
             delete m_Instance;
             m_PhysicalDevice = nullptr;
             m_Instance = nullptr;
-            VKit::Core::Terminate();
+            VKit::Terminate();
             return;
         }
         m_LogicalDevice = new VKit::LogicalDevice(logicalResult.GetValue());
@@ -203,7 +203,7 @@ class TestContext
             delete m_LogicalDevice;
             delete m_PhysicalDevice;
             delete m_Instance;
-            VKit::Core::Terminate();
+            VKit::Terminate();
             m_Valid = false;
         }
     }

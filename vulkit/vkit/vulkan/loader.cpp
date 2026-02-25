@@ -12,7 +12,7 @@ VkResult CreateInstance(const VkInstanceCreateInfo *pCreateInfo, const VkAllocat
 {
     TKIT_ASSERT(Vulkan::vkCreateInstance,
                 "[VULKIT][LOADER] The function 'vkCreateInstance' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return Vulkan::vkCreateInstance(pCreateInfo, pAllocator, pInstance);
 }
@@ -23,7 +23,7 @@ PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *pName)
 {
     TKIT_ASSERT(Vulkan::vkGetInstanceProcAddr,
                 "[VULKIT][LOADER] The function 'vkGetInstanceProcAddr' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return Vulkan::vkGetInstanceProcAddr(instance, pName);
 }
@@ -34,7 +34,7 @@ VkResult EnumerateInstanceVersion(uint32_t *pApiVersion)
 {
     TKIT_ASSERT(Vulkan::vkEnumerateInstanceVersion,
                 "[VULKIT][LOADER] The function 'vkEnumerateInstanceVersion' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return Vulkan::vkEnumerateInstanceVersion(pApiVersion);
 }
@@ -45,7 +45,7 @@ VkResult EnumerateInstanceLayerProperties(uint32_t *pPropertyCount, VkLayerPrope
 {
     TKIT_ASSERT(Vulkan::vkEnumerateInstanceLayerProperties,
                 "[VULKIT][LOADER] The function 'vkEnumerateInstanceLayerProperties' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return Vulkan::vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
 }
@@ -57,7 +57,7 @@ VkResult EnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *
 {
     TKIT_ASSERT(Vulkan::vkEnumerateInstanceExtensionProperties,
                 "[VULKIT][LOADER] The function 'vkEnumerateInstanceExtensionProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return Vulkan::vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
 }
@@ -3256,7 +3256,7 @@ void InstanceTable::DestroyInstance(VkInstance instance, const VkAllocationCallb
 {
     TKIT_ASSERT(this->vkDestroyInstance,
                 "[VULKIT][LOADER] The function 'vkDestroyInstance' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyInstance(instance, pAllocator);
 }
@@ -3267,7 +3267,7 @@ VkResult InstanceTable::EnumeratePhysicalDevices(VkInstance instance, uint32_t *
 {
     TKIT_ASSERT(this->vkEnumeratePhysicalDevices,
                 "[VULKIT][LOADER] The function 'vkEnumeratePhysicalDevices' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkEnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
 }
@@ -3277,7 +3277,7 @@ PFN_vkVoidFunction InstanceTable::GetDeviceProcAddr(VkDevice device, const char 
 {
     TKIT_ASSERT(this->vkGetDeviceProcAddr,
                 "[VULKIT][LOADER] The function 'vkGetDeviceProcAddr' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetDeviceProcAddr(device, pName);
 }
@@ -3288,7 +3288,7 @@ void InstanceTable::GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice,
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceProperties' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceProperties(physicalDevice, pProperties);
 }
@@ -3300,7 +3300,7 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice phys
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
@@ -3311,7 +3311,7 @@ void InstanceTable::GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalD
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceMemoryProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceMemoryProperties' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 }
@@ -3322,7 +3322,7 @@ void InstanceTable::GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice,
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFeatures,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFeatures' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFeatures(physicalDevice, pFeatures);
 }
@@ -3333,7 +3333,7 @@ void InstanceTable::GetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalD
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFormatProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFormatProperties' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
 }
@@ -3346,7 +3346,7 @@ VkResult InstanceTable::GetPhysicalDeviceImageFormatProperties(VkPhysicalDevice 
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceImageFormatProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceImageFormatProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags,
                                                           pImageFormatProperties);
@@ -3358,7 +3358,7 @@ VkResult InstanceTable::CreateDevice(VkPhysicalDevice physicalDevice, const VkDe
 {
     TKIT_ASSERT(this->vkCreateDevice,
                 "[VULKIT][LOADER] The function 'vkCreateDevice' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
 }
@@ -3369,7 +3369,7 @@ VkResult InstanceTable::EnumerateDeviceLayerProperties(VkPhysicalDevice physical
 {
     TKIT_ASSERT(this->vkEnumerateDeviceLayerProperties,
                 "[VULKIT][LOADER] The function 'vkEnumerateDeviceLayerProperties' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, pProperties);
 }
@@ -3381,7 +3381,7 @@ VkResult InstanceTable::EnumerateDeviceExtensionProperties(VkPhysicalDevice phys
 {
     TKIT_ASSERT(this->vkEnumerateDeviceExtensionProperties,
                 "[VULKIT][LOADER] The function 'vkEnumerateDeviceExtensionProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
 }
@@ -3395,7 +3395,7 @@ void InstanceTable::GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSparseImageFormatProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSparseImageFormatProperties' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling,
                                                          pPropertyCount, pProperties);
@@ -3407,7 +3407,7 @@ VkResult InstanceTable::CreateAndroidSurfaceKHR(VkInstance instance, const VkAnd
 {
     TKIT_ASSERT(this->vkCreateAndroidSurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateAndroidSurfaceKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3418,7 +3418,7 @@ VkResult InstanceTable::CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCr
 {
     TKIT_ASSERT(this->vkCreateSurfaceOHOS,
                 "[VULKIT][LOADER] The function 'vkCreateSurfaceOHOS' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateSurfaceOHOS(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3429,7 +3429,7 @@ VkResult InstanceTable::GetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice p
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceDisplayPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceDisplayPropertiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
 }
@@ -3441,7 +3441,7 @@ VkResult InstanceTable::GetPhysicalDeviceDisplayPlanePropertiesKHR(VkPhysicalDev
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceDisplayPlanePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceDisplayPlanePropertiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, pPropertyCount, pProperties);
 }
@@ -3452,7 +3452,7 @@ VkResult InstanceTable::GetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice phy
 {
     TKIT_ASSERT(this->vkGetDisplayPlaneSupportedDisplaysKHR,
                 "[VULKIT][LOADER] The function 'vkGetDisplayPlaneSupportedDisplaysKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, pDisplayCount, pDisplays);
 }
@@ -3464,7 +3464,7 @@ VkResult InstanceTable::GetDisplayModePropertiesKHR(VkPhysicalDevice physicalDev
 {
     TKIT_ASSERT(this->vkGetDisplayModePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetDisplayModePropertiesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetDisplayModePropertiesKHR(physicalDevice, display, pPropertyCount, pProperties);
 }
@@ -3476,7 +3476,7 @@ VkResult InstanceTable::CreateDisplayModeKHR(VkPhysicalDevice physicalDevice, Vk
 {
     TKIT_ASSERT(this->vkCreateDisplayModeKHR,
                 "[VULKIT][LOADER] The function 'vkCreateDisplayModeKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDisplayModeKHR(physicalDevice, display, pCreateInfo, pAllocator, pMode);
 }
@@ -3488,7 +3488,7 @@ VkResult InstanceTable::GetDisplayPlaneCapabilitiesKHR(VkPhysicalDevice physical
 {
     TKIT_ASSERT(this->vkGetDisplayPlaneCapabilitiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetDisplayPlaneCapabilitiesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, pCapabilities);
 }
@@ -3501,7 +3501,7 @@ VkResult InstanceTable::CreateDisplayPlaneSurfaceKHR(VkInstance instance,
 {
     TKIT_ASSERT(this->vkCreateDisplayPlaneSurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateDisplayPlaneSurfaceKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3512,7 +3512,7 @@ void InstanceTable::DestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface,
 {
     TKIT_ASSERT(this->vkDestroySurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkDestroySurfaceKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroySurfaceKHR(instance, surface, pAllocator);
 }
@@ -3523,7 +3523,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice phys
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceSupportKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
 }
@@ -3534,7 +3534,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceCapabilitiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceCapabilitiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
 }
@@ -3546,7 +3546,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice phys
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceFormatsKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceFormatsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
 }
@@ -3558,7 +3558,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfacePresentModesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfacePresentModesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
 }
@@ -3569,7 +3569,7 @@ VkResult InstanceTable::CreateViSurfaceNN(VkInstance instance, const VkViSurface
 {
     TKIT_ASSERT(this->vkCreateViSurfaceNN,
                 "[VULKIT][LOADER] The function 'vkCreateViSurfaceNN' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3580,7 +3580,7 @@ VkResult InstanceTable::CreateWaylandSurfaceKHR(VkInstance instance, const VkWay
 {
     TKIT_ASSERT(this->vkCreateWaylandSurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateWaylandSurfaceKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3592,7 +3592,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceWaylandPresentationSupportKHR(VkPhysica
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceWaylandPresentationSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceWaylandPresentationSupportKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice, queueFamilyIndex, display);
 }
@@ -3603,7 +3603,7 @@ VkResult InstanceTable::CreateWin32SurfaceKHR(VkInstance instance, const VkWin32
 {
     TKIT_ASSERT(this->vkCreateWin32SurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateWin32SurfaceKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3614,7 +3614,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceWin32PresentationSupportKHR(VkPhysicalD
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceWin32PresentationSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceWin32PresentationSupportKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
 }
@@ -3625,7 +3625,7 @@ VkResult InstanceTable::CreateXlibSurfaceKHR(VkInstance instance, const VkXlibSu
 {
     TKIT_ASSERT(this->vkCreateXlibSurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateXlibSurfaceKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3637,7 +3637,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDe
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceXlibPresentationSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceXlibPresentationSupportKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
 }
@@ -3648,7 +3648,7 @@ VkResult InstanceTable::CreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurf
 {
     TKIT_ASSERT(this->vkCreateXcbSurfaceKHR,
                 "[VULKIT][LOADER] The function 'vkCreateXcbSurfaceKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3661,7 +3661,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDev
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceXcbPresentationSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceXcbPresentationSupportKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice, queueFamilyIndex, connection, visual_id);
 }
@@ -3672,7 +3672,7 @@ VkResult InstanceTable::CreateDirectFBSurfaceEXT(VkInstance instance, const VkDi
 {
     TKIT_ASSERT(this->vkCreateDirectFBSurfaceEXT,
                 "[VULKIT][LOADER] The function 'vkCreateDirectFBSurfaceEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDirectFBSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3683,7 +3683,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceDirectFBPresentationSupportEXT(VkPhysic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceDirectFBPresentationSupportEXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceDirectFBPresentationSupportEXT' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceDirectFBPresentationSupportEXT(physicalDevice, queueFamilyIndex, dfb);
 }
@@ -3696,7 +3696,7 @@ VkResult InstanceTable::CreateImagePipeSurfaceFUCHSIA(VkInstance instance,
 {
     TKIT_ASSERT(this->vkCreateImagePipeSurfaceFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkCreateImagePipeSurfaceFUCHSIA' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateImagePipeSurfaceFUCHSIA(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3709,7 +3709,7 @@ VkResult InstanceTable::CreateStreamDescriptorSurfaceGGP(VkInstance instance,
 {
     TKIT_ASSERT(this->vkCreateStreamDescriptorSurfaceGGP,
                 "[VULKIT][LOADER] The function 'vkCreateStreamDescriptorSurfaceGGP' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateStreamDescriptorSurfaceGGP(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3720,7 +3720,7 @@ VkResult InstanceTable::CreateScreenSurfaceQNX(VkInstance instance, const VkScre
 {
     TKIT_ASSERT(this->vkCreateScreenSurfaceQNX,
                 "[VULKIT][LOADER] The function 'vkCreateScreenSurfaceQNX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateScreenSurfaceQNX(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -3732,7 +3732,7 @@ VkBool32 InstanceTable::GetPhysicalDeviceScreenPresentationSupportQNX(VkPhysical
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceScreenPresentationSupportQNX,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceScreenPresentationSupportQNX' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceScreenPresentationSupportQNX(physicalDevice, queueFamilyIndex, window);
 }
@@ -3745,7 +3745,7 @@ VkResult InstanceTable::CreateDebugReportCallbackEXT(VkInstance instance,
 {
     TKIT_ASSERT(this->vkCreateDebugReportCallbackEXT,
                 "[VULKIT][LOADER] The function 'vkCreateDebugReportCallbackEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDebugReportCallbackEXT(instance, pCreateInfo, pAllocator, pCallback);
 }
@@ -3756,7 +3756,7 @@ void InstanceTable::DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugRe
 {
     TKIT_ASSERT(this->vkDestroyDebugReportCallbackEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyDebugReportCallbackEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyDebugReportCallbackEXT(instance, callback, pAllocator);
 }
@@ -3768,7 +3768,7 @@ void InstanceTable::DebugReportMessageEXT(VkInstance instance, VkDebugReportFlag
 {
     TKIT_ASSERT(this->vkDebugReportMessageEXT,
                 "[VULKIT][LOADER] The function 'vkDebugReportMessageEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDebugReportMessageEXT(instance, flags, objectType, object, location, messageCode, pLayerPrefix, pMessage);
 }
@@ -3781,7 +3781,7 @@ VkResult InstanceTable::GetPhysicalDeviceExternalImageFormatPropertiesNV(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalImageFormatPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalImageFormatPropertiesNV' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice, format, type, tiling, usage, flags,
                                                                     externalHandleType, pExternalImageFormatProperties);
@@ -3793,7 +3793,7 @@ void InstanceTable::GetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice,
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFeatures2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFeatures2' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
 }
@@ -3804,7 +3804,7 @@ void InstanceTable::GetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceProperties2' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceProperties2(physicalDevice, pProperties);
 }
@@ -3815,7 +3815,7 @@ void InstanceTable::GetPhysicalDeviceFormatProperties2(VkPhysicalDevice physical
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFormatProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFormatProperties2' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
 }
@@ -3827,7 +3827,7 @@ VkResult InstanceTable::GetPhysicalDeviceImageFormatProperties2(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceImageFormatProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceImageFormatProperties2' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
 }
@@ -3839,7 +3839,7 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice phy
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyProperties2' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
@@ -3850,7 +3850,7 @@ void InstanceTable::GetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physical
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceMemoryProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceMemoryProperties2' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
 }
@@ -3862,7 +3862,7 @@ void InstanceTable::GetPhysicalDeviceSparseImageFormatProperties2(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSparseImageFormatProperties2,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSparseImageFormatProperties2' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
@@ -3874,7 +3874,7 @@ void InstanceTable::GetPhysicalDeviceExternalBufferProperties(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalBufferProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalBufferProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 }
@@ -3886,7 +3886,7 @@ VkResult InstanceTable::GetPhysicalDeviceExternalMemorySciBufPropertiesNV(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(physicalDevice, handleType, handle,
                                                                      pMemorySciBufProperties);
@@ -3898,7 +3898,7 @@ VkResult InstanceTable::GetPhysicalDeviceSciBufAttributesNV(VkPhysicalDevice phy
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSciBufAttributesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSciBufAttributesNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSciBufAttributesNV(physicalDevice, pAttributes);
 }
@@ -3910,7 +3910,7 @@ void InstanceTable::GetPhysicalDeviceExternalSemaphoreProperties(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalSemaphoreProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalSemaphoreProperties' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo,
                                                          pExternalSemaphoreProperties);
@@ -3923,7 +3923,7 @@ void InstanceTable::GetPhysicalDeviceExternalFenceProperties(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalFenceProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalFenceProperties' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
@@ -3935,7 +3935,7 @@ VkResult InstanceTable::GetPhysicalDeviceSciSyncAttributesNV(VkPhysicalDevice ph
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSciSyncAttributesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSciSyncAttributesNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSciSyncAttributesNV(physicalDevice, pSciSyncAttributesInfo, pAttributes);
 }
@@ -3945,7 +3945,7 @@ VkResult InstanceTable::ReleaseDisplayEXT(VkPhysicalDevice physicalDevice, VkDis
 {
     TKIT_ASSERT(this->vkReleaseDisplayEXT,
                 "[VULKIT][LOADER] The function 'vkReleaseDisplayEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkReleaseDisplayEXT(physicalDevice, display);
 }
@@ -3955,7 +3955,7 @@ VkResult InstanceTable::AcquireXlibDisplayEXT(VkPhysicalDevice physicalDevice, D
 {
     TKIT_ASSERT(this->vkAcquireXlibDisplayEXT,
                 "[VULKIT][LOADER] The function 'vkAcquireXlibDisplayEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireXlibDisplayEXT(physicalDevice, dpy, display);
 }
@@ -3966,7 +3966,7 @@ VkResult InstanceTable::GetRandROutputDisplayEXT(VkPhysicalDevice physicalDevice
 {
     TKIT_ASSERT(this->vkGetRandROutputDisplayEXT,
                 "[VULKIT][LOADER] The function 'vkGetRandROutputDisplayEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetRandROutputDisplayEXT(physicalDevice, dpy, rrOutput, pDisplay);
 }
@@ -3976,7 +3976,7 @@ VkResult InstanceTable::AcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, V
 {
     TKIT_ASSERT(this->vkAcquireWinrtDisplayNV,
                 "[VULKIT][LOADER] The function 'vkAcquireWinrtDisplayNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireWinrtDisplayNV(physicalDevice, display);
 }
@@ -3987,7 +3987,7 @@ VkResult InstanceTable::GetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint3
 {
     TKIT_ASSERT(this->vkGetWinrtDisplayNV,
                 "[VULKIT][LOADER] The function 'vkGetWinrtDisplayNV' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay);
 }
@@ -3998,7 +3998,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceCapabilities2EXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceCapabilities2EXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
 }
@@ -4010,7 +4010,7 @@ VkResult InstanceTable::EnumeratePhysicalDeviceGroups(
 {
     TKIT_ASSERT(this->vkEnumeratePhysicalDeviceGroups,
                 "[VULKIT][LOADER] The function 'vkEnumeratePhysicalDeviceGroups' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkEnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
 }
@@ -4022,7 +4022,7 @@ VkResult InstanceTable::GetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice p
 {
     TKIT_ASSERT(this->vkGetPhysicalDevicePresentRectanglesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDevicePresentRectanglesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
 }
@@ -4033,7 +4033,7 @@ VkResult InstanceTable::CreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurf
 {
     TKIT_ASSERT(this->vkCreateIOSSurfaceMVK,
                 "[VULKIT][LOADER] The function 'vkCreateIOSSurfaceMVK' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -4044,7 +4044,7 @@ VkResult InstanceTable::CreateMacOSSurfaceMVK(VkInstance instance, const VkMacOS
 {
     TKIT_ASSERT(this->vkCreateMacOSSurfaceMVK,
                 "[VULKIT][LOADER] The function 'vkCreateMacOSSurfaceMVK' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -4055,7 +4055,7 @@ VkResult InstanceTable::CreateMetalSurfaceEXT(VkInstance instance, const VkMetal
 {
     TKIT_ASSERT(this->vkCreateMetalSurfaceEXT,
                 "[VULKIT][LOADER] The function 'vkCreateMetalSurfaceEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateMetalSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -4067,7 +4067,7 @@ void InstanceTable::GetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice p
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceMultisamplePropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceMultisamplePropertiesEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples, pMultisampleProperties);
 }
@@ -4079,7 +4079,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceCapabilities2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceCapabilities2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
 }
@@ -4092,7 +4092,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice phy
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfaceFormats2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfaceFormats2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount,
                                                        pSurfaceFormats);
@@ -4105,7 +4105,7 @@ VkResult InstanceTable::GetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice 
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceDisplayProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceDisplayProperties2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, pPropertyCount, pProperties);
 }
@@ -4117,7 +4117,7 @@ VkResult InstanceTable::GetPhysicalDeviceDisplayPlaneProperties2KHR(VkPhysicalDe
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceDisplayPlaneProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceDisplayPlaneProperties2KHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, pPropertyCount, pProperties);
 }
@@ -4129,7 +4129,7 @@ VkResult InstanceTable::GetDisplayModeProperties2KHR(VkPhysicalDevice physicalDe
 {
     TKIT_ASSERT(this->vkGetDisplayModeProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetDisplayModeProperties2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, pProperties);
 }
@@ -4141,7 +4141,7 @@ VkResult InstanceTable::GetDisplayPlaneCapabilities2KHR(VkPhysicalDevice physica
 {
     TKIT_ASSERT(this->vkGetDisplayPlaneCapabilities2KHR,
                 "[VULKIT][LOADER] The function 'vkGetDisplayPlaneCapabilities2KHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetDisplayPlaneCapabilities2KHR(physicalDevice, pDisplayPlaneInfo, pCapabilities);
 }
@@ -4153,7 +4153,7 @@ VkResult InstanceTable::GetPhysicalDeviceCalibrateableTimeDomainsKHR(VkPhysicalD
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCalibrateableTimeDomainsKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCalibrateableTimeDomainsKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, pTimeDomainCount, pTimeDomains);
 }
@@ -4166,7 +4166,7 @@ VkResult InstanceTable::CreateDebugUtilsMessengerEXT(VkInstance instance,
 {
     TKIT_ASSERT(this->vkCreateDebugUtilsMessengerEXT,
                 "[VULKIT][LOADER] The function 'vkCreateDebugUtilsMessengerEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
 }
@@ -4177,7 +4177,7 @@ void InstanceTable::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUt
 {
     TKIT_ASSERT(this->vkDestroyDebugUtilsMessengerEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyDebugUtilsMessengerEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
@@ -4190,7 +4190,7 @@ void InstanceTable::SubmitDebugUtilsMessageEXT(VkInstance instance,
 {
     TKIT_ASSERT(this->vkSubmitDebugUtilsMessageEXT,
                 "[VULKIT][LOADER] The function 'vkSubmitDebugUtilsMessageEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
 }
@@ -4201,7 +4201,7 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeMatrixPropertiesNV(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCooperativeMatrixPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCooperativeMatrixPropertiesNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, pPropertyCount, pProperties);
 }
@@ -4214,7 +4214,7 @@ VkResult InstanceTable::GetPhysicalDeviceSurfacePresentModes2EXT(VkPhysicalDevic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSurfacePresentModes2EXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSurfacePresentModes2EXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, pSurfaceInfo, pPresentModeCount,
                                                             pPresentModes);
@@ -4227,7 +4227,7 @@ VkResult InstanceTable::EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounte
 {
     TKIT_ASSERT(this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR,
                 "[VULKIT][LOADER] The function 'vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR' is "
-                "not available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "not available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
         physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
@@ -4240,7 +4240,7 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR' is not "
-                "available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice, pPerformanceQueryCreateInfo,
                                                                   pNumPasses);
@@ -4252,7 +4252,7 @@ VkResult InstanceTable::CreateHeadlessSurfaceEXT(VkInstance instance, const VkHe
 {
     TKIT_ASSERT(this->vkCreateHeadlessSurfaceEXT,
                 "[VULKIT][LOADER] The function 'vkCreateHeadlessSurfaceEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateHeadlessSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
 }
@@ -4264,7 +4264,7 @@ VkResult InstanceTable::GetPhysicalDeviceSupportedFramebufferMixedSamplesCombina
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV' is "
-                "not available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "not available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, pCombinationCount,
                                                                                    pCombinations);
@@ -4276,7 +4276,7 @@ VkResult InstanceTable::GetPhysicalDeviceToolProperties(VkPhysicalDevice physica
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceToolProperties,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceToolProperties' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
 }
@@ -4288,7 +4288,7 @@ VkResult InstanceTable::GetPhysicalDeviceRefreshableObjectTypesKHR(VkPhysicalDev
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceRefreshableObjectTypesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceRefreshableObjectTypesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceRefreshableObjectTypesKHR(physicalDevice, pRefreshableObjectTypeCount,
                                                               pRefreshableObjectTypes);
@@ -4301,7 +4301,7 @@ VkResult InstanceTable::GetPhysicalDeviceFragmentShadingRatesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFragmentShadingRatesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFragmentShadingRatesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, pFragmentShadingRateCount,
                                                             pFragmentShadingRates);
@@ -4314,7 +4314,7 @@ VkResult InstanceTable::GetPhysicalDeviceVideoCapabilitiesKHR(VkPhysicalDevice p
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceVideoCapabilitiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceVideoCapabilitiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceVideoCapabilitiesKHR(physicalDevice, pVideoProfile, pCapabilities);
 }
@@ -4326,7 +4326,7 @@ VkResult InstanceTable::GetPhysicalDeviceVideoFormatPropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceVideoFormatPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceVideoFormatPropertiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo,
                                                              pVideoFormatPropertyCount, pVideoFormatProperties);
@@ -4339,7 +4339,7 @@ VkResult InstanceTable::GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR' is not "
-                "available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(physicalDevice, pQualityLevelInfo,
                                                                          pQualityLevelProperties);
@@ -4350,7 +4350,7 @@ VkResult InstanceTable::AcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, in
 {
     TKIT_ASSERT(this->vkAcquireDrmDisplayEXT,
                 "[VULKIT][LOADER] The function 'vkAcquireDrmDisplayEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireDrmDisplayEXT(physicalDevice, drmFd, display);
 }
@@ -4361,7 +4361,7 @@ VkResult InstanceTable::GetDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_
 {
     TKIT_ASSERT(this->vkGetDrmDisplayEXT,
                 "[VULKIT][LOADER] The function 'vkGetDrmDisplayEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetDrmDisplayEXT(physicalDevice, drmFd, connectorId, display);
 }
@@ -4373,7 +4373,7 @@ VkResult InstanceTable::GetPhysicalDeviceOpticalFlowImageFormatsNV(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceOpticalFlowImageFormatsNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceOpticalFlowImageFormatsNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, pOpticalFlowImageFormatInfo, pFormatCount,
                                                               pImageFormatProperties);
@@ -4385,7 +4385,7 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
 }
@@ -4397,7 +4397,7 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsProp
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV' is "
-                "not available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "not available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, pPropertyCount,
                                                                                     pProperties);
@@ -4409,7 +4409,7 @@ VkResult InstanceTable::GetPhysicalDeviceCooperativeVectorPropertiesNV(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCooperativeVectorPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCooperativeVectorPropertiesNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, pProperties);
 }
@@ -4421,7 +4421,7 @@ void InstanceTable::GetPhysicalDeviceExternalTensorPropertiesARM(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalTensorPropertiesARM,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalTensorPropertiesARM' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo,
                                                          pExternalTensorProperties);
@@ -4434,7 +4434,7 @@ VkResult InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
         physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
@@ -4448,7 +4448,7 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropert
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM' "
-                "is not available for the instance or device being used, either because VKit::Core::Initialize() was "
+                "is not available for the instance or device being used, either because VKit::Initialize() was "
                 "not called or because the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
         physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
@@ -4460,7 +4460,7 @@ void InstanceTable::GetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevic
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFeatures2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFeatures2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
 }
@@ -4471,7 +4471,7 @@ void InstanceTable::GetPhysicalDeviceProperties2KHR(VkPhysicalDevice physicalDev
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceProperties2KHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
 }
@@ -4482,7 +4482,7 @@ void InstanceTable::GetPhysicalDeviceFormatProperties2KHR(VkPhysicalDevice physi
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceFormatProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceFormatProperties2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
 }
@@ -4494,7 +4494,7 @@ VkResult InstanceTable::GetPhysicalDeviceImageFormatProperties2KHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceImageFormatProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceImageFormatProperties2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
 }
@@ -4506,7 +4506,7 @@ void InstanceTable::GetPhysicalDeviceQueueFamilyProperties2KHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceQueueFamilyProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceQueueFamilyProperties2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount,
                                                        pQueueFamilyProperties);
@@ -4518,7 +4518,7 @@ void InstanceTable::GetPhysicalDeviceMemoryProperties2KHR(VkPhysicalDevice physi
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceMemoryProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceMemoryProperties2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
 }
@@ -4530,7 +4530,7 @@ void InstanceTable::GetPhysicalDeviceSparseImageFormatProperties2KHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceSparseImageFormatProperties2KHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceSparseImageFormatProperties2KHR' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
@@ -4542,7 +4542,7 @@ void InstanceTable::GetPhysicalDeviceExternalBufferPropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalBufferPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalBufferPropertiesKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice, pExternalBufferInfo,
                                                          pExternalBufferProperties);
@@ -4555,7 +4555,7 @@ void InstanceTable::GetPhysicalDeviceExternalSemaphorePropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalSemaphorePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalSemaphorePropertiesKHR' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice, pExternalSemaphoreInfo,
                                                             pExternalSemaphoreProperties);
@@ -4568,7 +4568,7 @@ void InstanceTable::GetPhysicalDeviceExternalFencePropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceExternalFencePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceExternalFencePropertiesKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
@@ -4580,7 +4580,7 @@ VkResult InstanceTable::EnumeratePhysicalDeviceGroupsKHR(
 {
     TKIT_ASSERT(this->vkEnumeratePhysicalDeviceGroupsKHR,
                 "[VULKIT][LOADER] The function 'vkEnumeratePhysicalDeviceGroupsKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkEnumeratePhysicalDeviceGroupsKHR(instance, pPhysicalDeviceGroupCount,
                                                     pPhysicalDeviceGroupProperties);
@@ -4593,7 +4593,7 @@ VkResult InstanceTable::GetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalD
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceCalibrateableTimeDomainsEXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceCalibrateableTimeDomainsEXT' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, pTimeDomainCount, pTimeDomains);
 }
@@ -4604,7 +4604,7 @@ VkResult InstanceTable::GetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice phys
 {
     TKIT_ASSERT(this->vkGetPhysicalDeviceToolPropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetPhysicalDeviceToolPropertiesEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice, pToolCount, pToolProperties);
 }
@@ -4615,7 +4615,7 @@ void DeviceTable::DestroyDevice(VkDevice device, const VkAllocationCallbacks *pA
 {
     TKIT_ASSERT(this->vkDestroyDevice,
                 "[VULKIT][LOADER] The function 'vkDestroyDevice' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyDevice(device, pAllocator);
 }
@@ -4625,7 +4625,7 @@ void DeviceTable::GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uin
 {
     TKIT_ASSERT(this->vkGetDeviceQueue,
                 "[VULKIT][LOADER] The function 'vkGetDeviceQueue' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
@@ -4635,7 +4635,7 @@ VkResult DeviceTable::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkS
                                   VkFence fence) const
 {
     TKIT_ASSERT(this->vkQueueSubmit, "[VULKIT][LOADER] The function 'vkQueueSubmit' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     return this->vkQueueSubmit(queue, submitCount, pSubmits, fence);
 }
@@ -4645,7 +4645,7 @@ VkResult DeviceTable::QueueWaitIdle(VkQueue queue) const
 {
     TKIT_ASSERT(this->vkQueueWaitIdle,
                 "[VULKIT][LOADER] The function 'vkQueueWaitIdle' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkQueueWaitIdle(queue);
 }
@@ -4655,7 +4655,7 @@ VkResult DeviceTable::DeviceWaitIdle(VkDevice device) const
 {
     TKIT_ASSERT(this->vkDeviceWaitIdle,
                 "[VULKIT][LOADER] The function 'vkDeviceWaitIdle' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkDeviceWaitIdle(device);
 }
@@ -4666,7 +4666,7 @@ VkResult DeviceTable::AllocateMemory(VkDevice device, const VkMemoryAllocateInfo
 {
     TKIT_ASSERT(this->vkAllocateMemory,
                 "[VULKIT][LOADER] The function 'vkAllocateMemory' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
 }
@@ -4675,7 +4675,7 @@ VkResult DeviceTable::AllocateMemory(VkDevice device, const VkMemoryAllocateInfo
 void DeviceTable::FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks *pAllocator) const
 {
     TKIT_ASSERT(this->vkFreeMemory, "[VULKIT][LOADER] The function 'vkFreeMemory' is not available for the instance or "
-                                    "device being used, either because VKit::Core::Initialize() was not called or "
+                                    "device being used, either because VKit::Initialize() was not called or "
                                     "because the feature or extension bound to the function has not been enabled");
     this->vkFreeMemory(device, memory, pAllocator);
 }
@@ -4685,7 +4685,7 @@ VkResult DeviceTable::MapMemory(VkDevice device, VkDeviceMemory memory, VkDevice
                                 VkMemoryMapFlags flags, void **ppData) const
 {
     TKIT_ASSERT(this->vkMapMemory, "[VULKIT][LOADER] The function 'vkMapMemory' is not available for the instance or "
-                                   "device being used, either because VKit::Core::Initialize() was not called or "
+                                   "device being used, either because VKit::Initialize() was not called or "
                                    "because the feature or extension bound to the function has not been enabled");
     return this->vkMapMemory(device, memory, offset, size, flags, ppData);
 }
@@ -4694,7 +4694,7 @@ VkResult DeviceTable::MapMemory(VkDevice device, VkDeviceMemory memory, VkDevice
 void DeviceTable::UnmapMemory(VkDevice device, VkDeviceMemory memory) const
 {
     TKIT_ASSERT(this->vkUnmapMemory, "[VULKIT][LOADER] The function 'vkUnmapMemory' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     this->vkUnmapMemory(device, memory);
 }
@@ -4705,7 +4705,7 @@ VkResult DeviceTable::FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRa
 {
     TKIT_ASSERT(this->vkFlushMappedMemoryRanges,
                 "[VULKIT][LOADER] The function 'vkFlushMappedMemoryRanges' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkFlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
 }
@@ -4716,7 +4716,7 @@ VkResult DeviceTable::InvalidateMappedMemoryRanges(VkDevice device, uint32_t mem
 {
     TKIT_ASSERT(this->vkInvalidateMappedMemoryRanges,
                 "[VULKIT][LOADER] The function 'vkInvalidateMappedMemoryRanges' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkInvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
 }
@@ -4727,7 +4727,7 @@ void DeviceTable::GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memo
 {
     TKIT_ASSERT(this->vkGetDeviceMemoryCommitment,
                 "[VULKIT][LOADER] The function 'vkGetDeviceMemoryCommitment' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
@@ -4738,7 +4738,7 @@ void DeviceTable::GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer,
 {
     TKIT_ASSERT(this->vkGetBufferMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetBufferMemoryRequirements' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
@@ -4749,7 +4749,7 @@ VkResult DeviceTable::BindBufferMemory(VkDevice device, VkBuffer buffer, VkDevic
 {
     TKIT_ASSERT(this->vkBindBufferMemory,
                 "[VULKIT][LOADER] The function 'vkBindBufferMemory' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkBindBufferMemory(device, buffer, memory, memoryOffset);
 }
@@ -4760,7 +4760,7 @@ void DeviceTable::GetImageMemoryRequirements(VkDevice device, VkImage image,
 {
     TKIT_ASSERT(this->vkGetImageMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetImageMemoryRequirements' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
@@ -4771,7 +4771,7 @@ VkResult DeviceTable::BindImageMemory(VkDevice device, VkImage image, VkDeviceMe
 {
     TKIT_ASSERT(this->vkBindImageMemory,
                 "[VULKIT][LOADER] The function 'vkBindImageMemory' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkBindImageMemory(device, image, memory, memoryOffset);
 }
@@ -4783,7 +4783,7 @@ void DeviceTable::GetImageSparseMemoryRequirements(VkDevice device, VkImage imag
 {
     TKIT_ASSERT(this->vkGetImageSparseMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetImageSparseMemoryRequirements' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
@@ -4794,7 +4794,7 @@ VkResult DeviceTable::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, con
 {
     TKIT_ASSERT(this->vkQueueBindSparse,
                 "[VULKIT][LOADER] The function 'vkQueueBindSparse' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }
@@ -4804,7 +4804,7 @@ VkResult DeviceTable::CreateFence(VkDevice device, const VkFenceCreateInfo *pCre
                                   const VkAllocationCallbacks *pAllocator, VkFence *pFence) const
 {
     TKIT_ASSERT(this->vkCreateFence, "[VULKIT][LOADER] The function 'vkCreateFence' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     return this->vkCreateFence(device, pCreateInfo, pAllocator, pFence);
 }
@@ -4814,7 +4814,7 @@ void DeviceTable::DestroyFence(VkDevice device, VkFence fence, const VkAllocatio
 {
     TKIT_ASSERT(this->vkDestroyFence,
                 "[VULKIT][LOADER] The function 'vkDestroyFence' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyFence(device, fence, pAllocator);
 }
@@ -4823,7 +4823,7 @@ void DeviceTable::DestroyFence(VkDevice device, VkFence fence, const VkAllocatio
 VkResult DeviceTable::ResetFences(VkDevice device, uint32_t fenceCount, const VkFence *pFences) const
 {
     TKIT_ASSERT(this->vkResetFences, "[VULKIT][LOADER] The function 'vkResetFences' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     return this->vkResetFences(device, fenceCount, pFences);
 }
@@ -4833,7 +4833,7 @@ VkResult DeviceTable::GetFenceStatus(VkDevice device, VkFence fence) const
 {
     TKIT_ASSERT(this->vkGetFenceStatus,
                 "[VULKIT][LOADER] The function 'vkGetFenceStatus' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetFenceStatus(device, fence);
 }
@@ -4844,7 +4844,7 @@ VkResult DeviceTable::WaitForFences(VkDevice device, uint32_t fenceCount, const 
 {
     TKIT_ASSERT(this->vkWaitForFences,
                 "[VULKIT][LOADER] The function 'vkWaitForFences' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
 }
@@ -4855,7 +4855,7 @@ VkResult DeviceTable::CreateSemaphore(VkDevice device, const VkSemaphoreCreateIn
 {
     TKIT_ASSERT(this->vkCreateSemaphore,
                 "[VULKIT][LOADER] The function 'vkCreateSemaphore' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
 }
@@ -4866,7 +4866,7 @@ void DeviceTable::DestroySemaphore(VkDevice device, VkSemaphore semaphore,
 {
     TKIT_ASSERT(this->vkDestroySemaphore,
                 "[VULKIT][LOADER] The function 'vkDestroySemaphore' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroySemaphore(device, semaphore, pAllocator);
 }
@@ -4876,7 +4876,7 @@ VkResult DeviceTable::CreateEvent(VkDevice device, const VkEventCreateInfo *pCre
                                   const VkAllocationCallbacks *pAllocator, VkEvent *pEvent) const
 {
     TKIT_ASSERT(this->vkCreateEvent, "[VULKIT][LOADER] The function 'vkCreateEvent' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     return this->vkCreateEvent(device, pCreateInfo, pAllocator, pEvent);
 }
@@ -4886,7 +4886,7 @@ void DeviceTable::DestroyEvent(VkDevice device, VkEvent event, const VkAllocatio
 {
     TKIT_ASSERT(this->vkDestroyEvent,
                 "[VULKIT][LOADER] The function 'vkDestroyEvent' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyEvent(device, event, pAllocator);
 }
@@ -4896,7 +4896,7 @@ VkResult DeviceTable::GetEventStatus(VkDevice device, VkEvent event) const
 {
     TKIT_ASSERT(this->vkGetEventStatus,
                 "[VULKIT][LOADER] The function 'vkGetEventStatus' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetEventStatus(device, event);
 }
@@ -4905,7 +4905,7 @@ VkResult DeviceTable::GetEventStatus(VkDevice device, VkEvent event) const
 VkResult DeviceTable::SetEvent(VkDevice device, VkEvent event) const
 {
     TKIT_ASSERT(this->vkSetEvent, "[VULKIT][LOADER] The function 'vkSetEvent' is not available for the instance or "
-                                  "device being used, either because VKit::Core::Initialize() was not called or "
+                                  "device being used, either because VKit::Initialize() was not called or "
                                   "because the feature or extension bound to the function has not been enabled");
     return this->vkSetEvent(device, event);
 }
@@ -4914,7 +4914,7 @@ VkResult DeviceTable::SetEvent(VkDevice device, VkEvent event) const
 VkResult DeviceTable::ResetEvent(VkDevice device, VkEvent event) const
 {
     TKIT_ASSERT(this->vkResetEvent, "[VULKIT][LOADER] The function 'vkResetEvent' is not available for the instance or "
-                                    "device being used, either because VKit::Core::Initialize() was not called or "
+                                    "device being used, either because VKit::Initialize() was not called or "
                                     "because the feature or extension bound to the function has not been enabled");
     return this->vkResetEvent(device, event);
 }
@@ -4925,7 +4925,7 @@ VkResult DeviceTable::CreateQueryPool(VkDevice device, const VkQueryPoolCreateIn
 {
     TKIT_ASSERT(this->vkCreateQueryPool,
                 "[VULKIT][LOADER] The function 'vkCreateQueryPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
 }
@@ -4936,7 +4936,7 @@ void DeviceTable::DestroyQueryPool(VkDevice device, VkQueryPool queryPool,
 {
     TKIT_ASSERT(this->vkDestroyQueryPool,
                 "[VULKIT][LOADER] The function 'vkDestroyQueryPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyQueryPool(device, queryPool, pAllocator);
 }
@@ -4948,7 +4948,7 @@ VkResult DeviceTable::GetQueryPoolResults(VkDevice device, VkQueryPool queryPool
 {
     TKIT_ASSERT(this->vkGetQueryPoolResults,
                 "[VULKIT][LOADER] The function 'vkGetQueryPoolResults' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
 }
@@ -4958,7 +4958,7 @@ void DeviceTable::ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_
 {
     TKIT_ASSERT(this->vkResetQueryPool,
                 "[VULKIT][LOADER] The function 'vkResetQueryPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkResetQueryPool(device, queryPool, firstQuery, queryCount);
 }
@@ -4969,7 +4969,7 @@ VkResult DeviceTable::CreateBuffer(VkDevice device, const VkBufferCreateInfo *pC
 {
     TKIT_ASSERT(this->vkCreateBuffer,
                 "[VULKIT][LOADER] The function 'vkCreateBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
 }
@@ -4979,7 +4979,7 @@ void DeviceTable::DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAlloca
 {
     TKIT_ASSERT(this->vkDestroyBuffer,
                 "[VULKIT][LOADER] The function 'vkDestroyBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyBuffer(device, buffer, pAllocator);
 }
@@ -4990,7 +4990,7 @@ VkResult DeviceTable::CreateBufferView(VkDevice device, const VkBufferViewCreate
 {
     TKIT_ASSERT(this->vkCreateBufferView,
                 "[VULKIT][LOADER] The function 'vkCreateBufferView' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateBufferView(device, pCreateInfo, pAllocator, pView);
 }
@@ -5001,7 +5001,7 @@ void DeviceTable::DestroyBufferView(VkDevice device, VkBufferView bufferView,
 {
     TKIT_ASSERT(this->vkDestroyBufferView,
                 "[VULKIT][LOADER] The function 'vkDestroyBufferView' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyBufferView(device, bufferView, pAllocator);
 }
@@ -5011,7 +5011,7 @@ VkResult DeviceTable::CreateImage(VkDevice device, const VkImageCreateInfo *pCre
                                   const VkAllocationCallbacks *pAllocator, VkImage *pImage) const
 {
     TKIT_ASSERT(this->vkCreateImage, "[VULKIT][LOADER] The function 'vkCreateImage' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     return this->vkCreateImage(device, pCreateInfo, pAllocator, pImage);
 }
@@ -5021,7 +5021,7 @@ void DeviceTable::DestroyImage(VkDevice device, VkImage image, const VkAllocatio
 {
     TKIT_ASSERT(this->vkDestroyImage,
                 "[VULKIT][LOADER] The function 'vkDestroyImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyImage(device, image, pAllocator);
 }
@@ -5032,7 +5032,7 @@ void DeviceTable::GetImageSubresourceLayout(VkDevice device, VkImage image, cons
 {
     TKIT_ASSERT(this->vkGetImageSubresourceLayout,
                 "[VULKIT][LOADER] The function 'vkGetImageSubresourceLayout' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
@@ -5043,7 +5043,7 @@ VkResult DeviceTable::CreateImageView(VkDevice device, const VkImageViewCreateIn
 {
     TKIT_ASSERT(this->vkCreateImageView,
                 "[VULKIT][LOADER] The function 'vkCreateImageView' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateImageView(device, pCreateInfo, pAllocator, pView);
 }
@@ -5054,7 +5054,7 @@ void DeviceTable::DestroyImageView(VkDevice device, VkImageView imageView,
 {
     TKIT_ASSERT(this->vkDestroyImageView,
                 "[VULKIT][LOADER] The function 'vkDestroyImageView' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyImageView(device, imageView, pAllocator);
 }
@@ -5065,7 +5065,7 @@ VkResult DeviceTable::CreateShaderModule(VkDevice device, const VkShaderModuleCr
 {
     TKIT_ASSERT(this->vkCreateShaderModule,
                 "[VULKIT][LOADER] The function 'vkCreateShaderModule' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
 }
@@ -5076,7 +5076,7 @@ void DeviceTable::DestroyShaderModule(VkDevice device, VkShaderModule shaderModu
 {
     TKIT_ASSERT(this->vkDestroyShaderModule,
                 "[VULKIT][LOADER] The function 'vkDestroyShaderModule' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyShaderModule(device, shaderModule, pAllocator);
 }
@@ -5088,7 +5088,7 @@ VkResult DeviceTable::CreatePipelineCache(VkDevice device, const VkPipelineCache
 {
     TKIT_ASSERT(this->vkCreatePipelineCache,
                 "[VULKIT][LOADER] The function 'vkCreatePipelineCache' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
 }
@@ -5099,7 +5099,7 @@ void DeviceTable::DestroyPipelineCache(VkDevice device, VkPipelineCache pipeline
 {
     TKIT_ASSERT(this->vkDestroyPipelineCache,
                 "[VULKIT][LOADER] The function 'vkDestroyPipelineCache' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyPipelineCache(device, pipelineCache, pAllocator);
 }
@@ -5110,7 +5110,7 @@ VkResult DeviceTable::GetPipelineCacheData(VkDevice device, VkPipelineCache pipe
 {
     TKIT_ASSERT(this->vkGetPipelineCacheData,
                 "[VULKIT][LOADER] The function 'vkGetPipelineCacheData' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetPipelineCacheData(device, pipelineCache, pDataSize, pData);
 }
@@ -5121,7 +5121,7 @@ VkResult DeviceTable::MergePipelineCaches(VkDevice device, VkPipelineCache dstCa
 {
     TKIT_ASSERT(this->vkMergePipelineCaches,
                 "[VULKIT][LOADER] The function 'vkMergePipelineCaches' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkMergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
 }
@@ -5133,7 +5133,7 @@ VkResult DeviceTable::CreatePipelineBinariesKHR(VkDevice device, const VkPipelin
 {
     TKIT_ASSERT(this->vkCreatePipelineBinariesKHR,
                 "[VULKIT][LOADER] The function 'vkCreatePipelineBinariesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreatePipelineBinariesKHR(device, pCreateInfo, pAllocator, pBinaries);
 }
@@ -5144,7 +5144,7 @@ void DeviceTable::DestroyPipelineBinaryKHR(VkDevice device, VkPipelineBinaryKHR 
 {
     TKIT_ASSERT(this->vkDestroyPipelineBinaryKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyPipelineBinaryKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyPipelineBinaryKHR(device, pipelineBinary, pAllocator);
 }
@@ -5155,7 +5155,7 @@ VkResult DeviceTable::GetPipelineKeyKHR(VkDevice device, const VkPipelineCreateI
 {
     TKIT_ASSERT(this->vkGetPipelineKeyKHR,
                 "[VULKIT][LOADER] The function 'vkGetPipelineKeyKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetPipelineKeyKHR(device, pPipelineCreateInfo, pPipelineKey);
 }
@@ -5167,7 +5167,7 @@ VkResult DeviceTable::GetPipelineBinaryDataKHR(VkDevice device, const VkPipeline
 {
     TKIT_ASSERT(this->vkGetPipelineBinaryDataKHR,
                 "[VULKIT][LOADER] The function 'vkGetPipelineBinaryDataKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetPipelineBinaryDataKHR(device, pInfo, pPipelineBinaryKey, pPipelineBinaryDataSize,
                                             pPipelineBinaryData);
@@ -5179,7 +5179,7 @@ VkResult DeviceTable::ReleaseCapturedPipelineDataKHR(VkDevice device, const VkRe
 {
     TKIT_ASSERT(this->vkReleaseCapturedPipelineDataKHR,
                 "[VULKIT][LOADER] The function 'vkReleaseCapturedPipelineDataKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkReleaseCapturedPipelineDataKHR(device, pInfo, pAllocator);
 }
@@ -5191,7 +5191,7 @@ VkResult DeviceTable::CreateGraphicsPipelines(VkDevice device, VkPipelineCache p
 {
     TKIT_ASSERT(this->vkCreateGraphicsPipelines,
                 "[VULKIT][LOADER] The function 'vkCreateGraphicsPipelines' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator,
                                            pPipelines);
@@ -5204,7 +5204,7 @@ VkResult DeviceTable::CreateComputePipelines(VkDevice device, VkPipelineCache pi
 {
     TKIT_ASSERT(this->vkCreateComputePipelines,
                 "[VULKIT][LOADER] The function 'vkCreateComputePipelines' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 }
@@ -5215,7 +5215,7 @@ VkResult DeviceTable::GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice dev
 {
     TKIT_ASSERT(this->vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI,
                 "[VULKIT][LOADER] The function 'vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(device, renderpass, pMaxWorkgroupSize);
 }
@@ -5225,7 +5225,7 @@ void DeviceTable::DestroyPipeline(VkDevice device, VkPipeline pipeline, const Vk
 {
     TKIT_ASSERT(this->vkDestroyPipeline,
                 "[VULKIT][LOADER] The function 'vkDestroyPipeline' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyPipeline(device, pipeline, pAllocator);
 }
@@ -5237,7 +5237,7 @@ VkResult DeviceTable::CreatePipelineLayout(VkDevice device, const VkPipelineLayo
 {
     TKIT_ASSERT(this->vkCreatePipelineLayout,
                 "[VULKIT][LOADER] The function 'vkCreatePipelineLayout' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
 }
@@ -5248,7 +5248,7 @@ void DeviceTable::DestroyPipelineLayout(VkDevice device, VkPipelineLayout pipeli
 {
     TKIT_ASSERT(this->vkDestroyPipelineLayout,
                 "[VULKIT][LOADER] The function 'vkDestroyPipelineLayout' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyPipelineLayout(device, pipelineLayout, pAllocator);
 }
@@ -5259,7 +5259,7 @@ VkResult DeviceTable::CreateSampler(VkDevice device, const VkSamplerCreateInfo *
 {
     TKIT_ASSERT(this->vkCreateSampler,
                 "[VULKIT][LOADER] The function 'vkCreateSampler' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateSampler(device, pCreateInfo, pAllocator, pSampler);
 }
@@ -5269,7 +5269,7 @@ void DeviceTable::DestroySampler(VkDevice device, VkSampler sampler, const VkAll
 {
     TKIT_ASSERT(this->vkDestroySampler,
                 "[VULKIT][LOADER] The function 'vkDestroySampler' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroySampler(device, sampler, pAllocator);
 }
@@ -5281,7 +5281,7 @@ VkResult DeviceTable::CreateDescriptorSetLayout(VkDevice device, const VkDescrip
 {
     TKIT_ASSERT(this->vkCreateDescriptorSetLayout,
                 "[VULKIT][LOADER] The function 'vkCreateDescriptorSetLayout' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
 }
@@ -5292,7 +5292,7 @@ void DeviceTable::DestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLay
 {
     TKIT_ASSERT(this->vkDestroyDescriptorSetLayout,
                 "[VULKIT][LOADER] The function 'vkDestroyDescriptorSetLayout' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
 }
@@ -5304,7 +5304,7 @@ VkResult DeviceTable::CreateDescriptorPool(VkDevice device, const VkDescriptorPo
 {
     TKIT_ASSERT(this->vkCreateDescriptorPool,
                 "[VULKIT][LOADER] The function 'vkCreateDescriptorPool' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
 }
@@ -5315,7 +5315,7 @@ void DeviceTable::DestroyDescriptorPool(VkDevice device, VkDescriptorPool descri
 {
     TKIT_ASSERT(this->vkDestroyDescriptorPool,
                 "[VULKIT][LOADER] The function 'vkDestroyDescriptorPool' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyDescriptorPool(device, descriptorPool, pAllocator);
 }
@@ -5326,7 +5326,7 @@ VkResult DeviceTable::ResetDescriptorPool(VkDevice device, VkDescriptorPool desc
 {
     TKIT_ASSERT(this->vkResetDescriptorPool,
                 "[VULKIT][LOADER] The function 'vkResetDescriptorPool' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkResetDescriptorPool(device, descriptorPool, flags);
 }
@@ -5337,7 +5337,7 @@ VkResult DeviceTable::AllocateDescriptorSets(VkDevice device, const VkDescriptor
 {
     TKIT_ASSERT(this->vkAllocateDescriptorSets,
                 "[VULKIT][LOADER] The function 'vkAllocateDescriptorSets' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
 }
@@ -5348,7 +5348,7 @@ VkResult DeviceTable::FreeDescriptorSets(VkDevice device, VkDescriptorPool descr
 {
     TKIT_ASSERT(this->vkFreeDescriptorSets,
                 "[VULKIT][LOADER] The function 'vkFreeDescriptorSets' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkFreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
 }
@@ -5360,7 +5360,7 @@ void DeviceTable::UpdateDescriptorSets(VkDevice device, uint32_t descriptorWrite
 {
     TKIT_ASSERT(this->vkUpdateDescriptorSets,
                 "[VULKIT][LOADER] The function 'vkUpdateDescriptorSets' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkUpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount,
                                  pDescriptorCopies);
@@ -5372,7 +5372,7 @@ VkResult DeviceTable::CreateFramebuffer(VkDevice device, const VkFramebufferCrea
 {
     TKIT_ASSERT(this->vkCreateFramebuffer,
                 "[VULKIT][LOADER] The function 'vkCreateFramebuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
 }
@@ -5383,7 +5383,7 @@ void DeviceTable::DestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer,
 {
     TKIT_ASSERT(this->vkDestroyFramebuffer,
                 "[VULKIT][LOADER] The function 'vkDestroyFramebuffer' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyFramebuffer(device, framebuffer, pAllocator);
 }
@@ -5394,7 +5394,7 @@ VkResult DeviceTable::CreateRenderPass(VkDevice device, const VkRenderPassCreate
 {
     TKIT_ASSERT(this->vkCreateRenderPass,
                 "[VULKIT][LOADER] The function 'vkCreateRenderPass' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
 }
@@ -5405,7 +5405,7 @@ void DeviceTable::DestroyRenderPass(VkDevice device, VkRenderPass renderPass,
 {
     TKIT_ASSERT(this->vkDestroyRenderPass,
                 "[VULKIT][LOADER] The function 'vkDestroyRenderPass' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyRenderPass(device, renderPass, pAllocator);
 }
@@ -5415,7 +5415,7 @@ void DeviceTable::GetRenderAreaGranularity(VkDevice device, VkRenderPass renderP
 {
     TKIT_ASSERT(this->vkGetRenderAreaGranularity,
                 "[VULKIT][LOADER] The function 'vkGetRenderAreaGranularity' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetRenderAreaGranularity(device, renderPass, pGranularity);
 }
@@ -5426,7 +5426,7 @@ void DeviceTable::GetRenderingAreaGranularity(VkDevice device, const VkRendering
 {
     TKIT_ASSERT(this->vkGetRenderingAreaGranularity,
                 "[VULKIT][LOADER] The function 'vkGetRenderingAreaGranularity' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetRenderingAreaGranularity(device, pRenderingAreaInfo, pGranularity);
 }
@@ -5437,7 +5437,7 @@ VkResult DeviceTable::CreateCommandPool(VkDevice device, const VkCommandPoolCrea
 {
     TKIT_ASSERT(this->vkCreateCommandPool,
                 "[VULKIT][LOADER] The function 'vkCreateCommandPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
 }
@@ -5448,7 +5448,7 @@ void DeviceTable::DestroyCommandPool(VkDevice device, VkCommandPool commandPool,
 {
     TKIT_ASSERT(this->vkDestroyCommandPool,
                 "[VULKIT][LOADER] The function 'vkDestroyCommandPool' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyCommandPool(device, commandPool, pAllocator);
 }
@@ -5458,7 +5458,7 @@ VkResult DeviceTable::ResetCommandPool(VkDevice device, VkCommandPool commandPoo
 {
     TKIT_ASSERT(this->vkResetCommandPool,
                 "[VULKIT][LOADER] The function 'vkResetCommandPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkResetCommandPool(device, commandPool, flags);
 }
@@ -5469,7 +5469,7 @@ VkResult DeviceTable::AllocateCommandBuffers(VkDevice device, const VkCommandBuf
 {
     TKIT_ASSERT(this->vkAllocateCommandBuffers,
                 "[VULKIT][LOADER] The function 'vkAllocateCommandBuffers' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
 }
@@ -5480,7 +5480,7 @@ void DeviceTable::FreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
 {
     TKIT_ASSERT(this->vkFreeCommandBuffers,
                 "[VULKIT][LOADER] The function 'vkFreeCommandBuffers' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
@@ -5491,7 +5491,7 @@ VkResult DeviceTable::BeginCommandBuffer(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkBeginCommandBuffer,
                 "[VULKIT][LOADER] The function 'vkBeginCommandBuffer' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBeginCommandBuffer(commandBuffer, pBeginInfo);
 }
@@ -5501,7 +5501,7 @@ VkResult DeviceTable::EndCommandBuffer(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkEndCommandBuffer,
                 "[VULKIT][LOADER] The function 'vkEndCommandBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkEndCommandBuffer(commandBuffer);
 }
@@ -5511,7 +5511,7 @@ VkResult DeviceTable::ResetCommandBuffer(VkCommandBuffer commandBuffer, VkComman
 {
     TKIT_ASSERT(this->vkResetCommandBuffer,
                 "[VULKIT][LOADER] The function 'vkResetCommandBuffer' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkResetCommandBuffer(commandBuffer, flags);
 }
@@ -5522,7 +5522,7 @@ void DeviceTable::CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindP
 {
     TKIT_ASSERT(this->vkCmdBindPipeline,
                 "[VULKIT][LOADER] The function 'vkCmdBindPipeline' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
@@ -5533,7 +5533,7 @@ void DeviceTable::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandB
 {
     TKIT_ASSERT(this->vkCmdSetAttachmentFeedbackLoopEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetAttachmentFeedbackLoopEnableEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
@@ -5544,7 +5544,7 @@ void DeviceTable::CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstVi
 {
     TKIT_ASSERT(this->vkCmdSetViewport,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewport' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
@@ -5555,7 +5555,7 @@ void DeviceTable::CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstSci
 {
     TKIT_ASSERT(this->vkCmdSetScissor,
                 "[VULKIT][LOADER] The function 'vkCmdSetScissor' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
@@ -5565,7 +5565,7 @@ void DeviceTable::CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth
 {
     TKIT_ASSERT(this->vkCmdSetLineWidth,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineWidth' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetLineWidth(commandBuffer, lineWidth);
 }
@@ -5576,7 +5576,7 @@ void DeviceTable::CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBias
 {
     TKIT_ASSERT(this->vkCmdSetDepthBias,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBias' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
@@ -5586,7 +5586,7 @@ void DeviceTable::CmdSetBlendConstants(VkCommandBuffer commandBuffer, const floa
 {
     TKIT_ASSERT(this->vkCmdSetBlendConstants,
                 "[VULKIT][LOADER] The function 'vkCmdSetBlendConstants' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetBlendConstants(commandBuffer, blendConstants);
 }
@@ -5596,7 +5596,7 @@ void DeviceTable::CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDept
 {
     TKIT_ASSERT(this->vkCmdSetDepthBounds,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBounds' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
@@ -5607,7 +5607,7 @@ void DeviceTable::CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkSten
 {
     TKIT_ASSERT(this->vkCmdSetStencilCompareMask,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilCompareMask' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
@@ -5618,7 +5618,7 @@ void DeviceTable::CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStenci
 {
     TKIT_ASSERT(this->vkCmdSetStencilWriteMask,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilWriteMask' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
@@ -5629,7 +5629,7 @@ void DeviceTable::CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStenci
 {
     TKIT_ASSERT(this->vkCmdSetStencilReference,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilReference' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
@@ -5642,7 +5642,7 @@ void DeviceTable::CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelin
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorSets,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorSets' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
                                   pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
@@ -5654,7 +5654,7 @@ void DeviceTable::CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buf
 {
     TKIT_ASSERT(this->vkCmdBindIndexBuffer,
                 "[VULKIT][LOADER] The function 'vkCmdBindIndexBuffer' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
@@ -5665,7 +5665,7 @@ void DeviceTable::CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t f
 {
     TKIT_ASSERT(this->vkCmdBindVertexBuffers,
                 "[VULKIT][LOADER] The function 'vkCmdBindVertexBuffers' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
@@ -5675,7 +5675,7 @@ void DeviceTable::CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, u
                           uint32_t firstVertex, uint32_t firstInstance) const
 {
     TKIT_ASSERT(this->vkCmdDraw, "[VULKIT][LOADER] The function 'vkCmdDraw' is not available for the instance or "
-                                 "device being used, either because VKit::Core::Initialize() was not called or because "
+                                 "device being used, either because VKit::Initialize() was not called or because "
                                  "the feature or extension bound to the function has not been enabled");
     this->vkCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
@@ -5686,7 +5686,7 @@ void DeviceTable::CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCo
 {
     TKIT_ASSERT(this->vkCmdDrawIndexed,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndexed' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
@@ -5698,7 +5698,7 @@ void DeviceTable::CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCo
 {
     TKIT_ASSERT(this->vkCmdDrawMultiEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMultiEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
@@ -5710,7 +5710,7 @@ void DeviceTable::CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t
 {
     TKIT_ASSERT(this->vkCmdDrawMultiIndexedEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMultiIndexedEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride,
                                    pVertexOffset);
@@ -5722,7 +5722,7 @@ void DeviceTable::CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer
 {
     TKIT_ASSERT(this->vkCmdDrawIndirect,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndirect' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
@@ -5733,7 +5733,7 @@ void DeviceTable::CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer
 {
     TKIT_ASSERT(this->vkCmdDrawIndexedIndirect,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndexedIndirect' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
@@ -5743,7 +5743,7 @@ void DeviceTable::CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCount
                               uint32_t groupCountZ) const
 {
     TKIT_ASSERT(this->vkCmdDispatch, "[VULKIT][LOADER] The function 'vkCmdDispatch' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     this->vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
@@ -5753,7 +5753,7 @@ void DeviceTable::CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer bu
 {
     TKIT_ASSERT(this->vkCmdDispatchIndirect,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchIndirect' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
@@ -5763,7 +5763,7 @@ void DeviceTable::CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdSubpassShadingHUAWEI,
                 "[VULKIT][LOADER] The function 'vkCmdSubpassShadingHUAWEI' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSubpassShadingHUAWEI(commandBuffer);
 }
@@ -5774,7 +5774,7 @@ void DeviceTable::CmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t g
 {
     TKIT_ASSERT(this->vkCmdDrawClusterHUAWEI,
                 "[VULKIT][LOADER] The function 'vkCmdDrawClusterHUAWEI' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
@@ -5785,7 +5785,7 @@ void DeviceTable::CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, Vk
 {
     TKIT_ASSERT(this->vkCmdDrawClusterIndirectHUAWEI,
                 "[VULKIT][LOADER] The function 'vkCmdDrawClusterIndirectHUAWEI' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
@@ -5796,7 +5796,7 @@ void DeviceTable::CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffe
 {
     TKIT_ASSERT(this->vkCmdUpdatePipelineIndirectBufferNV,
                 "[VULKIT][LOADER] The function 'vkCmdUpdatePipelineIndirectBufferNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
@@ -5807,7 +5807,7 @@ void DeviceTable::CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffe
 {
     TKIT_ASSERT(this->vkCmdCopyBuffer,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
@@ -5819,7 +5819,7 @@ void DeviceTable::CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, 
 {
     TKIT_ASSERT(this->vkCmdCopyImage,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
@@ -5831,7 +5831,7 @@ void DeviceTable::CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, 
 {
     TKIT_ASSERT(this->vkCmdBlitImage,
                 "[VULKIT][LOADER] The function 'vkCmdBlitImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions,
                          filter);
@@ -5844,7 +5844,7 @@ void DeviceTable::CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer s
 {
     TKIT_ASSERT(this->vkCmdCopyBufferToImage,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBufferToImage' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
@@ -5856,7 +5856,7 @@ void DeviceTable::CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage sr
 {
     TKIT_ASSERT(this->vkCmdCopyImageToBuffer,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImageToBuffer' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
@@ -5867,7 +5867,7 @@ void DeviceTable::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDevic
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryIndirectNV,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryIndirectNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
@@ -5878,7 +5878,7 @@ void DeviceTable::CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryIndirectKHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryIndirectKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
 }
@@ -5891,7 +5891,7 @@ void DeviceTable::CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryToImageIndirectNV,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryToImageIndirectNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage,
                                            dstImageLayout, pImageSubresources);
@@ -5903,7 +5903,7 @@ void DeviceTable::CmdCopyMemoryToImageIndirectKHR(
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryToImageIndirectKHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryToImageIndirectKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 }
@@ -5914,7 +5914,7 @@ void DeviceTable::CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuf
 {
     TKIT_ASSERT(this->vkCmdUpdateBuffer,
                 "[VULKIT][LOADER] The function 'vkCmdUpdateBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
@@ -5925,7 +5925,7 @@ void DeviceTable::CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffe
 {
     TKIT_ASSERT(this->vkCmdFillBuffer,
                 "[VULKIT][LOADER] The function 'vkCmdFillBuffer' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
@@ -5937,7 +5937,7 @@ void DeviceTable::CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage imag
 {
     TKIT_ASSERT(this->vkCmdClearColorImage,
                 "[VULKIT][LOADER] The function 'vkCmdClearColorImage' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
@@ -5949,7 +5949,7 @@ void DeviceTable::CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkIma
 {
     TKIT_ASSERT(this->vkCmdClearDepthStencilImage,
                 "[VULKIT][LOADER] The function 'vkCmdClearDepthStencilImage' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
@@ -5961,7 +5961,7 @@ void DeviceTable::CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t at
 {
     TKIT_ASSERT(this->vkCmdClearAttachments,
                 "[VULKIT][LOADER] The function 'vkCmdClearAttachments' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
@@ -5973,7 +5973,7 @@ void DeviceTable::CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImag
 {
     TKIT_ASSERT(this->vkCmdResolveImage,
                 "[VULKIT][LOADER] The function 'vkCmdResolveImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
@@ -5982,7 +5982,7 @@ void DeviceTable::CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImag
 void DeviceTable::CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) const
 {
     TKIT_ASSERT(this->vkCmdSetEvent, "[VULKIT][LOADER] The function 'vkCmdSetEvent' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     this->vkCmdSetEvent(commandBuffer, event, stageMask);
 }
@@ -5992,7 +5992,7 @@ void DeviceTable::CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, Vk
 {
     TKIT_ASSERT(this->vkCmdResetEvent,
                 "[VULKIT][LOADER] The function 'vkCmdResetEvent' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResetEvent(commandBuffer, event, stageMask);
 }
@@ -6007,7 +6007,7 @@ void DeviceTable::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCou
 {
     TKIT_ASSERT(this->vkCmdWaitEvents,
                 "[VULKIT][LOADER] The function 'vkCmdWaitEvents' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
                           pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
@@ -6025,7 +6025,7 @@ void DeviceTable::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineSt
 {
     TKIT_ASSERT(this->vkCmdPipelineBarrier,
                 "[VULKIT][LOADER] The function 'vkCmdPipelineBarrier' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
                                pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
@@ -6038,7 +6038,7 @@ void DeviceTable::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool query
 {
     TKIT_ASSERT(this->vkCmdBeginQuery,
                 "[VULKIT][LOADER] The function 'vkCmdBeginQuery' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
@@ -6047,7 +6047,7 @@ void DeviceTable::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool query
 void DeviceTable::CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) const
 {
     TKIT_ASSERT(this->vkCmdEndQuery, "[VULKIT][LOADER] The function 'vkCmdEndQuery' is not available for the instance "
-                                     "or device being used, either because VKit::Core::Initialize() was not called or "
+                                     "or device being used, either because VKit::Initialize() was not called or "
                                      "because the feature or extension bound to the function has not been enabled");
     this->vkCmdEndQuery(commandBuffer, queryPool, query);
 }
@@ -6058,7 +6058,7 @@ void DeviceTable::CmdBeginConditionalRenderingEXT(
 {
     TKIT_ASSERT(this->vkCmdBeginConditionalRenderingEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBeginConditionalRenderingEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
@@ -6068,7 +6068,7 @@ void DeviceTable::CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) c
 {
     TKIT_ASSERT(this->vkCmdEndConditionalRenderingEXT,
                 "[VULKIT][LOADER] The function 'vkCmdEndConditionalRenderingEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndConditionalRenderingEXT(commandBuffer);
 }
@@ -6079,7 +6079,7 @@ void DeviceTable::CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool q
 {
     TKIT_ASSERT(this->vkCmdResetQueryPool,
                 "[VULKIT][LOADER] The function 'vkCmdResetQueryPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
@@ -6090,7 +6090,7 @@ void DeviceTable::CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineSta
 {
     TKIT_ASSERT(this->vkCmdWriteTimestamp,
                 "[VULKIT][LOADER] The function 'vkCmdWriteTimestamp' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
@@ -6102,7 +6102,7 @@ void DeviceTable::CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQuery
 {
     TKIT_ASSERT(this->vkCmdCopyQueryPoolResults,
                 "[VULKIT][LOADER] The function 'vkCmdCopyQueryPoolResults' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
                                     flags);
@@ -6115,7 +6115,7 @@ void DeviceTable::CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayo
 {
     TKIT_ASSERT(this->vkCmdPushConstants,
                 "[VULKIT][LOADER] The function 'vkCmdPushConstants' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
@@ -6126,7 +6126,7 @@ void DeviceTable::CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRend
 {
     TKIT_ASSERT(this->vkCmdBeginRenderPass,
                 "[VULKIT][LOADER] The function 'vkCmdBeginRenderPass' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
@@ -6136,7 +6136,7 @@ void DeviceTable::CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContent
 {
     TKIT_ASSERT(this->vkCmdNextSubpass,
                 "[VULKIT][LOADER] The function 'vkCmdNextSubpass' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdNextSubpass(commandBuffer, contents);
 }
@@ -6146,7 +6146,7 @@ void DeviceTable::CmdEndRenderPass(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdEndRenderPass,
                 "[VULKIT][LOADER] The function 'vkCmdEndRenderPass' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdEndRenderPass(commandBuffer);
 }
@@ -6157,7 +6157,7 @@ void DeviceTable::CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t com
 {
     TKIT_ASSERT(this->vkCmdExecuteCommands,
                 "[VULKIT][LOADER] The function 'vkCmdExecuteCommands' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
@@ -6170,7 +6170,7 @@ VkResult DeviceTable::CreateSharedSwapchainsKHR(VkDevice device, uint32_t swapch
 {
     TKIT_ASSERT(this->vkCreateSharedSwapchainsKHR,
                 "[VULKIT][LOADER] The function 'vkCreateSharedSwapchainsKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
 }
@@ -6181,7 +6181,7 @@ VkResult DeviceTable::CreateSwapchainKHR(VkDevice device, const VkSwapchainCreat
 {
     TKIT_ASSERT(this->vkCreateSwapchainKHR,
                 "[VULKIT][LOADER] The function 'vkCreateSwapchainKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
 }
@@ -6192,7 +6192,7 @@ void DeviceTable::DestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain,
 {
     TKIT_ASSERT(this->vkDestroySwapchainKHR,
                 "[VULKIT][LOADER] The function 'vkDestroySwapchainKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroySwapchainKHR(device, swapchain, pAllocator);
 }
@@ -6203,7 +6203,7 @@ VkResult DeviceTable::GetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swap
 {
     TKIT_ASSERT(this->vkGetSwapchainImagesKHR,
                 "[VULKIT][LOADER] The function 'vkGetSwapchainImagesKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
 }
@@ -6214,7 +6214,7 @@ VkResult DeviceTable::AcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapch
 {
     TKIT_ASSERT(this->vkAcquireNextImageKHR,
                 "[VULKIT][LOADER] The function 'vkAcquireNextImageKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
 }
@@ -6224,7 +6224,7 @@ VkResult DeviceTable::QueuePresentKHR(VkQueue queue, const VkPresentInfoKHR *pPr
 {
     TKIT_ASSERT(this->vkQueuePresentKHR,
                 "[VULKIT][LOADER] The function 'vkQueuePresentKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkQueuePresentKHR(queue, pPresentInfo);
 }
@@ -6235,7 +6235,7 @@ VkResult DeviceTable::DebugMarkerSetObjectNameEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkDebugMarkerSetObjectNameEXT,
                 "[VULKIT][LOADER] The function 'vkDebugMarkerSetObjectNameEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkDebugMarkerSetObjectNameEXT(device, pNameInfo);
 }
@@ -6245,7 +6245,7 @@ VkResult DeviceTable::DebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugM
 {
     TKIT_ASSERT(this->vkDebugMarkerSetObjectTagEXT,
                 "[VULKIT][LOADER] The function 'vkDebugMarkerSetObjectTagEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkDebugMarkerSetObjectTagEXT(device, pTagInfo);
 }
@@ -6256,7 +6256,7 @@ void DeviceTable::CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdDebugMarkerBeginEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDebugMarkerBeginEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
@@ -6266,7 +6266,7 @@ void DeviceTable::CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdDebugMarkerEndEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDebugMarkerEndEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDebugMarkerEndEXT(commandBuffer);
 }
@@ -6277,7 +6277,7 @@ void DeviceTable::CmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdDebugMarkerInsertEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDebugMarkerInsertEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
@@ -6288,7 +6288,7 @@ VkResult DeviceTable::GetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory mem
 {
     TKIT_ASSERT(this->vkGetMemoryWin32HandleNV,
                 "[VULKIT][LOADER] The function 'vkGetMemoryWin32HandleNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryWin32HandleNV(device, memory, handleType, pHandle);
 }
@@ -6299,7 +6299,7 @@ void DeviceTable::CmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer, V
 {
     TKIT_ASSERT(this->vkCmdExecuteGeneratedCommandsNV,
                 "[VULKIT][LOADER] The function 'vkCmdExecuteGeneratedCommandsNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
@@ -6310,7 +6310,7 @@ void DeviceTable::CmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdPreprocessGeneratedCommandsNV,
                 "[VULKIT][LOADER] The function 'vkCmdPreprocessGeneratedCommandsNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
@@ -6321,7 +6321,7 @@ void DeviceTable::CmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer, Vk
 {
     TKIT_ASSERT(this->vkCmdBindPipelineShaderGroupNV,
                 "[VULKIT][LOADER] The function 'vkCmdBindPipelineShaderGroupNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
@@ -6333,7 +6333,7 @@ void DeviceTable::GetGeneratedCommandsMemoryRequirementsNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetGeneratedCommandsMemoryRequirementsNV,
                 "[VULKIT][LOADER] The function 'vkGetGeneratedCommandsMemoryRequirementsNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetGeneratedCommandsMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
@@ -6346,7 +6346,7 @@ VkResult DeviceTable::CreateIndirectCommandsLayoutNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateIndirectCommandsLayoutNV,
                 "[VULKIT][LOADER] The function 'vkCreateIndirectCommandsLayoutNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateIndirectCommandsLayoutNV(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
 }
@@ -6357,7 +6357,7 @@ void DeviceTable::DestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCom
 {
     TKIT_ASSERT(this->vkDestroyIndirectCommandsLayoutNV,
                 "[VULKIT][LOADER] The function 'vkDestroyIndirectCommandsLayoutNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroyIndirectCommandsLayoutNV(device, indirectCommandsLayout, pAllocator);
 }
@@ -6368,7 +6368,7 @@ void DeviceTable::CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdExecuteGeneratedCommandsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdExecuteGeneratedCommandsEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
@@ -6380,7 +6380,7 @@ void DeviceTable::CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffe
 {
     TKIT_ASSERT(this->vkCmdPreprocessGeneratedCommandsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdPreprocessGeneratedCommandsEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
 }
@@ -6392,7 +6392,7 @@ void DeviceTable::GetGeneratedCommandsMemoryRequirementsEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetGeneratedCommandsMemoryRequirementsEXT,
                 "[VULKIT][LOADER] The function 'vkGetGeneratedCommandsMemoryRequirementsEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetGeneratedCommandsMemoryRequirementsEXT(device, pInfo, pMemoryRequirements);
 }
@@ -6405,7 +6405,7 @@ VkResult DeviceTable::CreateIndirectCommandsLayoutEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateIndirectCommandsLayoutEXT,
                 "[VULKIT][LOADER] The function 'vkCreateIndirectCommandsLayoutEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateIndirectCommandsLayoutEXT(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
 }
@@ -6416,7 +6416,7 @@ void DeviceTable::DestroyIndirectCommandsLayoutEXT(VkDevice device, VkIndirectCo
 {
     TKIT_ASSERT(this->vkDestroyIndirectCommandsLayoutEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyIndirectCommandsLayoutEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroyIndirectCommandsLayoutEXT(device, indirectCommandsLayout, pAllocator);
 }
@@ -6429,7 +6429,7 @@ VkResult DeviceTable::CreateIndirectExecutionSetEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateIndirectExecutionSetEXT,
                 "[VULKIT][LOADER] The function 'vkCreateIndirectExecutionSetEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateIndirectExecutionSetEXT(device, pCreateInfo, pAllocator, pIndirectExecutionSet);
 }
@@ -6440,7 +6440,7 @@ void DeviceTable::DestroyIndirectExecutionSetEXT(VkDevice device, VkIndirectExec
 {
     TKIT_ASSERT(this->vkDestroyIndirectExecutionSetEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyIndirectExecutionSetEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyIndirectExecutionSetEXT(device, indirectExecutionSet, pAllocator);
 }
@@ -6452,7 +6452,7 @@ void DeviceTable::UpdateIndirectExecutionSetPipelineEXT(
 {
     TKIT_ASSERT(this->vkUpdateIndirectExecutionSetPipelineEXT,
                 "[VULKIT][LOADER] The function 'vkUpdateIndirectExecutionSetPipelineEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkUpdateIndirectExecutionSetPipelineEXT(device, indirectExecutionSet, executionSetWriteCount,
                                                   pExecutionSetWrites);
@@ -6465,7 +6465,7 @@ void DeviceTable::UpdateIndirectExecutionSetShaderEXT(
 {
     TKIT_ASSERT(this->vkUpdateIndirectExecutionSetShaderEXT,
                 "[VULKIT][LOADER] The function 'vkUpdateIndirectExecutionSetShaderEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkUpdateIndirectExecutionSetShaderEXT(device, indirectExecutionSet, executionSetWriteCount,
                                                 pExecutionSetWrites);
@@ -6478,7 +6478,7 @@ void DeviceTable::CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipeline
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSet,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSet' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount,
                                  pDescriptorWrites);
@@ -6489,7 +6489,7 @@ void DeviceTable::TrimCommandPool(VkDevice device, VkCommandPool commandPool, Vk
 {
     TKIT_ASSERT(this->vkTrimCommandPool,
                 "[VULKIT][LOADER] The function 'vkTrimCommandPool' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkTrimCommandPool(device, commandPool, flags);
 }
@@ -6500,7 +6500,7 @@ VkResult DeviceTable::GetMemoryWin32HandleKHR(VkDevice device, const VkMemoryGet
 {
     TKIT_ASSERT(this->vkGetMemoryWin32HandleKHR,
                 "[VULKIT][LOADER] The function 'vkGetMemoryWin32HandleKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
 }
@@ -6512,7 +6512,7 @@ VkResult DeviceTable::GetMemoryWin32HandlePropertiesKHR(
 {
     TKIT_ASSERT(this->vkGetMemoryWin32HandlePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetMemoryWin32HandlePropertiesKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetMemoryWin32HandlePropertiesKHR(device, handleType, handle, pMemoryWin32HandleProperties);
 }
@@ -6522,7 +6522,7 @@ VkResult DeviceTable::GetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR
 {
     TKIT_ASSERT(this->vkGetMemoryFdKHR,
                 "[VULKIT][LOADER] The function 'vkGetMemoryFdKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetMemoryFdKHR(device, pGetFdInfo, pFd);
 }
@@ -6533,7 +6533,7 @@ VkResult DeviceTable::GetMemoryFdPropertiesKHR(VkDevice device, VkExternalMemory
 {
     TKIT_ASSERT(this->vkGetMemoryFdPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetMemoryFdPropertiesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryFdPropertiesKHR(device, handleType, fd, pMemoryFdProperties);
 }
@@ -6545,7 +6545,7 @@ VkResult DeviceTable::GetMemoryZirconHandleFUCHSIA(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetMemoryZirconHandleFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkGetMemoryZirconHandleFUCHSIA' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
 }
@@ -6557,7 +6557,7 @@ VkResult DeviceTable::GetMemoryZirconHandlePropertiesFUCHSIA(
 {
     TKIT_ASSERT(this->vkGetMemoryZirconHandlePropertiesFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkGetMemoryZirconHandlePropertiesFUCHSIA' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetMemoryZirconHandlePropertiesFUCHSIA(device, handleType, zirconHandle,
                                                           pMemoryZirconHandleProperties);
@@ -6570,7 +6570,7 @@ VkResult DeviceTable::GetMemoryRemoteAddressNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetMemoryRemoteAddressNV,
                 "[VULKIT][LOADER] The function 'vkGetMemoryRemoteAddressNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryRemoteAddressNV(device, pMemoryGetRemoteAddressInfo, pAddress);
 }
@@ -6581,7 +6581,7 @@ VkResult DeviceTable::GetMemorySciBufNV(VkDevice device, const VkMemoryGetSciBuf
 {
     TKIT_ASSERT(this->vkGetMemorySciBufNV,
                 "[VULKIT][LOADER] The function 'vkGetMemorySciBufNV' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetMemorySciBufNV(device, pGetSciBufInfo, pHandle);
 }
@@ -6593,7 +6593,7 @@ VkResult DeviceTable::GetSemaphoreWin32HandleKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetSemaphoreWin32HandleKHR,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreWin32HandleKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSemaphoreWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
 }
@@ -6604,7 +6604,7 @@ VkResult DeviceTable::ImportSemaphoreWin32HandleKHR(
 {
     TKIT_ASSERT(this->vkImportSemaphoreWin32HandleKHR,
                 "[VULKIT][LOADER] The function 'vkImportSemaphoreWin32HandleKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportSemaphoreWin32HandleKHR(device, pImportSemaphoreWin32HandleInfo);
 }
@@ -6614,7 +6614,7 @@ VkResult DeviceTable::GetSemaphoreFdKHR(VkDevice device, const VkSemaphoreGetFdI
 {
     TKIT_ASSERT(this->vkGetSemaphoreFdKHR,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreFdKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetSemaphoreFdKHR(device, pGetFdInfo, pFd);
 }
@@ -6625,7 +6625,7 @@ VkResult DeviceTable::ImportSemaphoreFdKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkImportSemaphoreFdKHR,
                 "[VULKIT][LOADER] The function 'vkImportSemaphoreFdKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportSemaphoreFdKHR(device, pImportSemaphoreFdInfo);
 }
@@ -6637,7 +6637,7 @@ VkResult DeviceTable::GetSemaphoreZirconHandleFUCHSIA(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetSemaphoreZirconHandleFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreZirconHandleFUCHSIA' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetSemaphoreZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
 }
@@ -6648,7 +6648,7 @@ VkResult DeviceTable::ImportSemaphoreZirconHandleFUCHSIA(
 {
     TKIT_ASSERT(this->vkImportSemaphoreZirconHandleFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkImportSemaphoreZirconHandleFUCHSIA' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkImportSemaphoreZirconHandleFUCHSIA(device, pImportSemaphoreZirconHandleInfo);
 }
@@ -6659,7 +6659,7 @@ VkResult DeviceTable::GetFenceWin32HandleKHR(VkDevice device, const VkFenceGetWi
 {
     TKIT_ASSERT(this->vkGetFenceWin32HandleKHR,
                 "[VULKIT][LOADER] The function 'vkGetFenceWin32HandleKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetFenceWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
 }
@@ -6670,7 +6670,7 @@ VkResult DeviceTable::ImportFenceWin32HandleKHR(
 {
     TKIT_ASSERT(this->vkImportFenceWin32HandleKHR,
                 "[VULKIT][LOADER] The function 'vkImportFenceWin32HandleKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportFenceWin32HandleKHR(device, pImportFenceWin32HandleInfo);
 }
@@ -6680,7 +6680,7 @@ VkResult DeviceTable::GetFenceFdKHR(VkDevice device, const VkFenceGetFdInfoKHR *
 {
     TKIT_ASSERT(this->vkGetFenceFdKHR,
                 "[VULKIT][LOADER] The function 'vkGetFenceFdKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetFenceFdKHR(device, pGetFdInfo, pFd);
 }
@@ -6690,7 +6690,7 @@ VkResult DeviceTable::ImportFenceFdKHR(VkDevice device, const VkImportFenceFdInf
 {
     TKIT_ASSERT(this->vkImportFenceFdKHR,
                 "[VULKIT][LOADER] The function 'vkImportFenceFdKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkImportFenceFdKHR(device, pImportFenceFdInfo);
 }
@@ -6701,7 +6701,7 @@ VkResult DeviceTable::GetFenceSciSyncFenceNV(VkDevice device, const VkFenceGetSc
 {
     TKIT_ASSERT(this->vkGetFenceSciSyncFenceNV,
                 "[VULKIT][LOADER] The function 'vkGetFenceSciSyncFenceNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetFenceSciSyncFenceNV(device, pGetSciSyncHandleInfo, pHandle);
 }
@@ -6712,7 +6712,7 @@ VkResult DeviceTable::GetFenceSciSyncObjNV(VkDevice device, const VkFenceGetSciS
 {
     TKIT_ASSERT(this->vkGetFenceSciSyncObjNV,
                 "[VULKIT][LOADER] The function 'vkGetFenceSciSyncObjNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetFenceSciSyncObjNV(device, pGetSciSyncHandleInfo, pHandle);
 }
@@ -6723,7 +6723,7 @@ VkResult DeviceTable::ImportFenceSciSyncFenceNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkImportFenceSciSyncFenceNV,
                 "[VULKIT][LOADER] The function 'vkImportFenceSciSyncFenceNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportFenceSciSyncFenceNV(device, pImportFenceSciSyncInfo);
 }
@@ -6734,7 +6734,7 @@ VkResult DeviceTable::ImportFenceSciSyncObjNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkImportFenceSciSyncObjNV,
                 "[VULKIT][LOADER] The function 'vkImportFenceSciSyncObjNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportFenceSciSyncObjNV(device, pImportFenceSciSyncInfo);
 }
@@ -6745,7 +6745,7 @@ VkResult DeviceTable::GetSemaphoreSciSyncObjNV(VkDevice device, const VkSemaphor
 {
     TKIT_ASSERT(this->vkGetSemaphoreSciSyncObjNV,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreSciSyncObjNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSemaphoreSciSyncObjNV(device, pGetSciSyncInfo, pHandle);
 }
@@ -6756,7 +6756,7 @@ VkResult DeviceTable::ImportSemaphoreSciSyncObjNV(
 {
     TKIT_ASSERT(this->vkImportSemaphoreSciSyncObjNV,
                 "[VULKIT][LOADER] The function 'vkImportSemaphoreSciSyncObjNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkImportSemaphoreSciSyncObjNV(device, pImportSemaphoreSciSyncInfo);
 }
@@ -6769,7 +6769,7 @@ VkResult DeviceTable::CreateSemaphoreSciSyncPoolNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateSemaphoreSciSyncPoolNV,
                 "[VULKIT][LOADER] The function 'vkCreateSemaphoreSciSyncPoolNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateSemaphoreSciSyncPoolNV(device, pCreateInfo, pAllocator, pSemaphorePool);
 }
@@ -6780,7 +6780,7 @@ void DeviceTable::DestroySemaphoreSciSyncPoolNV(VkDevice device, VkSemaphoreSciS
 {
     TKIT_ASSERT(this->vkDestroySemaphoreSciSyncPoolNV,
                 "[VULKIT][LOADER] The function 'vkDestroySemaphoreSciSyncPoolNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroySemaphoreSciSyncPoolNV(device, semaphorePool, pAllocator);
 }
@@ -6791,7 +6791,7 @@ VkResult DeviceTable::DisplayPowerControlEXT(VkDevice device, VkDisplayKHR displ
 {
     TKIT_ASSERT(this->vkDisplayPowerControlEXT,
                 "[VULKIT][LOADER] The function 'vkDisplayPowerControlEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkDisplayPowerControlEXT(device, display, pDisplayPowerInfo);
 }
@@ -6802,7 +6802,7 @@ VkResult DeviceTable::RegisterDeviceEventEXT(VkDevice device, const VkDeviceEven
 {
     TKIT_ASSERT(this->vkRegisterDeviceEventEXT,
                 "[VULKIT][LOADER] The function 'vkRegisterDeviceEventEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkRegisterDeviceEventEXT(device, pDeviceEventInfo, pAllocator, pFence);
 }
@@ -6814,7 +6814,7 @@ VkResult DeviceTable::RegisterDisplayEventEXT(VkDevice device, VkDisplayKHR disp
 {
     TKIT_ASSERT(this->vkRegisterDisplayEventEXT,
                 "[VULKIT][LOADER] The function 'vkRegisterDisplayEventEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkRegisterDisplayEventEXT(device, display, pDisplayEventInfo, pAllocator, pFence);
 }
@@ -6825,7 +6825,7 @@ VkResult DeviceTable::GetSwapchainCounterEXT(VkDevice device, VkSwapchainKHR swa
 {
     TKIT_ASSERT(this->vkGetSwapchainCounterEXT,
                 "[VULKIT][LOADER] The function 'vkGetSwapchainCounterEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSwapchainCounterEXT(device, swapchain, counter, pCounterValue);
 }
@@ -6837,7 +6837,7 @@ void DeviceTable::GetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t hea
 {
     TKIT_ASSERT(this->vkGetDeviceGroupPeerMemoryFeatures,
                 "[VULKIT][LOADER] The function 'vkGetDeviceGroupPeerMemoryFeatures' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDeviceGroupPeerMemoryFeatures(device, heapIndex, localDeviceIndex, remoteDeviceIndex,
                                              pPeerMemoryFeatures);
@@ -6849,7 +6849,7 @@ VkResult DeviceTable::BindBufferMemory2(VkDevice device, uint32_t bindInfoCount,
 {
     TKIT_ASSERT(this->vkBindBufferMemory2,
                 "[VULKIT][LOADER] The function 'vkBindBufferMemory2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkBindBufferMemory2(device, bindInfoCount, pBindInfos);
 }
@@ -6860,7 +6860,7 @@ VkResult DeviceTable::BindImageMemory2(VkDevice device, uint32_t bindInfoCount,
 {
     TKIT_ASSERT(this->vkBindImageMemory2,
                 "[VULKIT][LOADER] The function 'vkBindImageMemory2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkBindImageMemory2(device, bindInfoCount, pBindInfos);
 }
@@ -6870,7 +6870,7 @@ void DeviceTable::CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t devic
 {
     TKIT_ASSERT(this->vkCmdSetDeviceMask,
                 "[VULKIT][LOADER] The function 'vkCmdSetDeviceMask' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetDeviceMask(commandBuffer, deviceMask);
 }
@@ -6882,7 +6882,7 @@ VkResult DeviceTable::GetDeviceGroupPresentCapabilitiesKHR(
 {
     TKIT_ASSERT(this->vkGetDeviceGroupPresentCapabilitiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceGroupPresentCapabilitiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceGroupPresentCapabilitiesKHR(device, pDeviceGroupPresentCapabilities);
 }
@@ -6894,7 +6894,7 @@ VkResult DeviceTable::GetDeviceGroupSurfacePresentModesKHR(VkDevice device, VkSu
 {
     TKIT_ASSERT(this->vkGetDeviceGroupSurfacePresentModesKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceGroupSurfacePresentModesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
 }
@@ -6906,7 +6906,7 @@ VkResult DeviceTable::AcquireNextImage2KHR(VkDevice device, const VkAcquireNextI
 {
     TKIT_ASSERT(this->vkAcquireNextImage2KHR,
                 "[VULKIT][LOADER] The function 'vkAcquireNextImage2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireNextImage2KHR(device, pAcquireInfo, pImageIndex);
 }
@@ -6918,7 +6918,7 @@ void DeviceTable::CmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGr
 {
     TKIT_ASSERT(this->vkCmdDispatchBase,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchBase' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
@@ -6931,7 +6931,7 @@ VkResult DeviceTable::CreateDescriptorUpdateTemplate(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateDescriptorUpdateTemplate,
                 "[VULKIT][LOADER] The function 'vkCreateDescriptorUpdateTemplate' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDescriptorUpdateTemplate(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
 }
@@ -6942,7 +6942,7 @@ void DeviceTable::DestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorU
 {
     TKIT_ASSERT(this->vkDestroyDescriptorUpdateTemplate,
                 "[VULKIT][LOADER] The function 'vkDestroyDescriptorUpdateTemplate' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroyDescriptorUpdateTemplate(device, descriptorUpdateTemplate, pAllocator);
 }
@@ -6954,7 +6954,7 @@ void DeviceTable::UpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorS
 {
     TKIT_ASSERT(this->vkUpdateDescriptorSetWithTemplate,
                 "[VULKIT][LOADER] The function 'vkUpdateDescriptorSetWithTemplate' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkUpdateDescriptorSetWithTemplate(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
@@ -6966,7 +6966,7 @@ void DeviceTable::CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSetWithTemplate,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSetWithTemplate' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
@@ -6977,7 +6977,7 @@ void DeviceTable::SetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount, co
 {
     TKIT_ASSERT(this->vkSetHdrMetadataEXT,
                 "[VULKIT][LOADER] The function 'vkSetHdrMetadataEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkSetHdrMetadataEXT(device, swapchainCount, pSwapchains, pMetadata);
 }
@@ -6987,7 +6987,7 @@ VkResult DeviceTable::GetSwapchainStatusKHR(VkDevice device, VkSwapchainKHR swap
 {
     TKIT_ASSERT(this->vkGetSwapchainStatusKHR,
                 "[VULKIT][LOADER] The function 'vkGetSwapchainStatusKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSwapchainStatusKHR(device, swapchain);
 }
@@ -6998,7 +6998,7 @@ VkResult DeviceTable::GetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchain
 {
     TKIT_ASSERT(this->vkGetRefreshCycleDurationGOOGLE,
                 "[VULKIT][LOADER] The function 'vkGetRefreshCycleDurationGOOGLE' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetRefreshCycleDurationGOOGLE(device, swapchain, pDisplayTimingProperties);
 }
@@ -7010,7 +7010,7 @@ VkResult DeviceTable::GetPastPresentationTimingGOOGLE(VkDevice device, VkSwapcha
 {
     TKIT_ASSERT(this->vkGetPastPresentationTimingGOOGLE,
                 "[VULKIT][LOADER] The function 'vkGetPastPresentationTimingGOOGLE' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetPastPresentationTimingGOOGLE(device, swapchain, pPresentationTimingCount, pPresentationTimings);
 }
@@ -7021,7 +7021,7 @@ void DeviceTable::CmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32
 {
     TKIT_ASSERT(this->vkCmdSetViewportWScalingNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportWScalingNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
@@ -7032,7 +7032,7 @@ void DeviceTable::CmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, uint3
 {
     TKIT_ASSERT(this->vkCmdSetDiscardRectangleEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDiscardRectangleEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
@@ -7042,7 +7042,7 @@ void DeviceTable::CmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetDiscardRectangleEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDiscardRectangleEnableEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
@@ -7054,7 +7054,7 @@ void DeviceTable::CmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetDiscardRectangleModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDiscardRectangleModeEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
@@ -7065,7 +7065,7 @@ void DeviceTable::CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetSampleLocationsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetSampleLocationsEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
@@ -7076,7 +7076,7 @@ void DeviceTable::GetBufferMemoryRequirements2(VkDevice device, const VkBufferMe
 {
     TKIT_ASSERT(this->vkGetBufferMemoryRequirements2,
                 "[VULKIT][LOADER] The function 'vkGetBufferMemoryRequirements2' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetBufferMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
@@ -7087,7 +7087,7 @@ void DeviceTable::GetImageMemoryRequirements2(VkDevice device, const VkImageMemo
 {
     TKIT_ASSERT(this->vkGetImageMemoryRequirements2,
                 "[VULKIT][LOADER] The function 'vkGetImageMemoryRequirements2' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
@@ -7099,7 +7099,7 @@ void DeviceTable::GetImageSparseMemoryRequirements2(VkDevice device, const VkIma
 {
     TKIT_ASSERT(this->vkGetImageSparseMemoryRequirements2,
                 "[VULKIT][LOADER] The function 'vkGetImageSparseMemoryRequirements2' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetImageSparseMemoryRequirements2(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
@@ -7110,7 +7110,7 @@ void DeviceTable::GetDeviceBufferMemoryRequirements(VkDevice device, const VkDev
 {
     TKIT_ASSERT(this->vkGetDeviceBufferMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetDeviceBufferMemoryRequirements' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDeviceBufferMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
@@ -7121,7 +7121,7 @@ void DeviceTable::GetDeviceImageMemoryRequirements(VkDevice device, const VkDevi
 {
     TKIT_ASSERT(this->vkGetDeviceImageMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageMemoryRequirements' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDeviceImageMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
@@ -7133,7 +7133,7 @@ void DeviceTable::GetDeviceImageSparseMemoryRequirements(
 {
     TKIT_ASSERT(this->vkGetDeviceImageSparseMemoryRequirements,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageSparseMemoryRequirements' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceImageSparseMemoryRequirements(device, pInfo, pSparseMemoryRequirementCount,
                                                    pSparseMemoryRequirements);
@@ -7147,7 +7147,7 @@ VkResult DeviceTable::CreateSamplerYcbcrConversion(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateSamplerYcbcrConversion,
                 "[VULKIT][LOADER] The function 'vkCreateSamplerYcbcrConversion' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateSamplerYcbcrConversion(device, pCreateInfo, pAllocator, pYcbcrConversion);
 }
@@ -7158,7 +7158,7 @@ void DeviceTable::DestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrC
 {
     TKIT_ASSERT(this->vkDestroySamplerYcbcrConversion,
                 "[VULKIT][LOADER] The function 'vkDestroySamplerYcbcrConversion' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
 }
@@ -7168,7 +7168,7 @@ void DeviceTable::GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2 *pQu
 {
     TKIT_ASSERT(this->vkGetDeviceQueue2,
                 "[VULKIT][LOADER] The function 'vkGetDeviceQueue2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkGetDeviceQueue2(device, pQueueInfo, pQueue);
 }
@@ -7180,7 +7180,7 @@ VkResult DeviceTable::CreateValidationCacheEXT(VkDevice device, const VkValidati
 {
     TKIT_ASSERT(this->vkCreateValidationCacheEXT,
                 "[VULKIT][LOADER] The function 'vkCreateValidationCacheEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateValidationCacheEXT(device, pCreateInfo, pAllocator, pValidationCache);
 }
@@ -7191,7 +7191,7 @@ void DeviceTable::DestroyValidationCacheEXT(VkDevice device, VkValidationCacheEX
 {
     TKIT_ASSERT(this->vkDestroyValidationCacheEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyValidationCacheEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyValidationCacheEXT(device, validationCache, pAllocator);
 }
@@ -7202,7 +7202,7 @@ VkResult DeviceTable::GetValidationCacheDataEXT(VkDevice device, VkValidationCac
 {
     TKIT_ASSERT(this->vkGetValidationCacheDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetValidationCacheDataEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetValidationCacheDataEXT(device, validationCache, pDataSize, pData);
 }
@@ -7213,7 +7213,7 @@ VkResult DeviceTable::MergeValidationCachesEXT(VkDevice device, VkValidationCach
 {
     TKIT_ASSERT(this->vkMergeValidationCachesEXT,
                 "[VULKIT][LOADER] The function 'vkMergeValidationCachesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkMergeValidationCachesEXT(device, dstCache, srcCacheCount, pSrcCaches);
 }
@@ -7224,7 +7224,7 @@ void DeviceTable::GetDescriptorSetLayoutSupport(VkDevice device, const VkDescrip
 {
     TKIT_ASSERT(this->vkGetDescriptorSetLayoutSupport,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetLayoutSupport' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
 }
@@ -7235,7 +7235,7 @@ VkResult DeviceTable::GetSwapchainGrallocUsageANDROID(VkDevice device, VkFormat 
 {
     TKIT_ASSERT(this->vkGetSwapchainGrallocUsageANDROID,
                 "[VULKIT][LOADER] The function 'vkGetSwapchainGrallocUsageANDROID' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetSwapchainGrallocUsageANDROID(device, format, imageUsage, grallocUsage);
 }
@@ -7248,7 +7248,7 @@ VkResult DeviceTable::GetSwapchainGrallocUsage2ANDROID(VkDevice device, VkFormat
 {
     TKIT_ASSERT(this->vkGetSwapchainGrallocUsage2ANDROID,
                 "[VULKIT][LOADER] The function 'vkGetSwapchainGrallocUsage2ANDROID' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetSwapchainGrallocUsage2ANDROID(device, format, imageUsage, swapchainImageUsage,
                                                     grallocConsumerUsage, grallocProducerUsage);
@@ -7260,7 +7260,7 @@ VkResult DeviceTable::AcquireImageANDROID(VkDevice device, VkImage image, int na
 {
     TKIT_ASSERT(this->vkAcquireImageANDROID,
                 "[VULKIT][LOADER] The function 'vkAcquireImageANDROID' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireImageANDROID(device, image, nativeFenceFd, semaphore, fence);
 }
@@ -7272,7 +7272,7 @@ VkResult DeviceTable::QueueSignalReleaseImageANDROID(VkQueue queue, uint32_t wai
 {
     TKIT_ASSERT(this->vkQueueSignalReleaseImageANDROID,
                 "[VULKIT][LOADER] The function 'vkQueueSignalReleaseImageANDROID' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkQueueSignalReleaseImageANDROID(queue, waitSemaphoreCount, pWaitSemaphores, image, pNativeFenceFd);
 }
@@ -7283,7 +7283,7 @@ VkResult DeviceTable::GetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkS
 {
     TKIT_ASSERT(this->vkGetShaderInfoAMD,
                 "[VULKIT][LOADER] The function 'vkGetShaderInfoAMD' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkGetShaderInfoAMD(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
 }
@@ -7293,7 +7293,7 @@ void DeviceTable::SetLocalDimmingAMD(VkDevice device, VkSwapchainKHR swapChain, 
 {
     TKIT_ASSERT(this->vkSetLocalDimmingAMD,
                 "[VULKIT][LOADER] The function 'vkSetLocalDimmingAMD' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkSetLocalDimmingAMD(device, swapChain, localDimmingEnable);
 }
@@ -7305,7 +7305,7 @@ VkResult DeviceTable::GetCalibratedTimestampsKHR(VkDevice device, uint32_t times
 {
     TKIT_ASSERT(this->vkGetCalibratedTimestampsKHR,
                 "[VULKIT][LOADER] The function 'vkGetCalibratedTimestampsKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetCalibratedTimestampsKHR(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
 }
@@ -7315,7 +7315,7 @@ VkResult DeviceTable::SetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugU
 {
     TKIT_ASSERT(this->vkSetDebugUtilsObjectNameEXT,
                 "[VULKIT][LOADER] The function 'vkSetDebugUtilsObjectNameEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkSetDebugUtilsObjectNameEXT(device, pNameInfo);
 }
@@ -7325,7 +7325,7 @@ VkResult DeviceTable::SetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUt
 {
     TKIT_ASSERT(this->vkSetDebugUtilsObjectTagEXT,
                 "[VULKIT][LOADER] The function 'vkSetDebugUtilsObjectTagEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkSetDebugUtilsObjectTagEXT(device, pTagInfo);
 }
@@ -7335,7 +7335,7 @@ void DeviceTable::QueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtils
 {
     TKIT_ASSERT(this->vkQueueBeginDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkQueueBeginDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
 }
@@ -7345,7 +7345,7 @@ void DeviceTable::QueueEndDebugUtilsLabelEXT(VkQueue queue) const
 {
     TKIT_ASSERT(this->vkQueueEndDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkQueueEndDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkQueueEndDebugUtilsLabelEXT(queue);
 }
@@ -7355,7 +7355,7 @@ void DeviceTable::QueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtil
 {
     TKIT_ASSERT(this->vkQueueInsertDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkQueueInsertDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
 }
@@ -7366,7 +7366,7 @@ void DeviceTable::CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBeginDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBeginDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
@@ -7376,7 +7376,7 @@ void DeviceTable::CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdEndDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkCmdEndDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
@@ -7387,7 +7387,7 @@ void DeviceTable::CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdInsertDebugUtilsLabelEXT,
                 "[VULKIT][LOADER] The function 'vkCmdInsertDebugUtilsLabelEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
@@ -7399,7 +7399,7 @@ VkResult DeviceTable::GetMemoryHostPointerPropertiesEXT(
 {
     TKIT_ASSERT(this->vkGetMemoryHostPointerPropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetMemoryHostPointerPropertiesEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetMemoryHostPointerPropertiesEXT(device, handleType, pHostPointer, pMemoryHostPointerProperties);
 }
@@ -7410,7 +7410,7 @@ void DeviceTable::CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipel
 {
     TKIT_ASSERT(this->vkCmdWriteBufferMarkerAMD,
                 "[VULKIT][LOADER] The function 'vkCmdWriteBufferMarkerAMD' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
@@ -7421,7 +7421,7 @@ VkResult DeviceTable::CreateRenderPass2(VkDevice device, const VkRenderPassCreat
 {
     TKIT_ASSERT(this->vkCreateRenderPass2,
                 "[VULKIT][LOADER] The function 'vkCreateRenderPass2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateRenderPass2(device, pCreateInfo, pAllocator, pRenderPass);
 }
@@ -7432,7 +7432,7 @@ void DeviceTable::CmdBeginRenderPass2(VkCommandBuffer commandBuffer, const VkRen
 {
     TKIT_ASSERT(this->vkCmdBeginRenderPass2,
                 "[VULKIT][LOADER] The function 'vkCmdBeginRenderPass2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
@@ -7443,7 +7443,7 @@ void DeviceTable::CmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubpass
 {
     TKIT_ASSERT(this->vkCmdNextSubpass2,
                 "[VULKIT][LOADER] The function 'vkCmdNextSubpass2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
@@ -7453,7 +7453,7 @@ void DeviceTable::CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpa
 {
     TKIT_ASSERT(this->vkCmdEndRenderPass2,
                 "[VULKIT][LOADER] The function 'vkCmdEndRenderPass2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
@@ -7463,7 +7463,7 @@ VkResult DeviceTable::GetSemaphoreCounterValue(VkDevice device, VkSemaphore sema
 {
     TKIT_ASSERT(this->vkGetSemaphoreCounterValue,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreCounterValue' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSemaphoreCounterValue(device, semaphore, pValue);
 }
@@ -7473,7 +7473,7 @@ VkResult DeviceTable::WaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo 
 {
     TKIT_ASSERT(this->vkWaitSemaphores,
                 "[VULKIT][LOADER] The function 'vkWaitSemaphores' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkWaitSemaphores(device, pWaitInfo, timeout);
 }
@@ -7483,7 +7483,7 @@ VkResult DeviceTable::SignalSemaphore(VkDevice device, const VkSemaphoreSignalIn
 {
     TKIT_ASSERT(this->vkSignalSemaphore,
                 "[VULKIT][LOADER] The function 'vkSignalSemaphore' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkSignalSemaphore(device, pSignalInfo);
 }
@@ -7494,7 +7494,7 @@ VkResult DeviceTable::GetAndroidHardwareBufferPropertiesANDROID(
 {
     TKIT_ASSERT(this->vkGetAndroidHardwareBufferPropertiesANDROID,
                 "[VULKIT][LOADER] The function 'vkGetAndroidHardwareBufferPropertiesANDROID' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetAndroidHardwareBufferPropertiesANDROID(device, buffer, pProperties);
 }
@@ -7506,7 +7506,7 @@ VkResult DeviceTable::GetMemoryAndroidHardwareBufferANDROID(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetMemoryAndroidHardwareBufferANDROID,
                 "[VULKIT][LOADER] The function 'vkGetMemoryAndroidHardwareBufferANDROID' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetMemoryAndroidHardwareBufferANDROID(device, pInfo, pBuffer);
 }
@@ -7518,7 +7518,7 @@ void DeviceTable::CmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer b
 {
     TKIT_ASSERT(this->vkCmdDrawIndirectCount,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndirectCount' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
@@ -7530,7 +7530,7 @@ void DeviceTable::CmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkB
 {
     TKIT_ASSERT(this->vkCmdDrawIndexedIndirectCount,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndexedIndirectCount' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                         stride);
@@ -7541,7 +7541,7 @@ void DeviceTable::CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void *
 {
     TKIT_ASSERT(this->vkCmdSetCheckpointNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCheckpointNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
@@ -7552,7 +7552,7 @@ void DeviceTable::GetQueueCheckpointDataNV(VkQueue queue, uint32_t *pCheckpointD
 {
     TKIT_ASSERT(this->vkGetQueueCheckpointDataNV,
                 "[VULKIT][LOADER] The function 'vkGetQueueCheckpointDataNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
 }
@@ -7564,7 +7564,7 @@ void DeviceTable::CmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdBindTransformFeedbackBuffersEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindTransformFeedbackBuffersEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
@@ -7576,7 +7576,7 @@ void DeviceTable::CmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer, ui
 {
     TKIT_ASSERT(this->vkCmdBeginTransformFeedbackEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBeginTransformFeedbackEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers,
                                          pCounterBufferOffsets);
@@ -7589,7 +7589,7 @@ void DeviceTable::CmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint
 {
     TKIT_ASSERT(this->vkCmdEndTransformFeedbackEXT,
                 "[VULKIT][LOADER] The function 'vkCmdEndTransformFeedbackEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers,
                                        pCounterBufferOffsets);
@@ -7601,7 +7601,7 @@ void DeviceTable::CmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQuery
 {
     TKIT_ASSERT(this->vkCmdBeginQueryIndexedEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBeginQueryIndexedEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
@@ -7612,7 +7612,7 @@ void DeviceTable::CmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPo
 {
     TKIT_ASSERT(this->vkCmdEndQueryIndexedEXT,
                 "[VULKIT][LOADER] The function 'vkCmdEndQueryIndexedEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
@@ -7625,7 +7625,7 @@ void DeviceTable::CmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uin
 {
     TKIT_ASSERT(this->vkCmdDrawIndirectByteCountEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndirectByteCountEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset,
                                         counterOffset, vertexStride);
@@ -7637,7 +7637,7 @@ void DeviceTable::CmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uint32
 {
     TKIT_ASSERT(this->vkCmdSetExclusiveScissorNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetExclusiveScissorNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
@@ -7649,7 +7649,7 @@ void DeviceTable::CmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetExclusiveScissorEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetExclusiveScissorEnableNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount,
                                            pExclusiveScissorEnables);
@@ -7661,7 +7661,7 @@ void DeviceTable::CmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkIma
 {
     TKIT_ASSERT(this->vkCmdBindShadingRateImageNV,
                 "[VULKIT][LOADER] The function 'vkCmdBindShadingRateImageNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
@@ -7673,7 +7673,7 @@ void DeviceTable::CmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdSetViewportShadingRatePaletteNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportShadingRatePaletteNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
@@ -7685,7 +7685,7 @@ void DeviceTable::CmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, VkCoa
 {
     TKIT_ASSERT(this->vkCmdSetCoarseSampleOrderNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoarseSampleOrderNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
@@ -7695,7 +7695,7 @@ void DeviceTable::CmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t tas
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksNV,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
@@ -7706,7 +7706,7 @@ void DeviceTable::CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBu
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksIndirectNV,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksIndirectNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
@@ -7719,7 +7719,7 @@ void DeviceTable::CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksIndirectCountNV,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksIndirectCountNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                             stride);
@@ -7731,7 +7731,7 @@ void DeviceTable::CmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t gr
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
@@ -7742,7 +7742,7 @@ void DeviceTable::CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkB
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksIndirectEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksIndirectEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
@@ -7755,7 +7755,7 @@ void DeviceTable::CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdDrawMeshTasksIndirectCountEXT,
                 "[VULKIT][LOADER] The function 'vkCmdDrawMeshTasksIndirectCountEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
                                              maxDrawCount, stride);
@@ -7766,7 +7766,7 @@ VkResult DeviceTable::CompileDeferredNV(VkDevice device, VkPipeline pipeline, ui
 {
     TKIT_ASSERT(this->vkCompileDeferredNV,
                 "[VULKIT][LOADER] The function 'vkCompileDeferredNV' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCompileDeferredNV(device, pipeline, shader);
 }
@@ -7779,7 +7779,7 @@ VkResult DeviceTable::CreateAccelerationStructureNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateAccelerationStructureNV,
                 "[VULKIT][LOADER] The function 'vkCreateAccelerationStructureNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateAccelerationStructureNV(device, pCreateInfo, pAllocator, pAccelerationStructure);
 }
@@ -7790,7 +7790,7 @@ void DeviceTable::CmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkI
 {
     TKIT_ASSERT(this->vkCmdBindInvocationMaskHUAWEI,
                 "[VULKIT][LOADER] The function 'vkCmdBindInvocationMaskHUAWEI' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
@@ -7801,7 +7801,7 @@ void DeviceTable::DestroyAccelerationStructureKHR(VkDevice device, VkAcceleratio
 {
     TKIT_ASSERT(this->vkDestroyAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyAccelerationStructureKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroyAccelerationStructureKHR(device, accelerationStructure, pAllocator);
 }
@@ -7812,7 +7812,7 @@ void DeviceTable::DestroyAccelerationStructureNV(VkDevice device, VkAcceleration
 {
     TKIT_ASSERT(this->vkDestroyAccelerationStructureNV,
                 "[VULKIT][LOADER] The function 'vkDestroyAccelerationStructureNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyAccelerationStructureNV(device, accelerationStructure, pAllocator);
 }
@@ -7824,7 +7824,7 @@ void DeviceTable::GetAccelerationStructureMemoryRequirementsNV(
 {
     TKIT_ASSERT(this->vkGetAccelerationStructureMemoryRequirementsNV,
                 "[VULKIT][LOADER] The function 'vkGetAccelerationStructureMemoryRequirementsNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetAccelerationStructureMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
@@ -7835,7 +7835,7 @@ VkResult DeviceTable::BindAccelerationStructureMemoryNV(VkDevice device, uint32_
 {
     TKIT_ASSERT(this->vkBindAccelerationStructureMemoryNV,
                 "[VULKIT][LOADER] The function 'vkBindAccelerationStructureMemoryNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkBindAccelerationStructureMemoryNV(device, bindInfoCount, pBindInfos);
 }
@@ -7847,7 +7847,7 @@ void DeviceTable::CmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdCopyAccelerationStructureNV,
                 "[VULKIT][LOADER] The function 'vkCmdCopyAccelerationStructureNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
@@ -7858,7 +7858,7 @@ void DeviceTable::CmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyAccelerationStructureKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
@@ -7869,7 +7869,7 @@ VkResult DeviceTable::CopyAccelerationStructureKHR(VkDevice device, VkDeferredOp
 {
     TKIT_ASSERT(this->vkCopyAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkCopyAccelerationStructureKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyAccelerationStructureKHR(device, deferredOperation, pInfo);
 }
@@ -7880,7 +7880,7 @@ void DeviceTable::CmdCopyAccelerationStructureToMemoryKHR(VkCommandBuffer comman
 {
     TKIT_ASSERT(this->vkCmdCopyAccelerationStructureToMemoryKHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyAccelerationStructureToMemoryKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
@@ -7892,7 +7892,7 @@ VkResult DeviceTable::CopyAccelerationStructureToMemoryKHR(
 {
     TKIT_ASSERT(this->vkCopyAccelerationStructureToMemoryKHR,
                 "[VULKIT][LOADER] The function 'vkCopyAccelerationStructureToMemoryKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkCopyAccelerationStructureToMemoryKHR(device, deferredOperation, pInfo);
 }
@@ -7903,7 +7903,7 @@ void DeviceTable::CmdCopyMemoryToAccelerationStructureKHR(VkCommandBuffer comman
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryToAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryToAccelerationStructureKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
@@ -7915,7 +7915,7 @@ VkResult DeviceTable::CopyMemoryToAccelerationStructureKHR(
 {
     TKIT_ASSERT(this->vkCopyMemoryToAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkCopyMemoryToAccelerationStructureKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkCopyMemoryToAccelerationStructureKHR(device, deferredOperation, pInfo);
 }
@@ -7929,7 +7929,7 @@ void DeviceTable::CmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer co
 {
     TKIT_ASSERT(this->vkCmdWriteAccelerationStructuresPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkCmdWriteAccelerationStructuresPropertiesKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount,
                                                         pAccelerationStructures, queryType, queryPool, firstQuery);
@@ -7944,7 +7944,7 @@ void DeviceTable::CmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer com
 {
     TKIT_ASSERT(this->vkCmdWriteAccelerationStructuresPropertiesNV,
                 "[VULKIT][LOADER] The function 'vkCmdWriteAccelerationStructuresPropertiesNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount,
                                                        pAccelerationStructures, queryType, queryPool, firstQuery);
@@ -7959,7 +7959,7 @@ void DeviceTable::CmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBuildAccelerationStructureNV,
                 "[VULKIT][LOADER] The function 'vkCmdBuildAccelerationStructureNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src,
                                             scratch, scratchOffset);
@@ -7972,7 +7972,7 @@ VkResult DeviceTable::WriteAccelerationStructuresPropertiesKHR(
 {
     TKIT_ASSERT(this->vkWriteAccelerationStructuresPropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkWriteAccelerationStructuresPropertiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkWriteAccelerationStructuresPropertiesKHR(device, accelerationStructureCount, pAccelerationStructures,
                                                             queryType, dataSize, pData, stride);
@@ -7988,7 +7988,7 @@ void DeviceTable::CmdTraceRaysKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdTraceRaysKHR,
                 "[VULKIT][LOADER] The function 'vkCmdTraceRaysKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable,
                             pCallableShaderBindingTable, width, height, depth);
@@ -8005,7 +8005,7 @@ void DeviceTable::CmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenS
 {
     TKIT_ASSERT(this->vkCmdTraceRaysNV,
                 "[VULKIT][LOADER] The function 'vkCmdTraceRaysNV' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset,
                            missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride,
@@ -8020,7 +8020,7 @@ VkResult DeviceTable::GetRayTracingShaderGroupHandlesKHR(VkDevice device, VkPipe
 {
     TKIT_ASSERT(this->vkGetRayTracingShaderGroupHandlesKHR,
                 "[VULKIT][LOADER] The function 'vkGetRayTracingShaderGroupHandlesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetRayTracingShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize, pData);
 }
@@ -8032,7 +8032,7 @@ VkResult DeviceTable::GetRayTracingCaptureReplayShaderGroupHandlesKHR(VkDevice d
 {
     TKIT_ASSERT(this->vkGetRayTracingCaptureReplayShaderGroupHandlesKHR,
                 "[VULKIT][LOADER] The function 'vkGetRayTracingCaptureReplayShaderGroupHandlesKHR' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize,
                                                                    pData);
@@ -8044,7 +8044,7 @@ VkResult DeviceTable::GetAccelerationStructureHandleNV(VkDevice device, VkAccele
 {
     TKIT_ASSERT(this->vkGetAccelerationStructureHandleNV,
                 "[VULKIT][LOADER] The function 'vkGetAccelerationStructureHandleNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetAccelerationStructureHandleNV(device, accelerationStructure, dataSize, pData);
 }
@@ -8057,7 +8057,7 @@ VkResult DeviceTable::CreateRayTracingPipelinesNV(VkDevice device, VkPipelineCac
 {
     TKIT_ASSERT(this->vkCreateRayTracingPipelinesNV,
                 "[VULKIT][LOADER] The function 'vkCreateRayTracingPipelinesNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateRayTracingPipelinesNV(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator,
                                                pPipelines);
@@ -8072,7 +8072,7 @@ VkResult DeviceTable::CreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOp
 {
     TKIT_ASSERT(this->vkCreateRayTracingPipelinesKHR,
                 "[VULKIT][LOADER] The function 'vkCreateRayTracingPipelinesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateRayTracingPipelinesKHR(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos,
                                                 pAllocator, pPipelines);
@@ -8088,7 +8088,7 @@ void DeviceTable::CmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdTraceRaysIndirectKHR,
                 "[VULKIT][LOADER] The function 'vkCmdTraceRaysIndirectKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
                                     pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
@@ -8099,7 +8099,7 @@ void DeviceTable::CmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer, VkDevi
 {
     TKIT_ASSERT(this->vkCmdTraceRaysIndirect2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdTraceRaysIndirect2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
@@ -8111,7 +8111,7 @@ void DeviceTable::GetClusterAccelerationStructureBuildSizesNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetClusterAccelerationStructureBuildSizesNV,
                 "[VULKIT][LOADER] The function 'vkGetClusterAccelerationStructureBuildSizesNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetClusterAccelerationStructureBuildSizesNV(device, pInfo, pSizeInfo);
 }
@@ -8122,7 +8122,7 @@ void DeviceTable::CmdBuildClusterAccelerationStructureIndirectNV(
 {
     TKIT_ASSERT(this->vkCmdBuildClusterAccelerationStructureIndirectNV,
                 "[VULKIT][LOADER] The function 'vkCmdBuildClusterAccelerationStructureIndirectNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
 }
@@ -8134,7 +8134,7 @@ void DeviceTable::GetDeviceAccelerationStructureCompatibilityKHR(
 {
     TKIT_ASSERT(this->vkGetDeviceAccelerationStructureCompatibilityKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceAccelerationStructureCompatibilityKHR' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkGetDeviceAccelerationStructureCompatibilityKHR(device, pVersionInfo, pCompatibility);
 }
@@ -8145,7 +8145,7 @@ VkDeviceSize DeviceTable::GetRayTracingShaderGroupStackSizeKHR(VkDevice device, 
 {
     TKIT_ASSERT(this->vkGetRayTracingShaderGroupStackSizeKHR,
                 "[VULKIT][LOADER] The function 'vkGetRayTracingShaderGroupStackSizeKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetRayTracingShaderGroupStackSizeKHR(device, pipeline, group, groupShader);
 }
@@ -8155,7 +8155,7 @@ void DeviceTable::CmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBu
 {
     TKIT_ASSERT(this->vkCmdSetRayTracingPipelineStackSizeKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetRayTracingPipelineStackSizeKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
@@ -8165,7 +8165,7 @@ uint32_t DeviceTable::GetImageViewHandleNVX(VkDevice device, const VkImageViewHa
 {
     TKIT_ASSERT(this->vkGetImageViewHandleNVX,
                 "[VULKIT][LOADER] The function 'vkGetImageViewHandleNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetImageViewHandleNVX(device, pInfo);
 }
@@ -8175,7 +8175,7 @@ uint64_t DeviceTable::GetImageViewHandle64NVX(VkDevice device, const VkImageView
 {
     TKIT_ASSERT(this->vkGetImageViewHandle64NVX,
                 "[VULKIT][LOADER] The function 'vkGetImageViewHandle64NVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetImageViewHandle64NVX(device, pInfo);
 }
@@ -8187,7 +8187,7 @@ VkResult DeviceTable::GetImageViewAddressNVX(VkDevice device, VkImageView imageV
 {
     TKIT_ASSERT(this->vkGetImageViewAddressNVX,
                 "[VULKIT][LOADER] The function 'vkGetImageViewAddressNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetImageViewAddressNVX(device, imageView, pProperties);
 }
@@ -8199,7 +8199,7 @@ VkResult DeviceTable::GetDeviceGroupSurfacePresentModes2EXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetDeviceGroupSurfacePresentModes2EXT,
                 "[VULKIT][LOADER] The function 'vkGetDeviceGroupSurfacePresentModes2EXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceGroupSurfacePresentModes2EXT(device, pSurfaceInfo, pModes);
 }
@@ -8209,7 +8209,7 @@ VkResult DeviceTable::AcquireFullScreenExclusiveModeEXT(VkDevice device, VkSwapc
 {
     TKIT_ASSERT(this->vkAcquireFullScreenExclusiveModeEXT,
                 "[VULKIT][LOADER] The function 'vkAcquireFullScreenExclusiveModeEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkAcquireFullScreenExclusiveModeEXT(device, swapchain);
 }
@@ -8219,7 +8219,7 @@ VkResult DeviceTable::ReleaseFullScreenExclusiveModeEXT(VkDevice device, VkSwapc
 {
     TKIT_ASSERT(this->vkReleaseFullScreenExclusiveModeEXT,
                 "[VULKIT][LOADER] The function 'vkReleaseFullScreenExclusiveModeEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkReleaseFullScreenExclusiveModeEXT(device, swapchain);
 }
@@ -8229,7 +8229,7 @@ VkResult DeviceTable::AcquireProfilingLockKHR(VkDevice device, const VkAcquirePr
 {
     TKIT_ASSERT(this->vkAcquireProfilingLockKHR,
                 "[VULKIT][LOADER] The function 'vkAcquireProfilingLockKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkAcquireProfilingLockKHR(device, pInfo);
 }
@@ -8239,7 +8239,7 @@ void DeviceTable::ReleaseProfilingLockKHR(VkDevice device) const
 {
     TKIT_ASSERT(this->vkReleaseProfilingLockKHR,
                 "[VULKIT][LOADER] The function 'vkReleaseProfilingLockKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkReleaseProfilingLockKHR(device);
 }
@@ -8250,7 +8250,7 @@ VkResult DeviceTable::GetImageDrmFormatModifierPropertiesEXT(VkDevice device, Vk
 {
     TKIT_ASSERT(this->vkGetImageDrmFormatModifierPropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetImageDrmFormatModifierPropertiesEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetImageDrmFormatModifierPropertiesEXT(device, image, pProperties);
 }
@@ -8260,7 +8260,7 @@ uint64_t DeviceTable::GetBufferOpaqueCaptureAddress(VkDevice device, const VkBuf
 {
     TKIT_ASSERT(this->vkGetBufferOpaqueCaptureAddress,
                 "[VULKIT][LOADER] The function 'vkGetBufferOpaqueCaptureAddress' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetBufferOpaqueCaptureAddress(device, pInfo);
 }
@@ -8270,7 +8270,7 @@ VkDeviceAddress DeviceTable::GetBufferDeviceAddress(VkDevice device, const VkBuf
 {
     TKIT_ASSERT(this->vkGetBufferDeviceAddress,
                 "[VULKIT][LOADER] The function 'vkGetBufferDeviceAddress' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetBufferDeviceAddress(device, pInfo);
 }
@@ -8281,7 +8281,7 @@ VkResult DeviceTable::InitializePerformanceApiINTEL(VkDevice device,
 {
     TKIT_ASSERT(this->vkInitializePerformanceApiINTEL,
                 "[VULKIT][LOADER] The function 'vkInitializePerformanceApiINTEL' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkInitializePerformanceApiINTEL(device, pInitializeInfo);
 }
@@ -8291,7 +8291,7 @@ void DeviceTable::UninitializePerformanceApiINTEL(VkDevice device) const
 {
     TKIT_ASSERT(this->vkUninitializePerformanceApiINTEL,
                 "[VULKIT][LOADER] The function 'vkUninitializePerformanceApiINTEL' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkUninitializePerformanceApiINTEL(device);
 }
@@ -8302,7 +8302,7 @@ VkResult DeviceTable::CmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdSetPerformanceMarkerINTEL,
                 "[VULKIT][LOADER] The function 'vkCmdSetPerformanceMarkerINTEL' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
 }
@@ -8313,7 +8313,7 @@ VkResult DeviceTable::CmdSetPerformanceStreamMarkerINTEL(VkCommandBuffer command
 {
     TKIT_ASSERT(this->vkCmdSetPerformanceStreamMarkerINTEL,
                 "[VULKIT][LOADER] The function 'vkCmdSetPerformanceStreamMarkerINTEL' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
 }
@@ -8324,7 +8324,7 @@ VkResult DeviceTable::CmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdSetPerformanceOverrideINTEL,
                 "[VULKIT][LOADER] The function 'vkCmdSetPerformanceOverrideINTEL' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
 }
@@ -8336,7 +8336,7 @@ VkResult DeviceTable::AcquirePerformanceConfigurationINTEL(
 {
     TKIT_ASSERT(this->vkAcquirePerformanceConfigurationINTEL,
                 "[VULKIT][LOADER] The function 'vkAcquirePerformanceConfigurationINTEL' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkAcquirePerformanceConfigurationINTEL(device, pAcquireInfo, pConfiguration);
 }
@@ -8347,7 +8347,7 @@ VkResult DeviceTable::ReleasePerformanceConfigurationINTEL(VkDevice device,
 {
     TKIT_ASSERT(this->vkReleasePerformanceConfigurationINTEL,
                 "[VULKIT][LOADER] The function 'vkReleasePerformanceConfigurationINTEL' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkReleasePerformanceConfigurationINTEL(device, configuration);
 }
@@ -8358,7 +8358,7 @@ VkResult DeviceTable::QueueSetPerformanceConfigurationINTEL(VkQueue queue,
 {
     TKIT_ASSERT(this->vkQueueSetPerformanceConfigurationINTEL,
                 "[VULKIT][LOADER] The function 'vkQueueSetPerformanceConfigurationINTEL' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkQueueSetPerformanceConfigurationINTEL(queue, configuration);
 }
@@ -8369,7 +8369,7 @@ VkResult DeviceTable::GetPerformanceParameterINTEL(VkDevice device, VkPerformanc
 {
     TKIT_ASSERT(this->vkGetPerformanceParameterINTEL,
                 "[VULKIT][LOADER] The function 'vkGetPerformanceParameterINTEL' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetPerformanceParameterINTEL(device, parameter, pValue);
 }
@@ -8380,7 +8380,7 @@ uint64_t DeviceTable::GetDeviceMemoryOpaqueCaptureAddress(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetDeviceMemoryOpaqueCaptureAddress,
                 "[VULKIT][LOADER] The function 'vkGetDeviceMemoryOpaqueCaptureAddress' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceMemoryOpaqueCaptureAddress(device, pInfo);
 }
@@ -8392,7 +8392,7 @@ VkResult DeviceTable::GetPipelineExecutablePropertiesKHR(VkDevice device, const 
 {
     TKIT_ASSERT(this->vkGetPipelineExecutablePropertiesKHR,
                 "[VULKIT][LOADER] The function 'vkGetPipelineExecutablePropertiesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPipelineExecutablePropertiesKHR(device, pPipelineInfo, pExecutableCount, pProperties);
 }
@@ -8405,7 +8405,7 @@ VkResult DeviceTable::GetPipelineExecutableStatisticsKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetPipelineExecutableStatisticsKHR,
                 "[VULKIT][LOADER] The function 'vkGetPipelineExecutableStatisticsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPipelineExecutableStatisticsKHR(device, pExecutableInfo, pStatisticCount, pStatistics);
 }
@@ -8417,7 +8417,7 @@ VkResult DeviceTable::GetPipelineExecutableInternalRepresentationsKHR(
 {
     TKIT_ASSERT(this->vkGetPipelineExecutableInternalRepresentationsKHR,
                 "[VULKIT][LOADER] The function 'vkGetPipelineExecutableInternalRepresentationsKHR' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     return this->vkGetPipelineExecutableInternalRepresentationsKHR(
         device, pExecutableInfo, pInternalRepresentationCount, pInternalRepresentations);
@@ -8429,7 +8429,7 @@ void DeviceTable::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t line
 {
     TKIT_ASSERT(this->vkCmdSetLineStipple,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineStipple' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
@@ -8442,7 +8442,7 @@ VkResult DeviceTable::CreateAccelerationStructureKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateAccelerationStructureKHR,
                 "[VULKIT][LOADER] The function 'vkCreateAccelerationStructureKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateAccelerationStructureKHR(device, pCreateInfo, pAllocator, pAccelerationStructure);
 }
@@ -8454,7 +8454,7 @@ void DeviceTable::CmdBuildAccelerationStructuresKHR(
 {
     TKIT_ASSERT(this->vkCmdBuildAccelerationStructuresKHR,
                 "[VULKIT][LOADER] The function 'vkCmdBuildAccelerationStructuresKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
@@ -8468,7 +8468,7 @@ void DeviceTable::CmdBuildAccelerationStructuresIndirectKHR(VkCommandBuffer comm
 {
     TKIT_ASSERT(this->vkCmdBuildAccelerationStructuresIndirectKHR,
                 "[VULKIT][LOADER] The function 'vkCmdBuildAccelerationStructuresIndirectKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses,
                                                       pIndirectStrides, ppMaxPrimitiveCounts);
@@ -8482,7 +8482,7 @@ VkResult DeviceTable::BuildAccelerationStructuresKHR(
 {
     TKIT_ASSERT(this->vkBuildAccelerationStructuresKHR,
                 "[VULKIT][LOADER] The function 'vkBuildAccelerationStructuresKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBuildAccelerationStructuresKHR(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
 }
@@ -8493,7 +8493,7 @@ VkDeviceAddress DeviceTable::GetAccelerationStructureDeviceAddressKHR(
 {
     TKIT_ASSERT(this->vkGetAccelerationStructureDeviceAddressKHR,
                 "[VULKIT][LOADER] The function 'vkGetAccelerationStructureDeviceAddressKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetAccelerationStructureDeviceAddressKHR(device, pInfo);
 }
@@ -8504,7 +8504,7 @@ VkResult DeviceTable::CreateDeferredOperationKHR(VkDevice device, const VkAlloca
 {
     TKIT_ASSERT(this->vkCreateDeferredOperationKHR,
                 "[VULKIT][LOADER] The function 'vkCreateDeferredOperationKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDeferredOperationKHR(device, pAllocator, pDeferredOperation);
 }
@@ -8515,7 +8515,7 @@ void DeviceTable::DestroyDeferredOperationKHR(VkDevice device, VkDeferredOperati
 {
     TKIT_ASSERT(this->vkDestroyDeferredOperationKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyDeferredOperationKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyDeferredOperationKHR(device, operation, pAllocator);
 }
@@ -8525,7 +8525,7 @@ uint32_t DeviceTable::GetDeferredOperationMaxConcurrencyKHR(VkDevice device, VkD
 {
     TKIT_ASSERT(this->vkGetDeferredOperationMaxConcurrencyKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeferredOperationMaxConcurrencyKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeferredOperationMaxConcurrencyKHR(device, operation);
 }
@@ -8535,7 +8535,7 @@ VkResult DeviceTable::GetDeferredOperationResultKHR(VkDevice device, VkDeferredO
 {
     TKIT_ASSERT(this->vkGetDeferredOperationResultKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeferredOperationResultKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetDeferredOperationResultKHR(device, operation);
 }
@@ -8545,7 +8545,7 @@ VkResult DeviceTable::DeferredOperationJoinKHR(VkDevice device, VkDeferredOperat
 {
     TKIT_ASSERT(this->vkDeferredOperationJoinKHR,
                 "[VULKIT][LOADER] The function 'vkDeferredOperationJoinKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkDeferredOperationJoinKHR(device, operation);
 }
@@ -8557,7 +8557,7 @@ void DeviceTable::GetPipelineIndirectMemoryRequirementsNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetPipelineIndirectMemoryRequirementsNV,
                 "[VULKIT][LOADER] The function 'vkGetPipelineIndirectMemoryRequirementsNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetPipelineIndirectMemoryRequirementsNV(device, pCreateInfo, pMemoryRequirements);
 }
@@ -8568,7 +8568,7 @@ VkDeviceAddress DeviceTable::GetPipelineIndirectDeviceAddressNV(
 {
     TKIT_ASSERT(this->vkGetPipelineIndirectDeviceAddressNV,
                 "[VULKIT][LOADER] The function 'vkGetPipelineIndirectDeviceAddressNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetPipelineIndirectDeviceAddressNV(device, pInfo);
 }
@@ -8578,7 +8578,7 @@ void DeviceTable::AntiLagUpdateAMD(VkDevice device, const VkAntiLagDataAMD *pDat
 {
     TKIT_ASSERT(this->vkAntiLagUpdateAMD,
                 "[VULKIT][LOADER] The function 'vkAntiLagUpdateAMD' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkAntiLagUpdateAMD(device, pData);
 }
@@ -8588,7 +8588,7 @@ void DeviceTable::CmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags 
 {
     TKIT_ASSERT(this->vkCmdSetCullMode,
                 "[VULKIT][LOADER] The function 'vkCmdSetCullMode' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetCullMode(commandBuffer, cullMode);
 }
@@ -8598,7 +8598,7 @@ void DeviceTable::CmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace fro
 {
     TKIT_ASSERT(this->vkCmdSetFrontFace,
                 "[VULKIT][LOADER] The function 'vkCmdSetFrontFace' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetFrontFace(commandBuffer, frontFace);
 }
@@ -8608,7 +8608,7 @@ void DeviceTable::CmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimi
 {
     TKIT_ASSERT(this->vkCmdSetPrimitiveTopology,
                 "[VULKIT][LOADER] The function 'vkCmdSetPrimitiveTopology' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
@@ -8619,7 +8619,7 @@ void DeviceTable::CmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_
 {
     TKIT_ASSERT(this->vkCmdSetViewportWithCount,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportWithCount' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
@@ -8630,7 +8630,7 @@ void DeviceTable::CmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t
 {
     TKIT_ASSERT(this->vkCmdSetScissorWithCount,
                 "[VULKIT][LOADER] The function 'vkCmdSetScissorWithCount' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
@@ -8641,7 +8641,7 @@ void DeviceTable::CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer bu
 {
     TKIT_ASSERT(this->vkCmdBindIndexBuffer2,
                 "[VULKIT][LOADER] The function 'vkCmdBindIndexBuffer2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
 }
@@ -8653,7 +8653,7 @@ void DeviceTable::CmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t 
 {
     TKIT_ASSERT(this->vkCmdBindVertexBuffers2,
                 "[VULKIT][LOADER] The function 'vkCmdBindVertexBuffers2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
@@ -8663,7 +8663,7 @@ void DeviceTable::CmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 
 {
     TKIT_ASSERT(this->vkCmdSetDepthTestEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthTestEnable' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
@@ -8673,7 +8673,7 @@ void DeviceTable::CmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32
 {
     TKIT_ASSERT(this->vkCmdSetDepthWriteEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthWriteEnable' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
@@ -8683,7 +8683,7 @@ void DeviceTable::CmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareO
 {
     TKIT_ASSERT(this->vkCmdSetDepthCompareOp,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthCompareOp' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
@@ -8693,7 +8693,7 @@ void DeviceTable::CmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, VkB
 {
     TKIT_ASSERT(this->vkCmdSetDepthBoundsTestEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBoundsTestEnable' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
@@ -8703,7 +8703,7 @@ void DeviceTable::CmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool3
 {
     TKIT_ASSERT(this->vkCmdSetStencilTestEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilTestEnable' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
@@ -8714,7 +8714,7 @@ void DeviceTable::CmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFl
 {
     TKIT_ASSERT(this->vkCmdSetStencilOp,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilOp' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
@@ -8724,7 +8724,7 @@ void DeviceTable::CmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer, uin
 {
     TKIT_ASSERT(this->vkCmdSetPatchControlPointsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetPatchControlPointsEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
@@ -8734,7 +8734,7 @@ void DeviceTable::CmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, V
 {
     TKIT_ASSERT(this->vkCmdSetRasterizerDiscardEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetRasterizerDiscardEnable' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
@@ -8744,7 +8744,7 @@ void DeviceTable::CmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 
 {
     TKIT_ASSERT(this->vkCmdSetDepthBiasEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBiasEnable' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
@@ -8754,7 +8754,7 @@ void DeviceTable::CmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logi
 {
     TKIT_ASSERT(this->vkCmdSetLogicOpEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetLogicOpEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetLogicOpEXT(commandBuffer, logicOp);
 }
@@ -8764,7 +8764,7 @@ void DeviceTable::CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, Vk
 {
     TKIT_ASSERT(this->vkCmdSetPrimitiveRestartEnable,
                 "[VULKIT][LOADER] The function 'vkCmdSetPrimitiveRestartEnable' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
@@ -8776,7 +8776,7 @@ void DeviceTable::CmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffe
 {
     TKIT_ASSERT(this->vkCmdSetTessellationDomainOriginEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetTessellationDomainOriginEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
@@ -8786,7 +8786,7 @@ void DeviceTable::CmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBoo
 {
     TKIT_ASSERT(this->vkCmdSetDepthClampEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthClampEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
@@ -8796,7 +8796,7 @@ void DeviceTable::CmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonM
 {
     TKIT_ASSERT(this->vkCmdSetPolygonModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetPolygonModeEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
@@ -8807,7 +8807,7 @@ void DeviceTable::CmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetRasterizationSamplesEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetRasterizationSamplesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
@@ -8818,7 +8818,7 @@ void DeviceTable::CmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCou
 {
     TKIT_ASSERT(this->vkCmdSetSampleMaskEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetSampleMaskEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
@@ -8828,7 +8828,7 @@ void DeviceTable::CmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetAlphaToCoverageEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetAlphaToCoverageEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
@@ -8838,7 +8838,7 @@ void DeviceTable::CmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBoo
 {
     TKIT_ASSERT(this->vkCmdSetAlphaToOneEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetAlphaToOneEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
@@ -8848,7 +8848,7 @@ void DeviceTable::CmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32
 {
     TKIT_ASSERT(this->vkCmdSetLogicOpEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetLogicOpEnableEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
@@ -8859,7 +8859,7 @@ void DeviceTable::CmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint3
 {
     TKIT_ASSERT(this->vkCmdSetColorBlendEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetColorBlendEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
@@ -8871,7 +8871,7 @@ void DeviceTable::CmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uin
 {
     TKIT_ASSERT(this->vkCmdSetColorBlendEquationEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetColorBlendEquationEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
@@ -8882,7 +8882,7 @@ void DeviceTable::CmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_
 {
     TKIT_ASSERT(this->vkCmdSetColorWriteMaskEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetColorWriteMaskEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
@@ -8893,7 +8893,7 @@ void DeviceTable::CmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer, ui
 {
     TKIT_ASSERT(this->vkCmdSetRasterizationStreamEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetRasterizationStreamEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
@@ -8905,7 +8905,7 @@ void DeviceTable::CmdSetConservativeRasterizationModeEXT(
 {
     TKIT_ASSERT(this->vkCmdSetConservativeRasterizationModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetConservativeRasterizationModeEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
@@ -8917,7 +8917,7 @@ void DeviceTable::CmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer comm
 {
     TKIT_ASSERT(this->vkCmdSetExtraPrimitiveOverestimationSizeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetExtraPrimitiveOverestimationSizeEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
@@ -8928,7 +8928,7 @@ void DeviceTable::CmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool
 {
     TKIT_ASSERT(this->vkCmdSetDepthClipEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthClipEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
@@ -8939,7 +8939,7 @@ void DeviceTable::CmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetSampleLocationsEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetSampleLocationsEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
@@ -8952,7 +8952,7 @@ void DeviceTable::CmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uin
 {
     TKIT_ASSERT(this->vkCmdSetColorBlendAdvancedEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetColorBlendAdvancedEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
@@ -8964,7 +8964,7 @@ void DeviceTable::CmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetProvokingVertexModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetProvokingVertexModeEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
@@ -8976,7 +8976,7 @@ void DeviceTable::CmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetLineRasterizationModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineRasterizationModeEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
@@ -8987,7 +8987,7 @@ void DeviceTable::CmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer, VkBo
 {
     TKIT_ASSERT(this->vkCmdSetLineStippleEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineStippleEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
@@ -8998,7 +8998,7 @@ void DeviceTable::CmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdSetDepthClipNegativeOneToOneEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthClipNegativeOneToOneEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
@@ -9009,7 +9009,7 @@ void DeviceTable::CmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetViewportWScalingEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportWScalingEnableNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
@@ -9021,7 +9021,7 @@ void DeviceTable::CmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_
 {
     TKIT_ASSERT(this->vkCmdSetViewportSwizzleNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportSwizzleNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
@@ -9032,7 +9032,7 @@ void DeviceTable::CmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer, V
 {
     TKIT_ASSERT(this->vkCmdSetCoverageToColorEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageToColorEnableNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
@@ -9043,7 +9043,7 @@ void DeviceTable::CmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetCoverageToColorLocationNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageToColorLocationNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
@@ -9055,7 +9055,7 @@ void DeviceTable::CmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetCoverageModulationModeNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageModulationModeNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
@@ -9067,7 +9067,7 @@ void DeviceTable::CmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandB
 {
     TKIT_ASSERT(this->vkCmdSetCoverageModulationTableEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageModulationTableEnableNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
@@ -9079,7 +9079,7 @@ void DeviceTable::CmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetCoverageModulationTableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageModulationTableNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
@@ -9090,7 +9090,7 @@ void DeviceTable::CmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetShadingRateImageEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetShadingRateImageEnableNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
@@ -9102,7 +9102,7 @@ void DeviceTable::CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetCoverageReductionModeNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetCoverageReductionModeNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
@@ -9114,7 +9114,7 @@ void DeviceTable::CmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer comma
 {
     TKIT_ASSERT(this->vkCmdSetRepresentativeFragmentTestEnableNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetRepresentativeFragmentTestEnableNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
@@ -9126,7 +9126,7 @@ VkResult DeviceTable::CreatePrivateDataSlot(VkDevice device, const VkPrivateData
 {
     TKIT_ASSERT(this->vkCreatePrivateDataSlot,
                 "[VULKIT][LOADER] The function 'vkCreatePrivateDataSlot' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreatePrivateDataSlot(device, pCreateInfo, pAllocator, pPrivateDataSlot);
 }
@@ -9137,7 +9137,7 @@ void DeviceTable::DestroyPrivateDataSlot(VkDevice device, VkPrivateDataSlot priv
 {
     TKIT_ASSERT(this->vkDestroyPrivateDataSlot,
                 "[VULKIT][LOADER] The function 'vkDestroyPrivateDataSlot' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyPrivateDataSlot(device, privateDataSlot, pAllocator);
 }
@@ -9148,7 +9148,7 @@ VkResult DeviceTable::SetPrivateData(VkDevice device, VkObjectType objectType, u
 {
     TKIT_ASSERT(this->vkSetPrivateData,
                 "[VULKIT][LOADER] The function 'vkSetPrivateData' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkSetPrivateData(device, objectType, objectHandle, privateDataSlot, data);
 }
@@ -9159,7 +9159,7 @@ void DeviceTable::GetPrivateData(VkDevice device, VkObjectType objectType, uint6
 {
     TKIT_ASSERT(this->vkGetPrivateData,
                 "[VULKIT][LOADER] The function 'vkGetPrivateData' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkGetPrivateData(device, objectType, objectHandle, privateDataSlot, pData);
 }
@@ -9169,7 +9169,7 @@ void DeviceTable::CmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBuff
 {
     TKIT_ASSERT(this->vkCmdCopyBuffer2,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBuffer2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
@@ -9179,7 +9179,7 @@ void DeviceTable::CmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImage
 {
     TKIT_ASSERT(this->vkCmdCopyImage2,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImage2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
@@ -9189,7 +9189,7 @@ void DeviceTable::CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImage
 {
     TKIT_ASSERT(this->vkCmdBlitImage2,
                 "[VULKIT][LOADER] The function 'vkCmdBlitImage2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
@@ -9200,7 +9200,7 @@ void DeviceTable::CmdCopyBufferToImage2(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyBufferToImage2,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBufferToImage2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
@@ -9211,7 +9211,7 @@ void DeviceTable::CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyImageToBuffer2,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImageToBuffer2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
@@ -9221,7 +9221,7 @@ void DeviceTable::CmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolv
 {
     TKIT_ASSERT(this->vkCmdResolveImage2,
                 "[VULKIT][LOADER] The function 'vkCmdResolveImage2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
@@ -9232,7 +9232,7 @@ void DeviceTable::CmdRefreshObjectsKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdRefreshObjectsKHR,
                 "[VULKIT][LOADER] The function 'vkCmdRefreshObjectsKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdRefreshObjectsKHR(commandBuffer, pRefreshObjects);
 }
@@ -9243,7 +9243,7 @@ void DeviceTable::CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, co
 {
     TKIT_ASSERT(this->vkCmdSetFragmentShadingRateKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetFragmentShadingRateKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
@@ -9254,7 +9254,7 @@ void DeviceTable::CmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetFragmentShadingRateEnumNV,
                 "[VULKIT][LOADER] The function 'vkCmdSetFragmentShadingRateEnumNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
@@ -9267,7 +9267,7 @@ void DeviceTable::GetAccelerationStructureBuildSizesKHR(VkDevice device, VkAccel
 {
     TKIT_ASSERT(this->vkGetAccelerationStructureBuildSizesKHR,
                 "[VULKIT][LOADER] The function 'vkGetAccelerationStructureBuildSizesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetAccelerationStructureBuildSizesKHR(device, buildType, pBuildInfo, pMaxPrimitiveCounts, pSizeInfo);
 }
@@ -9280,7 +9280,7 @@ void DeviceTable::CmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_t v
 {
     TKIT_ASSERT(this->vkCmdSetVertexInputEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetVertexInputEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions,
                                  vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
@@ -9292,7 +9292,7 @@ void DeviceTable::CmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint3
 {
     TKIT_ASSERT(this->vkCmdSetColorWriteEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetColorWriteEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
@@ -9303,7 +9303,7 @@ void DeviceTable::CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
 {
     TKIT_ASSERT(this->vkCmdSetEvent2,
                 "[VULKIT][LOADER] The function 'vkCmdSetEvent2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
@@ -9313,7 +9313,7 @@ void DeviceTable::CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, V
 {
     TKIT_ASSERT(this->vkCmdResetEvent2,
                 "[VULKIT][LOADER] The function 'vkCmdResetEvent2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResetEvent2(commandBuffer, event, stageMask);
 }
@@ -9324,7 +9324,7 @@ void DeviceTable::CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCo
 {
     TKIT_ASSERT(this->vkCmdWaitEvents2,
                 "[VULKIT][LOADER] The function 'vkCmdWaitEvents2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
@@ -9334,7 +9334,7 @@ void DeviceTable::CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDep
 {
     TKIT_ASSERT(this->vkCmdPipelineBarrier2,
                 "[VULKIT][LOADER] The function 'vkCmdPipelineBarrier2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
@@ -9345,7 +9345,7 @@ VkResult DeviceTable::QueueSubmit2(VkQueue queue, uint32_t submitCount, const Vk
 {
     TKIT_ASSERT(this->vkQueueSubmit2,
                 "[VULKIT][LOADER] The function 'vkQueueSubmit2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkQueueSubmit2(queue, submitCount, pSubmits, fence);
 }
@@ -9356,7 +9356,7 @@ void DeviceTable::CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineSt
 {
     TKIT_ASSERT(this->vkCmdWriteTimestamp2,
                 "[VULKIT][LOADER] The function 'vkCmdWriteTimestamp2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
@@ -9367,7 +9367,7 @@ void DeviceTable::CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipe
 {
     TKIT_ASSERT(this->vkCmdWriteBufferMarker2AMD,
                 "[VULKIT][LOADER] The function 'vkCmdWriteBufferMarker2AMD' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
@@ -9379,7 +9379,7 @@ void DeviceTable::GetQueueCheckpointData2NV(VkQueue queue, uint32_t *pCheckpoint
 {
     TKIT_ASSERT(this->vkGetQueueCheckpointData2NV,
                 "[VULKIT][LOADER] The function 'vkGetQueueCheckpointData2NV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
 }
@@ -9389,7 +9389,7 @@ VkResult DeviceTable::CopyMemoryToImage(VkDevice device, const VkCopyMemoryToIma
 {
     TKIT_ASSERT(this->vkCopyMemoryToImage,
                 "[VULKIT][LOADER] The function 'vkCopyMemoryToImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCopyMemoryToImage(device, pCopyMemoryToImageInfo);
 }
@@ -9399,7 +9399,7 @@ VkResult DeviceTable::CopyImageToMemory(VkDevice device, const VkCopyImageToMemo
 {
     TKIT_ASSERT(this->vkCopyImageToMemory,
                 "[VULKIT][LOADER] The function 'vkCopyImageToMemory' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCopyImageToMemory(device, pCopyImageToMemoryInfo);
 }
@@ -9409,7 +9409,7 @@ VkResult DeviceTable::CopyImageToImage(VkDevice device, const VkCopyImageToImage
 {
     TKIT_ASSERT(this->vkCopyImageToImage,
                 "[VULKIT][LOADER] The function 'vkCopyImageToImage' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCopyImageToImage(device, pCopyImageToImageInfo);
 }
@@ -9420,7 +9420,7 @@ VkResult DeviceTable::TransitionImageLayout(VkDevice device, uint32_t transition
 {
     TKIT_ASSERT(this->vkTransitionImageLayout,
                 "[VULKIT][LOADER] The function 'vkTransitionImageLayout' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkTransitionImageLayout(device, transitionCount, pTransitions);
 }
@@ -9432,7 +9432,7 @@ VkResult DeviceTable::CreateVideoSessionKHR(VkDevice device, const VkVideoSessio
 {
     TKIT_ASSERT(this->vkCreateVideoSessionKHR,
                 "[VULKIT][LOADER] The function 'vkCreateVideoSessionKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateVideoSessionKHR(device, pCreateInfo, pAllocator, pVideoSession);
 }
@@ -9443,7 +9443,7 @@ void DeviceTable::DestroyVideoSessionKHR(VkDevice device, VkVideoSessionKHR vide
 {
     TKIT_ASSERT(this->vkDestroyVideoSessionKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyVideoSessionKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyVideoSessionKHR(device, videoSession, pAllocator);
 }
@@ -9456,7 +9456,7 @@ VkResult DeviceTable::CreateVideoSessionParametersKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateVideoSessionParametersKHR,
                 "[VULKIT][LOADER] The function 'vkCreateVideoSessionParametersKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateVideoSessionParametersKHR(device, pCreateInfo, pAllocator, pVideoSessionParameters);
 }
@@ -9468,7 +9468,7 @@ VkResult DeviceTable::UpdateVideoSessionParametersKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkUpdateVideoSessionParametersKHR,
                 "[VULKIT][LOADER] The function 'vkUpdateVideoSessionParametersKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkUpdateVideoSessionParametersKHR(device, videoSessionParameters, pUpdateInfo);
 }
@@ -9480,7 +9480,7 @@ VkResult DeviceTable::GetEncodedVideoSessionParametersKHR(
 {
     TKIT_ASSERT(this->vkGetEncodedVideoSessionParametersKHR,
                 "[VULKIT][LOADER] The function 'vkGetEncodedVideoSessionParametersKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetEncodedVideoSessionParametersKHR(device, pVideoSessionParametersInfo, pFeedbackInfo, pDataSize,
                                                        pData);
@@ -9492,7 +9492,7 @@ void DeviceTable::DestroyVideoSessionParametersKHR(VkDevice device, VkVideoSessi
 {
     TKIT_ASSERT(this->vkDestroyVideoSessionParametersKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyVideoSessionParametersKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroyVideoSessionParametersKHR(device, videoSessionParameters, pAllocator);
 }
@@ -9504,7 +9504,7 @@ VkResult DeviceTable::GetVideoSessionMemoryRequirementsKHR(
 {
     TKIT_ASSERT(this->vkGetVideoSessionMemoryRequirementsKHR,
                 "[VULKIT][LOADER] The function 'vkGetVideoSessionMemoryRequirementsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetVideoSessionMemoryRequirementsKHR(device, videoSession, pMemoryRequirementsCount,
                                                         pMemoryRequirements);
@@ -9517,7 +9517,7 @@ VkResult DeviceTable::BindVideoSessionMemoryKHR(VkDevice device, VkVideoSessionK
 {
     TKIT_ASSERT(this->vkBindVideoSessionMemoryKHR,
                 "[VULKIT][LOADER] The function 'vkBindVideoSessionMemoryKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBindVideoSessionMemoryKHR(device, videoSession, bindSessionMemoryInfoCount, pBindSessionMemoryInfos);
 }
@@ -9527,7 +9527,7 @@ void DeviceTable::CmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideo
 {
     TKIT_ASSERT(this->vkCmdDecodeVideoKHR,
                 "[VULKIT][LOADER] The function 'vkCmdDecodeVideoKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
@@ -9538,7 +9538,7 @@ void DeviceTable::CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBeginVideoCodingKHR,
                 "[VULKIT][LOADER] The function 'vkCmdBeginVideoCodingKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
@@ -9549,7 +9549,7 @@ void DeviceTable::CmdControlVideoCodingKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdControlVideoCodingKHR,
                 "[VULKIT][LOADER] The function 'vkCmdControlVideoCodingKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
@@ -9560,7 +9560,7 @@ void DeviceTable::CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdEndVideoCodingKHR,
                 "[VULKIT][LOADER] The function 'vkCmdEndVideoCodingKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
@@ -9570,7 +9570,7 @@ void DeviceTable::CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideo
 {
     TKIT_ASSERT(this->vkCmdEncodeVideoKHR,
                 "[VULKIT][LOADER] The function 'vkCmdEncodeVideoKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
@@ -9581,7 +9581,7 @@ void DeviceTable::CmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t 
 {
     TKIT_ASSERT(this->vkCmdDecompressMemoryNV,
                 "[VULKIT][LOADER] The function 'vkCmdDecompressMemoryNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
@@ -9594,7 +9594,7 @@ void DeviceTable::CmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdDecompressMemoryIndirectCountNV,
                 "[VULKIT][LOADER] The function 'vkCmdDecompressMemoryIndirectCountNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress,
                                                stride);
@@ -9607,7 +9607,7 @@ void DeviceTable::GetPartitionedAccelerationStructuresBuildSizesNV(
 {
     TKIT_ASSERT(this->vkGetPartitionedAccelerationStructuresBuildSizesNV,
                 "[VULKIT][LOADER] The function 'vkGetPartitionedAccelerationStructuresBuildSizesNV' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     this->vkGetPartitionedAccelerationStructuresBuildSizesNV(device, pInfo, pSizeInfo);
 }
@@ -9618,7 +9618,7 @@ void DeviceTable::CmdBuildPartitionedAccelerationStructuresNV(
 {
     TKIT_ASSERT(this->vkCmdBuildPartitionedAccelerationStructuresNV,
                 "[VULKIT][LOADER] The function 'vkCmdBuildPartitionedAccelerationStructuresNV' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
 }
@@ -9629,7 +9629,7 @@ VkResult DeviceTable::CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateI
 {
     TKIT_ASSERT(this->vkCreateCuModuleNVX,
                 "[VULKIT][LOADER] The function 'vkCreateCuModuleNVX' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateCuModuleNVX(device, pCreateInfo, pAllocator, pModule);
 }
@@ -9640,7 +9640,7 @@ VkResult DeviceTable::CreateCuFunctionNVX(VkDevice device, const VkCuFunctionCre
 {
     TKIT_ASSERT(this->vkCreateCuFunctionNVX,
                 "[VULKIT][LOADER] The function 'vkCreateCuFunctionNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateCuFunctionNVX(device, pCreateInfo, pAllocator, pFunction);
 }
@@ -9651,7 +9651,7 @@ void DeviceTable::DestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module,
 {
     TKIT_ASSERT(this->vkDestroyCuModuleNVX,
                 "[VULKIT][LOADER] The function 'vkDestroyCuModuleNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyCuModuleNVX(device, module, pAllocator);
 }
@@ -9662,7 +9662,7 @@ void DeviceTable::DestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function
 {
     TKIT_ASSERT(this->vkDestroyCuFunctionNVX,
                 "[VULKIT][LOADER] The function 'vkDestroyCuFunctionNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyCuFunctionNVX(device, function, pAllocator);
 }
@@ -9672,7 +9672,7 @@ void DeviceTable::CmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const VkCu
 {
     TKIT_ASSERT(this->vkCmdCuLaunchKernelNVX,
                 "[VULKIT][LOADER] The function 'vkCmdCuLaunchKernelNVX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
@@ -9683,7 +9683,7 @@ void DeviceTable::GetDescriptorSetLayoutSizeEXT(VkDevice device, VkDescriptorSet
 {
     TKIT_ASSERT(this->vkGetDescriptorSetLayoutSizeEXT,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetLayoutSizeEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetDescriptorSetLayoutSizeEXT(device, layout, pLayoutSizeInBytes);
 }
@@ -9694,7 +9694,7 @@ void DeviceTable::GetDescriptorSetLayoutBindingOffsetEXT(VkDevice device, VkDesc
 {
     TKIT_ASSERT(this->vkGetDescriptorSetLayoutBindingOffsetEXT,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetLayoutBindingOffsetEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDescriptorSetLayoutBindingOffsetEXT(device, layout, binding, pOffset);
 }
@@ -9705,7 +9705,7 @@ void DeviceTable::GetDescriptorEXT(VkDevice device, const VkDescriptorGetInfoEXT
 {
     TKIT_ASSERT(this->vkGetDescriptorEXT,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkGetDescriptorEXT(device, pDescriptorInfo, dataSize, pDescriptor);
 }
@@ -9716,7 +9716,7 @@ void DeviceTable::CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uin
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorBuffersEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorBuffersEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
@@ -9728,7 +9728,7 @@ void DeviceTable::CmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdSetDescriptorBufferOffsetsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDescriptorBufferOffsetsEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount,
                                              pBufferIndices, pOffsets);
@@ -9741,7 +9741,7 @@ void DeviceTable::CmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer com
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorBufferEmbeddedSamplersEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorBufferEmbeddedSamplersEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
@@ -9753,7 +9753,7 @@ VkResult DeviceTable::GetBufferOpaqueCaptureDescriptorDataEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetBufferOpaqueCaptureDescriptorDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetBufferOpaqueCaptureDescriptorDataEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetBufferOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
 }
@@ -9765,7 +9765,7 @@ VkResult DeviceTable::GetImageOpaqueCaptureDescriptorDataEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetImageOpaqueCaptureDescriptorDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetImageOpaqueCaptureDescriptorDataEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetImageOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
 }
@@ -9777,7 +9777,7 @@ VkResult DeviceTable::GetImageViewOpaqueCaptureDescriptorDataEXT(VkDevice device
 {
     TKIT_ASSERT(this->vkGetImageViewOpaqueCaptureDescriptorDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetImageViewOpaqueCaptureDescriptorDataEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetImageViewOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
 }
@@ -9789,7 +9789,7 @@ VkResult DeviceTable::GetSamplerOpaqueCaptureDescriptorDataEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetSamplerOpaqueCaptureDescriptorDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetSamplerOpaqueCaptureDescriptorDataEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetSamplerOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
 }
@@ -9800,7 +9800,7 @@ VkResult DeviceTable::GetAccelerationStructureOpaqueCaptureDescriptorDataEXT(
 {
     TKIT_ASSERT(this->vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT' is not "
-                "available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
 }
@@ -9810,7 +9810,7 @@ void DeviceTable::SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory mem
 {
     TKIT_ASSERT(this->vkSetDeviceMemoryPriorityEXT,
                 "[VULKIT][LOADER] The function 'vkSetDeviceMemoryPriorityEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkSetDeviceMemoryPriorityEXT(device, memory, priority);
 }
@@ -9821,7 +9821,7 @@ VkResult DeviceTable::WaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapcha
 {
     TKIT_ASSERT(this->vkWaitForPresent2KHR,
                 "[VULKIT][LOADER] The function 'vkWaitForPresent2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkWaitForPresent2KHR(device, swapchain, pPresentWait2Info);
 }
@@ -9832,7 +9832,7 @@ VkResult DeviceTable::WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchai
 {
     TKIT_ASSERT(this->vkWaitForPresentKHR,
                 "[VULKIT][LOADER] The function 'vkWaitForPresentKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkWaitForPresentKHR(device, swapchain, presentId, timeout);
 }
@@ -9845,7 +9845,7 @@ VkResult DeviceTable::CreateBufferCollectionFUCHSIA(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateBufferCollectionFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkCreateBufferCollectionFUCHSIA' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateBufferCollectionFUCHSIA(device, pCreateInfo, pAllocator, pCollection);
 }
@@ -9857,7 +9857,7 @@ VkResult DeviceTable::SetBufferCollectionBufferConstraintsFUCHSIA(
 {
     TKIT_ASSERT(this->vkSetBufferCollectionBufferConstraintsFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkSetBufferCollectionBufferConstraintsFUCHSIA' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkSetBufferCollectionBufferConstraintsFUCHSIA(device, collection, pBufferConstraintsInfo);
 }
@@ -9869,7 +9869,7 @@ VkResult DeviceTable::SetBufferCollectionImageConstraintsFUCHSIA(
 {
     TKIT_ASSERT(this->vkSetBufferCollectionImageConstraintsFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkSetBufferCollectionImageConstraintsFUCHSIA' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkSetBufferCollectionImageConstraintsFUCHSIA(device, collection, pImageConstraintsInfo);
 }
@@ -9880,7 +9880,7 @@ void DeviceTable::DestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollec
 {
     TKIT_ASSERT(this->vkDestroyBufferCollectionFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkDestroyBufferCollectionFUCHSIA' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyBufferCollectionFUCHSIA(device, collection, pAllocator);
 }
@@ -9891,7 +9891,7 @@ VkResult DeviceTable::GetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBu
 {
     TKIT_ASSERT(this->vkGetBufferCollectionPropertiesFUCHSIA,
                 "[VULKIT][LOADER] The function 'vkGetBufferCollectionPropertiesFUCHSIA' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetBufferCollectionPropertiesFUCHSIA(device, collection, pProperties);
 }
@@ -9902,7 +9902,7 @@ VkResult DeviceTable::CreateCudaModuleNV(VkDevice device, const VkCudaModuleCrea
 {
     TKIT_ASSERT(this->vkCreateCudaModuleNV,
                 "[VULKIT][LOADER] The function 'vkCreateCudaModuleNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateCudaModuleNV(device, pCreateInfo, pAllocator, pModule);
 }
@@ -9913,7 +9913,7 @@ VkResult DeviceTable::GetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV modul
 {
     TKIT_ASSERT(this->vkGetCudaModuleCacheNV,
                 "[VULKIT][LOADER] The function 'vkGetCudaModuleCacheNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetCudaModuleCacheNV(device, module, pCacheSize, pCacheData);
 }
@@ -9924,7 +9924,7 @@ VkResult DeviceTable::CreateCudaFunctionNV(VkDevice device, const VkCudaFunction
 {
     TKIT_ASSERT(this->vkCreateCudaFunctionNV,
                 "[VULKIT][LOADER] The function 'vkCreateCudaFunctionNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateCudaFunctionNV(device, pCreateInfo, pAllocator, pFunction);
 }
@@ -9935,7 +9935,7 @@ void DeviceTable::DestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module,
 {
     TKIT_ASSERT(this->vkDestroyCudaModuleNV,
                 "[VULKIT][LOADER] The function 'vkDestroyCudaModuleNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyCudaModuleNV(device, module, pAllocator);
 }
@@ -9946,7 +9946,7 @@ void DeviceTable::DestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV functi
 {
     TKIT_ASSERT(this->vkDestroyCudaFunctionNV,
                 "[VULKIT][LOADER] The function 'vkDestroyCudaFunctionNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyCudaFunctionNV(device, function, pAllocator);
 }
@@ -9956,7 +9956,7 @@ void DeviceTable::CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkC
 {
     TKIT_ASSERT(this->vkCmdCudaLaunchKernelNV,
                 "[VULKIT][LOADER] The function 'vkCmdCudaLaunchKernelNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
@@ -9966,7 +9966,7 @@ void DeviceTable::CmdBeginRendering(VkCommandBuffer commandBuffer, const VkRende
 {
     TKIT_ASSERT(this->vkCmdBeginRendering,
                 "[VULKIT][LOADER] The function 'vkCmdBeginRendering' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
@@ -9976,7 +9976,7 @@ void DeviceTable::CmdEndRendering(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdEndRendering,
                 "[VULKIT][LOADER] The function 'vkCmdEndRendering' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdEndRendering(commandBuffer);
 }
@@ -9987,7 +9987,7 @@ void DeviceTable::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdEndRendering2EXT,
                 "[VULKIT][LOADER] The function 'vkCmdEndRendering2EXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 }
@@ -9999,7 +9999,7 @@ void DeviceTable::GetDescriptorSetLayoutHostMappingInfoVALVE(
 {
     TKIT_ASSERT(this->vkGetDescriptorSetLayoutHostMappingInfoVALVE,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetLayoutHostMappingInfoVALVE' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDescriptorSetLayoutHostMappingInfoVALVE(device, pBindingReference, pHostMapping);
 }
@@ -10009,7 +10009,7 @@ void DeviceTable::GetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptor
 {
     TKIT_ASSERT(this->vkGetDescriptorSetHostMappingVALVE,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetHostMappingVALVE' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDescriptorSetHostMappingVALVE(device, descriptorSet, ppData);
 }
@@ -10020,7 +10020,7 @@ VkResult DeviceTable::CreateMicromapEXT(VkDevice device, const VkMicromapCreateI
 {
     TKIT_ASSERT(this->vkCreateMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkCreateMicromapEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateMicromapEXT(device, pCreateInfo, pAllocator, pMicromap);
 }
@@ -10031,7 +10031,7 @@ void DeviceTable::CmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t i
 {
     TKIT_ASSERT(this->vkCmdBuildMicromapsEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBuildMicromapsEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
@@ -10042,7 +10042,7 @@ VkResult DeviceTable::BuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR 
 {
     TKIT_ASSERT(this->vkBuildMicromapsEXT,
                 "[VULKIT][LOADER] The function 'vkBuildMicromapsEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkBuildMicromapsEXT(device, deferredOperation, infoCount, pInfos);
 }
@@ -10053,7 +10053,7 @@ void DeviceTable::DestroyMicromapEXT(VkDevice device, VkMicromapEXT micromap,
 {
     TKIT_ASSERT(this->vkDestroyMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyMicromapEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyMicromapEXT(device, micromap, pAllocator);
 }
@@ -10063,7 +10063,7 @@ void DeviceTable::CmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkCopy
 {
     TKIT_ASSERT(this->vkCmdCopyMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMicromapEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMicromapEXT(commandBuffer, pInfo);
 }
@@ -10074,7 +10074,7 @@ VkResult DeviceTable::CopyMicromapEXT(VkDevice device, VkDeferredOperationKHR de
 {
     TKIT_ASSERT(this->vkCopyMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkCopyMicromapEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCopyMicromapEXT(device, deferredOperation, pInfo);
 }
@@ -10085,7 +10085,7 @@ void DeviceTable::CmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyMicromapToMemoryEXT,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMicromapToMemoryEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
@@ -10096,7 +10096,7 @@ VkResult DeviceTable::CopyMicromapToMemoryEXT(VkDevice device, VkDeferredOperati
 {
     TKIT_ASSERT(this->vkCopyMicromapToMemoryEXT,
                 "[VULKIT][LOADER] The function 'vkCopyMicromapToMemoryEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyMicromapToMemoryEXT(device, deferredOperation, pInfo);
 }
@@ -10107,7 +10107,7 @@ void DeviceTable::CmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyMemoryToMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkCmdCopyMemoryToMicromapEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
@@ -10118,7 +10118,7 @@ VkResult DeviceTable::CopyMemoryToMicromapEXT(VkDevice device, VkDeferredOperati
 {
     TKIT_ASSERT(this->vkCopyMemoryToMicromapEXT,
                 "[VULKIT][LOADER] The function 'vkCopyMemoryToMicromapEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyMemoryToMicromapEXT(device, deferredOperation, pInfo);
 }
@@ -10130,7 +10130,7 @@ void DeviceTable::CmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdWriteMicromapsPropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkCmdWriteMicromapsPropertiesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
@@ -10142,7 +10142,7 @@ VkResult DeviceTable::WriteMicromapsPropertiesEXT(VkDevice device, uint32_t micr
 {
     TKIT_ASSERT(this->vkWriteMicromapsPropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkWriteMicromapsPropertiesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkWriteMicromapsPropertiesEXT(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
 }
@@ -10153,7 +10153,7 @@ void DeviceTable::GetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMic
 {
     TKIT_ASSERT(this->vkGetDeviceMicromapCompatibilityEXT,
                 "[VULKIT][LOADER] The function 'vkGetDeviceMicromapCompatibilityEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDeviceMicromapCompatibilityEXT(device, pVersionInfo, pCompatibility);
 }
@@ -10165,7 +10165,7 @@ void DeviceTable::GetMicromapBuildSizesEXT(VkDevice device, VkAccelerationStruct
 {
     TKIT_ASSERT(this->vkGetMicromapBuildSizesEXT,
                 "[VULKIT][LOADER] The function 'vkGetMicromapBuildSizesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetMicromapBuildSizesEXT(device, buildType, pBuildInfo, pSizeInfo);
 }
@@ -10176,7 +10176,7 @@ void DeviceTable::GetShaderModuleIdentifierEXT(VkDevice device, VkShaderModule s
 {
     TKIT_ASSERT(this->vkGetShaderModuleIdentifierEXT,
                 "[VULKIT][LOADER] The function 'vkGetShaderModuleIdentifierEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetShaderModuleIdentifierEXT(device, shaderModule, pIdentifier);
 }
@@ -10187,7 +10187,7 @@ void DeviceTable::GetShaderModuleCreateInfoIdentifierEXT(VkDevice device, const 
 {
     TKIT_ASSERT(this->vkGetShaderModuleCreateInfoIdentifierEXT,
                 "[VULKIT][LOADER] The function 'vkGetShaderModuleCreateInfoIdentifierEXT' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetShaderModuleCreateInfoIdentifierEXT(device, pCreateInfo, pIdentifier);
 }
@@ -10198,7 +10198,7 @@ void DeviceTable::GetImageSubresourceLayout2(VkDevice device, VkImage image, con
 {
     TKIT_ASSERT(this->vkGetImageSubresourceLayout2,
                 "[VULKIT][LOADER] The function 'vkGetImageSubresourceLayout2' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageSubresourceLayout2(device, image, pSubresource, pLayout);
 }
@@ -10209,7 +10209,7 @@ VkResult DeviceTable::GetPipelinePropertiesEXT(VkDevice device, const VkPipeline
 {
     TKIT_ASSERT(this->vkGetPipelinePropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetPipelinePropertiesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetPipelinePropertiesEXT(device, pPipelineInfo, pPipelineProperties);
 }
@@ -10219,7 +10219,7 @@ void DeviceTable::ExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInf
 {
     TKIT_ASSERT(this->vkExportMetalObjectsEXT,
                 "[VULKIT][LOADER] The function 'vkExportMetalObjectsEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkExportMetalObjectsEXT(device, pMetalObjectsInfo);
 }
@@ -10230,7 +10230,7 @@ void DeviceTable::CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBindTileMemoryQCOM,
                 "[VULKIT][LOADER] The function 'vkCmdBindTileMemoryQCOM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
 }
@@ -10242,7 +10242,7 @@ VkResult DeviceTable::GetFramebufferTilePropertiesQCOM(VkDevice device, VkFrameb
 {
     TKIT_ASSERT(this->vkGetFramebufferTilePropertiesQCOM,
                 "[VULKIT][LOADER] The function 'vkGetFramebufferTilePropertiesQCOM' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetFramebufferTilePropertiesQCOM(device, framebuffer, pPropertiesCount, pProperties);
 }
@@ -10253,7 +10253,7 @@ VkResult DeviceTable::GetDynamicRenderingTilePropertiesQCOM(VkDevice device, con
 {
     TKIT_ASSERT(this->vkGetDynamicRenderingTilePropertiesQCOM,
                 "[VULKIT][LOADER] The function 'vkGetDynamicRenderingTilePropertiesQCOM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDynamicRenderingTilePropertiesQCOM(device, pRenderingInfo, pProperties);
 }
@@ -10265,7 +10265,7 @@ VkResult DeviceTable::CreateOpticalFlowSessionNV(VkDevice device, const VkOptica
 {
     TKIT_ASSERT(this->vkCreateOpticalFlowSessionNV,
                 "[VULKIT][LOADER] The function 'vkCreateOpticalFlowSessionNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateOpticalFlowSessionNV(device, pCreateInfo, pAllocator, pSession);
 }
@@ -10276,7 +10276,7 @@ void DeviceTable::DestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSess
 {
     TKIT_ASSERT(this->vkDestroyOpticalFlowSessionNV,
                 "[VULKIT][LOADER] The function 'vkDestroyOpticalFlowSessionNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyOpticalFlowSessionNV(device, session, pAllocator);
 }
@@ -10288,7 +10288,7 @@ VkResult DeviceTable::BindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFl
 {
     TKIT_ASSERT(this->vkBindOpticalFlowSessionImageNV,
                 "[VULKIT][LOADER] The function 'vkBindOpticalFlowSessionImageNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBindOpticalFlowSessionImageNV(device, session, bindingPoint, view, layout);
 }
@@ -10299,7 +10299,7 @@ void DeviceTable::CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOptic
 {
     TKIT_ASSERT(this->vkCmdOpticalFlowExecuteNV,
                 "[VULKIT][LOADER] The function 'vkCmdOpticalFlowExecuteNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
@@ -10310,7 +10310,7 @@ VkResult DeviceTable::GetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCounts
 {
     TKIT_ASSERT(this->vkGetDeviceFaultInfoEXT,
                 "[VULKIT][LOADER] The function 'vkGetDeviceFaultInfoEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetDeviceFaultInfoEXT(device, pFaultCounts, pFaultInfo);
 }
@@ -10320,7 +10320,7 @@ void DeviceTable::CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDep
 {
     TKIT_ASSERT(this->vkCmdSetDepthBias2EXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBias2EXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
@@ -10331,7 +10331,7 @@ VkResult DeviceTable::ReleaseSwapchainImagesKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkReleaseSwapchainImagesKHR,
                 "[VULKIT][LOADER] The function 'vkReleaseSwapchainImagesKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkReleaseSwapchainImagesKHR(device, pReleaseInfo);
 }
@@ -10342,7 +10342,7 @@ void DeviceTable::GetDeviceImageSubresourceLayout(VkDevice device, const VkDevic
 {
     TKIT_ASSERT(this->vkGetDeviceImageSubresourceLayout,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageSubresourceLayout' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDeviceImageSubresourceLayout(device, pInfo, pLayout);
 }
@@ -10351,7 +10351,7 @@ void DeviceTable::GetDeviceImageSubresourceLayout(VkDevice device, const VkDevic
 VkResult DeviceTable::MapMemory2(VkDevice device, const VkMemoryMapInfo *pMemoryMapInfo, void **ppData) const
 {
     TKIT_ASSERT(this->vkMapMemory2, "[VULKIT][LOADER] The function 'vkMapMemory2' is not available for the instance or "
-                                    "device being used, either because VKit::Core::Initialize() was not called or "
+                                    "device being used, either because VKit::Initialize() was not called or "
                                     "because the feature or extension bound to the function has not been enabled");
     return this->vkMapMemory2(device, pMemoryMapInfo, ppData);
 }
@@ -10361,7 +10361,7 @@ VkResult DeviceTable::UnmapMemory2(VkDevice device, const VkMemoryUnmapInfo *pMe
 {
     TKIT_ASSERT(this->vkUnmapMemory2,
                 "[VULKIT][LOADER] The function 'vkUnmapMemory2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkUnmapMemory2(device, pMemoryUnmapInfo);
 }
@@ -10373,7 +10373,7 @@ VkResult DeviceTable::CreateShadersEXT(VkDevice device, uint32_t createInfoCount
 {
     TKIT_ASSERT(this->vkCreateShadersEXT,
                 "[VULKIT][LOADER] The function 'vkCreateShadersEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
 }
@@ -10383,7 +10383,7 @@ void DeviceTable::DestroyShaderEXT(VkDevice device, VkShaderEXT shader, const Vk
 {
     TKIT_ASSERT(this->vkDestroyShaderEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyShaderEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyShaderEXT(device, shader, pAllocator);
 }
@@ -10393,7 +10393,7 @@ VkResult DeviceTable::GetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader
 {
     TKIT_ASSERT(this->vkGetShaderBinaryDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetShaderBinaryDataEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetShaderBinaryDataEXT(device, shader, pDataSize, pData);
 }
@@ -10404,7 +10404,7 @@ void DeviceTable::CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stag
 {
     TKIT_ASSERT(this->vkCmdBindShadersEXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindShadersEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
@@ -10415,7 +10415,7 @@ VkResult DeviceTable::GetScreenBufferPropertiesQNX(VkDevice device, const struct
 {
     TKIT_ASSERT(this->vkGetScreenBufferPropertiesQNX,
                 "[VULKIT][LOADER] The function 'vkGetScreenBufferPropertiesQNX' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetScreenBufferPropertiesQNX(device, buffer, pProperties);
 }
@@ -10426,7 +10426,7 @@ VkResult DeviceTable::GetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, 
 {
     TKIT_ASSERT(this->vkGetExecutionGraphPipelineScratchSizeAMDX,
                 "[VULKIT][LOADER] The function 'vkGetExecutionGraphPipelineScratchSizeAMDX' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetExecutionGraphPipelineScratchSizeAMDX(device, executionGraph, pSizeInfo);
 }
@@ -10438,7 +10438,7 @@ VkResult DeviceTable::GetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, Vk
 {
     TKIT_ASSERT(this->vkGetExecutionGraphPipelineNodeIndexAMDX,
                 "[VULKIT][LOADER] The function 'vkGetExecutionGraphPipelineNodeIndexAMDX' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetExecutionGraphPipelineNodeIndexAMDX(device, executionGraph, pNodeInfo, pNodeIndex);
 }
@@ -10452,7 +10452,7 @@ VkResult DeviceTable::CreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipel
 {
     TKIT_ASSERT(this->vkCreateExecutionGraphPipelinesAMDX,
                 "[VULKIT][LOADER] The function 'vkCreateExecutionGraphPipelinesAMDX' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateExecutionGraphPipelinesAMDX(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator,
                                                      pPipelines);
@@ -10464,7 +10464,7 @@ void DeviceTable::CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuf
 {
     TKIT_ASSERT(this->vkCmdInitializeGraphScratchMemoryAMDX,
                 "[VULKIT][LOADER] The function 'vkCmdInitializeGraphScratchMemoryAMDX' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
@@ -10475,7 +10475,7 @@ void DeviceTable::CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAd
 {
     TKIT_ASSERT(this->vkCmdDispatchGraphAMDX,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchGraphAMDX' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
@@ -10487,7 +10487,7 @@ void DeviceTable::CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, Vk
 {
     TKIT_ASSERT(this->vkCmdDispatchGraphIndirectAMDX,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchGraphIndirectAMDX' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
@@ -10498,7 +10498,7 @@ void DeviceTable::CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffe
 {
     TKIT_ASSERT(this->vkCmdDispatchGraphIndirectCountAMDX,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchGraphIndirectCountAMDX' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
@@ -10509,7 +10509,7 @@ void DeviceTable::CmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorSets2,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorSets2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
 }
@@ -10519,7 +10519,7 @@ void DeviceTable::CmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushC
 {
     TKIT_ASSERT(this->vkCmdPushConstants2,
                 "[VULKIT][LOADER] The function 'vkCmdPushConstants2' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdPushConstants2(commandBuffer, pPushConstantsInfo);
 }
@@ -10530,7 +10530,7 @@ void DeviceTable::CmdPushDescriptorSet2(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSet2,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSet2' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
 }
@@ -10541,7 +10541,7 @@ void DeviceTable::CmdPushDescriptorSetWithTemplate2(
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSetWithTemplate2,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSetWithTemplate2' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
@@ -10552,7 +10552,7 @@ void DeviceTable::CmdSetDescriptorBufferOffsets2EXT(
 {
     TKIT_ASSERT(this->vkCmdSetDescriptorBufferOffsets2EXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDescriptorBufferOffsets2EXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 }
@@ -10564,7 +10564,7 @@ void DeviceTable::CmdBindDescriptorBufferEmbeddedSamplers2EXT(
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorBufferEmbeddedSamplers2EXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorBufferEmbeddedSamplers2EXT' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
@@ -10575,7 +10575,7 @@ VkResult DeviceTable::SetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swap
 {
     TKIT_ASSERT(this->vkSetLatencySleepModeNV,
                 "[VULKIT][LOADER] The function 'vkSetLatencySleepModeNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkSetLatencySleepModeNV(device, swapchain, pSleepModeInfo);
 }
@@ -10586,7 +10586,7 @@ VkResult DeviceTable::LatencySleepNV(VkDevice device, VkSwapchainKHR swapchain,
 {
     TKIT_ASSERT(this->vkLatencySleepNV,
                 "[VULKIT][LOADER] The function 'vkLatencySleepNV' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkLatencySleepNV(device, swapchain, pSleepInfo);
 }
@@ -10597,7 +10597,7 @@ void DeviceTable::SetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain,
 {
     TKIT_ASSERT(this->vkSetLatencyMarkerNV,
                 "[VULKIT][LOADER] The function 'vkSetLatencyMarkerNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkSetLatencyMarkerNV(device, swapchain, pLatencyMarkerInfo);
 }
@@ -10608,7 +10608,7 @@ void DeviceTable::GetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain,
 {
     TKIT_ASSERT(this->vkGetLatencyTimingsNV,
                 "[VULKIT][LOADER] The function 'vkGetLatencyTimingsNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetLatencyTimingsNV(device, swapchain, pLatencyMarkerInfo);
 }
@@ -10618,7 +10618,7 @@ void DeviceTable::QueueNotifyOutOfBandNV(VkQueue queue, const VkOutOfBandQueueTy
 {
     TKIT_ASSERT(this->vkQueueNotifyOutOfBandNV,
                 "[VULKIT][LOADER] The function 'vkQueueNotifyOutOfBandNV' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkQueueNotifyOutOfBandNV(queue, pQueueTypeInfo);
 }
@@ -10629,7 +10629,7 @@ void DeviceTable::CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuff
 {
     TKIT_ASSERT(this->vkCmdSetRenderingAttachmentLocations,
                 "[VULKIT][LOADER] The function 'vkCmdSetRenderingAttachmentLocations' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
 }
@@ -10640,7 +10640,7 @@ void DeviceTable::CmdSetRenderingInputAttachmentIndices(
 {
     TKIT_ASSERT(this->vkCmdSetRenderingInputAttachmentIndices,
                 "[VULKIT][LOADER] The function 'vkCmdSetRenderingInputAttachmentIndices' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
@@ -10651,7 +10651,7 @@ void DeviceTable::CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDept
 {
     TKIT_ASSERT(this->vkCmdSetDepthClampRangeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthClampRangeEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
 }
@@ -10662,7 +10662,7 @@ VkResult DeviceTable::GetMemoryMetalHandleEXT(VkDevice device, const VkMemoryGet
 {
     TKIT_ASSERT(this->vkGetMemoryMetalHandleEXT,
                 "[VULKIT][LOADER] The function 'vkGetMemoryMetalHandleEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetMemoryMetalHandleEXT(device, pGetMetalHandleInfo, pHandle);
 }
@@ -10674,7 +10674,7 @@ VkResult DeviceTable::GetMemoryMetalHandlePropertiesEXT(
 {
     TKIT_ASSERT(this->vkGetMemoryMetalHandlePropertiesEXT,
                 "[VULKIT][LOADER] The function 'vkGetMemoryMetalHandlePropertiesEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetMemoryMetalHandlePropertiesEXT(device, handleType, pHandle, pMemoryMetalHandleProperties);
 }
@@ -10685,7 +10685,7 @@ VkResult DeviceTable::ConvertCooperativeVectorMatrixNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkConvertCooperativeVectorMatrixNV,
                 "[VULKIT][LOADER] The function 'vkConvertCooperativeVectorMatrixNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkConvertCooperativeVectorMatrixNV(device, pInfo);
 }
@@ -10696,7 +10696,7 @@ void DeviceTable::CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuf
 {
     TKIT_ASSERT(this->vkCmdConvertCooperativeVectorMatrixNV,
                 "[VULKIT][LOADER] The function 'vkCmdConvertCooperativeVectorMatrixNV' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
 }
@@ -10707,7 +10707,7 @@ void DeviceTable::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdDispatchTileQCOM,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchTileQCOM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
@@ -10718,7 +10718,7 @@ void DeviceTable::CmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBeginPerTileExecutionQCOM,
                 "[VULKIT][LOADER] The function 'vkCmdBeginPerTileExecutionQCOM' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
 }
@@ -10729,7 +10729,7 @@ void DeviceTable::CmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdEndPerTileExecutionQCOM,
                 "[VULKIT][LOADER] The function 'vkCmdEndPerTileExecutionQCOM' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
 }
@@ -10742,7 +10742,7 @@ VkResult DeviceTable::CreateExternalComputeQueueNV(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateExternalComputeQueueNV,
                 "[VULKIT][LOADER] The function 'vkCreateExternalComputeQueueNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateExternalComputeQueueNV(device, pCreateInfo, pAllocator, pExternalQueue);
 }
@@ -10753,7 +10753,7 @@ void DeviceTable::DestroyExternalComputeQueueNV(VkDevice device, VkExternalCompu
 {
     TKIT_ASSERT(this->vkDestroyExternalComputeQueueNV,
                 "[VULKIT][LOADER] The function 'vkDestroyExternalComputeQueueNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyExternalComputeQueueNV(device, externalQueue, pAllocator);
 }
@@ -10764,7 +10764,7 @@ void DeviceTable::GetExternalComputeQueueDataNV(VkExternalComputeQueueNV externa
 {
     TKIT_ASSERT(this->vkGetExternalComputeQueueDataNV,
                 "[VULKIT][LOADER] The function 'vkGetExternalComputeQueueDataNV' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetExternalComputeQueueDataNV(externalQueue, params, pData);
 }
@@ -10775,7 +10775,7 @@ VkResult DeviceTable::CreateTensorARM(VkDevice device, const VkTensorCreateInfoA
 {
     TKIT_ASSERT(this->vkCreateTensorARM,
                 "[VULKIT][LOADER] The function 'vkCreateTensorARM' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkCreateTensorARM(device, pCreateInfo, pAllocator, pTensor);
 }
@@ -10785,7 +10785,7 @@ void DeviceTable::DestroyTensorARM(VkDevice device, VkTensorARM tensor, const Vk
 {
     TKIT_ASSERT(this->vkDestroyTensorARM,
                 "[VULKIT][LOADER] The function 'vkDestroyTensorARM' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkDestroyTensorARM(device, tensor, pAllocator);
 }
@@ -10796,7 +10796,7 @@ VkResult DeviceTable::CreateTensorViewARM(VkDevice device, const VkTensorViewCre
 {
     TKIT_ASSERT(this->vkCreateTensorViewARM,
                 "[VULKIT][LOADER] The function 'vkCreateTensorViewARM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateTensorViewARM(device, pCreateInfo, pAllocator, pView);
 }
@@ -10807,7 +10807,7 @@ void DeviceTable::DestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorVi
 {
     TKIT_ASSERT(this->vkDestroyTensorViewARM,
                 "[VULKIT][LOADER] The function 'vkDestroyTensorViewARM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyTensorViewARM(device, tensorView, pAllocator);
 }
@@ -10818,7 +10818,7 @@ void DeviceTable::GetTensorMemoryRequirementsARM(VkDevice device, const VkTensor
 {
     TKIT_ASSERT(this->vkGetTensorMemoryRequirementsARM,
                 "[VULKIT][LOADER] The function 'vkGetTensorMemoryRequirementsARM' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
@@ -10829,7 +10829,7 @@ VkResult DeviceTable::BindTensorMemoryARM(VkDevice device, uint32_t bindInfoCoun
 {
     TKIT_ASSERT(this->vkBindTensorMemoryARM,
                 "[VULKIT][LOADER] The function 'vkBindTensorMemoryARM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBindTensorMemoryARM(device, bindInfoCount, pBindInfos);
 }
@@ -10841,7 +10841,7 @@ void DeviceTable::GetDeviceTensorMemoryRequirementsARM(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetDeviceTensorMemoryRequirementsARM,
                 "[VULKIT][LOADER] The function 'vkGetDeviceTensorMemoryRequirementsARM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
@@ -10851,7 +10851,7 @@ void DeviceTable::CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTe
 {
     TKIT_ASSERT(this->vkCmdCopyTensorARM,
                 "[VULKIT][LOADER] The function 'vkCmdCopyTensorARM' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
 }
@@ -10863,7 +10863,7 @@ VkResult DeviceTable::GetTensorOpaqueCaptureDescriptorDataARM(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetTensorOpaqueCaptureDescriptorDataARM,
                 "[VULKIT][LOADER] The function 'vkGetTensorOpaqueCaptureDescriptorDataARM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetTensorOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
 }
@@ -10875,7 +10875,7 @@ VkResult DeviceTable::GetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice devic
 {
     TKIT_ASSERT(this->vkGetTensorViewOpaqueCaptureDescriptorDataARM,
                 "[VULKIT][LOADER] The function 'vkGetTensorViewOpaqueCaptureDescriptorDataARM' is not available for "
-                "the instance or device being used, either because VKit::Core::Initialize() was not called or because "
+                "the instance or device being used, either because VKit::Initialize() was not called or because "
                 "the feature or extension bound to the function has not been enabled");
     return this->vkGetTensorViewOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
 }
@@ -10888,7 +10888,7 @@ VkResult DeviceTable::CreateDataGraphPipelinesARM(VkDevice device, VkDeferredOpe
 {
     TKIT_ASSERT(this->vkCreateDataGraphPipelinesARM,
                 "[VULKIT][LOADER] The function 'vkCreateDataGraphPipelinesARM' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos,
                                                pAllocator, pPipelines);
@@ -10902,7 +10902,7 @@ VkResult DeviceTable::CreateDataGraphPipelineSessionARM(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateDataGraphPipelineSessionARM,
                 "[VULKIT][LOADER] The function 'vkCreateDataGraphPipelineSessionARM' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
 }
@@ -10915,7 +10915,7 @@ VkResult DeviceTable::GetDataGraphPipelineSessionBindPointRequirementsARM(
 {
     TKIT_ASSERT(this->vkGetDataGraphPipelineSessionBindPointRequirementsARM,
                 "[VULKIT][LOADER] The function 'vkGetDataGraphPipelineSessionBindPointRequirementsARM' is not "
-                "available for the instance or device being used, either because VKit::Core::Initialize() was not "
+                "available for the instance or device being used, either because VKit::Initialize() was not "
                 "called or because the feature or extension bound to the function has not been enabled");
     return this->vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount,
                                                                        pBindPointRequirements);
@@ -10928,7 +10928,7 @@ void DeviceTable::GetDataGraphPipelineSessionMemoryRequirementsARM(
 {
     TKIT_ASSERT(this->vkGetDataGraphPipelineSessionMemoryRequirementsARM,
                 "[VULKIT][LOADER] The function 'vkGetDataGraphPipelineSessionMemoryRequirementsARM' is not available "
-                "for the instance or device being used, either because VKit::Core::Initialize() was not called or "
+                "for the instance or device being used, either because VKit::Initialize() was not called or "
                 "because the feature or extension bound to the function has not been enabled");
     this->vkGetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
@@ -10939,7 +10939,7 @@ VkResult DeviceTable::BindDataGraphPipelineSessionMemoryARM(
 {
     TKIT_ASSERT(this->vkBindDataGraphPipelineSessionMemoryARM,
                 "[VULKIT][LOADER] The function 'vkBindDataGraphPipelineSessionMemoryARM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkBindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
 }
@@ -10950,7 +10950,7 @@ void DeviceTable::DestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGrap
 {
     TKIT_ASSERT(this->vkDestroyDataGraphPipelineSessionARM,
                 "[VULKIT][LOADER] The function 'vkDestroyDataGraphPipelineSessionARM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkDestroyDataGraphPipelineSessionARM(device, session, pAllocator);
 }
@@ -10961,7 +10961,7 @@ void DeviceTable::CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataG
 {
     TKIT_ASSERT(this->vkCmdDispatchDataGraphARM,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchDataGraphARM' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
@@ -10974,7 +10974,7 @@ VkResult DeviceTable::GetDataGraphPipelineAvailablePropertiesARM(VkDevice device
 {
     TKIT_ASSERT(this->vkGetDataGraphPipelineAvailablePropertiesARM,
                 "[VULKIT][LOADER] The function 'vkGetDataGraphPipelineAvailablePropertiesARM' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
 }
@@ -10987,7 +10987,7 @@ VkResult DeviceTable::GetDataGraphPipelinePropertiesARM(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetDataGraphPipelinePropertiesARM,
                 "[VULKIT][LOADER] The function 'vkGetDataGraphPipelinePropertiesARM' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
 }
@@ -10998,7 +10998,7 @@ void DeviceTable::ResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint
 {
     TKIT_ASSERT(this->vkResetQueryPoolEXT,
                 "[VULKIT][LOADER] The function 'vkResetQueryPoolEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkResetQueryPoolEXT(device, queryPool, firstQuery, queryCount);
 }
@@ -11009,7 +11009,7 @@ void DeviceTable::GetRenderingAreaGranularityKHR(VkDevice device, const VkRender
 {
     TKIT_ASSERT(this->vkGetRenderingAreaGranularityKHR,
                 "[VULKIT][LOADER] The function 'vkGetRenderingAreaGranularityKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetRenderingAreaGranularityKHR(device, pRenderingAreaInfo, pGranularity);
 }
@@ -11021,7 +11021,7 @@ void DeviceTable::CmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPipel
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSetKHR,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSetKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount,
                                     pDescriptorWrites);
@@ -11032,7 +11032,7 @@ void DeviceTable::TrimCommandPoolKHR(VkDevice device, VkCommandPool commandPool,
 {
     TKIT_ASSERT(this->vkTrimCommandPoolKHR,
                 "[VULKIT][LOADER] The function 'vkTrimCommandPoolKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkTrimCommandPoolKHR(device, commandPool, flags);
 }
@@ -11044,7 +11044,7 @@ void DeviceTable::GetDeviceGroupPeerMemoryFeaturesKHR(VkDevice device, uint32_t 
 {
     TKIT_ASSERT(this->vkGetDeviceGroupPeerMemoryFeaturesKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceGroupPeerMemoryFeaturesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceGroupPeerMemoryFeaturesKHR(device, heapIndex, localDeviceIndex, remoteDeviceIndex,
                                                 pPeerMemoryFeatures);
@@ -11056,7 +11056,7 @@ VkResult DeviceTable::BindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCou
 {
     TKIT_ASSERT(this->vkBindBufferMemory2KHR,
                 "[VULKIT][LOADER] The function 'vkBindBufferMemory2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
 }
@@ -11067,7 +11067,7 @@ VkResult DeviceTable::BindImageMemory2KHR(VkDevice device, uint32_t bindInfoCoun
 {
     TKIT_ASSERT(this->vkBindImageMemory2KHR,
                 "[VULKIT][LOADER] The function 'vkBindImageMemory2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkBindImageMemory2KHR(device, bindInfoCount, pBindInfos);
 }
@@ -11077,7 +11077,7 @@ void DeviceTable::CmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t de
 {
     TKIT_ASSERT(this->vkCmdSetDeviceMaskKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetDeviceMaskKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
@@ -11089,7 +11089,7 @@ void DeviceTable::CmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t bas
 {
     TKIT_ASSERT(this->vkCmdDispatchBaseKHR,
                 "[VULKIT][LOADER] The function 'vkCmdDispatchBaseKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY,
                                groupCountZ);
@@ -11103,7 +11103,7 @@ VkResult DeviceTable::CreateDescriptorUpdateTemplateKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateDescriptorUpdateTemplateKHR,
                 "[VULKIT][LOADER] The function 'vkCreateDescriptorUpdateTemplateKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateDescriptorUpdateTemplateKHR(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
 }
@@ -11115,7 +11115,7 @@ void DeviceTable::DestroyDescriptorUpdateTemplateKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkDestroyDescriptorUpdateTemplateKHR,
                 "[VULKIT][LOADER] The function 'vkDestroyDescriptorUpdateTemplateKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkDestroyDescriptorUpdateTemplateKHR(device, descriptorUpdateTemplate, pAllocator);
 }
@@ -11127,7 +11127,7 @@ void DeviceTable::UpdateDescriptorSetWithTemplateKHR(VkDevice device, VkDescript
 {
     TKIT_ASSERT(this->vkUpdateDescriptorSetWithTemplateKHR,
                 "[VULKIT][LOADER] The function 'vkUpdateDescriptorSetWithTemplateKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkUpdateDescriptorSetWithTemplateKHR(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
@@ -11141,7 +11141,7 @@ void DeviceTable::CmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuf
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSetWithTemplateKHR,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSetWithTemplateKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
@@ -11152,7 +11152,7 @@ void DeviceTable::GetBufferMemoryRequirements2KHR(VkDevice device, const VkBuffe
 {
     TKIT_ASSERT(this->vkGetBufferMemoryRequirements2KHR,
                 "[VULKIT][LOADER] The function 'vkGetBufferMemoryRequirements2KHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetBufferMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
@@ -11163,7 +11163,7 @@ void DeviceTable::GetImageMemoryRequirements2KHR(VkDevice device, const VkImageM
 {
     TKIT_ASSERT(this->vkGetImageMemoryRequirements2KHR,
                 "[VULKIT][LOADER] The function 'vkGetImageMemoryRequirements2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
@@ -11175,7 +11175,7 @@ void DeviceTable::GetImageSparseMemoryRequirements2KHR(
 {
     TKIT_ASSERT(this->vkGetImageSparseMemoryRequirements2KHR,
                 "[VULKIT][LOADER] The function 'vkGetImageSparseMemoryRequirements2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetImageSparseMemoryRequirements2KHR(device, pInfo, pSparseMemoryRequirementCount,
                                                  pSparseMemoryRequirements);
@@ -11188,7 +11188,7 @@ void DeviceTable::GetDeviceBufferMemoryRequirementsKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkGetDeviceBufferMemoryRequirementsKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceBufferMemoryRequirementsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceBufferMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
@@ -11199,7 +11199,7 @@ void DeviceTable::GetDeviceImageMemoryRequirementsKHR(VkDevice device, const VkD
 {
     TKIT_ASSERT(this->vkGetDeviceImageMemoryRequirementsKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageMemoryRequirementsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceImageMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
@@ -11211,7 +11211,7 @@ void DeviceTable::GetDeviceImageSparseMemoryRequirementsKHR(
 {
     TKIT_ASSERT(this->vkGetDeviceImageSparseMemoryRequirementsKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageSparseMemoryRequirementsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceImageSparseMemoryRequirementsKHR(device, pInfo, pSparseMemoryRequirementCount,
                                                       pSparseMemoryRequirements);
@@ -11225,7 +11225,7 @@ VkResult DeviceTable::CreateSamplerYcbcrConversionKHR(VkDevice device,
 {
     TKIT_ASSERT(this->vkCreateSamplerYcbcrConversionKHR,
                 "[VULKIT][LOADER] The function 'vkCreateSamplerYcbcrConversionKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkCreateSamplerYcbcrConversionKHR(device, pCreateInfo, pAllocator, pYcbcrConversion);
 }
@@ -11236,7 +11236,7 @@ void DeviceTable::DestroySamplerYcbcrConversionKHR(VkDevice device, VkSamplerYcb
 {
     TKIT_ASSERT(this->vkDestroySamplerYcbcrConversionKHR,
                 "[VULKIT][LOADER] The function 'vkDestroySamplerYcbcrConversionKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkDestroySamplerYcbcrConversionKHR(device, ycbcrConversion, pAllocator);
 }
@@ -11247,7 +11247,7 @@ void DeviceTable::GetDescriptorSetLayoutSupportKHR(VkDevice device, const VkDesc
 {
     TKIT_ASSERT(this->vkGetDescriptorSetLayoutSupportKHR,
                 "[VULKIT][LOADER] The function 'vkGetDescriptorSetLayoutSupportKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkGetDescriptorSetLayoutSupportKHR(device, pCreateInfo, pSupport);
 }
@@ -11259,7 +11259,7 @@ VkResult DeviceTable::GetCalibratedTimestampsEXT(VkDevice device, uint32_t times
 {
     TKIT_ASSERT(this->vkGetCalibratedTimestampsEXT,
                 "[VULKIT][LOADER] The function 'vkGetCalibratedTimestampsEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetCalibratedTimestampsEXT(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
 }
@@ -11270,7 +11270,7 @@ VkResult DeviceTable::CreateRenderPass2KHR(VkDevice device, const VkRenderPassCr
 {
     TKIT_ASSERT(this->vkCreateRenderPass2KHR,
                 "[VULKIT][LOADER] The function 'vkCreateRenderPass2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreateRenderPass2KHR(device, pCreateInfo, pAllocator, pRenderPass);
 }
@@ -11281,7 +11281,7 @@ void DeviceTable::CmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer, const Vk
 {
     TKIT_ASSERT(this->vkCmdBeginRenderPass2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdBeginRenderPass2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
@@ -11292,7 +11292,7 @@ void DeviceTable::CmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkSubp
 {
     TKIT_ASSERT(this->vkCmdNextSubpass2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdNextSubpass2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
@@ -11302,7 +11302,7 @@ void DeviceTable::CmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const VkSu
 {
     TKIT_ASSERT(this->vkCmdEndRenderPass2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdEndRenderPass2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
@@ -11312,7 +11312,7 @@ VkResult DeviceTable::GetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore s
 {
     TKIT_ASSERT(this->vkGetSemaphoreCounterValueKHR,
                 "[VULKIT][LOADER] The function 'vkGetSemaphoreCounterValueKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetSemaphoreCounterValueKHR(device, semaphore, pValue);
 }
@@ -11323,7 +11323,7 @@ VkResult DeviceTable::WaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
 {
     TKIT_ASSERT(this->vkWaitSemaphoresKHR,
                 "[VULKIT][LOADER] The function 'vkWaitSemaphoresKHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkWaitSemaphoresKHR(device, pWaitInfo, timeout);
 }
@@ -11333,7 +11333,7 @@ VkResult DeviceTable::SignalSemaphoreKHR(VkDevice device, const VkSemaphoreSigna
 {
     TKIT_ASSERT(this->vkSignalSemaphoreKHR,
                 "[VULKIT][LOADER] The function 'vkSignalSemaphoreKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkSignalSemaphoreKHR(device, pSignalInfo);
 }
@@ -11345,7 +11345,7 @@ void DeviceTable::CmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffe
 {
     TKIT_ASSERT(this->vkCmdDrawIndirectCountKHR,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndirectCountKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                     stride);
@@ -11358,7 +11358,7 @@ void DeviceTable::CmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffe
 {
     TKIT_ASSERT(this->vkCmdDrawIndirectCountAMD,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndirectCountAMD' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                     stride);
@@ -11371,7 +11371,7 @@ void DeviceTable::CmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdDrawIndexedIndirectCountKHR,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndexedIndirectCountKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                            stride);
@@ -11384,7 +11384,7 @@ void DeviceTable::CmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdDrawIndexedIndirectCountAMD,
                 "[VULKIT][LOADER] The function 'vkCmdDrawIndexedIndirectCountAMD' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
                                            stride);
@@ -11396,7 +11396,7 @@ VkResult DeviceTable::GetRayTracingShaderGroupHandlesNV(VkDevice device, VkPipel
 {
     TKIT_ASSERT(this->vkGetRayTracingShaderGroupHandlesNV,
                 "[VULKIT][LOADER] The function 'vkGetRayTracingShaderGroupHandlesNV' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetRayTracingShaderGroupHandlesNV(device, pipeline, firstGroup, groupCount, dataSize, pData);
 }
@@ -11406,7 +11406,7 @@ uint64_t DeviceTable::GetBufferOpaqueCaptureAddressKHR(VkDevice device, const Vk
 {
     TKIT_ASSERT(this->vkGetBufferOpaqueCaptureAddressKHR,
                 "[VULKIT][LOADER] The function 'vkGetBufferOpaqueCaptureAddressKHR' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     return this->vkGetBufferOpaqueCaptureAddressKHR(device, pInfo);
 }
@@ -11416,7 +11416,7 @@ VkDeviceAddress DeviceTable::GetBufferDeviceAddressKHR(VkDevice device, const Vk
 {
     TKIT_ASSERT(this->vkGetBufferDeviceAddressKHR,
                 "[VULKIT][LOADER] The function 'vkGetBufferDeviceAddressKHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetBufferDeviceAddressKHR(device, pInfo);
 }
@@ -11426,7 +11426,7 @@ VkDeviceAddress DeviceTable::GetBufferDeviceAddressEXT(VkDevice device, const Vk
 {
     TKIT_ASSERT(this->vkGetBufferDeviceAddressEXT,
                 "[VULKIT][LOADER] The function 'vkGetBufferDeviceAddressEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkGetBufferDeviceAddressEXT(device, pInfo);
 }
@@ -11437,7 +11437,7 @@ uint64_t DeviceTable::GetDeviceMemoryOpaqueCaptureAddressKHR(
 {
     TKIT_ASSERT(this->vkGetDeviceMemoryOpaqueCaptureAddressKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceMemoryOpaqueCaptureAddressKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     return this->vkGetDeviceMemoryOpaqueCaptureAddressKHR(device, pInfo);
 }
@@ -11448,7 +11448,7 @@ void DeviceTable::CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t l
 {
     TKIT_ASSERT(this->vkCmdSetLineStippleKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineStippleKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
@@ -11459,7 +11459,7 @@ void DeviceTable::CmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t l
 {
     TKIT_ASSERT(this->vkCmdSetLineStippleEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetLineStippleEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
@@ -11469,7 +11469,7 @@ void DeviceTable::CmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFla
 {
     TKIT_ASSERT(this->vkCmdSetCullModeEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetCullModeEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetCullModeEXT(commandBuffer, cullMode);
 }
@@ -11479,7 +11479,7 @@ void DeviceTable::CmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace 
 {
     TKIT_ASSERT(this->vkCmdSetFrontFaceEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetFrontFaceEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
@@ -11489,7 +11489,7 @@ void DeviceTable::CmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer, VkPr
 {
     TKIT_ASSERT(this->vkCmdSetPrimitiveTopologyEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetPrimitiveTopologyEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
@@ -11500,7 +11500,7 @@ void DeviceTable::CmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint
 {
     TKIT_ASSERT(this->vkCmdSetViewportWithCountEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetViewportWithCountEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
@@ -11511,7 +11511,7 @@ void DeviceTable::CmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint3
 {
     TKIT_ASSERT(this->vkCmdSetScissorWithCountEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetScissorWithCountEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
@@ -11522,7 +11522,7 @@ void DeviceTable::CmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer
 {
     TKIT_ASSERT(this->vkCmdBindIndexBuffer2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdBindIndexBuffer2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 }
@@ -11534,7 +11534,7 @@ void DeviceTable::CmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32
 {
     TKIT_ASSERT(this->vkCmdBindVertexBuffers2EXT,
                 "[VULKIT][LOADER] The function 'vkCmdBindVertexBuffers2EXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
@@ -11544,7 +11544,7 @@ void DeviceTable::CmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkBool
 {
     TKIT_ASSERT(this->vkCmdSetDepthTestEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthTestEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
@@ -11554,7 +11554,7 @@ void DeviceTable::CmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer, VkBoo
 {
     TKIT_ASSERT(this->vkCmdSetDepthWriteEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthWriteEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
@@ -11564,7 +11564,7 @@ void DeviceTable::CmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCompa
 {
     TKIT_ASSERT(this->vkCmdSetDepthCompareOpEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthCompareOpEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
@@ -11574,7 +11574,7 @@ void DeviceTable::CmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer, 
 {
     TKIT_ASSERT(this->vkCmdSetDepthBoundsTestEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBoundsTestEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
@@ -11584,7 +11584,7 @@ void DeviceTable::CmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer, VkBo
 {
     TKIT_ASSERT(this->vkCmdSetStencilTestEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilTestEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
@@ -11595,7 +11595,7 @@ void DeviceTable::CmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFac
 {
     TKIT_ASSERT(this->vkCmdSetStencilOpEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetStencilOpEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
@@ -11606,7 +11606,7 @@ void DeviceTable::CmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer
 {
     TKIT_ASSERT(this->vkCmdSetRasterizerDiscardEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetRasterizerDiscardEnableEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
@@ -11616,7 +11616,7 @@ void DeviceTable::CmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkBool
 {
     TKIT_ASSERT(this->vkCmdSetDepthBiasEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetDepthBiasEnableEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
@@ -11626,7 +11626,7 @@ void DeviceTable::CmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdSetPrimitiveRestartEnableEXT,
                 "[VULKIT][LOADER] The function 'vkCmdSetPrimitiveRestartEnableEXT' is not available for the instance "
-                "or device being used, either because VKit::Core::Initialize() was not called or because the feature "
+                "or device being used, either because VKit::Initialize() was not called or because the feature "
                 "or extension bound to the function has not been enabled");
     this->vkCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
@@ -11638,7 +11638,7 @@ VkResult DeviceTable::CreatePrivateDataSlotEXT(VkDevice device, const VkPrivateD
 {
     TKIT_ASSERT(this->vkCreatePrivateDataSlotEXT,
                 "[VULKIT][LOADER] The function 'vkCreatePrivateDataSlotEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCreatePrivateDataSlotEXT(device, pCreateInfo, pAllocator, pPrivateDataSlot);
 }
@@ -11649,7 +11649,7 @@ void DeviceTable::DestroyPrivateDataSlotEXT(VkDevice device, VkPrivateDataSlotEX
 {
     TKIT_ASSERT(this->vkDestroyPrivateDataSlotEXT,
                 "[VULKIT][LOADER] The function 'vkDestroyPrivateDataSlotEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkDestroyPrivateDataSlotEXT(device, privateDataSlot, pAllocator);
 }
@@ -11660,7 +11660,7 @@ VkResult DeviceTable::SetPrivateDataEXT(VkDevice device, VkObjectType objectType
 {
     TKIT_ASSERT(this->vkSetPrivateDataEXT,
                 "[VULKIT][LOADER] The function 'vkSetPrivateDataEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkSetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, data);
 }
@@ -11671,7 +11671,7 @@ void DeviceTable::GetPrivateDataEXT(VkDevice device, VkObjectType objectType, ui
 {
     TKIT_ASSERT(this->vkGetPrivateDataEXT,
                 "[VULKIT][LOADER] The function 'vkGetPrivateDataEXT' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkGetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, pData);
 }
@@ -11681,7 +11681,7 @@ void DeviceTable::CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyB
 {
     TKIT_ASSERT(this->vkCmdCopyBuffer2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBuffer2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
@@ -11691,7 +11691,7 @@ void DeviceTable::CmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCopyIm
 {
     TKIT_ASSERT(this->vkCmdCopyImage2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImage2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
@@ -11701,7 +11701,7 @@ void DeviceTable::CmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBlitIm
 {
     TKIT_ASSERT(this->vkCmdBlitImage2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdBlitImage2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
@@ -11712,7 +11712,7 @@ void DeviceTable::CmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyBufferToImage2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyBufferToImage2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
@@ -11723,7 +11723,7 @@ void DeviceTable::CmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdCopyImageToBuffer2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdCopyImageToBuffer2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
@@ -11734,7 +11734,7 @@ void DeviceTable::CmdResolveImage2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdResolveImage2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdResolveImage2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
@@ -11745,7 +11745,7 @@ void DeviceTable::CmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
 {
     TKIT_ASSERT(this->vkCmdSetEvent2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetEvent2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
@@ -11756,7 +11756,7 @@ void DeviceTable::CmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event
 {
     TKIT_ASSERT(this->vkCmdResetEvent2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdResetEvent2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
@@ -11767,7 +11767,7 @@ void DeviceTable::CmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t even
 {
     TKIT_ASSERT(this->vkCmdWaitEvents2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdWaitEvents2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     this->vkCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
@@ -11778,7 +11778,7 @@ void DeviceTable::CmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdPipelineBarrier2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdPipelineBarrier2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
@@ -11789,7 +11789,7 @@ VkResult DeviceTable::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const
 {
     TKIT_ASSERT(this->vkQueueSubmit2KHR,
                 "[VULKIT][LOADER] The function 'vkQueueSubmit2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
 }
@@ -11800,7 +11800,7 @@ void DeviceTable::CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelin
 {
     TKIT_ASSERT(this->vkCmdWriteTimestamp2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdWriteTimestamp2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
@@ -11811,7 +11811,7 @@ VkResult DeviceTable::CopyMemoryToImageEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkCopyMemoryToImageEXT,
                 "[VULKIT][LOADER] The function 'vkCopyMemoryToImageEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyMemoryToImageEXT(device, pCopyMemoryToImageInfo);
 }
@@ -11822,7 +11822,7 @@ VkResult DeviceTable::CopyImageToMemoryEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkCopyImageToMemoryEXT,
                 "[VULKIT][LOADER] The function 'vkCopyImageToMemoryEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyImageToMemoryEXT(device, pCopyImageToMemoryInfo);
 }
@@ -11832,7 +11832,7 @@ VkResult DeviceTable::CopyImageToImageEXT(VkDevice device, const VkCopyImageToIm
 {
     TKIT_ASSERT(this->vkCopyImageToImageEXT,
                 "[VULKIT][LOADER] The function 'vkCopyImageToImageEXT' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkCopyImageToImageEXT(device, pCopyImageToImageInfo);
 }
@@ -11843,7 +11843,7 @@ VkResult DeviceTable::TransitionImageLayoutEXT(VkDevice device, uint32_t transit
 {
     TKIT_ASSERT(this->vkTransitionImageLayoutEXT,
                 "[VULKIT][LOADER] The function 'vkTransitionImageLayoutEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkTransitionImageLayoutEXT(device, transitionCount, pTransitions);
 }
@@ -11853,7 +11853,7 @@ void DeviceTable::CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRe
 {
     TKIT_ASSERT(this->vkCmdBeginRenderingKHR,
                 "[VULKIT][LOADER] The function 'vkCmdBeginRenderingKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
@@ -11863,7 +11863,7 @@ void DeviceTable::CmdEndRenderingKHR(VkCommandBuffer commandBuffer) const
 {
     TKIT_ASSERT(this->vkCmdEndRenderingKHR,
                 "[VULKIT][LOADER] The function 'vkCmdEndRenderingKHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdEndRenderingKHR(commandBuffer);
 }
@@ -11875,7 +11875,7 @@ void DeviceTable::GetImageSubresourceLayout2KHR(VkDevice device, VkImage image,
 {
     TKIT_ASSERT(this->vkGetImageSubresourceLayout2KHR,
                 "[VULKIT][LOADER] The function 'vkGetImageSubresourceLayout2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageSubresourceLayout2KHR(device, image, pSubresource, pLayout);
 }
@@ -11887,7 +11887,7 @@ void DeviceTable::GetImageSubresourceLayout2EXT(VkDevice device, VkImage image,
 {
     TKIT_ASSERT(this->vkGetImageSubresourceLayout2EXT,
                 "[VULKIT][LOADER] The function 'vkGetImageSubresourceLayout2EXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkGetImageSubresourceLayout2EXT(device, image, pSubresource, pLayout);
 }
@@ -11898,7 +11898,7 @@ VkResult DeviceTable::ReleaseSwapchainImagesEXT(VkDevice device,
 {
     TKIT_ASSERT(this->vkReleaseSwapchainImagesEXT,
                 "[VULKIT][LOADER] The function 'vkReleaseSwapchainImagesEXT' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     return this->vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
 }
@@ -11909,7 +11909,7 @@ void DeviceTable::GetDeviceImageSubresourceLayoutKHR(VkDevice device, const VkDe
 {
     TKIT_ASSERT(this->vkGetDeviceImageSubresourceLayoutKHR,
                 "[VULKIT][LOADER] The function 'vkGetDeviceImageSubresourceLayoutKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkGetDeviceImageSubresourceLayoutKHR(device, pInfo, pLayout);
 }
@@ -11919,7 +11919,7 @@ VkResult DeviceTable::MapMemory2KHR(VkDevice device, const VkMemoryMapInfoKHR *p
 {
     TKIT_ASSERT(this->vkMapMemory2KHR,
                 "[VULKIT][LOADER] The function 'vkMapMemory2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkMapMemory2KHR(device, pMemoryMapInfo, ppData);
 }
@@ -11929,7 +11929,7 @@ VkResult DeviceTable::UnmapMemory2KHR(VkDevice device, const VkMemoryUnmapInfoKH
 {
     TKIT_ASSERT(this->vkUnmapMemory2KHR,
                 "[VULKIT][LOADER] The function 'vkUnmapMemory2KHR' is not available for the instance or device being "
-                "used, either because VKit::Core::Initialize() was not called or because the feature or extension "
+                "used, either because VKit::Initialize() was not called or because the feature or extension "
                 "bound to the function has not been enabled");
     return this->vkUnmapMemory2KHR(device, pMemoryUnmapInfo);
 }
@@ -11940,7 +11940,7 @@ void DeviceTable::CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdBindDescriptorSets2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdBindDescriptorSets2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 }
@@ -11951,7 +11951,7 @@ void DeviceTable::CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdPushConstants2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdPushConstants2KHR' is not available for the instance or device "
-                "being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 }
@@ -11962,7 +11962,7 @@ void DeviceTable::CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSet2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSet2KHR' is not available for the instance or "
-                "device being used, either because VKit::Core::Initialize() was not called or because the feature or "
+                "device being used, either because VKit::Initialize() was not called or because the feature or "
                 "extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 }
@@ -11974,7 +11974,7 @@ void DeviceTable::CmdPushDescriptorSetWithTemplate2KHR(
 {
     TKIT_ASSERT(this->vkCmdPushDescriptorSetWithTemplate2KHR,
                 "[VULKIT][LOADER] The function 'vkCmdPushDescriptorSetWithTemplate2KHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
@@ -11985,7 +11985,7 @@ void DeviceTable::CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandB
 {
     TKIT_ASSERT(this->vkCmdSetRenderingAttachmentLocationsKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetRenderingAttachmentLocationsKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
@@ -11996,7 +11996,7 @@ void DeviceTable::CmdSetRenderingInputAttachmentIndicesKHR(
 {
     TKIT_ASSERT(this->vkCmdSetRenderingInputAttachmentIndicesKHR,
                 "[VULKIT][LOADER] The function 'vkCmdSetRenderingInputAttachmentIndicesKHR' is not available for the "
-                "instance or device being used, either because VKit::Core::Initialize() was not called or because the "
+                "instance or device being used, either because VKit::Initialize() was not called or because the "
                 "feature or extension bound to the function has not been enabled");
     this->vkCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }

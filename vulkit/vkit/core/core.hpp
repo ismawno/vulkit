@@ -19,13 +19,14 @@ struct Specs
     const char *LoaderPath = nullptr;
     Allocation Allocators{};
 };
+
+VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
+void Terminate();
+
 } // namespace VKit
 
 namespace VKit::Core
 {
-VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
-void Terminate();
-
 bool IsExtensionSupported(const char *name);
 bool IsLayerSupported(const char *name);
 
