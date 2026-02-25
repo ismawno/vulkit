@@ -216,12 +216,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
         for (u32 i = 0; i < callbackData->objectCount; ++i)                                                            \
         {                                                                                                              \
             const VkDebugUtilsObjectNameInfoEXT &obj = callbackData->pObjects[i];                                      \
-            fn("object[{}] = {}", i, toString(obj.objectType));                                                        \
+            fn("    object[{}] = {}", i, toString(obj.objectType));                                                    \
             if (obj.pObjectName)                                                                                       \
             {                                                                                                          \
-                fn("    Name=\"{}\"", obj.pObjectName);                                                                \
+                fn("        Name=\"{}\"", obj.pObjectName);                                                            \
             }                                                                                                          \
-            fn("    Handle={:x}", obj.objectHandle);                                                                   \
+            fn("        Handle={:x}", obj.objectHandle);                                                               \
         }                                                                                                              \
     }                                                                                                                  \
     if (callbackData->queueLabelCount != 0)                                                                            \
