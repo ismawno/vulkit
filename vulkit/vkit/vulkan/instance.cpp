@@ -208,7 +208,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 {
     const char *mtype = toString(messageType);
 #define PRINT_DEBUG_INFO(fn)                                                                                           \
-    fn("[VULKIT][{}] Id={} Code={:x} Message={}", mtype,                                                               \
+    fn("[VULKIT][{}] Id='{}' Code='{:x}' Message='{}'", mtype,                                                         \
        callbackData->pMessageIdName ? callbackData->pMessageIdName : "?", callbackData->messageIdNumber,               \
        callbackData->pMessage);                                                                                        \
     if (callbackData->objectCount != 0)                                                                                \
@@ -217,10 +217,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
         for (u32 i = 0; i < callbackData->objectCount; ++i)                                                            \
         {                                                                                                              \
             const VkDebugUtilsObjectNameInfoEXT &obj = callbackData->pObjects[i];                                      \
-            fn("[VULKIT][{}]    object[{}] = {}", mtype, i, toString(obj.objectType));                                 \
+            fn("[VULKIT][{}]    object[{}]={}", mtype, i, toString(obj.objectType));                                   \
             if (obj.pObjectName)                                                                                       \
             {                                                                                                          \
-                fn("[VULKIT][{}]        Name=\"{}\"", mtype, obj.pObjectName);                                         \
+                fn("[VULKIT][{}]        Name='{}'", mtype, obj.pObjectName);                                           \
             }                                                                                                          \
             fn("[VULKIT][{}]        Handle={:x}", mtype, obj.objectHandle);                                            \
         }                                                                                                              \
