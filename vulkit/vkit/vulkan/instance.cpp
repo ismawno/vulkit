@@ -206,38 +206,39 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
                                                            const VkDebugUtilsMessengerCallbackDataEXT *callbackData,
                                                            void *)
 {
+    const char *mtype = toString(messageType);
 #define PRINT_DEBUG_INFO(fn)                                                                                           \
-    fn("[VULKIT][{}] ID={} {:x} {}", toString(messageType),                                                            \
+    fn("[VULKIT][{}] Id={} Code={:x} Message={}", mtype,                                                               \
        callbackData->pMessageIdName ? callbackData->pMessageIdName : "?", callbackData->messageIdNumber,               \
        callbackData->pMessage);                                                                                        \
     if (callbackData->objectCount != 0)                                                                                \
     {                                                                                                                  \
-        fn("Objects ({}):", callbackData->objectCount);                                                                \
+        fn("[VULKIT][{}] Objects ({}):", mtype, callbackData->objectCount);                                            \
         for (u32 i = 0; i < callbackData->objectCount; ++i)                                                            \
         {                                                                                                              \
             const VkDebugUtilsObjectNameInfoEXT &obj = callbackData->pObjects[i];                                      \
-            fn("    object[{}] = {}", i, toString(obj.objectType));                                                    \
+            fn("[VULKIT][{}]    object[{}] = {}", mtype, i, toString(obj.objectType));                                 \
             if (obj.pObjectName)                                                                                       \
             {                                                                                                          \
-                fn("        Name=\"{}\"", obj.pObjectName);                                                            \
+                fn("[VULKIT][{}]        Name=\"{}\"", mtype, obj.pObjectName);                                         \
             }                                                                                                          \
-            fn("        Handle={:x}", obj.objectHandle);                                                               \
+            fn("[VULKIT][{}]        Handle={:x}", mtype, obj.objectHandle);                                            \
         }                                                                                                              \
     }                                                                                                                  \
     if (callbackData->queueLabelCount != 0)                                                                            \
     {                                                                                                                  \
-        fn("Queue label stack ({}):", callbackData->queueLabelCount);                                                  \
+        fn("[VULKIT][{}] Queue label stack ({}):", mtype, callbackData->queueLabelCount);                              \
         for (u32 i = 0; i < callbackData->queueLabelCount; ++i)                                                        \
         {                                                                                                              \
-            fn("    label[{}] -> {}", i, callbackData->pQueueLabels[i].pLabelName);                                    \
+            fn("[VULKIT][{}]    label[{}] -> {}", mtype, i, callbackData->pQueueLabels[i].pLabelName);                 \
         }                                                                                                              \
     }                                                                                                                  \
     if (callbackData->cmdBufLabelCount != 0)                                                                           \
     {                                                                                                                  \
-        fn("CmdBuf label stack ({}):", callbackData->queueLabelCount);                                                 \
+        fn("[VULKIT][{}] CmdBuf label stack ({}):", mtype, callbackData->queueLabelCount);                             \
         for (u32 i = 0; i < callbackData->cmdBufLabelCount; ++i)                                                       \
         {                                                                                                              \
-            fn("    label[{}] -> {}", i, callbackData->pCmdBufLabels[i].pLabelName);                                   \
+            fn("[VULKIT][{}]    label[{}] -> {}", mtype, i, callbackData->pCmdBufLabels[i].pLabelName);                \
         }                                                                                                              \
     }
 
