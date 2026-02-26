@@ -208,7 +208,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 {
     const char *mtype = toString(messageType);
 #define PRINT_DEBUG_INFO(fn)                                                                                           \
-    fn("[VULKIT][{}] Id='{}' Code='{:x}' Message='{}'", mtype,                                                         \
+    fn("[VULKIT][{}] Id='{}' Code='{:#x}' Message='{}'", mtype,                                                        \
        callbackData->pMessageIdName ? callbackData->pMessageIdName : "?", callbackData->messageIdNumber,               \
        callbackData->pMessage);                                                                                        \
     if (callbackData->objectCount != 0)                                                                                \
@@ -222,7 +222,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
             {                                                                                                          \
                 fn("[VULKIT][{}]        Name='{}'", mtype, obj.pObjectName);                                           \
             }                                                                                                          \
-            fn("[VULKIT][{}]        Handle={:x}", mtype, obj.objectHandle);                                            \
+            fn("[VULKIT][{}]        Handle={:#x}", mtype, obj.objectHandle);                                           \
         }                                                                                                              \
     }                                                                                                                  \
     if (callbackData->queueLabelCount != 0)                                                                            \
