@@ -189,23 +189,25 @@ Result<> Initialize(const Specs &specs)
                               Result<>);
         extensionCount += counts[i + 1];
     }
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0],
-                                                                       s_Capabilities->AvailableExtensions.GetData()),
-                          Result<>);
 
     TKit::StackArray<VkExtensionProperties> extensions{};
     extensions.Resize(extensionCount);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], extensions.GetData()),
+                          Result<>);
+
+    u32 count = counts[0];
     for (u32 i = 0; i < layerCount; ++i)
         if (counts[i + 1] != 0)
         {
             VKIT_RETURN_IF_FAILED(
                 Vulkan::EnumerateInstanceExtensionProperties(s_Capabilities->AvailableLayers[i].layerName,
-                                                             &counts[i + 1], extensions.GetData() + counts[i]),
+                                                             &counts[i + 1], extensions.GetData() + count),
                 Result<>);
+            count += counts[i + 1];
         }
     s_Capabilities->AvailableExtensions.Reserve(extensionCount);
     for (u32 i = 0; i < extensionCount; ++i)
-        if (strcmp(extensions[i].extensionName, "") != 0 && !IsExtensionSupported(extensions[i].extensionName))
+        if (!IsExtensionSupported(extensions[i].extensionName))
             s_Capabilities->AvailableExtensions.Append(extensions[i]);
 
     return Result<>::Ok();
