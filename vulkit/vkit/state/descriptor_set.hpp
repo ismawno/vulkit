@@ -22,9 +22,8 @@ class DescriptorSet
         {
         }
 
-        void WriteBuffer(u32 binding, const VkDescriptorBufferInfo &bufferInfo);
-        void WriteBuffer(u32 binding, const DeviceBuffer &buffer);
-        void WriteImage(u32 binding, const VkDescriptorImageInfo &imageInfo);
+        void WriteBuffer(u32 binding, const VkDescriptorBufferInfo *bufferInfo);
+        void WriteImage(u32 binding, const VkDescriptorImageInfo *imageInfo);
         void Overwrite(const VkDescriptorSet set);
 
       private:

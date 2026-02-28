@@ -17,7 +17,7 @@ void DescriptorSet::Bind(const ProxyDevice &device, const VkCommandBuffer comman
                                         dynamicOffsets.GetSize(), dynamicOffsets.GetData());
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBufferInfo &bufferInfo)
+void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBufferInfo *bufferInfo)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
 
@@ -25,7 +25,7 @@ void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBuf
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
     write.dstBinding = binding;
-    write.pBufferInfo = &bufferInfo;
+    write.pBufferInfo = bufferInfo;
 
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
@@ -33,12 +33,7 @@ void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBuf
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 binding, const DeviceBuffer &buffer)
-{
-    WriteBuffer(binding, buffer.CreateDescriptorInfo());
-}
-
-void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImageInfo &imageInfo)
+void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImageInfo *imageInfo)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
 
@@ -46,7 +41,7 @@ void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImag
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
     write.dstBinding = binding;
-    write.pImageInfo = &imageInfo;
+    write.pImageInfo = imageInfo;
 
     // I am not sure if this is correct!!
     write.descriptorCount = description.descriptorCount;
