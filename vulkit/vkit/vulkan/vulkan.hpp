@@ -66,53 +66,38 @@
 #define VKIT_EXPAND_VERSION(version)                                                                                   \
     VKIT_API_VERSION_MAJOR(version), VKIT_API_VERSION_MINOR(version), VKIT_API_VERSION_PATCH(version)
 
+#define VKIT_LOG_RESULT(fun, result) fun(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
+#define VKIT_LOG_EXPRESSION(fun, expression)                                                                           \
+    if (const auto __vkit_result = (expression); !VKit::IsSuccessful(__vkit_result))                                   \
+    fun("{}", VKit::ResultToString(__vkit_result))
+
 #ifdef TKIT_ENABLE_DEBUG_LOGS
-#    define VKIT_LOG_RESULT_DEBUG(result)                                                                              \
-        TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
-#    define VKIT_LOG_EXPRESSION_DEBUG(expression)                                                                      \
-        {                                                                                                              \
-            const auto __vkit_result = expression;                                                                     \
-            TKIT_LOG_DEBUG_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));          \
-        }
+#    define VKIT_LOG_RESULT_DEBUG(result) VKIT_LOG_RESULT(TKIT_LOG_DEBUG_IF, (result))
+#    define VKIT_LOG_EXPRESSION_DEBUG(expression) VKIT_LOG_EXPRESSION(TKIT_LOG_DEBUG, (expression))
 #else
 #    define VKIT_LOG_RESULT_DEBUG(result) TKIT_UNUSED(result)
 #    define VKIT_LOG_EXPRESSION_DEBUG(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_INFO_LOGS
-#    define VKIT_LOG_RESULT_INFO(result)                                                                               \
-        TKIT_LOG_INFO_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
-#    define VKIT_LOG_EXPRESSION_INFO(expression)                                                                       \
-        {                                                                                                              \
-            const auto __vkit_result = expression;                                                                     \
-            TKIT_LOG_INFO_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));           \
-        }
+#    define VKIT_LOG_RESULT_INFO(result) VKIT_LOG_RESULT(TKIT_LOG_INFO_IF, (result))
+#    define VKIT_LOG_EXPRESSION_INFO(expression) VKIT_LOG_EXPRESSION(TKIT_LOG_INFO, (expression))
 #else
 #    define VKIT_LOG_RESULT_INFO(result) TKIT_UNUSED(result)
 #    define VKIT_LOG_EXPRESSION_INFO(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_WARNING_LOGS
-#    define VKIT_LOG_RESULT_WARNING(result)                                                                            \
-        TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
-#    define VKIT_LOG_EXPRESSION_WARNING(expression)                                                                    \
-        {                                                                                                              \
-            const auto __vkit_result = expression;                                                                     \
-            TKIT_LOG_WARNING_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));        \
-        }
+#    define VKIT_LOG_RESULT_WARNING(result) VKIT_LOG_RESULT(TKIT_LOG_WARNING_IF, (result))
+#    define VKIT_LOG_EXPRESSION_WARNING(expression) VKIT_LOG_EXPRESSION(TKIT_LOG_WARNING, (expression))
 #else
 #    define VKIT_LOG_RESULT_WARNING(result) TKIT_UNUSED(result)
 #    define VKIT_LOG_EXPRESSION_WARNING(expression) expression
 #endif
 
 #ifdef TKIT_ENABLE_ERROR_LOGS
-#    define VKIT_LOG_RESULT_ERROR(result)                                                                              \
-        TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
-#    define VKIT_LOG_EXPRESSION_ERROR(expression)                                                                      \
-        {                                                                                                              \
-            const auto __vkit_result = expression;                                                                     \
-            TKIT_LOG_ERROR_IF(!VKit::IsSuccessful(__vkit_result), "{}", VKit::ResultToString(__vkit_result));          \
-        }
+#    define VKIT_LOG_RESULT_ERROR(result) VKIT_LOG_RESULT(TKIT_LOG_ERROR_IF, (result))
+#    define VKIT_LOG_EXPRESSION_ERROR(expression) VKIT_LOG_EXPRESSION(TKIT_LOG_ERROR, (expression))
 #else
 #    define VKIT_LOG_RESULT_ERROR(result) TKIT_UNUSED(result)
 #    define VKIT_LOG_EXPRESSION_ERROR(expression) expression
