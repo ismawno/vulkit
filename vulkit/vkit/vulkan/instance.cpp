@@ -359,18 +359,6 @@ Result<Instance> Instance::Builder::Build() const
             layers.Append(layer);
     }
 
-    const bool properties2Support = apiVersion < VKIT_MAKE_VERSION(0, 1, 1, 0) &&
-                                    Core::IsExtensionSupported("VK_KHR_get_physical_device_properties2");
-
-    if (properties2Support && !contains(extensions, "VK_KHR_get_physical_device_properties2"))
-        extensions.Append("VK_KHR_get_physical_device_properties2");
-
-#ifdef VK_KHR_portability_enumeration
-    const bool portabilitySupport = Core::IsExtensionSupported("VK_KHR_portability_enumeration");
-    if (portabilitySupport && !contains(extensions, "VK_KHR_portability_enumeration"))
-        extensions.Append("VK_KHR_portability_enumeration");
-#endif
-
     if (!m_Headless)
     {
         const auto checkWindowingSupport = [&extensions](const char *extension) -> bool {
@@ -533,7 +521,7 @@ Result<Instance> Instance::Builder::Build() const
     instanceInfo.ppEnabledLayerNames = layers.GetData();
     instanceInfo.pNext = pNext;
 #ifdef VK_KHR_portability_enumeration
-    if (portabilitySupport)
+    if (contains(extensions, "VK_KHR_portability_enumeration"))
         instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
 

@@ -593,13 +593,6 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #endif
 
     const bool prop2 = m_Instance->IsExtensionEnabled("VK_KHR_get_physical_device_properties2");
-#ifndef VK_KHR_get_physical_device_properties2
-    if (prop2)
-        return JudgeResult::Error(
-            Error_MissingExtension,
-            "[VULKIT][P-DEVICE] The 'VK_KHR_get_physical_device_properties2' extension is not supported");
-#endif
-
     DeviceFeatures features{};
     DeviceProperties properties{};
 
