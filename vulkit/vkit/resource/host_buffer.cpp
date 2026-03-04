@@ -2,6 +2,9 @@
 #include "vkit/resource/host_buffer.hpp"
 #include "tkit/memory/memory.hpp"
 
+TKIT_COMPILER_WARNING_IGNORE_PUSH()
+TKIT_MSVC_WARNING_IGNORE(4244)
+
 namespace VKit
 {
 HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize instanceSize, const VkDeviceSize alignment)
@@ -48,5 +51,6 @@ void HostBuffer::Destroy()
     TKit::DeallocateAligned(m_Data);
     m_Data = nullptr;
 }
+TKIT_COMPILER_WARNING_IGNORE_POP()
 
 } // namespace VKit
