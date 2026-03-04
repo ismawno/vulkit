@@ -22,8 +22,8 @@ static Result<VkPresentModeKHR> selectPresentMode(const TKit::Span<const VkPrese
                                                   const TKit::Span<const VkPresentModeKHR> supported)
 {
     for (const VkPresentModeKHR &desired : requested)
-        for (const VkPresentModeKHR &supported : supported)
-            if (desired == supported)
+        for (const VkPresentModeKHR &supp : supported)
+            if (desired == supp)
                 return desired;
     return Result<VkPresentModeKHR>::Error(Error_NoFormatSupported);
 }

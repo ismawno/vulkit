@@ -8,6 +8,9 @@
 #include "vkit/device/proxy_device.hpp"
 #include "vkit/memory/allocator.hpp"
 
+TKIT_COMPILER_WARNING_IGNORE_PUSH()
+TKIT_MSVC_WARNING_IGNORE(4244)
+
 namespace VKit
 {
 class CommandPool;
@@ -98,12 +101,12 @@ class DeviceBuffer
     const void *ReadAt(const u32 index) const
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index);
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
     void *ReadAt(const u32 index)
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index);
+        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
 
     void Write(const void *data, const VkBufferCopy &copy);
@@ -195,4 +198,5 @@ class DeviceBuffer
     VkBuffer m_Buffer = VK_NULL_HANDLE;
     Info m_Info;
 };
+TKIT_COMPILER_WARNING_IGNORE_POP()
 } // namespace VKit

@@ -186,7 +186,7 @@ void DeviceBuffer::WriteAt(const u32 index, const void *pdata)
 {
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
 
-    const VkDeviceSize size = m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index);
+    const VkDeviceSize size = m_Info.InstanceAlignedSize * index;
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
     TKit::ForwardCopy(data, pdata, m_Info.InstanceSize);
 }
@@ -284,7 +284,7 @@ Result<> DeviceBuffer::Flush(const VkDeviceSize size, const VkDeviceSize offset)
 Result<> DeviceBuffer::FlushAt(const u32 index)
 {
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index));
+    return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
 Result<> DeviceBuffer::Invalidate(const VkDeviceSize size, const VkDeviceSize offset)
@@ -296,7 +296,7 @@ Result<> DeviceBuffer::Invalidate(const VkDeviceSize size, const VkDeviceSize of
 Result<> DeviceBuffer::InvalidateAt(const u32 index)
 {
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index));
+    return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
 void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer commandBuffer, const VkDeviceSize offset) const
@@ -323,7 +323,7 @@ VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfo(const VkDeviceSize siz
 VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfoAt(const u32 index) const
 {
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return CreateDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * static_cast<VkDeviceSize>(index));
+    return CreateDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
 } // namespace VKit
