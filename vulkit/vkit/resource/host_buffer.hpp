@@ -25,12 +25,12 @@ class HostBuffer
     const void *ReadAt(const u32 index) const
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_InstanceSize * index;
+        return static_cast<std::byte *>(m_Data) + m_InstanceSize * static_cast<VkDeviceSize>(index);
     }
     void *ReadAt(const u32 index)
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_InstanceSize * index;
+        return static_cast<std::byte *>(m_Data) + m_InstanceSize * static_cast<VkDeviceSize>(index);
     }
 
     void Write(const void *data, const VkBufferCopy &copy);

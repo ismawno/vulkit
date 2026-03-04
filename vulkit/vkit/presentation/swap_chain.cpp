@@ -12,8 +12,8 @@ static Result<VkSurfaceFormatKHR> selectFormat(const TKit::Span<const VkSurfaceF
                                                const TKit::Span<const VkSurfaceFormatKHR> supported)
 {
     for (const VkSurfaceFormatKHR &desired : requested)
-        for (const VkSurfaceFormatKHR &supported : supported)
-            if (desired.format == supported.format && desired.colorSpace == supported.colorSpace)
+        for (const VkSurfaceFormatKHR &supp : supported)
+            if (desired.format == supp.format && desired.colorSpace == supp.colorSpace)
                 return Result<VkSurfaceFormatKHR>::Ok(desired);
     return Result<VkSurfaceFormatKHR>::Error(Error_NoFormatSupported);
 }

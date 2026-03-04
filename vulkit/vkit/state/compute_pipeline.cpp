@@ -37,8 +37,8 @@ Result<> ComputePipeline::Create(const ProxyDevice &device, const TKit::Span<con
 {
     TKit::StackArray<VkComputePipelineCreateInfo> pipelineInfos{};
     pipelineInfos.Reserve(specs.GetSize());
-    for (const ComputePipelineSpecs &specs : specs)
-        pipelineInfos.Append(createPipelineInfo(specs));
+    for (const ComputePipelineSpecs &spc : specs)
+        pipelineInfos.Append(createPipelineInfo(spc));
 
     const u32 count = specs.GetSize();
     TKit::StackArray<VkPipeline> vkpipelines{count};

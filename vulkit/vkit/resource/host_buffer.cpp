@@ -27,7 +27,7 @@ void HostBuffer::WriteAt(const u32 index, const void *pdata)
 {
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
 
-    const VkDeviceSize size = m_InstanceSize * index;
+    const VkDeviceSize size = m_InstanceSize * static_cast<VkDeviceSize>(index);
     std::byte *data = static_cast<std::byte *>(m_Data) + size;
     TKit::ForwardCopy(data, pdata, m_InstanceSize);
 }
