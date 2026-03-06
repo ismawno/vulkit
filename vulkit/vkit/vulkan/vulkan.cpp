@@ -53,6 +53,8 @@ const char *ErrorCodeToString(const ErrorCode code)
         return "VulkanError";
     case Error_BadSynchronization:
         return "BadSynchronization";
+    case Error_LockedAssets:
+        return "LockedAssets";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
     case Error_InitializationFailed:

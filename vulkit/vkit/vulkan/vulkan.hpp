@@ -159,6 +159,9 @@
 
 namespace VKit
 {
+
+// this error code tries to include pretty much all possible errors that can happen in a computer graphics program so
+// that Result<...> can still be used as much as possible. many will be unrelated to vulkit itself
 enum ErrorCode : u8
 {
     Error_VulkanError,
@@ -182,6 +185,7 @@ enum ErrorCode : u8
     Error_EntryPointNotFound,
     Error_ShaderCompilationFailed,
     Error_BadSynchronization,
+    Error_LockedAssets,
     Error_Unknown,
     Error_Count
 };
