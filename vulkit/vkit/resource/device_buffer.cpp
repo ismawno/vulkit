@@ -3,9 +3,6 @@
 #include "vkit/execution/command_pool.hpp"
 #include "vkit/resource/device_image.hpp"
 
-TKIT_COMPILER_WARNING_IGNORE_PUSH()
-TKIT_MSVC_WARNING_IGNORE(4244)
-
 namespace VKit
 {
 static VkDeviceSize alignedSize(const VkDeviceSize size, const VkDeviceSize alignment)
@@ -329,5 +326,4 @@ VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfoAt(const u32 index) con
     return CreateDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
-TKIT_COMPILER_WARNING_IGNORE_POP()
 } // namespace VKit

@@ -8,9 +8,6 @@
 #include "vkit/device/proxy_device.hpp"
 #include "vkit/memory/allocator.hpp"
 
-TKIT_COMPILER_WARNING_IGNORE_PUSH()
-TKIT_MSVC_WARNING_IGNORE(4244)
-
 namespace VKit
 {
 class CommandPool;
@@ -198,5 +195,4 @@ class DeviceBuffer
     VkBuffer m_Buffer = VK_NULL_HANDLE;
     Info m_Info;
 };
-TKIT_COMPILER_WARNING_IGNORE_POP()
 } // namespace VKit

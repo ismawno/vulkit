@@ -8,9 +8,6 @@
 #include "vkit/core/alias.hpp"
 #include "tkit/utils/debug.hpp"
 
-TKIT_COMPILER_WARNING_IGNORE_PUSH()
-TKIT_MSVC_WARNING_IGNORE(4244)
-
 namespace VKit
 {
 class HostBuffer
@@ -77,5 +74,4 @@ class HostBuffer
     VkDeviceSize m_Size = 0;
     VkDeviceSize m_Alignment = 0;
 };
-TKIT_COMPILER_WARNING_IGNORE_POP()
 } // namespace VKit
