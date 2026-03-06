@@ -20,10 +20,10 @@ Result<Shader> Shader::Create(const ProxyDevice &device, const std::string_view 
 
     const auto fileSize = file.tellg();
 
-    TKit::StackArray<char> code{static_cast<u32>(fileSize)};
+    TKit::StackArray<char> code{u32(fileSize)};
     file.seekg(0);
     file.read(code.GetData(), fileSize);
-    const u32 *spv = reinterpret_cast<const u32 *>(code.GetData());
+    const u32 *spv = rcast<const u32 *>(code.GetData());
     return Create(device, spv, fileSize);
 }
 

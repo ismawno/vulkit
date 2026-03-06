@@ -354,9 +354,9 @@ TEST_CASE("CommandPool::Allocate - Single Buffer", "[command_pool][allocate]")
     SECTION("Multiple sequential allocations return unique handles")
     {
         std::vector<VkCommandBuffer> buffers;
-        constexpr int count = 10;
+        constexpr i32 count = 10;
 
-        for (int i = 0; i < count; ++i)
+        for (i32 i = 0; i < count; ++i)
         {
             auto result = pool.Allocate();
             REQUIRE(result);
@@ -513,7 +513,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
         REQUIRE(poolResult);
         auto pool = poolResult.GetValue();
 
-        for (int i = 0; i < 10; ++i)
+        for (i32 i = 0; i < 10; ++i)
         {
             auto result = pool.Reset();
             REQUIRE(result);
@@ -597,9 +597,9 @@ TEST_CASE("CommandPool::BeginSingleTimeCommands", "[command_pool][single_time]")
 
     SECTION("Multiple consecutive single time command operations")
     {
-        constexpr int iterations = 10;
+        constexpr i32 iterations = 10;
 
-        for (int i = 0; i < iterations; ++i)
+        for (i32 i = 0; i < iterations; ++i)
         {
             auto beginResult = pool.BeginSingleTimeCommands();
             REQUIRE(beginResult);
@@ -882,7 +882,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
         REQUIRE(allocResult);
         VkCommandBuffer cmd = allocResult.GetValue();
 
-        for (int i = 0; i < 5; ++i)
+        for (i32 i = 0; i < 5; ++i)
         {
             VkCommandBufferBeginInfo beginInfo{};
             beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -961,7 +961,7 @@ TEST_CASE("Queue::WaitIdle", "[queue][wait]")
 
     SECTION("Multiple consecutive WaitIdle calls")
     {
-        for (int i = 0; i < 10; ++i)
+        for (i32 i = 0; i < 10; ++i)
         {
             auto result = queue->WaitIdle();
             REQUIRE(result);
@@ -988,9 +988,9 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
 
     SECTION("Rapid allocate-submit-wait cycles")
     {
-        constexpr int cycles = 50;
+        constexpr i32 cycles = 50;
 
-        for (int i = 0; i < cycles; ++i)
+        for (i32 i = 0; i < cycles; ++i)
         {
             auto beginResult = pool.BeginSingleTimeCommands();
             REQUIRE(beginResult);
@@ -1002,10 +1002,10 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
 
     SECTION("Batch operations with periodic resets")
     {
-        constexpr int batches = 10;
+        constexpr i32 batches = 10;
         constexpr u32 buffersPerBatch = 8;
 
-        for (int batch = 0; batch < batches; ++batch)
+        for (i32 batch = 0; batch < batches; ++batch)
         {
             TKit::FixedArray<VkCommandBuffer, buffersPerBatch> cmds;
 

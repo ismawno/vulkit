@@ -101,12 +101,12 @@ class DeviceBuffer
     const void *ReadAt(const u32 index) const
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
+        return scast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
     void *ReadAt(const u32 index)
     {
         TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-        return static_cast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
+        return scast<std::byte *>(m_Data) + m_Info.InstanceAlignedSize * index;
     }
 
     void Write(const void *data, const VkBufferCopy &copy);

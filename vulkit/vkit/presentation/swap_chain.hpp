@@ -89,7 +89,7 @@ class SwapChain
 
         SwapChainBuilderFlags m_Flags = 0;
         VkSwapchainCreateFlagsKHR m_CreateFlags = 0;
-        VkSurfaceTransformFlagBitsKHR m_TransformBit = static_cast<VkSurfaceTransformFlagBitsKHR>(0);
+        VkSurfaceTransformFlagBitsKHR m_TransformBit = VkSurfaceTransformFlagBitsKHR(0);
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     };
 

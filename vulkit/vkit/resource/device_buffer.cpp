@@ -180,8 +180,8 @@ void DeviceBuffer::Write(const void *data, const VkBufferCopy &copy)
                 "destination offset ({})",
                 copy.size, m_Info.Size, copy.dstOffset);
 
-    std::byte *dst = static_cast<std::byte *>(m_Data) + copy.dstOffset;
-    const std::byte *src = static_cast<const std::byte *>(data) + copy.srcOffset;
+    std::byte *dst = scast<std::byte *>(m_Data) + copy.dstOffset;
+    const std::byte *src = scast<const std::byte *>(data) + copy.srcOffset;
     TKit::ForwardCopy(dst, src, copy.size);
 }
 
@@ -190,7 +190,7 @@ void DeviceBuffer::WriteAt(const u32 index, const void *pdata)
     TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
 
     const VkDeviceSize size = m_Info.InstanceAlignedSize * index;
-    std::byte *data = static_cast<std::byte *>(m_Data) + size;
+    std::byte *data = scast<std::byte *>(m_Data) + size;
     TKit::ForwardCopy(data, pdata, m_Info.InstanceSize);
 }
 

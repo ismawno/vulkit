@@ -57,7 +57,7 @@ class CoreGuard
     CoreGuard()
     {
         auto result = VKit::Initialize();
-        m_Valid = static_cast<bool>(result);
+        m_Valid = bool(result);
     }
 
     ~CoreGuard()
@@ -641,7 +641,7 @@ TEST_CASE("PhysicalDevice::Selector - Device GetCode() Preference", "[physical_d
         if (result)
         {
             VKit::PhysicalDevice device = result.GetValue();
-            INFO("Selected device type: " << static_cast<int>(device.GetInfo().Type));
+            INFO("Selected device type: " << i32(device.GetInfo().Type));
 
             // If discrete is available, it should be selected
             // Otherwise falls back to whatever is available
@@ -659,7 +659,7 @@ TEST_CASE("PhysicalDevice::Selector - Device GetCode() Preference", "[physical_d
         if (result)
         {
             VKit::PhysicalDevice device = result.GetValue();
-            INFO("Selected device type: " << static_cast<int>(device.GetInfo().Type));
+            INFO("Selected device type: " << i32(device.GetInfo().Type));
         }
     }
 

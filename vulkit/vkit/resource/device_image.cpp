@@ -449,8 +449,8 @@ VkDeviceSize DeviceImage::ComputeSize(const VkFormat format, const u32 pwidth, c
     const u32 rowTexels = width;
     const u32 imgTexels = height;
 
-    const VkDeviceSize rowStride = static_cast<VkDeviceSize>(rowTexels) * ppixel;
-    const VkDeviceSize sliceStride = static_cast<VkDeviceSize>(imgTexels) * rowStride;
+    const VkDeviceSize rowStride = VkDeviceSize(rowTexels) * ppixel;
+    const VkDeviceSize sliceStride = VkDeviceSize(imgTexels) * rowStride;
 
     return (width * ppixel + (height - 1) * rowStride + (depth - 1) * sliceStride);
 }

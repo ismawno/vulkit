@@ -109,7 +109,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
                                    support.Capabilities.maxImageExtent.height);
     }
     VkSurfaceTransformFlagBitsKHR transform = m_TransformBit;
-    if (transform == static_cast<VkSurfaceTransformFlagBitsKHR>(0))
+    if (transform == VkSurfaceTransformFlagBitsKHR(0))
         transform = support.Capabilities.currentTransform;
 
     const TKit::FixedArray<u32, 2> indices{devInfo.FamilyIndices[Queue_Graphics], devInfo.FamilyIndices[Queue_Present]};
