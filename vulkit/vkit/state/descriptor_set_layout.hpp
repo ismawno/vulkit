@@ -22,11 +22,20 @@ class DescriptorSetLayout
 
         VKIT_NO_DISCARD Result<DescriptorSetLayout> Build() const;
 
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
+        Builder &AddBinding2(VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1,
+                             const VkDescriptorBindingFlagsEXT flags = 0);
+#endif
         Builder &AddBinding(VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1);
+        Builder &SetFlags(VkDescriptorSetLayoutCreateFlags flags);
 
       private:
         ProxyDevice m_Device;
         TKit::TierArray<VkDescriptorSetLayoutBinding> m_Bindings;
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
+        TKit::TierArray<VkDescriptorBindingFlagsEXT> m_BindFlags;
+#endif
+        VkDescriptorSetLayoutCreateFlags m_Flags = 0;
     };
 
     DescriptorSetLayout() = default;
