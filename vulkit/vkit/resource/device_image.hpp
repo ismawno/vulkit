@@ -134,6 +134,8 @@ class DeviceImage
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &info);
     VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &range);
 
+    VkDescriptorImageInfo CreateDescriptorInfo(VkSampler sampler = VK_NULL_HANDLE) const;
+
     VkImageMemoryBarrier CreateTransitionLayoutBarrier(VkImageLayout layout, const TransitionInfo &info,
                                                        const void *next = nullptr) const;
     void TransitionLayout(VkCommandBuffer commandBuffer, VkImageLayout layout, const TransitionInfo &info,
