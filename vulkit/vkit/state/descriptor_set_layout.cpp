@@ -17,7 +17,7 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
         flagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
         flagsInfo.bindingCount = m_BindFlags.GetSize();
         flagsInfo.pBindingFlags = m_BindFlags.GetData();
-        layoutInfo.pNext = &layoutInfo;
+        layoutInfo.pNext = &flagsInfo;
     }
 #endif
     layoutInfo.flags = m_Flags;
