@@ -6,7 +6,6 @@
 #endif
 
 #include "vkit/core/alias.hpp"
-#include "tkit/utils/debug.hpp"
 
 namespace VKit
 {
@@ -14,28 +13,9 @@ class HostBuffer
 {
   public:
     HostBuffer() = default;
-    HostBuffer(VkDeviceSize instanceCount, VkDeviceSize instanceSize,
-               VkDeviceSize alignment = alignof(std::max_align_t));
-
-    template <typename T> static HostBuffer Create(const VkDeviceSize instanceCount)
-    {
-        return HostBuffer(instanceCount, sizeof(T), alignof(T));
-    }
-
-    const void *ReadAt(const u32 index) const
-    {
-        TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return scast<std::byte *>(m_Data) + m_InstanceSize * index;
-    }
-    void *ReadAt(const u32 index)
-    {
-        TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-        return scast<std::byte *>(m_Data) + m_InstanceSize * index;
-    }
+    HostBuffer(VkDeviceSize size, VkDeviceSize alignment = alignof(std::max_align_t));
 
     void Write(const void *data, const VkBufferCopy &copy);
-    void WriteAt(u32 index, const void *data);
-
     void Destroy();
 
     const void *GetData() const
@@ -47,21 +27,13 @@ class HostBuffer
         return m_Data;
     }
 
-    void Resize(VkDeviceSize instanceCount);
+    void Resize(VkDeviceSize size);
 
     operator bool() const
     {
         return m_Data != nullptr;
     }
 
-    VkDeviceSize GetInstanceCount() const
-    {
-        return m_InstanceCount;
-    }
-    VkDeviceSize GetInstanceSize() const
-    {
-        return m_InstanceSize;
-    }
     VkDeviceSize GetSize() const
     {
         return m_Size;
@@ -69,8 +41,6 @@ class HostBuffer
 
   private:
     void *m_Data = nullptr;
-    VkDeviceSize m_InstanceCount = 0;
-    VkDeviceSize m_InstanceSize = 0;
     VkDeviceSize m_Size = 0;
     VkDeviceSize m_Alignment = 0;
 };

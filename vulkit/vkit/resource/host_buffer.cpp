@@ -4,9 +4,7 @@
 
 namespace VKit
 {
-HostBuffer::HostBuffer(const VkDeviceSize instanceCount, const VkDeviceSize instanceSize, const VkDeviceSize alignment)
-    : m_InstanceCount(instanceCount), m_InstanceSize(instanceSize), m_Size(instanceCount * instanceSize),
-      m_Alignment(alignment)
+HostBuffer::HostBuffer(const VkDeviceSize size, const VkDeviceSize alignment) : m_Size(size), m_Alignment(alignment)
 {
     m_Data = TKit::AllocateAligned(m_Size, alignment);
 }
@@ -23,24 +21,13 @@ void HostBuffer::Write(const void *data, const VkBufferCopy &copy)
     TKit::ForwardCopy(dst, src, copy.size);
 }
 
-void HostBuffer::WriteAt(const u32 index, const void *pdata)
+void HostBuffer::Resize(const VkDeviceSize size)
 {
-    TKIT_CHECK_OUT_OF_BOUNDS(index, m_InstanceCount, "[VULKIT][HOST-BUFFER] ");
-
-    const VkDeviceSize size = m_InstanceSize * index;
-    std::byte *data = scast<std::byte *>(m_Data) + size;
-    TKit::ForwardCopy(data, pdata, m_InstanceSize);
-}
-
-void HostBuffer::Resize(const VkDeviceSize instanceCount)
-{
-    const VkDeviceSize size = instanceCount * m_InstanceSize;
     void *data = TKit::AllocateAligned(size, m_Alignment);
     TKit::ForwardCopy(data, m_Data, m_Size);
     TKit::DeallocateAligned(m_Data);
     m_Data = data;
     m_Size = size;
-    m_InstanceCount = instanceCount;
 }
 
 void HostBuffer::Destroy()

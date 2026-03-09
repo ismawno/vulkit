@@ -5,11 +5,6 @@
 
 namespace VKit
 {
-static VkDeviceSize alignedSize(const VkDeviceSize size, const VkDeviceSize alignment)
-{
-    return (size + alignment - 1) & ~(alignment - 1);
-}
-
 DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, DeviceBufferFlags flags)
     : m_Device(device), m_Allocator(allocator)
 {
@@ -64,10 +59,7 @@ Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
 {
     Info info;
     info.Allocator = m_Allocator;
-    info.InstanceSize = m_InstanceSize;
-    info.InstanceCount = m_InstanceCount;
-    info.InstanceAlignedSize = alignedSize(m_InstanceSize, m_PerInstanceMinimumAlignment);
-    info.Size = info.InstanceAlignedSize * m_InstanceCount;
+    info.Size = m_Size;
     info.Flags = m_Flags;
 
     VkBufferCreateInfo bufferInfo = m_BufferInfo;
@@ -100,14 +92,7 @@ Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
 
 DeviceBuffer::Builder &DeviceBuffer::Builder::SetSize(const VkDeviceSize size)
 {
-    m_InstanceCount = size;
-    m_InstanceSize = 1;
-    return *this;
-}
-DeviceBuffer::Builder &DeviceBuffer::Builder::SetSize(const VkDeviceSize instanceCount, const VkDeviceSize instanceSize)
-{
-    m_InstanceCount = instanceCount;
-    m_InstanceSize = instanceSize;
+    m_Size = size;
     return *this;
 }
 DeviceBuffer::Builder &DeviceBuffer::Builder::SetUsage(const VkBufferUsageFlags flags)
@@ -123,11 +108,6 @@ DeviceBuffer::Builder &DeviceBuffer::Builder::SetSharingMode(const VkSharingMode
 DeviceBuffer::Builder &DeviceBuffer::Builder::SetAllocationCreateInfo(const VmaAllocationCreateInfo &info)
 {
     m_AllocationInfo = info;
-    return *this;
-}
-DeviceBuffer::Builder &DeviceBuffer::Builder::SetPerInstanceMinimumAlignment(const VkDeviceSize alignment)
-{
-    m_PerInstanceMinimumAlignment = alignment;
     return *this;
 }
 DeviceBuffer::Builder &DeviceBuffer::Builder::AddFamilyIndex(const u32 index)
@@ -180,15 +160,6 @@ void DeviceBuffer::Write(const void *data, const VkBufferCopy &copy)
     std::byte *dst = scast<std::byte *>(m_Data) + copy.dstOffset;
     const std::byte *src = scast<const std::byte *>(data) + copy.srcOffset;
     TKit::ForwardCopy(dst, src, copy.size);
-}
-
-void DeviceBuffer::WriteAt(const u32 index, const void *pdata)
-{
-    TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-
-    const VkDeviceSize size = m_Info.InstanceAlignedSize * index;
-    std::byte *data = scast<std::byte *>(m_Data) + size;
-    TKit::ForwardCopy(data, pdata, m_Info.InstanceSize);
 }
 
 void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer commandBuffer, const DeviceBuffer &source,
@@ -281,22 +252,12 @@ Result<> DeviceBuffer::Flush(const VkDeviceSize size, const VkDeviceSize offset)
     VKIT_RETURN_IF_FAILED(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, offset, size), Result<>);
     return Result<>::Ok();
 }
-Result<> DeviceBuffer::FlushAt(const u32 index)
-{
-    TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return Flush(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
-}
 
 Result<> DeviceBuffer::Invalidate(const VkDeviceSize size, const VkDeviceSize offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot invalidate unmapped buffer");
     VKIT_RETURN_IF_FAILED(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, offset, size), Result<>);
     return Result<>::Ok();
-}
-Result<> DeviceBuffer::InvalidateAt(const u32 index)
-{
-    TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return Invalidate(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
 void DeviceBuffer::BindAsVertexBuffer(const VkCommandBuffer commandBuffer, const VkDeviceSize offset) const
@@ -319,11 +280,6 @@ VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfo(const VkDeviceSize siz
     info.offset = offset;
     info.range = size;
     return info;
-}
-VkDescriptorBufferInfo DeviceBuffer::CreateDescriptorInfoAt(const u32 index) const
-{
-    TKIT_CHECK_OUT_OF_BOUNDS(index, m_Info.InstanceCount, "[VULKIT][DEVICE-BUFFER] ");
-    return CreateDescriptorInfo(m_Info.InstanceSize, m_Info.InstanceAlignedSize * index);
 }
 
 } // namespace VKit
