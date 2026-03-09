@@ -15,6 +15,11 @@ class HostBuffer
     HostBuffer() = default;
     HostBuffer(VkDeviceSize size, VkDeviceSize alignment = alignof(std::max_align_t));
 
+    template <typename T> static HostBuffer Create(const u32 instanceCount)
+    {
+        return HostBuffer(instanceCount * sizeof(T), alignof(T));
+    }
+
     void Write(const void *data, const VkBufferCopy &copy);
     void Destroy();
 
