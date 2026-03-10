@@ -528,8 +528,8 @@ Result<Instance> Instance::Builder::Build() const
     VkInstance vkinstance;
     VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance), Result<Instance>);
 
-    TKit::TierAllocator *alloc = TKit::GetTier();
-    Vulkan::InstanceTable *table = alloc->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
+    TKit::TierAllocator *tier = TKit::GetTier();
+    Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
 
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
@@ -541,7 +541,7 @@ Result<Instance> Instance::Builder::Build() const
         const auto cleanup = [&] {
             table->DestroyDebugUtilsMessengerEXT(vkinstance, debugMessenger, m_AllocationCallbacks);
             table->DestroyInstance(vkinstance, m_AllocationCallbacks);
-            alloc->Destroy(table);
+            tier->Destroy(table);
         };
         VKIT_RETURN_IF_FAILED(
             table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, m_AllocationCallbacks, &debugMessenger),

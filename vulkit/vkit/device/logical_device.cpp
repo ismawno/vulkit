@@ -151,9 +151,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device),
         Result<LogicalDevice>);
 
-    TKit::TierAllocator *alloc = TKit::GetTier();
+    TKit::TierAllocator *tier = TKit::GetTier();
     Vulkan::DeviceTable *table =
-        alloc->Create<Vulkan::DeviceTable>(Vulkan::DeviceTable::Create(device, *m_Instance->GetInfo().Table));
+        tier->Create<Vulkan::DeviceTable>(Vulkan::DeviceTable::Create(device, *m_Instance->GetInfo().Table));
 
     Info info{};
     info.Instance = m_Instance;
@@ -167,12 +167,12 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
                 return info.QueuesPerType[i][index];
         VkQueue q;
         table->GetDeviceQueue(pdevice, family, index, &q);
-        return info.Queues.Append(alloc->Create<Queue>(pdevice, q, family));
+        return info.Queues.Append(tier->Create<Queue>(pdevice, q, family));
     };
 
     const auto cleanup = [&] {
         for (VKit::Queue *queue : info.Queues)
-            alloc->Destroy(queue);
+            tier->Destroy(queue);
         table->DestroyDevice(device, instanceInfo.AllocationCallbacks);
     };
 
@@ -195,11 +195,11 @@ void LogicalDevice::Destroy()
 {
     if (m_Device)
     {
-        TKit::TierAllocator *alloc = TKit::GetTier();
+        TKit::TierAllocator *tier = TKit::GetTier();
         for (VKit::Queue *q : m_Info.Queues)
         {
             q->DestroyTimeline();
-            alloc->Destroy(q);
+            tier->Destroy(q);
         }
         m_Info.Table->DestroyDevice(m_Device, m_Info.Instance->GetInfo().AllocationCallbacks);
         TKit::GetTier()->Destroy(m_Info.Table);
