@@ -225,7 +225,7 @@ class DeviceImage
     ProxyDevice m_Device{};
     VkImage m_Image = VK_NULL_HANDLE;
     VkImageView m_ImageView = VK_NULL_HANDLE;
-    VkImageLayout m_Layout;
+    VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
     Info m_Info;
 };
 } // namespace VKit
