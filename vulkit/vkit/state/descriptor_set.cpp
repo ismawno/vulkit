@@ -1,6 +1,5 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/descriptor_set.hpp"
-#include "vkit/resource/device_buffer.hpp"
 
 namespace VKit
 {
@@ -17,7 +16,7 @@ void DescriptorSet::Bind(const ProxyDevice &device, const VkCommandBuffer comman
                                         dynamicOffsets.GetSize(), dynamicOffsets.GetData());
 }
 
-void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBufferInfo *bufferInfo,
+void DescriptorSet::Writer::WriteBuffer(const u32 binding, TKit::Span<const VkDescriptorBufferInfo> bufferInfo,
                                         const u32 dstElement)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
@@ -26,16 +25,15 @@ void DescriptorSet::Writer::WriteBuffer(const u32 binding, const VkDescriptorBuf
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
     write.dstBinding = binding;
-    write.pBufferInfo = bufferInfo;
+    write.pBufferInfo = bufferInfo.GetData();
     write.dstArrayElement = dstElement;
-
-    // I am not sure if this is correct!!
-    write.descriptorCount = description.descriptorCount;
+    write.descriptorCount = bufferInfo.GetSize();
 
     m_Writes.Append(write);
 }
 
-void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImageInfo *imageInfo, const u32 dstElement)
+void DescriptorSet::Writer::WriteImage(const u32 binding, TKit::Span<const VkDescriptorImageInfo> imageInfo,
+                                       const u32 dstElement)
 {
     const VkDescriptorSetLayoutBinding &description = m_Layout->GetBindings()[binding];
 
@@ -43,11 +41,9 @@ void DescriptorSet::Writer::WriteImage(const u32 binding, const VkDescriptorImag
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = description.descriptorType;
     write.dstBinding = binding;
-    write.pImageInfo = imageInfo;
+    write.pImageInfo = imageInfo.GetData();
     write.dstArrayElement = dstElement;
-
-    // I am not sure if this is correct!!
-    write.descriptorCount = description.descriptorCount;
+    write.descriptorCount = imageInfo.GetSize();
 
     m_Writes.Append(write);
 }

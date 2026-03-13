@@ -22,8 +22,8 @@ class DescriptorSet
         {
         }
 
-        void WriteBuffer(u32 binding, const VkDescriptorBufferInfo *bufferInfo, u32 dstElement = 0);
-        void WriteImage(u32 binding, const VkDescriptorImageInfo *imageInfo, u32 dstElement = 0);
+        void WriteBuffer(u32 binding, TKit::Span<const VkDescriptorBufferInfo> bufferInfo, u32 dstElement = 0);
+        void WriteImage(u32 binding, TKit::Span<const VkDescriptorImageInfo> imageInfo, u32 dstElement = 0);
         void Overwrite(const VkDescriptorSet set);
 
       private:
