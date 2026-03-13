@@ -185,11 +185,11 @@ Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &in
     return m_ImageView;
 }
 
-VkDescriptorImageInfo DeviceImage::CreateDescriptorInfo(const VkSampler sampler) const
+VkDescriptorImageInfo DeviceImage::CreateDescriptorInfo(const VkImageLayout layout, const VkSampler sampler) const
 {
     TKIT_ASSERT(m_ImageView, "[VULKIT][DEVICE-IMAGE] An image view is required to create a descriptor info");
     VkDescriptorImageInfo info{};
-    info.imageLayout = m_Layout;
+    info.imageLayout = layout;
     info.imageView = m_ImageView;
     info.sampler = sampler;
 
