@@ -52,6 +52,8 @@ DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator all
         m_BufferInfo.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
     if (flags & DeviceBufferFlag_Storage)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    if (flags & DeviceBufferFlag_Indirect)
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
     m_Flags = flags;
 }
 

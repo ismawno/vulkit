@@ -24,8 +24,9 @@ enum DeviceBufferFlagBits : DeviceBufferFlags
     DeviceBufferFlag_Vertex = 1 << 5,
     DeviceBufferFlag_Index = 1 << 6,
     DeviceBufferFlag_Storage = 1 << 7,
-    DeviceBufferFlag_HostMapped = 1 << 8,
-    DeviceBufferFlag_HostRandomAccess = 1 << 9,
+    DeviceBufferFlag_Indirect = 1 << 8,
+    DeviceBufferFlag_HostMapped = 1 << 9,
+    DeviceBufferFlag_HostRandomAccess = 1 << 10,
 };
 
 class DeviceBuffer
