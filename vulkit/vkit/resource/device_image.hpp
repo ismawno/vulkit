@@ -216,6 +216,10 @@ class DeviceImage
     {
         return m_Layout;
     }
+    void SetLayout(const VkImageLayout layout)
+    {
+        m_Layout = layout;
+    }
     const Info &GetInfo() const
     {
         return m_Info;
