@@ -62,6 +62,10 @@ class Queue
     {
         return m_TimelineCounter;
     }
+    u64 GetTimelineSubmissions()
+    {
+        return m_TimelineSubmissions;
+    }
 
     u32 GetFamily() const
     {
