@@ -62,7 +62,7 @@ class Queue
     {
         return m_TimelineCounter;
     }
-    u64 GetTimelineSubmissions()
+    u64 GetTimelineSubmissions() const
     {
         return m_TimelineSubmissions;
     }
