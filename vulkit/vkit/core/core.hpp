@@ -7,7 +7,6 @@
 
 namespace VKit
 {
-using Flags = u8;
 struct Allocation
 {
     TKit::ArenaAllocator *Arena = nullptr;
@@ -20,8 +19,14 @@ struct Specs
     Allocation Allocators{};
 };
 
+using TerminateFlags = u8;
+enum TerminateFlagBits : TerminateFlags
+{
+    TerminateFlag_ResetArenas = 1 << 0,
+};
+
 VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
-void Terminate();
+void Terminate(TerminateFlags flags = 0);
 
 } // namespace VKit
 
