@@ -28,10 +28,6 @@ enum TerminationFlagBit : TerminationFlags
 VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
 void Terminate(TerminationFlags flags = 0);
 
-} // namespace VKit
-
-namespace VKit::Core
-{
 bool IsExtensionSupported(const char *name);
 bool IsLayerSupported(const char *name);
 
@@ -44,4 +40,4 @@ const VkLayerProperties &GetLayerByIndex(u32 index);
 u32 GetExtensionCount();
 u32 GetLayerCount();
 
-} // namespace VKit::Core
+} // namespace VKit

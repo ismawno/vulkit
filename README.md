@@ -112,7 +112,7 @@ The [render_pass.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/st
 ```cpp
 const auto result =
     VKit::RenderPass::Builder(&device, imageCount)
-        .SetAllocator(Core::GetVulkanAllocator())
+        .SetAllocator(GetVulkanAllocator())
         // Color attachment 0
         .BeginAttachment(VKit::Attachment::Flag_Color)
         .RequestFormat(info.SurfaceFormat.format)

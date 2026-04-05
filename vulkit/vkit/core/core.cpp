@@ -4,7 +4,7 @@
 #include "vkit/core/alias.hpp"
 #include "tkit/container/stack_array.hpp"
 
-namespace VKit::Core
+namespace VKit
 {
 struct Capabilities
 {
@@ -63,7 +63,7 @@ u32 GetLayerCount()
     return s_Capabilities->AvailableLayers.GetSize();
 }
 
-} // namespace VKit::Core
+} // namespace VKit
 
 #if defined(TKIT_OS_APPLE) || defined(TKIT_OS_LINUX)
 #    include <dlfcn.h>
@@ -75,8 +75,6 @@ u32 GetLayerCount()
 
 namespace VKit
 {
-using namespace Core;
-
 static void *s_Library = nullptr;
 static void attempt(const char *loaderPath)
 {

@@ -172,7 +172,7 @@ TEST_CASE("Initialize - Basic Initialization", "[core][init]")
         REQUIRE(result);
 
         // Should have at least some extensions available
-        CHECK_FALSE(VKit::Core::GetExtensionCount() == 0);
+        CHECK_FALSE(VKit::GetExtensionCount() == 0);
 
         VKit::Terminate();
     }
@@ -204,7 +204,7 @@ TEST_CASE("Terminate", "[core][terminate]")
     }
 }
 
-TEST_CASE("Core::IsExtensionSupported", "[core][extensions]")
+TEST_CASE("IsExtensionSupported", "[core][extensions]")
 {
     CoreGuard guard;
     REQUIRE(guard.IsValid());
@@ -212,78 +212,78 @@ TEST_CASE("Core::IsExtensionSupported", "[core][extensions]")
     SECTION("VK_KHR_surface is commonly available")
     {
         // This extension is available on most systems with display capability
-        bool supported = VKit::Core::IsExtensionSupported("VK_KHR_surface");
+        bool supported = VKit::IsExtensionSupported("VK_KHR_surface");
         // May or may not be supported depending on headless setup
         INFO("VK_KHR_surface supported: " << supported);
     }
 
     SECTION("Non-existent extension returns false")
     {
-        bool supported = VKit::Core::IsExtensionSupported("VK_FAKE_nonexistent_extension_12345");
+        bool supported = VKit::IsExtensionSupported("VK_FAKE_nonexistent_extension_12345");
         CHECK_FALSE(supported);
     }
 
     SECTION("Empty string returns false")
     {
-        bool supported = VKit::Core::IsExtensionSupported("");
+        bool supported = VKit::IsExtensionSupported("");
         CHECK_FALSE(supported);
     }
 
     SECTION("GetExtension returns nullptr for unsupported")
     {
-        const VkExtensionProperties *ext = VKit::Core::GetExtensionByName("VK_FAKE_nonexistent_extension");
+        const VkExtensionProperties *ext = VKit::GetExtensionByName("VK_FAKE_nonexistent_extension");
         CHECK(ext == nullptr);
     }
 
     SECTION("GetExtension returns valid pointer for supported extension")
     {
         // Find any available extension
-        if (VKit::Core::GetExtensionCount() != 0)
+        if (VKit::GetExtensionCount() != 0)
         {
-            const char *extName = VKit::Core::GetExtensionByIndex(0).extensionName;
-            const VkExtensionProperties *ext = VKit::Core::GetExtensionByName(extName);
+            const char *extName = VKit::GetExtensionByIndex(0).extensionName;
+            const VkExtensionProperties *ext = VKit::GetExtensionByName(extName);
             REQUIRE(ext != nullptr);
             CHECK(std::strcmp(ext->extensionName, extName) == 0);
         }
     }
 }
 
-TEST_CASE("Core::IsLayerSupported", "[core][layers]")
+TEST_CASE("IsLayerSupported", "[core][layers]")
 {
     CoreGuard guard;
     REQUIRE(guard.IsValid());
 
     SECTION("Non-existent layer returns false")
     {
-        bool supported = VKit::Core::IsLayerSupported("VK_LAYER_FAKE_nonexistent_12345");
+        bool supported = VKit::IsLayerSupported("VK_LAYER_FAKE_nonexistent_12345");
         CHECK_FALSE(supported);
     }
 
     SECTION("Empty string returns false")
     {
-        bool supported = VKit::Core::IsLayerSupported("");
+        bool supported = VKit::IsLayerSupported("");
         CHECK_FALSE(supported);
     }
 
     SECTION("VK_LAYER_KHRONOS_validation may be available")
     {
-        bool supported = VKit::Core::IsLayerSupported("VK_LAYER_KHRONOS_validation");
+        bool supported = VKit::IsLayerSupported("VK_LAYER_KHRONOS_validation");
         INFO("VK_LAYER_KHRONOS_validation supported: " << supported);
         // Just logging - availability depends on SDK installation
     }
 
     SECTION("GetLayer returns nullptr for unsupported")
     {
-        const VkLayerProperties *layer = VKit::Core::GetLayerByName("VK_LAYER_FAKE_nonexistent");
+        const VkLayerProperties *layer = VKit::GetLayerByName("VK_LAYER_FAKE_nonexistent");
         CHECK(layer == nullptr);
     }
 
     SECTION("GetLayer returns valid pointer for supported layer")
     {
-        if (VKit::Core::GetLayerCount() != 0)
+        if (VKit::GetLayerCount() != 0)
         {
-            const char *layerName = VKit::Core::GetLayerByIndex(0).layerName;
-            const VkLayerProperties *layer = VKit::Core::GetLayerByName(layerName);
+            const char *layerName = VKit::GetLayerByIndex(0).layerName;
+            const VkLayerProperties *layer = VKit::GetLayerByName(layerName);
             REQUIRE(layer != nullptr);
             CHECK(std::strcmp(layer->layerName, layerName) == 0);
         }
@@ -412,12 +412,12 @@ TEST_CASE("Instance::Builder - Extension Handling", "[instance][builder][extensi
     SECTION("Request available extension")
     {
         // Find an available extension to request
-        if (VKit::Core::GetExtensionCount() == 0)
+        if (VKit::GetExtensionCount() == 0)
         {
             SKIP("No extensions available for testing");
         }
 
-        const char *extName = VKit::Core::GetExtensionByIndex(0).extensionName;
+        const char *extName = VKit::GetExtensionByIndex(0).extensionName;
         const auto result = VKit::Instance::Builder()
                                 .SetApplicationName("Extension Test")
                                 .RequestExtension(extName)

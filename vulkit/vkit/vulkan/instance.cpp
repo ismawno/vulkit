@@ -282,11 +282,11 @@ static bool contains(const TKit::Span<const char *const> elements, const char *e
 
 Instance::Builder::Builder()
 {
-    m_RequiredExtensions.Reserve(Core::GetExtensionCount());
-    m_RequestedExtensions.Reserve(Core::GetExtensionCount());
+    m_RequiredExtensions.Reserve(GetExtensionCount());
+    m_RequestedExtensions.Reserve(GetExtensionCount());
 
-    m_RequiredLayers.Reserve(Core::GetLayerCount());
-    m_RequestedLayers.Reserve(Core::GetLayerCount());
+    m_RequiredLayers.Reserve(GetLayerCount());
+    m_RequestedLayers.Reserve(GetLayerCount());
 }
 
 Result<Instance> Instance::Builder::Build() const
@@ -327,7 +327,7 @@ Result<Instance> Instance::Builder::Build() const
     TKit::StackArray<const char *> extensions;
     extensions.Reserve(m_RequiredExtensions.GetCapacity());
     for (const char *extension : m_RequiredExtensions)
-        if (!Core::IsExtensionSupported(extension))
+        if (!IsExtensionSupported(extension))
             return Result<Instance>::Error(
                 Error_MissingExtension,
                 TKit::Format("[VULKIT][INSTANCE] The required extension '{}' is not suported", extension));
@@ -336,7 +336,7 @@ Result<Instance> Instance::Builder::Build() const
 
     for (const char *extension : m_RequestedExtensions)
     {
-        const bool supported = Core::IsExtensionSupported(extension);
+        const bool supported = IsExtensionSupported(extension);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested extension '{}' is not suported", extension);
         if (supported && !contains(extensions, extension))
             extensions.Append(extension);
@@ -345,7 +345,7 @@ Result<Instance> Instance::Builder::Build() const
     TKit::StackArray<const char *> layers;
     layers.Reserve(m_RequiredLayers.GetCapacity());
     for (const char *layer : m_RequiredLayers)
-        if (!Core::IsLayerSupported(layer))
+        if (!IsLayerSupported(layer))
             return Result<Instance>::Error(
                 Error_MissingLayer, TKit::Format("[VULKIT][INSTANCE] The required layer '{}' is not suported", layer));
         else if (!contains(layers, layer))
@@ -353,7 +353,7 @@ Result<Instance> Instance::Builder::Build() const
 
     for (const char *layer : m_RequestedLayers)
     {
-        const bool supported = Core::IsLayerSupported(layer);
+        const bool supported = IsLayerSupported(layer);
         TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested layer '{}' is not suported", layer);
         if (supported && !contains(layers, layer))
             layers.Append(layer);
@@ -362,7 +362,7 @@ Result<Instance> Instance::Builder::Build() const
     if (!m_Headless)
     {
         const auto checkWindowingSupport = [&extensions](const char *extension) -> bool {
-            if (!Core::IsExtensionSupported(extension))
+            if (!IsExtensionSupported(extension))
                 return false;
             if (!contains(extensions, extension))
                 extensions.Append(extension);
