@@ -13,7 +13,7 @@ class CommandPool;
 class DeviceBuffer;
 
 using DeviceImageFlags = u16;
-enum DeviceImageFlagBits : DeviceImageFlags
+enum DeviceImageFlagBit : DeviceImageFlags
 {
     DeviceImageFlag_Color = 1 << 0,
     DeviceImageFlag_Depth = 1 << 1,

@@ -20,7 +20,7 @@ struct Specs
 };
 
 using TerminationFlags = u8;
-enum TerminationFlagBits : TerminationFlags
+enum TerminationFlagBit : TerminationFlags
 {
     TerminationFlag_ResetArenas = 1 << 0,
 };

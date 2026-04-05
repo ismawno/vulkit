@@ -12,7 +12,7 @@
 namespace VKit
 {
 using StencilOperationFlags = u8;
-enum StencilOperationFlagBits : StencilOperationFlags
+enum StencilOperationFlagBit : StencilOperationFlags
 {
     StencilOperationFlag_Front = 1 << 0,
     StencilOperationFlag_Back = 1 << 1,

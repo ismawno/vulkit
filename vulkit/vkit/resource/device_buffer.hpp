@@ -14,7 +14,7 @@ class CommandPool;
 class DeviceImage;
 
 using DeviceBufferFlags = u16;
-enum DeviceBufferFlagBits : DeviceBufferFlags
+enum DeviceBufferFlagBit : DeviceBufferFlags
 {
     DeviceBufferFlag_DeviceLocal = 1 << 0,
     DeviceBufferFlag_HostVisible = 1 << 1,

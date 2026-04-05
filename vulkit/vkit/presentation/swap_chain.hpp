@@ -15,14 +15,14 @@
 namespace VKit
 {
 using SwapChainBuilderFlags = u8;
-enum SwapChainBuilderFlagBits : SwapChainBuilderFlags
+enum SwapChainBuilderFlagBit : SwapChainBuilderFlags
 {
     SwapChainBuilderFlag_Clipped = 1 << 0,
     SwapChainBuilderFlag_CreateImageViews = 1 << 1
 };
 
 using SwapChainFlags = u8;
-enum SwapChainFlagBits : SwapChainFlags
+enum SwapChainFlagBit : SwapChainFlags
 {
     SwapChainFlag_Clipped = 1 << 0,
     SwapChainFlag_HasImageViews = 1 << 1

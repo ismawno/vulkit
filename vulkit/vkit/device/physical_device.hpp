@@ -22,7 +22,7 @@ enum DeviceType : u32
 };
 
 using DeviceSelectorFlags = u16;
-enum DeviceSelectorFlagBits : DeviceSelectorFlags
+enum DeviceSelectorFlagBit : DeviceSelectorFlags
 {
     DeviceSelectorFlag_AnyType = 1 << 0,
     DeviceSelectorFlag_RequireDedicatedComputeQueue = 1 << 1,
@@ -37,7 +37,7 @@ enum DeviceSelectorFlagBits : DeviceSelectorFlags
 };
 
 using DeviceFlags = u16;
-enum DeviceFlagBits : DeviceFlags
+enum DeviceFlagBit : DeviceFlags
 {
     DeviceFlag_Optimal = 1 << 0,
     DeviceFlag_HasDedicatedComputeQueue = 1 << 1,
