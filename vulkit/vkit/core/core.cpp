@@ -212,7 +212,7 @@ Result<> Initialize(const Specs &specs)
 
     return Result<>::Ok();
 }
-void Terminate(const TerminateFlags flags)
+void Terminate(const TerminationFlags flags)
 {
     if (!s_Library)
         return;
@@ -223,7 +223,7 @@ void Terminate(const TerminateFlags flags)
 #endif
     s_Library = nullptr;
     s_Capabilities.Destruct();
-    if (flags & TerminateFlag_ResetArenas)
+    if (flags & TerminationFlag_ResetArenas)
         TKit::GetArena()->Reset();
     if (s_PushedAlloc & 4)
         TKit::PopTier();

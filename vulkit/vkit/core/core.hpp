@@ -19,14 +19,14 @@ struct Specs
     Allocation Allocators{};
 };
 
-using TerminateFlags = u8;
-enum TerminateFlagBits : TerminateFlags
+using TerminationFlags = u8;
+enum TerminationFlagBits : TerminationFlags
 {
-    TerminateFlag_ResetArenas = 1 << 0,
+    TerminationFlag_ResetArenas = 1 << 0,
 };
 
 VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});
-void Terminate(TerminateFlags flags = 0);
+void Terminate(TerminationFlags flags = 0);
 
 } // namespace VKit
 
