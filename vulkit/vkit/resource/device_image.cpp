@@ -107,6 +107,8 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
         m_ImageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     if (m_Flags & DeviceImageFlag_Sampled)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+    if (m_Flags & DeviceImageFlag_Storage)
+        m_ImageInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
     if (m_Flags & DeviceImageFlag_Source)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     if (m_Flags & DeviceImageFlag_Destination)
