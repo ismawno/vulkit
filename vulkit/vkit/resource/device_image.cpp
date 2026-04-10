@@ -181,10 +181,11 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     return img;
 }
 
-Result<VkImageView> DeviceImage::AddImageView()
+Result<VkImageView> DeviceImage::AddImageView(const VkImageViewType type)
 {
-    const VkImageViewCreateInfo info = createDefaultImageViewInfo(
-        m_Image, getImageViewType(m_Info.Type), createDefaultRange(m_Info.MipLevels, m_Info.ArrayLayers, m_Info.Flags));
+    const VkImageViewCreateInfo info =
+        createDefaultImageViewInfo(m_Image, type == VK_IMAGE_VIEW_TYPE_MAX_ENUM ? getImageViewType(m_Info.Type) : type,
+                                   createDefaultRange(m_Info.MipLevels, m_Info.ArrayLayers, m_Info.Flags));
     VkImageView &view = m_Views.Append();
     VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view),
                           Result<VkImageView>);
@@ -577,10 +578,11 @@ DeviceImage::Builder &DeviceImage::Builder::SetNext(const void *next)
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::AddImageView()
+DeviceImage::Builder &DeviceImage::Builder::AddImageView(const VkImageViewType type)
 {
     VkImageViewCreateInfo &info = m_ViewInfos.Append(createDefaultImageViewInfo(
-        VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType), createDefaultRange(m_ImageInfo, m_Flags)));
+        VK_NULL_HANDLE, type == VK_IMAGE_VIEW_TYPE_MAX_ENUM ? getImageViewType(m_ImageInfo.imageType) : type,
+        createDefaultRange(m_ImageInfo, m_Flags)));
     info.format = m_ImageInfo.format;
 
     return *this;

@@ -70,7 +70,7 @@ class DeviceImage
         const VkImageCreateInfo &GetImageInfo() const;
         const VkImageViewCreateInfo &GetImageViewInfo() const;
 
-        Builder &AddImageView();
+        Builder &AddImageView(VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM); // defaults to the image one
         Builder &AddImageView(const VkImageViewCreateInfo &info);
         Builder &AddImageView(const VkImageSubresourceRange &range);
 
@@ -135,7 +135,8 @@ class DeviceImage
     {
         m_Views.Append(view);
     }
-    VKIT_NO_DISCARD Result<VkImageView> AddImageView();
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView(
+        VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM); // defaults to the image one
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageSubresourceRange &range);
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageViewCreateInfo &info);
 
