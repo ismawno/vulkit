@@ -185,30 +185,34 @@ Result<VkImageView> DeviceImage::AddImageView()
 {
     const VkImageViewCreateInfo info = createDefaultImageViewInfo(
         m_Image, getImageViewType(m_Info.Type), createDefaultRange(m_Info.MipLevels, m_Info.ArrayLayers, m_Info.Flags));
-    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
+    VkImageView &view = m_Views.Append();
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view),
                           Result<VkImageView>);
-    return m_ImageView;
+    return view;
 }
 Result<VkImageView> DeviceImage::AddImageView(const VkImageSubresourceRange &range)
 {
     const VkImageViewCreateInfo info = createDefaultImageViewInfo(m_Image, getImageViewType(m_Info.Type), range);
-    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
+    VkImageView &view = m_Views.Append();
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view),
                           Result<VkImageView>);
-    return m_ImageView;
+    return view;
 }
 Result<VkImageView> DeviceImage::AddImageView(const VkImageViewCreateInfo &info)
 {
-    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
+    VkImageView &view = m_Views.Append();
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view),
                           Result<VkImageView>);
-    return m_ImageView;
+    return view;
 }
 
-VkDescriptorImageInfo DeviceImage::CreateDescriptorInfo(const VkImageLayout layout, const VkSampler sampler) const
+VkDescriptorImageInfo DeviceImage::CreateDescriptorInfo(const VkImageLayout layout, const u32 viewIndex,
+                                                        const VkSampler sampler) const
 {
-    TKIT_ASSERT(m_ImageView, "[VULKIT][DEVICE-IMAGE] An image view is required to create a descriptor info");
+    TKIT_ASSERT(!m_Views.IsEmpty(), "[VULKIT][DEVICE-IMAGE] An image view is required to create a descriptor info");
     VkDescriptorImageInfo info{};
     info.imageLayout = layout;
-    info.imageView = m_ImageView;
+    info.imageView = m_Views[viewIndex];
     info.sampler = sampler;
 
     return info;
@@ -486,17 +490,17 @@ VkDeviceSize DeviceImage::ComputeSize(const VkFormat format, const u32 pwidth, c
 
 void DeviceImage::Destroy()
 {
-    DestroyImageView();
+    DestroyImageViews();
     if (m_Image && m_Info.Allocation)
         vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
     m_Info = {};
     m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 }
-void DeviceImage::DestroyImageView()
+void DeviceImage::DestroyImageViews()
 {
-    if (m_ImageView)
-        m_Device.Table->DestroyImageView(m_Device, m_ImageView, m_Device.AllocationCallbacks);
-    m_ImageView = VK_NULL_HANDLE;
+    for (const VkImageView view : m_Views)
+        m_Device.Table->DestroyImageView(m_Device, view, m_Device.AllocationCallbacks);
+    m_Views.Clear();
 }
 DeviceImage::Builder &DeviceImage::Builder::SetImageType(const VkImageType type)
 {

@@ -126,17 +126,21 @@ class DeviceImage
                               DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
 
     DeviceImage() = default;
-    DeviceImage(const ProxyDevice &device, const VkImage image, const VkImageLayout layout, const Info &info,
-                const VkImageView imageView = VK_NULL_HANDLE)
-        : m_Device(device), m_Image(image), m_ImageView(imageView), m_Layout(layout), m_Info(info)
+    DeviceImage(const ProxyDevice &device, const VkImage image, const VkImageLayout layout, const Info &info)
+        : m_Device(device), m_Image(image), m_Layout(layout), m_Info(info)
     {
     }
 
+    void AddImageView(VkImageView view)
+    {
+        m_Views.Append(view);
+    }
     VKIT_NO_DISCARD Result<VkImageView> AddImageView();
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageSubresourceRange &range);
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageViewCreateInfo &info);
 
-    VkDescriptorImageInfo CreateDescriptorInfo(VkImageLayout layout, VkSampler sampler = VK_NULL_HANDLE) const;
+    VkDescriptorImageInfo CreateDescriptorInfo(VkImageLayout layout, u32 viewIndex = 0,
+                                               VkSampler sampler = VK_NULL_HANDLE) const;
 
     VkImageMemoryBarrier CreateTransitionLayoutBarrier(VkImageLayout layout, const TransitionInfo &info,
                                                        const void *next = nullptr) const;
@@ -176,7 +180,7 @@ class DeviceImage
     static VkDeviceSize GetBytesPerPixel(VkFormat format);
 
     void Destroy();
-    void DestroyImageView();
+    void DestroyImageViews();
 
     operator VkImage() const
     {
@@ -191,17 +195,17 @@ class DeviceImage
 
     VKIT_SET_DEBUG_NAME(m_Image, VK_OBJECT_TYPE_IMAGE)
 #ifdef VK_EXT_debug_utils
-    VKIT_NO_DISCARD Result<> SetImageViewName(const char *name)
+    VKIT_NO_DISCARD Result<> SetViewNames(const char *name)
     {
-        TKIT_ASSERT(m_ImageView, "[ONYX][IMAGE] The image must have an image view to be able to set a name");
-        return m_Device.SetObjectName(m_ImageView, VK_OBJECT_TYPE_IMAGE_VIEW, name);
+        for (u32 i = 0; i < m_Views.GetSize(); ++i)
+        {
+            TKIT_RETURN_IF_FAILED(
+                m_Device.SetObjectName(m_Views[i], VK_OBJECT_TYPE_IMAGE_VIEW, TKit::Format("{}-{}", i, name).c_str()));
+        }
+        return Result<>::Ok();
     }
 #endif
 
-    bool HasImageView() const
-    {
-        return m_ImageView != VK_NULL_HANDLE;
-    }
     const ProxyDevice &GetDevice() const
     {
         return m_Device;
@@ -210,9 +214,9 @@ class DeviceImage
     {
         return m_Image;
     }
-    VkImageView GetImageView() const
+    const TKit::TierArray<VkImageView> &GetViews() const
     {
-        return m_ImageView;
+        return m_Views;
     }
     VkImageLayout GetLayout() const
     {
@@ -230,7 +234,7 @@ class DeviceImage
   private:
     ProxyDevice m_Device{};
     VkImage m_Image = VK_NULL_HANDLE;
-    VkImageView m_ImageView = VK_NULL_HANDLE;
+    TKit::TierArray<VkImageView> m_Views{};
     VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
     Info m_Info;
 };

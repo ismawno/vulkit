@@ -157,7 +157,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     const auto cleanup = [proxy, swapChain, &checkFlags, &finalImages] {
         if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
             for (DeviceImage &image : finalImages)
-                image.DestroyImageView();
+                image.DestroyImageViews();
 
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
     };
@@ -196,7 +196,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
             VKIT_RETURN_IF_FAILED(proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &view),
                                   Result<SwapChain>, cleanup());
         }
-        finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo, view};
+        finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
+        finalImages[i].AddImageView(view);
     }
 
     return Result<SwapChain>::Ok(proxy, swapChain, finalImages, info);
@@ -205,7 +206,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
 void SwapChain::Destroy()
 {
     for (DeviceImage image : m_Images)
-        image.DestroyImageView();
+        image.DestroyImageViews();
 
     m_Images.Clear();
 

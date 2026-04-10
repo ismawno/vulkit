@@ -145,7 +145,7 @@ class RenderPass
         VkImageView GetImageView(const u32 imageIndex, const u32 attachmentIndex) const
         {
             const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
-            return m_Images[imageIndex * attachmentCount + attachmentIndex].GetImageView();
+            return m_Images[imageIndex * attachmentCount + attachmentIndex].GetViews()[0];
         }
         VkFramebuffer GetFrameBuffer(const u32 imageIndex) const
         {
@@ -212,7 +212,7 @@ class RenderPass
 
                 const DeviceImage &imageData = imresult.GetValue();
                 resources.m_Images.Append(imageData);
-                attachments[j] = imageData.GetImageView();
+                attachments[j] = imageData.GetViews()[0];
             }
             VkFramebufferCreateInfo frameBufferInfo{};
             frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
