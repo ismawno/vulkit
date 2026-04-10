@@ -36,16 +36,21 @@ static VkImageAspectFlags inferAspectMask(const DeviceImageFlags flags)
     TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
     return VK_IMAGE_ASPECT_NONE;
 }
-static VkImageSubresourceRange createRange(const VkImageCreateInfo &info, const DeviceImageFlags flags)
+static VkImageSubresourceRange createDefaultRange(const u32 mipLevels, const u32 arrayLayers,
+                                                  const DeviceImageFlags flags)
 {
     VkImageSubresourceRange range{};
     range.aspectMask |= inferAspectMask(flags);
 
     range.baseMipLevel = 0;
-    range.levelCount = info.mipLevels;
+    range.levelCount = mipLevels;
     range.baseArrayLayer = 0;
-    range.layerCount = info.arrayLayers;
+    range.layerCount = arrayLayers;
     return range;
+}
+static VkImageSubresourceRange createDefaultRange(const VkImageCreateInfo &info, const DeviceImageFlags flags)
+{
+    return createDefaultRange(info.mipLevels, info.arrayLayers, flags);
 }
 DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, const VkExtent2D &extent,
                               const VkFormat format, const DeviceImageFlags flags)
@@ -106,9 +111,6 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
         m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     if (m_Flags & DeviceImageFlag_Destination)
         m_ImageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-
-    m_ViewInfo = createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType),
-                                            createRange(m_ImageInfo, m_Flags));
 }
 
 VkImageAspectFlags DeviceImage::InferAspectMask() const
@@ -160,25 +162,41 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     info.Allocator = m_Allocator;
     info.Allocation = allocation;
     info.Format = m_ImageInfo.format;
+    info.Type = m_ImageInfo.imageType;
     info.Width = m_ImageInfo.extent.width;
     info.Height = m_ImageInfo.extent.height;
     info.Depth = m_ImageInfo.extent.depth;
+    info.MipLevels = m_ImageInfo.mipLevels;
+    info.ArrayLayers = m_ImageInfo.arrayLayers;
     info.Flags = m_Flags;
 
     DeviceImage img{m_Device, image, m_ImageInfo.initialLayout, info};
-    if (m_ViewInfo.format == VK_FORMAT_UNDEFINED)
-        return img;
 
-    VkImageViewCreateInfo vinfo = m_ViewInfo;
-    vinfo.image = image;
-    const auto vres = img.CreateImageView(vinfo);
-    if (!vres)
-        return vres;
-
+    TKit::TierArray<VkImageViewCreateInfo> vinfos = m_ViewInfos;
+    for (VkImageViewCreateInfo &vinfo : vinfos)
+    {
+        vinfo.image = image;
+        TKIT_RETURN_IF_FAILED(img.AddImageView(vinfo));
+    }
     return img;
 }
 
-Result<VkImageView> DeviceImage::CreateImageView(const VkImageViewCreateInfo &info)
+Result<VkImageView> DeviceImage::AddImageView()
+{
+    const VkImageViewCreateInfo info = createDefaultImageViewInfo(
+        m_Image, getImageViewType(m_Info.Type), createDefaultRange(m_Info.MipLevels, m_Info.ArrayLayers, m_Info.Flags));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
+                          Result<VkImageView>);
+    return m_ImageView;
+}
+Result<VkImageView> DeviceImage::AddImageView(const VkImageSubresourceRange &range)
+{
+    const VkImageViewCreateInfo info = createDefaultImageViewInfo(m_Image, getImageViewType(m_Info.Type), range);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
+                          Result<VkImageView>);
+    return m_ImageView;
+}
+Result<VkImageView> DeviceImage::AddImageView(const VkImageViewCreateInfo &info)
 {
     VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &m_ImageView),
                           Result<VkImageView>);
@@ -495,14 +513,16 @@ DeviceImage::Builder &DeviceImage::Builder::SetDepth(const u32 depth)
 DeviceImage::Builder &DeviceImage::Builder::SetMipLevels(const u32 levels)
 {
     m_ImageInfo.mipLevels = levels;
-    m_ViewInfo.subresourceRange.levelCount = levels;
+    for (VkImageViewCreateInfo &vinfo : m_ViewInfos)
+        vinfo.subresourceRange.levelCount = levels;
     return *this;
 }
 
 DeviceImage::Builder &DeviceImage::Builder::SetArrayLayers(const u32 layers)
 {
     m_ImageInfo.arrayLayers = layers;
-    m_ViewInfo.subresourceRange.layerCount = layers;
+    for (VkImageViewCreateInfo &vinfo : m_ViewInfos)
+        vinfo.subresourceRange.layerCount = layers;
     return *this;
 }
 
@@ -547,34 +567,33 @@ DeviceImage::Builder &DeviceImage::Builder::SetImageCreateInfo(const VkImageCrea
     return *this;
 }
 
-DeviceImage::Builder &DeviceImage::Builder::WithImageView()
-{
-    m_ViewInfo.format = m_ImageInfo.format;
-    return *this;
-}
-DeviceImage::Builder &DeviceImage::Builder::SetNextToImageInfo(const void *next)
+DeviceImage::Builder &DeviceImage::Builder::SetNext(const void *next)
 {
     m_ImageInfo.pNext = next;
     return *this;
 }
-DeviceImage::Builder &DeviceImage::Builder::SetNextToImageViewInfo(const void *next)
+
+DeviceImage::Builder &DeviceImage::Builder::AddImageView()
 {
-    m_ViewInfo.pNext = next;
+    VkImageViewCreateInfo &info = m_ViewInfos.Append(createDefaultImageViewInfo(
+        VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType), createDefaultRange(m_ImageInfo, m_Flags)));
+    info.format = m_ImageInfo.format;
+
     return *this;
 }
-
-DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageViewCreateInfo &info)
+DeviceImage::Builder &DeviceImage::Builder::AddImageView(const VkImageViewCreateInfo &info)
 {
     TKIT_ASSERT(!info.image,
                 "[VULKIT][DEVICE-IMAGE] The image must be set to null when passing a image view create info because it "
                 "will be replaced with the newly created image");
-    m_ViewInfo = info;
+    m_ViewInfos.Append(info);
     return *this;
 }
-DeviceImage::Builder &DeviceImage::Builder::WithImageView(const VkImageSubresourceRange &range)
+DeviceImage::Builder &DeviceImage::Builder::AddImageView(const VkImageSubresourceRange &range)
 {
-    m_ViewInfo.format = m_ImageInfo.format;
-    m_ViewInfo.subresourceRange = range;
+    VkImageViewCreateInfo &info =
+        m_ViewInfos.Append(createDefaultImageViewInfo(VK_NULL_HANDLE, getImageViewType(m_ImageInfo.imageType), range));
+    info.format = m_ImageInfo.format;
     return *this;
 }
 

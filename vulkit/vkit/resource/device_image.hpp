@@ -48,7 +48,7 @@ class DeviceImage
          * @brief Creates a vulkan image with the provided specification.
          *
          * IMPORTANT: Image view configuration should be done after the image configuration is finished. That is, try to
-         * call `CreateImageView()` as the last method before `Build()`.
+         * call `AddImageView()` as the last method before `Build()`.
          *
          * @return A `Result` containing the created `DeviceImage` or an error if the creation fails.
          */
@@ -65,21 +65,20 @@ class DeviceImage
         Builder &SetFlags(VkImageCreateFlags flags);
         Builder &SetUsage(VkImageUsageFlags flags);
         Builder &SetImageCreateInfo(const VkImageCreateInfo &info);
-        Builder &SetNextToImageInfo(const void *next);
-        Builder &SetNextToImageViewInfo(const void *next);
+        Builder &SetNext(const void *next);
 
         const VkImageCreateInfo &GetImageInfo() const;
         const VkImageViewCreateInfo &GetImageViewInfo() const;
 
-        Builder &WithImageView();
-        Builder &WithImageView(const VkImageViewCreateInfo &info);
-        Builder &WithImageView(const VkImageSubresourceRange &range);
+        Builder &AddImageView();
+        Builder &AddImageView(const VkImageViewCreateInfo &info);
+        Builder &AddImageView(const VkImageSubresourceRange &range);
 
       private:
         ProxyDevice m_Device;
         VmaAllocator m_Allocator;
         VkImageCreateInfo m_ImageInfo{};
-        VkImageViewCreateInfo m_ViewInfo{};
+        TKit::TierArray<VkImageViewCreateInfo> m_ViewInfos{};
         DeviceImageFlags m_Flags;
     };
 
@@ -88,9 +87,12 @@ class DeviceImage
         VmaAllocator Allocator;
         VmaAllocation Allocation;
         VkFormat Format;
+        VkImageType Type;
         u32 Width;
         u32 Height;
         u32 Depth;
+        u32 MipLevels;
+        u32 ArrayLayers;
         DeviceImageFlags Flags;
     };
 
@@ -130,9 +132,9 @@ class DeviceImage
     {
     }
 
-    VKIT_NO_DISCARD Result<VkImageView> CreateImageView();
-    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageViewCreateInfo &info);
-    VKIT_NO_DISCARD Result<VkImageView> CreateImageView(const VkImageSubresourceRange &range);
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView();
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageSubresourceRange &range);
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageViewCreateInfo &info);
 
     VkDescriptorImageInfo CreateDescriptorInfo(VkImageLayout layout, VkSampler sampler = VK_NULL_HANDLE) const;
 
