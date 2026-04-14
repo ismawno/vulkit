@@ -224,7 +224,7 @@ class DeviceImage
     {
         return m_Views;
     }
-    VkImageView GetView(const u32 idx) const
+    VkImageView GetView(const u32 idx = 0) const
     {
         return m_Views[idx];
     }
