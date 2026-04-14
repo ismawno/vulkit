@@ -201,10 +201,14 @@ class DeviceImage
     {
         for (u32 i = 0; i < m_Views.GetSize(); ++i)
         {
-            TKIT_RETURN_IF_FAILED(
-                m_Device.SetObjectName(m_Views[i], VK_OBJECT_TYPE_IMAGE_VIEW, TKit::Format("{}-{}", i, name).c_str()));
+            TKIT_RETURN_IF_FAILED(SetViewName(i, name));
         }
         return Result<>::Ok();
+    }
+    VKIT_NO_DISCARD Result<> SetViewName(const u32 idx, const char *name)
+    {
+        return m_Device.SetObjectName(m_Views[idx], VK_OBJECT_TYPE_IMAGE_VIEW,
+                                      TKit::Format("{}-{}", idx, name).c_str());
     }
 #endif
 
