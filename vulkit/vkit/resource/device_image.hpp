@@ -224,6 +224,10 @@ class DeviceImage
     {
         return m_Views;
     }
+    VkImageView GetView(const u32 idx)
+    {
+        return m_Views[idx];
+    }
     VkImageLayout GetLayout() const
     {
         return m_Layout;
