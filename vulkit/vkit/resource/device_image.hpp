@@ -40,10 +40,10 @@ class DeviceImage
     class Builder
     {
       public:
-        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent3D &extent, VkFormat format,
-                DeviceImageFlags flags = 0);
-        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent2D &extent, VkFormat format,
-                DeviceImageFlags flags = 0);
+        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent3D &extent,
+                TKit::Span<const VkFormat> formats, DeviceImageFlags flags = 0);
+        Builder(const ProxyDevice &device, VmaAllocator allocator, const VkExtent2D &extent,
+                TKit::Span<const VkFormat> formats, DeviceImageFlags flags = 0);
 
         /**
          * @brief Creates a vulkan image with the provided specification.
@@ -71,15 +71,21 @@ class DeviceImage
         const VkImageCreateInfo &GetImageInfo() const;
         const VkImageViewCreateInfo &GetImageViewInfo() const;
 
-        Builder &AddImageView(VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM); // defaults to the image one
-        Builder &AddImageView(const VkImageViewCreateInfo &info);
-        Builder &AddImageView(const VkImageSubresourceRange &range);
+        Builder &AddImageView(const VkFormat format)
+        {
+            return AddImageView(VK_IMAGE_VIEW_TYPE_MAX_ENUM, format);
+        }
+        Builder &AddImageView(VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM,
+                              VkFormat format = VK_FORMAT_UNDEFINED); // defaults to the image ones
+        Builder &AddImageView(const VkImageViewCreateInfo &info);     // have image as null here
+        Builder &AddImageView(const VkImageSubresourceRange &range, VkFormat format = VK_FORMAT_UNDEFINED);
 
       private:
         ProxyDevice m_Device;
         VmaAllocator m_Allocator;
         VkImageCreateInfo m_ImageInfo{};
         TKit::TierArray<VkImageViewCreateInfo> m_ViewInfos{};
+        TKit::TierArray<VkFormat> m_Formats{};
         DeviceImageFlags m_Flags;
     };
 
@@ -87,7 +93,7 @@ class DeviceImage
     {
         VmaAllocator Allocator;
         VmaAllocation Allocation;
-        VkFormat Format;
+        TKit::TierArray<VkFormat> Formats;
         VkImageType Type;
         u32 Width;
         u32 Height;
@@ -95,6 +101,9 @@ class DeviceImage
         u32 MipLevels;
         u32 ArrayLayers;
         DeviceImageFlags Flags;
+
+        static Info FromSwapChain(TKit::Span<const VkFormat> formats, const VkExtent2D &extent,
+                                  DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
     };
 
     struct TransitionInfo
@@ -123,9 +132,6 @@ class DeviceImage
     };
 #endif
 
-    static Info FromSwapChain(VkFormat format, const VkExtent2D &extent,
-                              DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
-
     DeviceImage() = default;
     DeviceImage(const ProxyDevice &device, const VkImage image, const VkImageLayout layout, const Info &info)
         : m_Device(device), m_Image(image), m_Layout(layout), m_Info(info)
@@ -136,10 +142,16 @@ class DeviceImage
     {
         m_Views.Append(view);
     }
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkFormat format)
+    {
+        return AddImageView(VK_IMAGE_VIEW_TYPE_MAX_ENUM, format);
+    }
+
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(
-        VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM); // defaults to the image one
-    VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageSubresourceRange &range);
+        VkImageViewType type = VK_IMAGE_VIEW_TYPE_MAX_ENUM,
+        VkFormat format = VK_FORMAT_UNDEFINED); // defaults to the image ones
     VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageViewCreateInfo &info);
+    VKIT_NO_DISCARD Result<VkImageView> AddImageView(const VkImageSubresourceRange &range, VkFormat format);
 
     VkDescriptorImageInfo CreateDescriptorInfo(VkImageLayout layout, u32 viewIndex = 0,
                                                VkSampler sampler = VK_NULL_HANDLE) const;
@@ -177,7 +189,7 @@ class DeviceImage
 
     VkDeviceSize GetBytesPerPixel() const
     {
-        return GetBytesPerPixel(m_Info.Format);
+        return GetBytesPerPixel(m_Info.Formats.GetFront());
     }
     static VkDeviceSize GetBytesPerPixel(VkFormat format);
 

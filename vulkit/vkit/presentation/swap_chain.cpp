@@ -174,30 +174,10 @@ Result<SwapChain> SwapChain::Builder::Build() const
     finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
     {
-        DeviceImage::Info iminfo = DeviceImage::FromSwapChain(surfaceFormat.format, extent);
-        VkImageView view = VK_NULL_HANDLE;
-        if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
-        {
-            VkImageViewCreateInfo viewInfo{};
-            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            viewInfo.image = images[i];
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            viewInfo.format = surfaceFormat.format;
-            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            viewInfo.subresourceRange.baseMipLevel = 0;
-            viewInfo.subresourceRange.levelCount = 1;
-            viewInfo.subresourceRange.baseArrayLayer = 0;
-            viewInfo.subresourceRange.layerCount = 1;
-
-            VKIT_RETURN_IF_FAILED(proxy.Table->CreateImageView(proxy, &viewInfo, proxy.AllocationCallbacks, &view),
-                                  Result<SwapChain>, cleanup());
-        }
+        DeviceImage::Info iminfo = DeviceImage::Info::FromSwapChain(surfaceFormat.format, extent);
         finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
-        finalImages[i].AddImageView(view);
+        if (checkFlags(SwapChainBuilderFlag_CreateImageViews))
+            TKIT_RETURN_IF_FAILED(finalImages[i].AddImageView(), cleanup());
     }
 
     return Result<SwapChain>::Ok(proxy, swapChain, finalImages, info);
