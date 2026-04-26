@@ -94,6 +94,8 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
 #else
     m_ImageInfo.flags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT * (formats.GetSize() != 1);
 #endif
+    for (const VkFormat f : formats)
+        m_Formats.Append(f);
 
     if (m_Flags & DeviceImageFlag_ColorAttachment)
     {
