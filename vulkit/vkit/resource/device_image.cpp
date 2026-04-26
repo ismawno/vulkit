@@ -147,6 +147,9 @@ DeviceImage::Info DeviceImage::Info::FromSwapChain(const TKit::Span<const VkForm
     for (const VkFormat f : formats)
         info.Formats.Append(f);
     info.Flags = flags;
+    info.Type = VK_IMAGE_TYPE_2D;
+    info.MipLevels = 1;
+    info.ArrayLayers = 1;
     return info;
 }
 
