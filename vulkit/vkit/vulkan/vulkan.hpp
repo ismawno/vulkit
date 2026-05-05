@@ -177,44 +177,6 @@ enum ErrorCode : u8
     Error_Count
 };
 
-template <typename T, typename E> T CheckResult(TKit::Result<T, E> &&result)
-{
-    TKIT_ASSERT(result, "{}", result.GetError().ToString());
-    if constexpr (!std::same_as<T, void>)
-        return result.GetValue();
-}
-
-#ifdef TKIT_ENABLE_ASSERTS
-void CheckResult(VkResult result);
-#else
-inline void CheckResult(const VkResult)
-{
-}
-#endif
-
-const char *VulkanResultToString(VkResult result);
-const char *ErrorCodeToString(ErrorCode code);
-
-template <typename T> bool IsSuccessful(const T &result)
-{
-    using TT = std::remove_cvref_t<T>;
-    if constexpr (std::same_as<TT, VkResult>)
-        return result == VK_SUCCESS;
-    else
-        return result.IsOk();
-}
-
-template <typename T> auto ResultToString(const T &result)
-{
-    using TT = std::remove_cvref_t<T>;
-    if constexpr (std::same_as<TT, VkResult>)
-        return VulkanResultToString(result);
-    else
-    {
-        TKIT_ASSERT(!result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
-        return result ? "Success" : result.GetError().ToString();
-    }
-}
 class Error
 {
   public:
@@ -267,6 +229,45 @@ class Error
 };
 
 template <typename T = void> using Result = TKit::Result<T, Error>;
+
+template <typename T> T CheckResult(Result<T> &&result)
+{
+    TKIT_ASSERT(result, "{}", result.GetError().ToString());
+    if constexpr (!std::same_as<T, void>)
+        return result.GetValue();
+}
+
+#ifdef TKIT_ENABLE_ASSERTS
+void CheckResult(VkResult result);
+#else
+inline void CheckResult(const VkResult)
+{
+}
+#endif
+
+const char *VulkanResultToString(VkResult result);
+const char *ErrorCodeToString(ErrorCode code);
+
+template <typename T> bool IsSuccessful(const T &result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return result == VK_SUCCESS;
+    else
+        return result.IsOk();
+}
+
+template <typename T> auto ResultToString(const T &result)
+{
+    using TT = std::remove_cvref_t<T>;
+    if constexpr (std::same_as<TT, VkResult>)
+        return VulkanResultToString(result);
+    else
+    {
+        TKIT_ASSERT(!result, "[VULKIT][RESULT] Only unsuccessful results make sense to be stringified");
+        return result ? "Success" : result.GetError().ToString();
+    }
+}
 
 class DeletionQueue
 {
