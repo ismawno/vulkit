@@ -70,7 +70,7 @@ if(VULKIT_ENABLE_SWAP_CHAIN)
 endif()
 
 add_library(vulkit STATIC ${SOURCES})
-target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.8.x\")
+target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.9.x\")
 
 if(VULKIT_ENABLE_INSTANCE)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_INSTANCE)
