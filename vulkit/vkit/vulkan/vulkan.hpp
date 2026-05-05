@@ -103,12 +103,6 @@
 #    define VKIT_LOG_EXPRESSION_ERROR(expression) expression
 #endif
 
-#ifdef TKIT_ENABLE_ASSERTS
-#    define VKIT_CHECK_RESULT(result) TKIT_ASSERT(VKit::IsSuccessful(result), "{}", VKit::ResultToString(result))
-#else
-#    define VKIT_CHECK_RESULT(result) TKIT_UNUSED(result)
-#endif
-
 #define VKIT_CHECK_EXPRESSION(expression) VKit::CheckExpression(expression)
 
 #define VKIT_RETURN_ON_ERROR(vkresult, rtype, ...)                                                                     \
