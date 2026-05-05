@@ -49,20 +49,10 @@ const char *ErrorCodeToString(const ErrorCode code)
     {
     case Error_VulkanError:
         return "VulkanError";
-    case Error_BadSynchronization:
-        return "BadSynchronization";
-    case Error_LockedAssets:
-        return "LockedAssets";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
-    case Error_InitializationFailed:
-        return "InitializationFailed";
-    case Error_LoadFailed:
-        return "LoadFailed";
     case Error_BadInput:
         return "BadInput";
-    case Error_RejectedWindow:
-        return "RejectedWindow";
     case Error_VersionMismatch:
         return "VersionMismatch";
     case Error_NoSurfaceCapabilities:
@@ -87,10 +77,6 @@ const char *ErrorCodeToString(const ErrorCode code)
         return "BadImageCount";
     case Error_FileNotFound:
         return "FileNotFound";
-    case Error_EntryPointNotFound:
-        return "EntryPointNotFound";
-    case Error_ShaderCompilationFailed:
-        return "ShaderCompilationFailed";
     default:
         return "Unknown";
     }

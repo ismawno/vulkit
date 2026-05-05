@@ -166,12 +166,9 @@ enum ErrorCode : u8
 {
     Error_VulkanError,
     Error_VulkanLibraryNotFound,
-    Error_InitializationFailed,
-    Error_LoadFailed,
     Error_BadInput,
     Error_VersionMismatch,
     Error_NoSurfaceCapabilities,
-    Error_RejectedWindow,
     Error_RejectedDevice,
     Error_MissingQueue,
     Error_MissingExtension,
@@ -182,10 +179,6 @@ enum ErrorCode : u8
     Error_NoFormatSupported,
     Error_BadImageCount,
     Error_FileNotFound,
-    Error_EntryPointNotFound,
-    Error_ShaderCompilationFailed,
-    Error_BadSynchronization,
-    Error_LockedAssets,
     Error_Unknown,
     Error_Count
 };
