@@ -103,7 +103,7 @@
 #    define VKIT_LOG_EXPRESSION_ERROR(expression) expression
 #endif
 
-#define VKIT_CHECK_EXPRESSION(expression) VKit::CheckExpression(expression)
+#define VKIT_CHECK_RESULT(expression) VKit::CheckResult(expression)
 
 #define VKIT_RETURN_ON_ERROR(vkresult, rtype, ...)                                                                     \
     if ((vkresult) != VK_SUCCESS)                                                                                      \
@@ -177,7 +177,7 @@ enum ErrorCode : u8
     Error_Count
 };
 
-template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&result)
+template <typename T, typename E> T CheckResult(TKit::Result<T, E> &&result)
 {
     TKIT_ASSERT(result, "{}", result.GetError().ToString());
     if constexpr (!std::same_as<T, void>)
@@ -185,9 +185,9 @@ template <typename T, typename E> T CheckExpression(TKit::Result<T, E> &&result)
 }
 
 #ifdef TKIT_ENABLE_ASSERTS
-void CheckExpression(VkResult result);
+void CheckResult(VkResult result);
 #else
-inline void CheckExpression(const VkResult)
+inline void CheckResult(const VkResult)
 {
 }
 #endif
