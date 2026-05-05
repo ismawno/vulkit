@@ -228,9 +228,6 @@ template <typename T> auto ResultToString(const T &result)
         return result ? "Success" : result.GetError().ToString();
     }
 }
-} // namespace VKit
-namespace VKit::Detail
-{
 class Error
 {
   public:
@@ -281,11 +278,8 @@ class Error
     ErrorCode m_ErrorCode = Error_Unknown;
     VkResult m_VkResult = VK_SUCCESS;
 };
-} // namespace VKit::Detail
 
-namespace VKit
-{
-template <typename T = void> using Result = TKit::Result<T, Detail::Error>;
+template <typename T = void> using Result = TKit::Result<T, Error>;
 
 class DeletionQueue
 {

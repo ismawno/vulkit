@@ -5,8 +5,6 @@
 
 namespace VKit
 {
-using namespace Detail;
-
 template <typename T> static std::string formatMessage(const VkResult result, const T &message)
 {
     return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
