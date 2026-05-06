@@ -22,7 +22,7 @@ std::string Error::ToString() const
     return str;
 }
 #ifdef TKIT_ENABLE_ASSERTS
-void CheckExpression(const VkResult result)
+void CheckResult(const VkResult result)
 {
     TKIT_ASSERT(result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(result));
 }
