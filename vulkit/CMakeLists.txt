@@ -208,7 +208,6 @@ endif()
 
 target_precompile_headers(vulkit PRIVATE
                           ${CMAKE_CURRENT_SOURCE_DIR}/vkit/core/pch.hpp)
-target_compile_definitions(vulkit PUBLIC VKIT_ROOT_PATH="${VULKIT_ROOT_PATH}")
 
 tkit_default_configure(vulkit)
 # No need for more: toolkit handles the rest. As it is a library I develop, I
