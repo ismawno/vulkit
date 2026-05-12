@@ -18,7 +18,7 @@ static VkImageViewType getImageViewType(const VkImageType type)
     case VK_IMAGE_TYPE_3D:
         return VK_IMAGE_VIEW_TYPE_3D;
     default:
-        TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unrecognized vulkan image type");
+        TKIT_FATAL("[VULKIT][DEVICE-IMAGE] Unrecognized vulkan image type");
         return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
     }
 }
@@ -33,7 +33,7 @@ static VkImageAspectFlags inferAspectMask(const DeviceImageFlags flags)
     else if (flags & DeviceImageFlag_Stencil)
         return VK_IMAGE_ASPECT_STENCIL_BIT;
 
-    TKIT_LOG_WARNING("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask. Using 'VK_IMAGE_ASPECT_NONE'");
+    TKIT_FATAL("[VULKIT][DEVICE-IMAGE] Unable to deduce aspect mask");
     return VK_IMAGE_ASPECT_NONE;
 }
 static VkImageSubresourceRange createDefaultRange(const u32 mipLevels, const u32 arrayLayers,
@@ -489,7 +489,7 @@ VkDeviceSize DeviceImage::GetBytesPerPixel(const VkFormat format)
     case VK_FORMAT_D32_SFLOAT_S8_UINT:
         return 5;
     default:
-        TKIT_LOG_WARNING(
+        TKIT_FATAL(
             "[VULKIT][DEVICE-IMAGE] Unrecognized vulkan format when resolving the number of bytes per pixel for it");
         return 0;
     }
