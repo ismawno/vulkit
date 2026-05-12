@@ -15,6 +15,7 @@
 #include "vkit/device/physical_device.hpp"
 #include "vkit/device/logical_device.hpp"
 #include "vkit/execution/queue.hpp"
+#include "tkit/utils/limits.hpp"
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_CLANG_WARNING_IGNORE("-Wunused-parameter")
 TKIT_GCC_WARNING_IGNORE("-Wunused-parameter")
@@ -995,7 +996,7 @@ TEST_CASE("PhysicalDevice - Extension Management", "[physical_device][extensions
         const auto &extensions = device.GetInfo().AvailableExtensions;
         if (!extensions.IsEmpty())
         {
-            const char *extName = extensions[0].c_str();
+            const char *extName = extensions[0].GetData();
             CHECK(device.EnableExtension(extName));
             CHECK(device.IsExtensionEnabled(extName));
         }

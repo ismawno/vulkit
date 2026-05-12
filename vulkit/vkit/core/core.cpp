@@ -160,7 +160,7 @@ Result<> Initialize(const Specs &specs)
     if (specs.Allocators.Tier)
         s_Allocation.Tier = specs.Allocators.Tier;
     else if (!s_Allocation.Tier)
-        s_Allocation.Tier = new TKit::TierAllocator({.MaxAllocation = 256_kib});
+        s_Allocation.Tier = new TKit::TierAllocator({.MaxAllocation = 1_mib});
 
     if (TKit::GetTier() != s_Allocation.Tier)
     {

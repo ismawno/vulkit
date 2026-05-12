@@ -6,6 +6,7 @@
 #endif
 
 #include "vkit/resource/device_image.hpp"
+#include "tkit/utils/limits.hpp"
 
 namespace VKit
 {

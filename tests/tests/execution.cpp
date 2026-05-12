@@ -127,7 +127,7 @@ class TestContext
         auto coreResult = VKit::Initialize();
         if (!coreResult)
         {
-            m_ErrorMessage = "Failed to initialize Core: " + std::string(coreResult.GetError().GetMessage());
+            m_ErrorMessage = "Failed to initialize Core: " + coreResult.GetError().GetMessage();
             return;
         }
 
@@ -144,7 +144,7 @@ class TestContext
 
         if (!instanceResult)
         {
-            m_ErrorMessage = "Failed to create Instance: " + std::string(instanceResult.GetError().GetMessage());
+            m_ErrorMessage = "Failed to create Instance: " + instanceResult.GetError().GetMessage();
             VKit::Terminate();
             return;
         }
@@ -162,7 +162,7 @@ class TestContext
 
         if (!physicalResult)
         {
-            m_ErrorMessage = "Failed to select Physical Device: " + std::string(physicalResult.GetError().GetMessage());
+            m_ErrorMessage = "Failed to select Physical Device: " + physicalResult.GetError().GetMessage();
             m_Instance->Destroy();
             delete m_Instance;
             m_Instance = nullptr;
@@ -180,7 +180,7 @@ class TestContext
 
         if (!logicalResult)
         {
-            m_ErrorMessage = "Failed to create Logical Device: " + std::string(logicalResult.GetError().GetMessage());
+            m_ErrorMessage = "Failed to create Logical Device: " + logicalResult.GetError().GetMessage();
             m_Instance->Destroy();
             delete m_PhysicalDevice;
             delete m_Instance;
@@ -209,7 +209,7 @@ class TestContext
     }
 
     bool m_Valid = false;
-    std::string m_ErrorMessage;
+    TKit::String m_ErrorMessage;
     VKit::Instance *m_Instance = nullptr;
     VKit::PhysicalDevice *m_PhysicalDevice = nullptr;
     VKit::LogicalDevice *m_LogicalDevice = nullptr;
@@ -703,10 +703,10 @@ TEST_CASE("Queue - Basic Properties", "[queue][properties]")
 
 TEST_CASE("Queue - ToString", "[queue][utility]")
 {
-    CHECK(std::string(VKit::ToString(VKit::Queue_Graphics)) == "Graphics");
-    CHECK(std::string(VKit::ToString(VKit::Queue_Compute)) == "Compute");
-    CHECK(std::string(VKit::ToString(VKit::Queue_Transfer)) == "Transfer");
-    CHECK(std::string(VKit::ToString(VKit::Queue_Present)) == "Present");
+    CHECK(TKit::String(VKit::ToString(VKit::Queue_Graphics)) == "Graphics");
+    CHECK(TKit::String(VKit::ToString(VKit::Queue_Compute)) == "Compute");
+    CHECK(TKit::String(VKit::ToString(VKit::Queue_Transfer)) == "Transfer");
+    CHECK(TKit::String(VKit::ToString(VKit::Queue_Present)) == "Present");
 }
 
 // ============================================================================

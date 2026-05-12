@@ -1,24 +1,23 @@
 #include "vkit/core/pch.hpp"
-#include "tkit/utils/logging.hpp"
 #include "vkit/vulkan/vulkan.hpp"
 #include "vkit/core/alias.hpp"
 
 namespace VKit
 {
-template <typename T> static std::string formatMessage(const VkResult result, const T &message)
+template <typename T> static TKit::String formatMessage(const VkResult result, const T &message)
 {
-    return TKit::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
+    return TKit::String::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
 }
 
-std::string Error::ToString() const
+TKit::String Error::ToString() const
 {
-    std::string str = TKit::Format("[VULKIT] Error code: '{}'", ErrorCodeToString(m_ErrorCode));
+    TKit::String str = TKit::String::Format("[VULKIT] Error code: '{}'", ErrorCodeToString(m_ErrorCode));
     if (m_ErrorCode == Error_VulkanError)
-        str += TKit::Format(" - Vulkan result: '{}'", VulkanResultToString(m_VkResult));
+        str += TKit::String::Format(" - Vulkan result: '{}'", VulkanResultToString(m_VkResult));
     if (m_CheapMessage)
-        str += TKit::Format(" - Message: '{}'", m_CheapMessage);
-    else if (!m_FormattedMessage.empty())
-        str += TKit::Format(" - Message: '{}'", m_FormattedMessage);
+        str += TKit::String::Format(" - Message: '{}'", m_CheapMessage);
+    else if (!m_FormattedMessage.IsEmpty())
+        str += TKit::String::Format(" - Message: '{}'", m_FormattedMessage);
     return str;
 }
 #ifdef TKIT_ENABLE_ASSERTS

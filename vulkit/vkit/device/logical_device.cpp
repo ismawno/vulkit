@@ -64,8 +64,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         if (requiredCount > family.queueCount)
             return Result<LogicalDevice>::Error(
                 Error_RejectedDevice,
-                TKit::Format("The required queue count for the family index {} exceeds its queue count. {} >= {}",
-                             index, requiredCount, family.queueCount));
+                TKit::String::Format(
+                    "The required queue count for the family index {} exceeds its queue count. {} >= {}", index,
+                    requiredCount, family.queueCount));
 
         TKit::TierArray<f32> &fp = finalPriorities.Append();
 
@@ -101,8 +102,8 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
     TKit::StackArray<const char *> enabledExtensions;
     enabledExtensions.Reserve(devInfo.EnabledExtensions.GetSize());
-    for (const std::string &extension : devInfo.EnabledExtensions)
-        enabledExtensions.Append(extension.c_str());
+    for (const TKit::String &extension : devInfo.EnabledExtensions)
+        enabledExtensions.Append(extension.GetData());
 
 #ifdef VKIT_API_VERSION_1_1
     const bool v11 = devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);

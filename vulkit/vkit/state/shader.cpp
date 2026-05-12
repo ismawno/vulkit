@@ -10,12 +10,12 @@ namespace VKit
 TKIT_COMPILER_WARNING_IGNORE_PUSH()
 TKIT_MSVC_WARNING_IGNORE(6262)
 
-Result<Shader> Shader::Create(const ProxyDevice &device, const std::string_view spirvPath)
+Result<Shader> Shader::Create(const ProxyDevice &device, const TKit::StringView spirvPath)
 {
-    std::ifstream file{spirvPath.data(), std::ios::ate | std::ios::binary};
+    std::ifstream file{spirvPath.GetData(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return Result<Shader>::Error(Error_FileNotFound,
-                                     TKit::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
+                                     TKit::String::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
 
     const auto fileSize = file.tellg();
 

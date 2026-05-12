@@ -7,6 +7,7 @@
 
 #include "vkit/core/alias.hpp"
 #include "vkit/device/proxy_device.hpp"
+#include "tkit/container/span.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit
@@ -14,7 +15,7 @@ namespace VKit
 class Shader
 {
   public:
-    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, std::string_view spirvPath);
+    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, TKit::StringView spirvPath);
     VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, const u32 *spirv, size_t size);
 
     Shader() = default;
