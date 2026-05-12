@@ -2,6 +2,7 @@
 #include "vkit/device/physical_device.hpp"
 #include "vkit/execution/queue.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/utils/limits.hpp"
 
 namespace VKit
 {
@@ -358,8 +359,8 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (m_Name && strcmp(m_Name, name) != 0)
         return JudgeResult::Error(
             Error_RejectedDevice,
-            TKit::Format("[VULKIT][P-DEVICE] The device name '{}' does not match the requested name '{}'", name,
-                         m_Name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device name '{}' does not match the requested name '{}'", name,
+                                 m_Name));
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
                         "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
@@ -368,8 +369,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (quickProperties.apiVersion < m_RequiredApiVersion)
         return JudgeResult::Error(
             Error_VersionMismatch,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not support the required API version {}.{}.{}", name,
-                         VKIT_EXPAND_VERSION(m_RequiredApiVersion)));
+            TKit::String::Format(
+                "[VULKIT][P-DEVICE] The device '{}' does not support the required API version {}.{}.{}", name,
+                VKIT_EXPAND_VERSION(m_RequiredApiVersion)));
 
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
@@ -385,24 +387,24 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData()),
         JudgeResult, "[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name);
 
-    TKit::StackArray<std::string> availableExtensions;
+    TKit::StackArray<TKit::String> availableExtensions;
     availableExtensions.Reserve(extensionsProps.GetSize());
     for (const VkExtensionProperties &extension : extensionsProps)
         availableExtensions.Append(extension.extensionName);
 
-    TKit::StackArray<std::string> enabledExtensions;
+    TKit::StackArray<TKit::String> enabledExtensions;
     enabledExtensions.Reserve(m_RequestedExtensions.GetCapacity());
-    for (const std::string &extension : m_RequiredExtensions)
+    for (const TKit::String &extension : m_RequiredExtensions)
     {
         if (!contains(availableExtensions, extension))
             return JudgeResult::Error(
                 Error_MissingExtension,
-                TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not support the required extension '{}'", name,
-                             extension));
+                TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not support the required extension '{}'",
+                                     name, extension));
         enabledExtensions.Append(extension);
     }
 
-    for (const std::string &extension : m_RequestedExtensions)
+    for (const TKit::String &extension : m_RequestedExtensions)
         if (contains(availableExtensions, extension))
             enabledExtensions.Append(extension);
         else
@@ -550,34 +552,36 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a graphics queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a graphics queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireComputeQueue, DeviceFlag_HasComputeQueue))
         return JudgeResult::Error(
-            Error_MissingQueue, TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a compute queue", name));
+            Error_MissingQueue,
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireTransferQueue, DeviceFlag_HasTransferQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a transfer queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a transfer queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequirePresentQueue, DeviceFlag_HasPresentQueue))
         return JudgeResult::Error(
-            Error_MissingQueue, TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a present queue", name));
+            Error_MissingQueue,
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a present queue", name));
 
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated compute queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated transfer queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated transfer queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate compute queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate transfer queue", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate transfer queue", name));
 
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
@@ -644,34 +648,36 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required core features", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required core features", name));
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
         !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.1 or 1.2 features",
-                         name));
+            TKit::String::Format(
+                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.1 or 1.2 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_3
     if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.3 features", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.3 features",
+                                 name));
 #endif
 #ifdef VKIT_API_VERSION_1_4
     if (!compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features",
+                                 name));
 #endif
     if (m_PreferredType != DeviceType(properties.Core.deviceType))
     {
         if (!checkFlags(DeviceSelectorFlag_AnyType))
             return JudgeResult::Error(
                 Error_RejectedDevice,
-                TKit::Format("[VULKIT][P-DEVICE] The device '{}' is not of the preferred type", name));
+                TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' is not of the preferred type", name));
         fullySuitable = false;
     }
 
@@ -702,15 +708,15 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!hasDeviceLocalMemory)
         return JudgeResult::Error(
             Error_InsufficientMemory,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have device local memory", name));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have device local memory", name));
     TKIT_LOG_WARNING_IF(!hasRequestedMemory,
                         "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {:L} bytes", name,
                         m_RequestedMemory);
     if (!hasRequiredMemory)
         return JudgeResult::Error(
             Error_InsufficientMemory,
-            TKit::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes", name,
-                         m_RequiredMemory));
+            TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes",
+                                 name, m_RequiredMemory));
 
     fullySuitable &= hasRequestedMemory;
     if (fullySuitable)

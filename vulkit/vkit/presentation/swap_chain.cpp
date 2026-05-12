@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/presentation/swap_chain.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/utils/limits.hpp"
 
 #ifndef VK_KHR_surface
 #    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"

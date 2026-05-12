@@ -299,10 +299,11 @@ Result<Instance> Instance::Builder::Build() const
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
         if (version < pversion)
-            return Result<u32>::Error(Error_VersionMismatch,
-                                      TKit::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
-                                                   "not supported. The required version is {}.{}.{}",
-                                                   VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
+            return Result<u32>::Error(
+                Error_VersionMismatch,
+                TKit::String::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
+                                     "not supported. The required version is {}.{}.{}",
+                                     VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
 
         return isRequested ? pversion : version;
     };
@@ -330,7 +331,7 @@ Result<Instance> Instance::Builder::Build() const
         if (!IsExtensionSupported(extension))
             return Result<Instance>::Error(
                 Error_MissingExtension,
-                TKit::Format("[VULKIT][INSTANCE] The required extension '{}' is not suported", extension));
+                TKit::String::Format("[VULKIT][INSTANCE] The required extension '{}' is not suported", extension));
         else if (!contains(extensions, extension))
             extensions.Append(extension);
 
@@ -347,7 +348,8 @@ Result<Instance> Instance::Builder::Build() const
     for (const char *layer : m_RequiredLayers)
         if (!IsLayerSupported(layer))
             return Result<Instance>::Error(
-                Error_MissingLayer, TKit::Format("[VULKIT][INSTANCE] The required layer '{}' is not suported", layer));
+                Error_MissingLayer,
+                TKit::String::Format("[VULKIT][INSTANCE] The required layer '{}' is not suported", layer));
         else if (!contains(layers, layer))
             layers.Append(layer);
 
@@ -372,7 +374,7 @@ Result<Instance> Instance::Builder::Build() const
         const auto generateError = [](const char *extension) -> Result<Instance> {
             return Result<Instance>::Error(
                 Error_MissingExtension,
-                TKit::Format(
+                TKit::String::Format(
                     "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
                     extension));
         };
