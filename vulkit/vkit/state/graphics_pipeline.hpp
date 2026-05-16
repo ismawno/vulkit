@@ -14,8 +14,8 @@ namespace VKit
 using StencilOperationFlags = u8;
 enum StencilOperationFlagBit : StencilOperationFlags
 {
-    StencilOperationFlag_Front = 1 << 0,
-    StencilOperationFlag_Back = 1 << 1,
+    StencilOperationFlag_Front = 1U << 0,
+    StencilOperationFlag_Back = 1U << 1,
 };
 // no pNext hooks for now. must retrieve create info and add them yourself
 class GraphicsPipeline

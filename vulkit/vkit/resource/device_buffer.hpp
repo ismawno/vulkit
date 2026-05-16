@@ -16,17 +16,17 @@ class DeviceImage;
 using DeviceBufferFlags = u16;
 enum DeviceBufferFlagBit : DeviceBufferFlags
 {
-    DeviceBufferFlag_DeviceLocal = 1 << 0,
-    DeviceBufferFlag_HostVisible = 1 << 1,
-    DeviceBufferFlag_Source = 1 << 2,
-    DeviceBufferFlag_Destination = 1 << 3,
-    DeviceBufferFlag_Staging = 1 << 4,
-    DeviceBufferFlag_Vertex = 1 << 5,
-    DeviceBufferFlag_Index = 1 << 6,
-    DeviceBufferFlag_Storage = 1 << 7,
-    DeviceBufferFlag_Indirect = 1 << 8,
-    DeviceBufferFlag_HostMapped = 1 << 9,
-    DeviceBufferFlag_HostRandomAccess = 1 << 10,
+    DeviceBufferFlag_DeviceLocal = 1U << 0,
+    DeviceBufferFlag_HostVisible = 1U << 1,
+    DeviceBufferFlag_Source = 1U << 2,
+    DeviceBufferFlag_Destination = 1U << 3,
+    DeviceBufferFlag_Staging = 1U << 4,
+    DeviceBufferFlag_Vertex = 1U << 5,
+    DeviceBufferFlag_Index = 1U << 6,
+    DeviceBufferFlag_Storage = 1U << 7,
+    DeviceBufferFlag_Indirect = 1U << 8,
+    DeviceBufferFlag_HostMapped = 1U << 9,
+    DeviceBufferFlag_HostRandomAccess = 1U << 10,
 };
 
 class DeviceBuffer

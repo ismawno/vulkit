@@ -22,7 +22,7 @@ struct Specs
 using TerminationFlags = u8;
 enum TerminationFlagBit : TerminationFlags
 {
-    TerminationFlag_ResetArenas = 1 << 0,
+    TerminationFlag_ResetArenas = 1U << 0,
 };
 
 VKIT_NO_DISCARD Result<> Initialize(const Specs &specs = {});

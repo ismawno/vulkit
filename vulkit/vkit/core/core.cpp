@@ -143,7 +143,7 @@ Result<> Initialize(const Specs &specs)
     if (TKit::GetArena() != s_Allocation.Arena)
     {
         TKit::PushArena(s_Allocation.Arena);
-        s_PushedAlloc |= 1 << 0;
+        s_PushedAlloc |= 1U << 0;
     }
 
     if (specs.Allocators.Stack)
@@ -154,7 +154,7 @@ Result<> Initialize(const Specs &specs)
     if (TKit::GetStack() != s_Allocation.Stack)
     {
         TKit::PushStack(s_Allocation.Stack);
-        s_PushedAlloc |= 1 << 1;
+        s_PushedAlloc |= 1U << 1;
     }
 
     if (specs.Allocators.Tier)
@@ -165,7 +165,7 @@ Result<> Initialize(const Specs &specs)
     if (TKit::GetTier() != s_Allocation.Tier)
     {
         TKit::PushTier(s_Allocation.Tier);
-        s_PushedAlloc |= 1 << 2;
+        s_PushedAlloc |= 1U << 2;
     }
 
     u32 layerCount;

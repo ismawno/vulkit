@@ -24,31 +24,31 @@ enum DeviceType : u32
 using DeviceSelectorFlags = u16;
 enum DeviceSelectorFlagBit : DeviceSelectorFlags
 {
-    DeviceSelectorFlag_AnyType = 1 << 0,
-    DeviceSelectorFlag_RequireDedicatedComputeQueue = 1 << 1,
-    DeviceSelectorFlag_RequireDedicatedTransferQueue = 1 << 2,
-    DeviceSelectorFlag_RequireSeparateComputeQueue = 1 << 3,
-    DeviceSelectorFlag_RequireSeparateTransferQueue = 1 << 4,
-    DeviceSelectorFlag_PortabilitySubset = 1 << 5,
-    DeviceSelectorFlag_RequireGraphicsQueue = 1 << 6,
-    DeviceSelectorFlag_RequireComputeQueue = 1 << 7,
-    DeviceSelectorFlag_RequireTransferQueue = 1 << 8,
-    DeviceSelectorFlag_RequirePresentQueue = 1 << 9
+    DeviceSelectorFlag_AnyType = 1U << 0,
+    DeviceSelectorFlag_RequireDedicatedComputeQueue = 1U << 1,
+    DeviceSelectorFlag_RequireDedicatedTransferQueue = 1U << 2,
+    DeviceSelectorFlag_RequireSeparateComputeQueue = 1U << 3,
+    DeviceSelectorFlag_RequireSeparateTransferQueue = 1U << 4,
+    DeviceSelectorFlag_PortabilitySubset = 1U << 5,
+    DeviceSelectorFlag_RequireGraphicsQueue = 1U << 6,
+    DeviceSelectorFlag_RequireComputeQueue = 1U << 7,
+    DeviceSelectorFlag_RequireTransferQueue = 1U << 8,
+    DeviceSelectorFlag_RequirePresentQueue = 1U << 9
 };
 
 using DeviceFlags = u16;
 enum DeviceFlagBit : DeviceFlags
 {
-    DeviceFlag_Optimal = 1 << 0,
-    DeviceFlag_HasDedicatedComputeQueue = 1 << 1,
-    DeviceFlag_HasDedicatedTransferQueue = 1 << 2,
-    DeviceFlag_HasSeparateTransferQueue = 1 << 3,
-    DeviceFlag_HasSeparateComputeQueue = 1 << 4,
-    DeviceFlag_PortabilitySubset = 1 << 5,
-    DeviceFlag_HasGraphicsQueue = 1 << 6,
-    DeviceFlag_HasComputeQueue = 1 << 7,
-    DeviceFlag_HasTransferQueue = 1 << 8,
-    DeviceFlag_HasPresentQueue = 1 << 9
+    DeviceFlag_Optimal = 1U << 0,
+    DeviceFlag_HasDedicatedComputeQueue = 1U << 1,
+    DeviceFlag_HasDedicatedTransferQueue = 1U << 2,
+    DeviceFlag_HasSeparateTransferQueue = 1U << 3,
+    DeviceFlag_HasSeparateComputeQueue = 1U << 4,
+    DeviceFlag_PortabilitySubset = 1U << 5,
+    DeviceFlag_HasGraphicsQueue = 1U << 6,
+    DeviceFlag_HasComputeQueue = 1U << 7,
+    DeviceFlag_HasTransferQueue = 1U << 8,
+    DeviceFlag_HasPresentQueue = 1U << 9
 };
 
 struct DeviceFeatures

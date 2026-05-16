@@ -15,18 +15,18 @@ class DeviceBuffer;
 using DeviceImageFlags = u16;
 enum DeviceImageFlagBit : DeviceImageFlags
 {
-    DeviceImageFlag_Color = 1 << 0,
-    DeviceImageFlag_Depth = 1 << 1,
-    DeviceImageFlag_Stencil = 1 << 2,
-    DeviceImageFlag_ColorAttachment = 1 << 3,
-    DeviceImageFlag_DepthAttachment = 1 << 4,
-    DeviceImageFlag_StencilAttachment = 1 << 5,
-    DeviceImageFlag_InputAttachment = 1 << 6,
-    DeviceImageFlag_Sampled = 1 << 7,
-    DeviceImageFlag_Storage = 1 << 8,
-    DeviceImageFlag_ForceHostVisible = 1 << 9,
-    DeviceImageFlag_Source = 1 << 10,
-    DeviceImageFlag_Destination = 1 << 11,
+    DeviceImageFlag_Color = 1U << 0,
+    DeviceImageFlag_Depth = 1U << 1,
+    DeviceImageFlag_Stencil = 1U << 2,
+    DeviceImageFlag_ColorAttachment = 1U << 3,
+    DeviceImageFlag_DepthAttachment = 1U << 4,
+    DeviceImageFlag_StencilAttachment = 1U << 5,
+    DeviceImageFlag_InputAttachment = 1U << 6,
+    DeviceImageFlag_Sampled = 1U << 7,
+    DeviceImageFlag_Storage = 1U << 8,
+    DeviceImageFlag_ForceHostVisible = 1U << 9,
+    DeviceImageFlag_Source = 1U << 10,
+    DeviceImageFlag_Destination = 1U << 11,
 };
 
 } // namespace VKit
