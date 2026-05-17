@@ -828,6 +828,7 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
         const auto judgeResult = judgeDevice(vkdevice, idx++);
+        VKIT_LOG_RESULT_ERROR(judgeResult);
         devices.Append(judgeResult);
     }
 
