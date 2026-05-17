@@ -16,23 +16,21 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType typ
 LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, u32 count, f32 priority)
 {
     QueuePriorities &priorities = m_Priorities[family];
-    if (count < priorities.RequiredPriorities.GetSize())
-        priorities.RequiredPriorities.Resize(count);
-    else
-        count -= priorities.RequiredPriorities.GetSize();
+    if (count <= priorities.RequiredPriorities.GetSize())
+        return *this;
 
+    count -= priorities.RequiredPriorities.GetSize();
     for (u32 i = 0; i < count; ++i)
-        m_Priorities[family].RequiredPriorities.Append(priority);
+        priorities.RequiredPriorities.Append(priority);
     return *this;
 }
 LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 family, u32 count, f32 priority)
 {
     QueuePriorities &priorities = m_Priorities[family];
-    if (count < priorities.RequestedPriorities.GetSize())
-        priorities.RequestedPriorities.Resize(count);
-    else
-        count -= priorities.RequestedPriorities.GetSize();
+    if (count <= priorities.RequestedPriorities.GetSize())
+        return *this;
 
+    count -= priorities.RequestedPriorities.GetSize();
     for (u32 i = 0; i < count; ++i)
         m_Priorities[family].RequestedPriorities.Append(priority);
     return *this;
