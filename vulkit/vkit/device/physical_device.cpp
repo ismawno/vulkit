@@ -342,7 +342,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
     const auto result = Enumerate();
     TKIT_RETURN_ON_ERROR(result);
 
-    const auto &devices = result.GetValue();
+    const auto &devices = *result;
     return devices[0];
 }
 

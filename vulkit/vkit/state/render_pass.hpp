@@ -211,7 +211,7 @@ class RenderPass
                     return imresult;
                 }
 
-                const DeviceImage &imageData = imresult.GetValue();
+                const DeviceImage &imageData = *imresult;
                 resources.m_Images.Append(imageData);
                 attachments[j] = imageData.GetViews()[0];
             }

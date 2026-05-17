@@ -57,7 +57,7 @@ Result<SwapChain> SwapChain::Builder::Build() const
     const auto suppResult = m_Device->QuerySwapChainSupport(m_Surface);
     TKIT_RETURN_ON_ERROR(suppResult);
 
-    const PhysicalDevice::SwapChainSupportDetails &support = suppResult.GetValue();
+    const PhysicalDevice::SwapChainSupportDetails &support = *suppResult;
 
     const u32 mnic = support.Capabilities.minImageCount;
     const u32 mxic = support.Capabilities.maxImageCount;
@@ -95,8 +95,8 @@ Result<SwapChain> SwapChain::Builder::Build() const
     const auto presentModeResult = selectPresentMode(presentModes, support.PresentModes);
     TKIT_RETURN_ON_ERROR(presentModeResult);
 
-    const VkSurfaceFormatKHR surfaceFormat = surfFormatResult.GetValue();
-    const VkPresentModeKHR presentMode = presentModeResult.GetValue();
+    const VkSurfaceFormatKHR surfaceFormat = *surfFormatResult;
+    const VkPresentModeKHR presentMode = *presentModeResult;
 
     VkExtent2D extent;
     if (support.Capabilities.currentExtent.width != TKIT_U32_MAX &&

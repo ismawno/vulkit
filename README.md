@@ -57,7 +57,7 @@ const auto result = VKit::Instance::Builder()
                         .RequestValidationLayers()
                         .Build();
 VKIT_CHECK_RESULT(result);
-const VKit::Instance &instance = result.GetValue();
+const VKit::Instance &instance = *result;
 // Rest of the code...
 ```
 
@@ -77,7 +77,7 @@ const auto physres =
                     VKit::PhysicalDevice::Selector::Flag_RequireGraphicsQueue)
         .Select();
 VKIT_CHECK_RESULT(physres);
-const VKit::PhysicalDevice &phys = physres.GetValue();
+const VKit::PhysicalDevice &phys = *physres;
 
 const auto devres = VKit::LogicalDevice::Create(s_Instance, phys);
 VKIT_CHECK_RESULT(devres);

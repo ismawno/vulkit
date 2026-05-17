@@ -43,7 +43,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
         TKIT_RETURN_ON_ERROR(result);
 
         Attachment att = attachment.m_Attachment;
-        att.Description.format = result.GetValue();
+        att.Description.format = *result;
 
         attachments.Append(att);
         attDescriptions.Append(att.Description);

@@ -367,7 +367,7 @@ Result<> DeviceImage::CopyFromImage(CommandPool &pool, VkQueue queue, const Devi
     const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
-    const VkCommandBuffer cmd = cres.GetValue();
+    const VkCommandBuffer cmd = *cres;
     CopyFromImage(cmd, source, copy);
     return pool.EndSingleTimeCommands(cmd, queue);
 }
@@ -378,7 +378,7 @@ Result<> DeviceImage::CopyFromBuffer(CommandPool &pool, VkQueue queue, const Dev
     const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
-    const VkCommandBuffer cmd = cres.GetValue();
+    const VkCommandBuffer cmd = *cres;
     CopyFromBuffer(cmd, source, copy);
     return pool.EndSingleTimeCommands(cmd, queue);
 }

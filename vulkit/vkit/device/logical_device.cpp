@@ -183,7 +183,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         {
             const auto result = createQueue(findex, j);
             TKIT_RETURN_ON_ERROR(result, cleanup());
-            info.QueuesPerType[i].Append(result.GetValue());
+            info.QueuesPerType[i].Append(*result);
         }
     }
 

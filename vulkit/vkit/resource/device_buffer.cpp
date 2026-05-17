@@ -212,7 +212,7 @@ Result<> DeviceBuffer::CopyFromBuffer(CommandPool &pool, VkQueue queue, const De
     const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
-    const VkCommandBuffer cmd = cres.GetValue();
+    const VkCommandBuffer cmd = *cres;
     CopyFromBuffer(cmd, source, copy);
     return pool.EndSingleTimeCommands(cmd, queue);
 }
@@ -223,7 +223,7 @@ Result<> DeviceBuffer::CopyFromImage(CommandPool &pool, VkQueue queue, const Dev
     const auto cres = pool.BeginSingleTimeCommands();
     TKIT_RETURN_ON_ERROR(cres);
 
-    const VkCommandBuffer cmd = cres.GetValue();
+    const VkCommandBuffer cmd = *cres;
     CopyFromImage(cmd, source, copy);
     return pool.EndSingleTimeCommands(cmd, queue);
 }
@@ -237,7 +237,7 @@ Result<> DeviceBuffer::UploadFromHost(CommandPool &pool, const VkQueue queue, co
             .Build();
     TKIT_RETURN_ON_ERROR(bres);
 
-    DeviceBuffer &staging = bres.GetValue();
+    DeviceBuffer &staging = *bres;
     staging.Write(data, {.srcOffset = pcopy.srcOffset, .dstOffset = 0, .size = pcopy.size});
     const auto result = staging.Flush();
     TKIT_RETURN_ON_ERROR(result, staging.Destroy());

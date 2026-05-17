@@ -236,7 +236,7 @@ template <typename T> T CheckResult(Result<T> &&result)
 {
     TKIT_ASSERT(result, "{}", result.GetError().ToString());
     if constexpr (!std::same_as<T, void>)
-        return result.GetValue();
+        return *result;
 }
 
 #ifdef TKIT_ENABLE_ASSERTS

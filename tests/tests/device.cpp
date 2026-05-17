@@ -306,7 +306,7 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK(instance.GetHandle() != VK_NULL_HANDLE);
 
         instance.Destroy();
@@ -325,7 +325,7 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         const auto &info = instance.GetInfo();
 
         CHECK(std::strcmp(info.ApplicationName, "Full Test App") == 0);
@@ -345,7 +345,7 @@ TEST_CASE("Instance::Builder - Basic Creation", "[instance][builder][create]")
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         instance.Destroy();
     }
 }
@@ -365,7 +365,7 @@ TEST_CASE("Instance::Builder - API Version Handling", "[instance][builder][versi
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK(instance.GetInfo().ApiVersion >= VKIT_MAKE_VERSION(0, 1, 0, 0));
 
         instance.Destroy();
@@ -382,7 +382,7 @@ TEST_CASE("Instance::Builder - API Version Handling", "[instance][builder][versi
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         // Should get at least 1.0.0
         CHECK(instance.GetInfo().ApiVersion >= VKIT_MAKE_VERSION(0, 1, 0, 0));
 
@@ -427,7 +427,7 @@ TEST_CASE("Instance::Builder - Extension Handling", "[instance][builder][extensi
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK(instance.IsExtensionEnabled(extName));
 
         instance.Destroy();
@@ -444,7 +444,7 @@ TEST_CASE("Instance::Builder - Extension Handling", "[instance][builder][extensi
         // Should succeed - requested extensions are optional
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK_FALSE(instance.IsExtensionEnabled("VK_FAKE_extension_does_not_exist"));
 
         instance.Destroy();
@@ -481,7 +481,7 @@ TEST_CASE("Instance::Builder - Layer Handling", "[instance][builder][layers]")
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK_FALSE(instance.IsLayerEnabled("VK_LAYER_FAKE_does_not_exist"));
 
         instance.Destroy();
@@ -512,7 +512,7 @@ TEST_CASE("Instance::Builder - Layer Handling", "[instance][builder][layers]")
 
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         bool hasValidation = instance.IsLayerEnabled("VK_LAYER_KHRONOS_validation");
         INFO("Validation layer enabled: " << hasValidation);
 
@@ -530,7 +530,7 @@ TEST_CASE("Instance - Destruction", "[instance][destroy]")
         const auto result = CreateMinimalInstance();
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         CHECK(instance.GetHandle() != VK_NULL_HANDLE);
 
         instance.Destroy();
@@ -542,7 +542,7 @@ TEST_CASE("Instance - Destruction", "[instance][destroy]")
         const auto result = CreateMinimalInstance();
         REQUIRE(result);
 
-        VKit::Instance instance = result.GetValue();
+        VKit::Instance instance = *result;
         instance.Destroy();
         instance.Destroy(); // Should not crash
 
@@ -558,7 +558,7 @@ TEST_CASE("Instance - Proxy Creation", "[instance][proxy]")
     const auto result = CreateMinimalInstance();
     REQUIRE(result);
 
-    VKit::Instance instance = result.GetValue();
+    VKit::Instance instance = *result;
 
     SECTION("CreateProxy returns valid proxy")
     {
@@ -582,7 +582,7 @@ TEST_CASE("PhysicalDevice::Selector - Basic Selection", "[physical_device][selec
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Select any device succeeds on systems with GPU")
     {
@@ -598,7 +598,7 @@ TEST_CASE("PhysicalDevice::Selector - Basic Selection", "[physical_device][selec
             return;
         }
 
-        VKit::PhysicalDevice device = result.GetValue();
+        VKit::PhysicalDevice device = *result;
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
     }
 
@@ -615,7 +615,7 @@ TEST_CASE("PhysicalDevice::Selector - Basic Selection", "[physical_device][selec
             return;
         }
 
-        const auto &devices = result.GetValue();
+        const auto &devices = *result;
         CHECK_FALSE(devices.IsEmpty());
 
         INFO("Found " << devices.GetSize() << " physical device(s)");
@@ -629,7 +629,7 @@ TEST_CASE("PhysicalDevice::Selector - Device GetCode() Preference", "[physical_d
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Prefer discrete GPU")
     {
@@ -641,7 +641,7 @@ TEST_CASE("PhysicalDevice::Selector - Device GetCode() Preference", "[physical_d
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             INFO("Selected device type: " << i32(device.GetInfo().Type));
 
             // If discrete is available, it should be selected
@@ -659,7 +659,7 @@ TEST_CASE("PhysicalDevice::Selector - Device GetCode() Preference", "[physical_d
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             INFO("Selected device type: " << i32(device.GetInfo().Type));
         }
     }
@@ -687,7 +687,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Require graphics queue")
     {
@@ -699,7 +699,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK((device.GetInfo().Flags & VKit::DeviceFlag_HasGraphicsQueue) != 0);
             CHECK(device.GetInfo().FamilyIndices[VKit::Queue_Graphics] != TKIT_U32_MAX);
         }
@@ -715,7 +715,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK((device.GetInfo().Flags & VKit::DeviceFlag_HasComputeQueue) != 0);
         }
     }
@@ -730,7 +730,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK((device.GetInfo().Flags & VKit::DeviceFlag_HasTransferQueue) != 0);
         }
     }
@@ -745,7 +745,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK((device.GetInfo().Flags & VKit::DeviceFlag_HasDedicatedComputeQueue) != 0);
         }
         else
@@ -765,7 +765,7 @@ TEST_CASE("PhysicalDevice::Selector - Queue Requirements", "[physical_device][se
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK((device.GetInfo().Flags & VKit::DeviceFlag_HasSeparateTransferQueue) != 0);
         }
         else
@@ -782,7 +782,7 @@ TEST_CASE("PhysicalDevice::Selector - Extension Requirements", "[physical_device
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Require unavailable extension fails")
     {
@@ -810,7 +810,7 @@ TEST_CASE("PhysicalDevice::Selector - Extension Requirements", "[physical_device
         // Should succeed - requested is optional
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK_FALSE(device.IsExtensionEnabled("VK_FAKE_does_not_exist"));
         }
     }
@@ -823,7 +823,7 @@ TEST_CASE("PhysicalDevice::Selector - Memory Requirements", "[physical_device][s
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Require reasonable memory amount")
     {
@@ -835,7 +835,7 @@ TEST_CASE("PhysicalDevice::Selector - Memory Requirements", "[physical_device][s
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             // Verify device has device-local memory
             const auto &memProps = device.GetInfo().Properties.Memory;
             bool hasDeviceLocal = false;
@@ -874,7 +874,7 @@ TEST_CASE("PhysicalDevice::Selector - API Version", "[physical_device][selector]
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     SECTION("Require API version 1.0.0 succeeds")
     {
@@ -886,7 +886,7 @@ TEST_CASE("PhysicalDevice::Selector - API Version", "[physical_device][selector]
 
         if (result)
         {
-            VKit::PhysicalDevice device = result.GetValue();
+            VKit::PhysicalDevice device = *result;
             CHECK(device.GetInfo().ApiVersion >= VKIT_MAKE_VERSION(0, 1, 0, 0));
         }
     }
@@ -914,7 +914,7 @@ TEST_CASE("PhysicalDevice - Feature Queries", "[physical_device][features]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto deviceResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                             .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -926,7 +926,7 @@ TEST_CASE("PhysicalDevice - Feature Queries", "[physical_device][features]")
         SKIP("No physical device available");
     }
 
-    VKit::PhysicalDevice device = deviceResult.GetValue();
+    VKit::PhysicalDevice device = *deviceResult;
 
     SECTION("Can query available features")
     {
@@ -964,7 +964,7 @@ TEST_CASE("PhysicalDevice - Extension Management", "[physical_device][extensions
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto deviceResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                             .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -976,7 +976,7 @@ TEST_CASE("PhysicalDevice - Extension Management", "[physical_device][extensions
         SKIP("No physical device available");
     }
 
-    VKit::PhysicalDevice device = deviceResult.GetValue();
+    VKit::PhysicalDevice device = *deviceResult;
 
     SECTION("Can query available extensions")
     {
@@ -1019,7 +1019,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1032,7 +1032,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     SECTION("Create device with single graphics queue")
     {
@@ -1042,7 +1042,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
 
         REQUIRE(result);
 
-        VKit::LogicalDevice device = result.GetValue();
+        VKit::LogicalDevice device = *result;
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
         const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
@@ -1061,7 +1061,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
 
         REQUIRE(result);
 
-        VKit::LogicalDevice device = result.GetValue();
+        VKit::LogicalDevice device = *result;
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
         // Graphics should definitely exist
@@ -1079,7 +1079,7 @@ TEST_CASE("LogicalDevice::Builder - Basic Creation", "[logical_device][builder][
         // May succeed or fail depending on queue count support
         if (result)
         {
-            VKit::LogicalDevice device = result.GetValue();
+            VKit::LogicalDevice device = *result;
             const auto &queues = device.GetInfo().QueuesPerType[VKit::Queue_Graphics];
             INFO("Created " << queues.GetSize() << " graphics queue(s)");
             device.Destroy();
@@ -1094,7 +1094,7 @@ TEST_CASE("LogicalDevice::Builder - Queue Priority", "[logical_device][builder][
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1107,7 +1107,7 @@ TEST_CASE("LogicalDevice::Builder - Queue Priority", "[logical_device][builder][
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     SECTION("Different priorities for queues")
     {
@@ -1119,7 +1119,7 @@ TEST_CASE("LogicalDevice::Builder - Queue Priority", "[logical_device][builder][
 
         REQUIRE(result);
 
-        VKit::LogicalDevice device = result.GetValue();
+        VKit::LogicalDevice device = *result;
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
         device.Destroy();
@@ -1133,7 +1133,7 @@ TEST_CASE("LogicalDevice - Destruction", "[logical_device][destroy]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1146,7 +1146,7 @@ TEST_CASE("LogicalDevice - Destruction", "[logical_device][destroy]")
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     SECTION("Destroy sets handle to null")
     {
@@ -1156,7 +1156,7 @@ TEST_CASE("LogicalDevice - Destruction", "[logical_device][destroy]")
 
         REQUIRE(result);
 
-        VKit::LogicalDevice device = result.GetValue();
+        VKit::LogicalDevice device = *result;
         CHECK(device.GetHandle() != VK_NULL_HANDLE);
 
         device.Destroy();
@@ -1171,7 +1171,7 @@ TEST_CASE("LogicalDevice - Destruction", "[logical_device][destroy]")
 
         REQUIRE(result);
 
-        VKit::LogicalDevice device = result.GetValue();
+        VKit::LogicalDevice device = *result;
         device.Destroy();
         device.Destroy(); // Should not crash
 
@@ -1186,7 +1186,7 @@ TEST_CASE("LogicalDevice - WaitIdle", "[logical_device][wait]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1199,14 +1199,14 @@ TEST_CASE("LogicalDevice - WaitIdle", "[logical_device][wait]")
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     auto deviceResult = VKit::LogicalDevice::Builder(&instanceGuard.Get(), &physicalDevice)
                             .RequireQueue(VKit::Queue_Graphics, 1)
                             .Build();
 
     REQUIRE(deviceResult);
-    VKit::LogicalDevice device = deviceResult.GetValue();
+    VKit::LogicalDevice device = *deviceResult;
 
     SECTION("WaitIdle on idle device succeeds")
     {
@@ -1239,7 +1239,7 @@ TEST_CASE("LogicalDevice - Proxy Creation", "[logical_device][proxy]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1252,14 +1252,14 @@ TEST_CASE("LogicalDevice - Proxy Creation", "[logical_device][proxy]")
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     auto deviceResult = VKit::LogicalDevice::Builder(&instanceGuard.Get(), &physicalDevice)
                             .RequireQueue(VKit::Queue_Graphics, 1)
                             .Build();
 
     REQUIRE(deviceResult);
-    VKit::LogicalDevice device = deviceResult.GetValue();
+    VKit::LogicalDevice device = *deviceResult;
 
     SECTION("CreateProxy returns valid proxy")
     {
@@ -1279,7 +1279,7 @@ TEST_CASE("LogicalDevice - FindSupportedFormat", "[logical_device][format]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1292,14 +1292,14 @@ TEST_CASE("LogicalDevice - FindSupportedFormat", "[logical_device][format]")
         SKIP("No suitable physical device available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     auto deviceResult = VKit::LogicalDevice::Builder(&instanceGuard.Get(), &physicalDevice)
                             .RequireQueue(VKit::Queue_Graphics, 1)
                             .Build();
 
     REQUIRE(deviceResult);
-    VKit::LogicalDevice device = deviceResult.GetValue();
+    VKit::LogicalDevice device = *deviceResult;
 
     SECTION("Find depth format")
     {
@@ -1312,7 +1312,7 @@ TEST_CASE("LogicalDevice - FindSupportedFormat", "[logical_device][format]")
 
         if (result)
         {
-            VkFormat format = result.GetValue();
+            VkFormat format = *result;
             CHECK((format == VK_FORMAT_D32_SFLOAT || format == VK_FORMAT_D32_SFLOAT_S8_UINT ||
                    format == VK_FORMAT_D24_UNORM_S8_UINT));
         }
@@ -1327,7 +1327,7 @@ TEST_CASE("LogicalDevice - FindSupportedFormat", "[logical_device][format]")
 
         if (result)
         {
-            VkFormat format = result.GetValue();
+            VkFormat format = *result;
             CHECK((format == VK_FORMAT_R8G8B8A8_SRGB || format == VK_FORMAT_B8G8R8A8_SRGB));
         }
     }
@@ -1360,7 +1360,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
 
     auto instanceResult = CreateValidatedInstance();
     REQUIRE(instanceResult);
-    InstanceGuard instanceGuard(std::move(instanceResult.GetValue()));
+    InstanceGuard instanceGuard(std::move(*instanceResult));
 
     auto physicalResult = VKit::PhysicalDevice::Selector(&instanceGuard.Get())
                               .AddFlags(VKit::DeviceSelectorFlag_AnyType)
@@ -1375,7 +1375,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
         SKIP("No suitable physical device with all queue types available");
     }
 
-    VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+    VKit::PhysicalDevice physicalDevice = *physicalResult;
 
     auto deviceResult = VKit::LogicalDevice::Builder(&instanceGuard.Get(), &physicalDevice)
                             .RequireQueue(VKit::Queue_Graphics, 1, 1.0f)
@@ -1384,7 +1384,7 @@ TEST_CASE("LogicalDevice - Queue Access", "[logical_device][queues]")
                             .Build();
 
     REQUIRE(deviceResult);
-    VKit::LogicalDevice device = deviceResult.GetValue();
+    VKit::LogicalDevice device = *deviceResult;
 
     SECTION("Can access graphics queue")
     {
@@ -1445,7 +1445,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
                                   .Build();
 
         REQUIRE(instanceResult);
-        VKit::Instance instance = instanceResult.GetValue();
+        VKit::Instance instance = *instanceResult;
 
         // Step 3: Select Physical Device
         auto physicalResult = VKit::PhysicalDevice::Selector(&instance)
@@ -1462,7 +1462,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
             SKIP("No physical device available");
         }
 
-        VKit::PhysicalDevice physicalDevice = physicalResult.GetValue();
+        VKit::PhysicalDevice physicalDevice = *physicalResult;
 
         // Log device info
         INFO("Selected device: " << physicalDevice.GetInfo().Properties.Core.deviceName);
@@ -1477,7 +1477,7 @@ TEST_CASE("Full initialization pipeline", "[integration][pipeline]")
                                 .Build();
 
         REQUIRE(deviceResult);
-        VKit::LogicalDevice device = deviceResult.GetValue();
+        VKit::LogicalDevice device = *deviceResult;
 
         // Verify everything is set up correctly
         CHECK(device.GetHandle() != VK_NULL_HANDLE);

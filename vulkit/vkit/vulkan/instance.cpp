@@ -323,7 +323,7 @@ Result<Instance> Instance::Builder::Build() const
         vresult = checkApiVersion(m_RequiredApiVersion, false);
         TKIT_RETURN_ON_ERROR(vresult);
     }
-    const u32 apiVersion = vresult.GetValue();
+    const u32 apiVersion = *vresult;
 
     TKit::StackArray<const char *> extensions;
     extensions.Reserve(m_RequiredExtensions.GetCapacity());

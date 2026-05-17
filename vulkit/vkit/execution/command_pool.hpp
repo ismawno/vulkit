@@ -39,7 +39,7 @@ class CommandPool
         const auto result = BeginSingleTimeCommands();
         TKIT_RETURN_ON_ERROR(result);
 
-        const VkCommandBuffer cmd = result.GetValue();
+        const VkCommandBuffer cmd = *result;
         std::forward<F>(fun)(cmd);
         return EndSingleTimeCommands(cmd, queue);
     }

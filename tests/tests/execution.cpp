@@ -148,7 +148,7 @@ class TestContext
             VKit::Terminate();
             return;
         }
-        m_Instance = new VKit::Instance(instanceResult.GetValue());
+        m_Instance = new VKit::Instance(*instanceResult);
 
         // Select physical device with all queue types
         auto physicalResult = VKit::PhysicalDevice::Selector(m_Instance)
@@ -169,7 +169,7 @@ class TestContext
             VKit::Terminate();
             return;
         }
-        m_PhysicalDevice = new VKit::PhysicalDevice(physicalResult.GetValue());
+        m_PhysicalDevice = new VKit::PhysicalDevice(*physicalResult);
 
         // Create logical device with multiple queue types
         auto logicalResult = VKit::LogicalDevice::Builder(m_Instance, m_PhysicalDevice)
@@ -189,7 +189,7 @@ class TestContext
             VKit::Terminate();
             return;
         }
-        m_LogicalDevice = new VKit::LogicalDevice(logicalResult.GetValue());
+        m_LogicalDevice = new VKit::LogicalDevice(*logicalResult);
         m_Valid = true;
     }
 
@@ -243,7 +243,7 @@ TEST_CASE("CommandPool::Create - Basic Creation", "[command_pool][create]")
         auto result = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
 
         REQUIRE(result);
-        auto pool = result.GetValue();
+        auto pool = *result;
         CHECK(pool.GetHandle() != VK_NULL_HANDLE);
 
         pool.Destroy();
@@ -255,7 +255,7 @@ TEST_CASE("CommandPool::Create - Basic Creation", "[command_pool][create]")
             VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 
         REQUIRE(result);
-        auto pool = result.GetValue();
+        auto pool = *result;
         CHECK(pool.GetHandle() != VK_NULL_HANDLE);
 
         pool.Destroy();
@@ -266,7 +266,7 @@ TEST_CASE("CommandPool::Create - Basic Creation", "[command_pool][create]")
         auto result = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
 
         REQUIRE(result);
-        auto pool = result.GetValue();
+        auto pool = *result;
         CHECK(pool.GetHandle() != VK_NULL_HANDLE);
 
         pool.Destroy();
@@ -285,7 +285,7 @@ TEST_CASE("CommandPool::Create - Basic Creation", "[command_pool][create]")
             // May or may not succeed depending on device support
             if (result)
             {
-                auto pool = result.GetValue();
+                auto pool = *result;
                 pool.Destroy();
             }
         }
@@ -302,9 +302,9 @@ TEST_CASE("CommandPool::Create - Basic Creation", "[command_pool][create]")
         REQUIRE(computeResult);
         REQUIRE(transferResult);
 
-        auto graphicsPool = graphicsResult.GetValue();
-        auto computePool = computeResult.GetValue();
-        auto transferPool = transferResult.GetValue();
+        auto graphicsPool = *graphicsResult;
+        auto computePool = *computeResult;
+        auto transferPool = *transferResult;
 
         // Handles should be unique
         CHECK(graphicsPool.GetHandle() != computePool.GetHandle());
@@ -329,16 +329,16 @@ TEST_CASE("CommandPool::Allocate - Single Buffer", "[command_pool][allocate]")
 
     auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Allocates primary command buffer")
     {
         auto result = pool.Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
         REQUIRE(result);
-        CHECK(result.GetValue() != VK_NULL_HANDLE);
+        CHECK(*result != VK_NULL_HANDLE);
 
-        pool.Deallocate(result.GetValue());
+        pool.Deallocate(*result);
     }
 
     SECTION("Allocates secondary command buffer")
@@ -346,9 +346,9 @@ TEST_CASE("CommandPool::Allocate - Single Buffer", "[command_pool][allocate]")
         auto result = pool.Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
         REQUIRE(result);
-        CHECK(result.GetValue() != VK_NULL_HANDLE);
+        CHECK(*result != VK_NULL_HANDLE);
 
-        pool.Deallocate(result.GetValue());
+        pool.Deallocate(*result);
     }
 
     SECTION("Multiple sequential allocations return unique handles")
@@ -360,7 +360,7 @@ TEST_CASE("CommandPool::Allocate - Single Buffer", "[command_pool][allocate]")
         {
             auto result = pool.Allocate();
             REQUIRE(result);
-            buffers.push_back(result.GetValue());
+            buffers.push_back(*result);
         }
 
         // Verify all handles are unique
@@ -389,7 +389,7 @@ TEST_CASE("CommandPool::Allocate - Batch Allocation", "[command_pool][allocate][
 
     auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Allocates batch of primary buffers")
     {
@@ -465,7 +465,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         auto result = pool.Reset();
         REQUIRE(result);
@@ -477,7 +477,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         // Allocate some buffers
         constexpr u32 count = 5;
@@ -496,7 +496,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
@@ -511,7 +511,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         for (i32 i = 0; i < 10; ++i)
         {
@@ -527,7 +527,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
         auto poolResult =
             VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         // First allocation
         auto alloc1 = pool.Allocate();
@@ -540,7 +540,7 @@ TEST_CASE("CommandPool::Reset", "[command_pool][reset]")
         // Allocate again after reset
         auto alloc2 = pool.Allocate();
         REQUIRE(alloc2);
-        CHECK(alloc2.GetValue() != VK_NULL_HANDLE);
+        CHECK(*alloc2 != VK_NULL_HANDLE);
 
         pool.Destroy();
     }
@@ -561,17 +561,17 @@ TEST_CASE("CommandPool::BeginSingleTimeCommands", "[command_pool][single_time]")
     auto poolResult =
         VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Begin returns valid command buffer in recording state")
     {
         auto result = pool.BeginSingleTimeCommands();
 
         REQUIRE(result);
-        CHECK(result.GetValue() != VK_NULL_HANDLE);
+        CHECK(*result != VK_NULL_HANDLE);
 
         // End to clean up
-        auto endResult = pool.EndSingleTimeCommands(result.GetValue(), *queue);
+        auto endResult = pool.EndSingleTimeCommands(*result, *queue);
         REQUIRE(endResult);
     }
 
@@ -580,7 +580,7 @@ TEST_CASE("CommandPool::BeginSingleTimeCommands", "[command_pool][single_time]")
         auto beginResult = pool.BeginSingleTimeCommands();
         REQUIRE(beginResult);
 
-        VkCommandBuffer cmd = beginResult.GetValue();
+        VkCommandBuffer cmd = *beginResult;
 
         // Record a simple command (memory barrier)
         VkMemoryBarrier barrier{};
@@ -604,7 +604,7 @@ TEST_CASE("CommandPool::BeginSingleTimeCommands", "[command_pool][single_time]")
             auto beginResult = pool.BeginSingleTimeCommands();
             REQUIRE(beginResult);
 
-            auto endResult = pool.EndSingleTimeCommands(beginResult.GetValue(), *queue);
+            auto endResult = pool.EndSingleTimeCommands(*beginResult, *queue);
             REQUIRE(endResult);
         }
     }
@@ -626,7 +626,7 @@ TEST_CASE("CommandPool::Destroy", "[command_pool][destroy]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         CHECK(pool.GetHandle() != VK_NULL_HANDLE);
 
@@ -639,7 +639,7 @@ TEST_CASE("CommandPool::Destroy", "[command_pool][destroy]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         pool.Destroy();
         pool.Destroy(); // Should not crash
@@ -651,7 +651,7 @@ TEST_CASE("CommandPool::Destroy", "[command_pool][destroy]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
@@ -724,13 +724,13 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
     auto poolResult =
         VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Submit single command buffer")
     {
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
-        VkCommandBuffer cmd = allocResult.GetValue();
+        VkCommandBuffer cmd = *allocResult;
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -830,7 +830,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
     auto poolResult =
         VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Submit with unsignaled fence and wait")
     {
@@ -843,7 +843,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
 
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
-        VkCommandBuffer cmd = allocResult.GetValue();
+        VkCommandBuffer cmd = *allocResult;
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -880,7 +880,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
 
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
-        VkCommandBuffer cmd = allocResult.GetValue();
+        VkCommandBuffer cmd = *allocResult;
 
         for (i32 i = 0; i < 5; ++i)
         {
@@ -932,11 +932,11 @@ TEST_CASE("Queue::WaitIdle", "[queue][wait]")
     {
         auto poolResult = VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), 0);
         REQUIRE(poolResult);
-        auto pool = poolResult.GetValue();
+        auto pool = *poolResult;
 
         auto allocResult = pool.Allocate();
         REQUIRE(allocResult);
-        VkCommandBuffer cmd = allocResult.GetValue();
+        VkCommandBuffer cmd = *allocResult;
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -984,7 +984,7 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
     auto poolResult =
         VKit::CommandPool::Create(proxy, ctx.GetGraphicsFamily(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
     REQUIRE(poolResult);
-    auto pool = poolResult.GetValue();
+    auto pool = *poolResult;
 
     SECTION("Rapid allocate-submit-wait cycles")
     {
@@ -995,7 +995,7 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
             auto beginResult = pool.BeginSingleTimeCommands();
             REQUIRE(beginResult);
 
-            auto endResult = pool.EndSingleTimeCommands(beginResult.GetValue(), *queue);
+            auto endResult = pool.EndSingleTimeCommands(*beginResult, *queue);
             REQUIRE(endResult);
         }
     }
@@ -1046,9 +1046,9 @@ TEST_CASE("Integration - Multi-Queue Operations", "[integration][multi_queue]")
     auto &ctx = TestContext::Get();
     auto proxy = ctx.GetProxy();
 
-    auto *graphicsQueue = ctx.GetGraphicsQueue();
-    auto *computeQueue = ctx.GetComputeQueue();
-    auto *transferQueue = ctx.GetTransferQueue();
+    auto graphicsQueue = ctx.GetGraphicsQueue();
+    auto computeQueue = ctx.GetComputeQueue();
+    auto transferQueue = ctx.GetTransferQueue();
 
     REQUIRE(graphicsQueue != nullptr);
     REQUIRE(computeQueue != nullptr);
@@ -1065,28 +1065,28 @@ TEST_CASE("Integration - Multi-Queue Operations", "[integration][multi_queue]")
     REQUIRE(computePoolResult);
     REQUIRE(transferPoolResult);
 
-    auto graphicsPool = graphicsPoolResult.GetValue();
-    auto computePool = computePoolResult.GetValue();
-    auto transferPool = transferPoolResult.GetValue();
+    auto graphicsPool = *graphicsPoolResult;
+    auto computePool = *computePoolResult;
+    auto transferPool = *transferPoolResult;
 
     SECTION("Submit to multiple queues independently")
     {
         // Submit to graphics
         auto gBegin = graphicsPool.BeginSingleTimeCommands();
         REQUIRE(gBegin);
-        auto gEnd = graphicsPool.EndSingleTimeCommands(gBegin.GetValue(), *graphicsQueue);
+        auto gEnd = graphicsPool.EndSingleTimeCommands(*gBegin, *graphicsQueue);
         REQUIRE(gEnd);
 
         // Submit to compute
         auto cBegin = computePool.BeginSingleTimeCommands();
         REQUIRE(cBegin);
-        auto cEnd = computePool.EndSingleTimeCommands(cBegin.GetValue(), *computeQueue);
+        auto cEnd = computePool.EndSingleTimeCommands(*cBegin, *computeQueue);
         REQUIRE(cEnd);
 
         // Submit to transfer
         auto tBegin = transferPool.BeginSingleTimeCommands();
         REQUIRE(tBegin);
-        auto tEnd = transferPool.EndSingleTimeCommands(tBegin.GetValue(), *transferQueue);
+        auto tEnd = transferPool.EndSingleTimeCommands(*tBegin, *transferQueue);
         REQUIRE(tEnd);
     }
 
