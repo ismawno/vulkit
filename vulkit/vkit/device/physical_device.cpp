@@ -346,7 +346,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
     return devices[0];
 }
 
-Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice device) const
+Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice device, const u32 idx) const
 {
     using JudgeResult = Result<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
@@ -355,6 +355,20 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     VkPhysicalDeviceProperties quickProperties;
     table->GetPhysicalDeviceProperties(device, &quickProperties);
     const char *name = quickProperties.deviceName;
+
+    TKIT_LOG_INFO("[VULKIT][P-DEVICE] Found physical device ID={} [{}]: {}", quickProperties.deviceID, idx, name);
+
+    if (m_Id != TKIT_U32_MAX && m_Id != quickProperties.deviceID)
+        return JudgeResult::Error(
+            Error_RejectedDevice,
+            TKit::String::Format("[VULKIT][P-DEVICE] The device id '{}' does not match the requested ID '{}'",
+                                 quickProperties.deviceID, m_Id));
+
+    if (m_Index != TKIT_U32_MAX && m_Index != idx)
+        return JudgeResult::Error(
+            Error_RejectedDevice,
+            TKit::String::Format("[VULKIT][P-DEVICE] The device index '{}' does not match the requested index '{}'",
+                                 idx, m_Index));
 
     if (m_Name && strcmp(m_Name, name) != 0)
         return JudgeResult::Error(
@@ -809,9 +823,11 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
 
     TKit::TierArray<Result<PhysicalDevice>> devices;
     devices.Reserve(vkdevices.GetSize());
+
+    u32 idx = 0;
     for (const VkPhysicalDevice vkdevice : vkdevices)
     {
-        const auto judgeResult = judgeDevice(vkdevice);
+        const auto judgeResult = judgeDevice(vkdevice, idx++);
         devices.Append(judgeResult);
     }
 
@@ -867,6 +883,11 @@ Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSu
 PhysicalDevice::Selector &PhysicalDevice::Selector::SetName(const char *name)
 {
     m_Name = name;
+    return *this;
+}
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetIndex(const u32 idx)
+{
+    m_Index = idx;
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const DeviceType type)

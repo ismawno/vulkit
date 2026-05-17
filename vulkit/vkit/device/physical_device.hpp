@@ -8,6 +8,7 @@
 #include "tkit/container/tier_array.hpp"
 #include "vkit/vulkan/instance.hpp"
 #include "vkit/execution/queue.hpp"
+#include "tkit/utils/limits.hpp"
 
 namespace VKit
 {
@@ -114,6 +115,8 @@ class PhysicalDevice
         VKIT_NO_DISCARD Result<TKit::TierArray<Result<PhysicalDevice>>> Enumerate() const;
 
         Selector &SetName(const char *name);
+        Selector &SetIndex(u32 idx);
+        Selector &SetId(u32 id);
         Selector &PreferType(DeviceType type);
 
         Selector &RequireApiVersion(u32 version);
@@ -139,13 +142,15 @@ class PhysicalDevice
 #endif
 
       private:
-        VKIT_NO_DISCARD Result<PhysicalDevice> judgeDevice(VkPhysicalDevice device) const;
+        VKIT_NO_DISCARD Result<PhysicalDevice> judgeDevice(VkPhysicalDevice device, u32 idx) const;
 
         const Instance *m_Instance;
         const char *m_Name = nullptr;
 
         u32 m_RequiredApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
         u32 m_RequestedApiVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+        u32 m_Index = TKIT_U32_MAX;
+        u32 m_Id = TKIT_U32_MAX;
 
 #ifdef VK_KHR_surface
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
