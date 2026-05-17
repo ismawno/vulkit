@@ -834,7 +834,7 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
 
     const auto valids = std::stable_partition(devices.begin(), devices.end(),
                                               [](const Result<PhysicalDevice> &device) { return device.IsOk(); });
-    std::stable_partition(valids, devices.end(), [](const Result<PhysicalDevice> &device) {
+    std::stable_partition(devices.begin(), valids, [](const Result<PhysicalDevice> &device) {
         return device.GetValue().GetInfo().Flags & DeviceFlag_Optimal;
     });
     return devices;
