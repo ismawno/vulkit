@@ -346,6 +346,23 @@ Result<PhysicalDevice> PhysicalDevice::Selector::Select() const
     return devices[0];
 }
 
+static DeviceType fromVulkan(VkPhysicalDeviceType type) noexcept
+{
+    switch (type)
+    {
+    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+        return Device_Discrete;
+    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+        return Device_Integrated;
+    case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+        return Device_Virtual;
+    case VK_PHYSICAL_DEVICE_TYPE_CPU:
+        return Device_CPU;
+    default:
+        return Device_Other;
+    }
+}
+
 Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice device, const u32 idx) const
 {
     using JudgeResult = Result<PhysicalDevice>;
@@ -686,7 +703,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
             TKit::String::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features",
                                  name));
 #endif
-    if (m_PreferredType != DeviceType(properties.Core.deviceType))
+    if (m_PreferredType != fromVulkan(properties.Core.deviceType))
     {
         if (!checkFlags(DeviceSelectorFlag_AnyType))
             return JudgeResult::Error(
@@ -761,7 +778,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     deviceInfo.FamilyIndices[Queue_Transfer] = transferIndex;
     deviceInfo.FamilyIndices[Queue_Present] = presentIndex;
     deviceInfo.QueueFamilies = families;
-    deviceInfo.Type = DeviceType(properties.Core.deviceType);
+    deviceInfo.Type = fromVulkan(properties.Core.deviceType);
     deviceInfo.AvailableFeatures = features;
     deviceInfo.EnabledFeatures = m_RequiredFeatures;
     deviceInfo.Properties = properties;
@@ -832,10 +849,19 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
         devices.Append(judgeResult);
     }
 
+    std::sort(devices.begin(), devices.end(),
+              [](const Result<PhysicalDevice> &device1, const Result<PhysicalDevice> &device2) {
+                  if (!device1)
+                      return false;
+                  if (!device2)
+                      return true;
+                  return device1->GetInfo().Type < device2->GetInfo().Type;
+              });
+
     const auto valids = std::stable_partition(devices.begin(), devices.end(),
                                               [](const Result<PhysicalDevice> &device) { return device.IsOk(); });
     std::stable_partition(devices.begin(), valids, [](const Result<PhysicalDevice> &device) {
-        return device.GetValue().GetInfo().Flags & DeviceFlag_Optimal;
+        return device->GetInfo().Flags & DeviceFlag_Optimal;
     });
     return devices;
 }

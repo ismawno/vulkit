@@ -12,14 +12,13 @@
 
 namespace VKit
 {
-
 enum DeviceType : u32
 {
-    Device_Discrete = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
-    Device_Integrated = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
-    Device_Virtual = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
-    Device_CPU = VK_PHYSICAL_DEVICE_TYPE_CPU,
-    Device_Other = VK_PHYSICAL_DEVICE_TYPE_OTHER
+    Device_Discrete,
+    Device_Integrated,
+    Device_Virtual,
+    Device_CPU,
+    Device_Other
 };
 
 using DeviceSelectorFlags = u16;
