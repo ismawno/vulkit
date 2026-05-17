@@ -890,6 +890,11 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::SetIndex(const u32 idx)
     m_Index = idx;
     return *this;
 }
+PhysicalDevice::Selector &PhysicalDevice::Selector::SetId(const u32 id)
+{
+    m_Id = id;
+    return *this;
+}
 PhysicalDevice::Selector &PhysicalDevice::Selector::PreferType(const DeviceType type)
 {
     m_PreferredType = type;
