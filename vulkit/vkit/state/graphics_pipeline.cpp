@@ -193,14 +193,9 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetTopology(const VkPrimit
     m_InputAssemblyInfo.topology = topology;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnablePrimitiveRestart(const VkBool32 enable)
 {
-    m_InputAssemblyInfo.primitiveRestartEnable = VK_TRUE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisablePrimitiveRestart()
-{
-    m_InputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+    m_InputAssemblyInfo.primitiveRestartEnable = enable;
     return *this;
 }
 
@@ -220,29 +215,19 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetViewportCount(const u32
 }
 
 // Rasterization
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableRasterizerDiscard()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableRasterizerDiscard(const VkBool32 enable)
 {
-    m_RasterizationInfo.rasterizerDiscardEnable = VK_TRUE;
+    m_RasterizationInfo.rasterizerDiscardEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp(const VkBool32 enable)
 {
-    m_RasterizationInfo.depthClampEnable = VK_TRUE;
+    m_RasterizationInfo.depthClampEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableRasterizerDiscard()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBiasEnable(const VkBool32 enable)
 {
-    m_RasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthClamp()
-{
-    m_RasterizationInfo.depthClampEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBias()
-{
-    m_RasterizationInfo.depthBiasEnable = VK_FALSE;
+    m_RasterizationInfo.depthBiasEnable = enable;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetPolygonMode(const VkPolygonMode mode)
@@ -265,11 +250,6 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetFrontFace(const VkFront
     m_RasterizationInfo.frontFace = frontFace;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias()
-{
-    m_RasterizationInfo.depthBiasEnable = VK_TRUE;
-    return *this;
-}
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 constantFactor, const f32 clamp,
                                                                    const f32 slopeFactor)
 {
@@ -280,14 +260,9 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthBias(const f32 con
 }
 
 // Multisampling
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableSampleShading()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableSampleShading(const VkBool32 enable)
 {
-    m_MultisampleInfo.sampleShadingEnable = VK_TRUE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableSampleShading()
-{
-    m_MultisampleInfo.sampleShadingEnable = VK_FALSE;
+    m_MultisampleInfo.sampleShadingEnable = enable;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleCount(const VkSampleCountFlagBits sampleCount)
@@ -305,41 +280,27 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetSampleMask(const VkSamp
     m_MultisampleInfo.pSampleMask = sampleMask;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToCoverage()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToCoverage(const VkBool32 enable)
 {
-    m_MultisampleInfo.alphaToCoverageEnable = VK_TRUE;
+    m_MultisampleInfo.alphaToCoverageEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToOne()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableAlphaToOne(const VkBool32 enable)
 {
-    m_MultisampleInfo.alphaToOneEnable = VK_TRUE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToCoverage()
-{
-    m_MultisampleInfo.alphaToCoverageEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableAlphaToOne()
-{
-    m_MultisampleInfo.alphaToOneEnable = VK_FALSE;
+    m_MultisampleInfo.alphaToOneEnable = enable;
     return *this;
 }
 
 // Color Blending
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation(const VkBool32 enable)
 {
-    m_ColorBlendInfo.logicOpEnable = VK_TRUE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableLogicOperation()
-{
-    m_ColorBlendInfo.logicOpEnable = VK_FALSE;
+    m_ColorBlendInfo.logicOpEnable = enable;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp operation)
 {
     m_ColorBlendInfo.logicOp = operation;
+    m_ColorBlendInfo.logicOpEnable = VK_TRUE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *constants)
@@ -376,44 +337,24 @@ GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::Builder::BeginColorA
 }
 
 // Depth and Stencil
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthTest()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthTest(const VkBool32 enable)
 {
-    m_DepthStencilInfo.depthTestEnable = VK_TRUE;
+    m_DepthStencilInfo.depthTestEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthWrite()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthWrite(const VkBool32 enable)
 {
-    m_DepthStencilInfo.depthWriteEnable = VK_TRUE;
+    m_DepthStencilInfo.depthWriteEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBoundsTest()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBoundsTest(const VkBool32 enable)
 {
-    m_DepthStencilInfo.depthBoundsTestEnable = VK_TRUE;
+    m_DepthStencilInfo.depthBoundsTestEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableStencilTest()
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableStencilTest(const VkBool32 enable)
 {
-    m_DepthStencilInfo.stencilTestEnable = VK_TRUE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthTest()
-{
-    m_DepthStencilInfo.depthTestEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthWrite()
-{
-    m_DepthStencilInfo.depthWriteEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableDepthBoundsTest()
-{
-    m_DepthStencilInfo.depthBoundsTestEnable = VK_FALSE;
-    return *this;
-}
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::DisableStencilTest()
-{
-    m_DepthStencilInfo.stencilTestEnable = VK_FALSE;
+    m_DepthStencilInfo.stencilTestEnable = enable;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetDepthCompareOperation(const VkCompareOp op)
@@ -552,16 +493,13 @@ GraphicsPipeline::ColorAttachmentBuilder::ColorAttachmentBuilder(Builder *builde
     m_ColorBlendAttachmentInfo.alphaBlendOp = VK_BLEND_OP_ADD;                            // Optional
 }
 
-GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::EnableBlending()
+GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::EnableBlending(
+    const VkBool32 enable)
 {
-    m_ColorBlendAttachmentInfo.blendEnable = VK_TRUE;
+    m_ColorBlendAttachmentInfo.blendEnable = enable;
     return *this;
 }
-GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::DisableBlending()
-{
-    m_ColorBlendAttachmentInfo.blendEnable = VK_FALSE;
-    return *this;
-}
+
 GraphicsPipeline::ColorAttachmentBuilder &GraphicsPipeline::ColorAttachmentBuilder::SetColorWriteMask(
     const VkColorComponentFlags writeMask)
 {
@@ -599,5 +537,4 @@ GraphicsPipeline::Builder &GraphicsPipeline::ColorAttachmentBuilder::EndColorAtt
     m_Builder->m_ColorAttachments.Append(m_ColorBlendAttachmentInfo);
     return *m_Builder;
 }
-
 } // namespace VKit

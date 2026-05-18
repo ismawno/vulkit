@@ -132,10 +132,9 @@ Sampler::Builder &Sampler::Builder::SetAnisotropy(const f32 maxAnisotropy)
     return *this;
 }
 
-Sampler::Builder &Sampler::Builder::DisableAnisotropy()
+Sampler::Builder &Sampler::Builder::EnableAnisotropy(const VkBool32 enable)
 {
-    m_Info.anisotropyEnable = VK_FALSE;
-    m_Info.maxAnisotropy = 1.0f;
+    m_Info.anisotropyEnable = enable;
     return *this;
 }
 
@@ -146,10 +145,9 @@ Sampler::Builder &Sampler::Builder::SetCompareOp(const VkCompareOp op)
     return *this;
 }
 
-Sampler::Builder &Sampler::Builder::DisableCompare()
+Sampler::Builder &Sampler::Builder::EnableCompare(const VkBool32 enable)
 {
-    m_Info.compareEnable = VK_FALSE;
-    m_Info.compareOp = VK_COMPARE_OP_ALWAYS;
+    m_Info.compareEnable = enable;
     return *this;
 }
 

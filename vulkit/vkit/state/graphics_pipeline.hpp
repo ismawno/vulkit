@@ -29,8 +29,7 @@ class GraphicsPipeline
       public:
         ColorAttachmentBuilder(Builder *builder);
 
-        ColorAttachmentBuilder &EnableBlending();
-        ColorAttachmentBuilder &DisableBlending();
+        ColorAttachmentBuilder &EnableBlending(VkBool32 enable = VK_TRUE);
 
         ColorAttachmentBuilder &SetColorWriteMask(VkColorComponentFlags mask);
 
@@ -94,20 +93,16 @@ class GraphicsPipeline
 
         // Input Assembly
         Builder &SetTopology(VkPrimitiveTopology topology);
-        Builder &EnablePrimitiveRestart();
-        Builder &DisablePrimitiveRestart();
+        Builder &EnablePrimitiveRestart(VkBool32 enable = VK_TRUE);
 
         // Viewport and Scissor
         Builder &AddViewport(VkViewport viewport, VkRect2D scissor);
         Builder &SetViewportCount(u32 viewportCount);
 
         // Rasterization
-        Builder &EnableRasterizerDiscard();
-        Builder &EnableDepthClamp();
-        Builder &EnableDepthBias();
-        Builder &DisableRasterizerDiscard();
-        Builder &DisableDepthClamp();
-        Builder &DisableDepthBias();
+        Builder &EnableRasterizerDiscard(VkBool32 enable = VK_TRUE);
+        Builder &EnableDepthClamp(VkBool32 enable = VK_TRUE);
+        Builder &EnableDepthBiasEnable(VkBool32 enable = VK_TRUE);
         Builder &SetPolygonMode(VkPolygonMode mode);
         Builder &SetLineWidth(f32 width);
         Builder &SetCullMode(VkCullModeFlags mode);
@@ -115,19 +110,15 @@ class GraphicsPipeline
         Builder &SetDepthBias(f32 constantFactor, f32 clamp, f32 slopeFactor);
 
         // Multisampling
-        Builder &EnableSampleShading();
-        Builder &EnableAlphaToCoverage();
-        Builder &EnableAlphaToOne();
-        Builder &DisableSampleShading();
-        Builder &DisableAlphaToCoverage();
-        Builder &DisableAlphaToOne();
+        Builder &EnableSampleShading(VkBool32 enable = VK_TRUE);
+        Builder &EnableAlphaToCoverage(VkBool32 enable = VK_TRUE);
+        Builder &EnableAlphaToOne(VkBool32 enable = VK_TRUE);
         Builder &SetSampleCount(VkSampleCountFlagBits sampleCount);
         Builder &SetMinSampleShading(f32 minSampleShading);
         Builder &SetSampleMask(const VkSampleMask *sampleMask);
 
         // Color Blending
-        Builder &EnableLogicOperation();
-        Builder &DisableLogicOperation();
+        Builder &EnableLogicOperation(VkBool32 enable);
         Builder &SetLogicOperation(VkLogicOp operation);
         Builder &SetBlendConstants(const f32 *constants);
         Builder &SetBlendConstants(f32 c1, f32 c2, f32 c3, f32 c4);
@@ -136,14 +127,10 @@ class GraphicsPipeline
         ColorAttachmentBuilder &BeginColorAttachment();
 
         // Depth and Stencil
-        Builder &EnableDepthTest();
-        Builder &EnableDepthWrite();
-        Builder &EnableDepthBoundsTest();
-        Builder &EnableStencilTest();
-        Builder &DisableDepthTest();
-        Builder &DisableDepthWrite();
-        Builder &DisableDepthBoundsTest();
-        Builder &DisableStencilTest();
+        Builder &EnableDepthTest(VkBool32 enable = VK_TRUE);
+        Builder &EnableDepthWrite(VkBool32 enable = VK_TRUE);
+        Builder &EnableDepthBoundsTest(VkBool32 enable = VK_TRUE);
+        Builder &EnableStencilTest(VkBool32 enable = VK_TRUE);
         Builder &SetDepthCompareOperation(VkCompareOp op);
         Builder &SetDepthBounds(f32 min, f32 max);
         Builder &SetStencilFailOperation(VkStencilOp failOp, StencilOperationFlags flags);

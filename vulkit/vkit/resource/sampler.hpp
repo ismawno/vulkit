@@ -31,10 +31,10 @@ class Sampler
         Builder &SetMaxLod(f32 max);
 
         Builder &SetAnisotropy(f32 maxAnisotropy);
-        Builder &DisableAnisotropy();
+        Builder &EnableAnisotropy(VkBool32 enable);
 
         Builder &SetCompareOp(VkCompareOp op);
-        Builder &DisableCompare();
+        Builder &EnableCompare(VkBool32 enable);
 
         Builder &SetBorderColor(VkBorderColor color);
         Builder &SetUnnormalizedCoordinates(bool unnormalized);
