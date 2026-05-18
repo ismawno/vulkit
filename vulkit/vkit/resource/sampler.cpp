@@ -127,7 +127,6 @@ Sampler::Builder &Sampler::Builder::SetMaxLod(const f32 max)
 
 Sampler::Builder &Sampler::Builder::SetAnisotropy(const f32 maxAnisotropy)
 {
-    m_Info.anisotropyEnable = VK_TRUE;
     m_Info.maxAnisotropy = maxAnisotropy;
     return *this;
 }
@@ -140,7 +139,6 @@ Sampler::Builder &Sampler::Builder::EnableAnisotropy(const VkBool32 enable)
 
 Sampler::Builder &Sampler::Builder::SetCompareOp(const VkCompareOp op)
 {
-    m_Info.compareEnable = VK_TRUE;
     m_Info.compareOp = op;
     return *this;
 }

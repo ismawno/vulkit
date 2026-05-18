@@ -300,7 +300,6 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableLogicOperation(const
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetLogicOperation(const VkLogicOp operation)
 {
     m_ColorBlendInfo.logicOp = operation;
-    m_ColorBlendInfo.logicOpEnable = VK_TRUE;
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::SetBlendConstants(const f32 *constants)
