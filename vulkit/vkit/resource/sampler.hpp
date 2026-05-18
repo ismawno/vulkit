@@ -34,7 +34,7 @@ class Sampler
         Builder &EnableAnisotropy(VkBool32 enable);
 
         Builder &SetCompareOp(VkCompareOp op);
-        Builder &EnableCompare(VkBool32 enable);
+        Builder &EnableCompare(VkBool32 enable = VK_TRUE);
 
         Builder &SetBorderColor(VkBorderColor color);
         Builder &SetUnnormalizedCoordinates(bool unnormalized);
