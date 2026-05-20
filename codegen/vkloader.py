@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import difflib
 
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
+sys.path.append(str(Path(__file__).parent.parent))
 
 from convoy import Convoy
 
