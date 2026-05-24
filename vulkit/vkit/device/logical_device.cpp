@@ -27,10 +27,11 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, u
 LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 family, u32 count, f32 priority)
 {
     QueuePriorities &priorities = m_Priorities[family];
-    if (count <= priorities.RequestedPriorities.GetSize())
+    const u32 rcount = priorities.RequestedPriorities.GetSize() + priorities.RequiredPriorities.GetSize();
+    if (count <= rcount)
         return *this;
 
-    count -= priorities.RequestedPriorities.GetSize();
+    count -= rcount;
     for (u32 i = 0; i < count; ++i)
         m_Priorities[family].RequestedPriorities.Append(priority);
     return *this;
