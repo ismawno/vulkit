@@ -142,8 +142,8 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     createInfo.pQueueCreateInfos = queueCreateInfos.GetData();
     createInfo.enabledExtensionCount = enabledExtensions.GetSize();
     createInfo.ppEnabledExtensionNames = enabledExtensions.GetData();
-    createInfo.enabledLayerCount = instanceInfo.EnabledLayers.GetSize();
-    createInfo.ppEnabledLayerNames = instanceInfo.EnabledLayers.GetData();
+    createInfo.enabledLayerCount = 0;
+    createInfo.ppEnabledLayerNames = nullptr;
 
     const Vulkan::InstanceTable *itable = instanceInfo.Table;
 
