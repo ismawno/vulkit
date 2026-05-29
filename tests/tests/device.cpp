@@ -996,7 +996,7 @@ TEST_CASE("PhysicalDevice - Extension Management", "[physical_device][extensions
         const auto &extensions = device.GetInfo().AvailableExtensions;
         if (!extensions.IsEmpty())
         {
-            const char *extName = extensions[0].GetData();
+            const char *extName = extensions[0].CString();
             CHECK(device.EnableExtension(extName));
             CHECK(device.IsExtensionEnabled(extName));
         }

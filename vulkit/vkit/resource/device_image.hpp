@@ -220,7 +220,7 @@ class DeviceImage
     VKIT_NO_DISCARD Result<> SetViewName(const u32 idx, const char *name)
     {
         return m_Device.SetObjectName(m_Views[idx], VK_OBJECT_TYPE_IMAGE_VIEW,
-                                      TKit::String::Format("{}-{}", name, idx).GetData());
+                                      TKit::String::Format("{}-{}", name, idx).CString());
     }
 #endif
 

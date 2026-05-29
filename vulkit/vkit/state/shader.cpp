@@ -12,6 +12,7 @@ TKIT_MSVC_WARNING_IGNORE(6262)
 
 Result<Shader> Shader::Create(const ProxyDevice &device, const TKit::StringView spirvPath)
 {
+    // NOTE(Isma): Not very nice that GetData() on a string view
     std::ifstream file{spirvPath.GetData(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
         return Result<Shader>::Error(Error_FileNotFound,

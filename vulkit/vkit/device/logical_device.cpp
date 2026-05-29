@@ -102,7 +102,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     TKit::StackArray<const char *> enabledExtensions;
     enabledExtensions.Reserve(devInfo.EnabledExtensions.GetSize());
     for (const TKit::String &extension : devInfo.EnabledExtensions)
-        enabledExtensions.Append(extension.GetData());
+        enabledExtensions.Append(extension.CString());
 
 #ifdef VKIT_API_VERSION_1_1
     const bool v11 = devInfo.ApiVersion >= VKIT_MAKE_VERSION(0, 1, 1, 0);
