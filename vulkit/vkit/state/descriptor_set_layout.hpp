@@ -6,6 +6,7 @@
 #endif
 
 #include "vkit/device/proxy_device.hpp"
+#include "tkit/container/hash_map.hpp"
 #include <vulkan/vulkan.h>
 
 namespace VKit
@@ -23,15 +24,15 @@ class DescriptorSetLayout
         VKIT_NO_DISCARD Result<DescriptorSetLayout> Build() const;
 
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
-        Builder &AddBinding2(VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1,
+        Builder &AddBinding2(u32 binding, VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1,
                              const VkDescriptorBindingFlagsEXT flags = 0);
 #endif
-        Builder &AddBinding(VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1);
+        Builder &AddBinding(u32 binding, VkDescriptorType type, VkShaderStageFlags stageFlags, u32 count = 1);
         Builder &SetFlags(VkDescriptorSetLayoutCreateFlags flags);
 
       private:
         ProxyDevice m_Device;
-        TKit::TierArray<VkDescriptorSetLayoutBinding> m_Bindings;
+        TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> m_Bindings;
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
         TKit::TierArray<VkDescriptorBindingFlagsEXT> m_BindFlags;
 #endif
@@ -40,7 +41,7 @@ class DescriptorSetLayout
 
     DescriptorSetLayout() = default;
     DescriptorSetLayout(const ProxyDevice &device, const VkDescriptorSetLayout layout,
-                        const TKit::TierArray<VkDescriptorSetLayoutBinding> &bindings)
+                        const TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> &bindings)
         : m_Device(device), m_Layout(layout), m_Bindings{bindings}
     {
     }
@@ -48,7 +49,7 @@ class DescriptorSetLayout
     void Destroy();
     VKIT_SET_DEBUG_NAME(m_Layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT)
 
-    const TKit::TierArray<VkDescriptorSetLayoutBinding> &GetBindings() const
+    const TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> &GetBindings() const
     {
         return m_Bindings;
     }
@@ -72,6 +73,6 @@ class DescriptorSetLayout
   private:
     ProxyDevice m_Device{};
     VkDescriptorSetLayout m_Layout = VK_NULL_HANDLE;
-    TKit::TierArray<VkDescriptorSetLayoutBinding> m_Bindings;
+    TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> m_Bindings;
 };
 } // namespace VKit

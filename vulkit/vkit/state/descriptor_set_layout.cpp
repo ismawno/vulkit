@@ -6,10 +6,17 @@ namespace VKit
 
 Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 {
+    TKit::StackArray<VkDescriptorSetLayoutBinding> bindings{};
+    bindings.Reserve(m_Bindings.GetSize());
+
+    for (const auto &kv : m_Bindings)
+        bindings.Append(kv.Value);
+
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = m_Bindings.GetSize();
-    layoutInfo.pBindings = m_Bindings.GetData();
+    layoutInfo.bindingCount = bindings.GetSize();
+    layoutInfo.pBindings = bindings.GetData();
+
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
     VkDescriptorSetLayoutBindingFlagsCreateInfoEXT flagsInfo{};
     if (!m_BindFlags.IsEmpty())
@@ -44,25 +51,25 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::SetFlags(const VkDes
     return *this;
 }
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
-DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding2(const VkDescriptorType type,
+DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding2(const u32 binding, const VkDescriptorType type,
                                                                         const VkShaderStageFlags stageFlags,
                                                                         const u32 count,
                                                                         const VkDescriptorBindingFlagsEXT flags)
 {
     m_BindFlags.Append(flags);
-    return AddBinding(type, stageFlags, count);
+    return AddBinding(binding, type, stageFlags, count);
 }
 #endif
-DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(const VkDescriptorType type,
+DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(const u32 bpoint, const VkDescriptorType type,
                                                                        const VkShaderStageFlags stageFlags,
                                                                        const u32 count)
 {
     VkDescriptorSetLayoutBinding binding{};
-    binding.binding = m_Bindings.GetSize();
+    binding.binding = bpoint;
     binding.descriptorType = type;
     binding.descriptorCount = count;
     binding.stageFlags = stageFlags;
-    m_Bindings.Append(binding);
+    m_Bindings[bpoint] = binding;
     return *this;
 }
 
