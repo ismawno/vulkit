@@ -3,14 +3,22 @@
 
 namespace VKit
 {
-
 Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 {
     TKit::StackArray<VkDescriptorSetLayoutBinding> bindings{};
     bindings.Reserve(m_Bindings.GetSize());
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
+    TKit::StackArray<VkDescriptorBindingFlagsEXT> flags{};
+    flags.Reserve(m_Bindings.GetSize());
+#endif
 
     for (const auto &kv : m_Bindings)
-        bindings.Append(kv.Value);
+    {
+        bindings.Append(kv.Value.Binding);
+#if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
+        flags.Append(kv.Value.Flags);
+#endif
+    }
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -19,13 +27,10 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
     VkDescriptorSetLayoutBindingFlagsCreateInfoEXT flagsInfo{};
-    if (!m_BindFlags.IsEmpty())
-    {
-        flagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
-        flagsInfo.bindingCount = m_BindFlags.GetSize();
-        flagsInfo.pBindingFlags = m_BindFlags.GetData();
-        layoutInfo.pNext = &flagsInfo;
-    }
+    flagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+    flagsInfo.bindingCount = flags.GetSize();
+    flagsInfo.pBindingFlags = flags.GetData();
+    layoutInfo.pNext = &flagsInfo;
 #endif
     layoutInfo.flags = m_Flags;
 
@@ -34,7 +39,11 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
         m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout),
         Result<DescriptorSetLayout>);
 
-    return Result<DescriptorSetLayout>::Ok(m_Device, layout, m_Bindings);
+    TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> bindingMap{};
+    for (const VkDescriptorSetLayoutBinding &b : bindings)
+        bindingMap[b.binding] = b;
+
+    return Result<DescriptorSetLayout>::Ok(m_Device, layout, bindingMap);
 }
 
 void DescriptorSetLayout::Destroy()
@@ -56,8 +65,9 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding2(const u3
                                                                         const u32 count,
                                                                         const VkDescriptorBindingFlagsEXT flags)
 {
-    m_BindFlags.Append(flags);
-    return AddBinding(binding, type, stageFlags, count);
+    AddBinding(binding, type, stageFlags, count);
+    m_Bindings[binding].Flags = flags;
+    return *this;
 }
 #endif
 DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(const u32 bpoint, const VkDescriptorType type,
@@ -69,7 +79,7 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::AddBinding(const u32
     binding.descriptorType = type;
     binding.descriptorCount = count;
     binding.stageFlags = stageFlags;
-    m_Bindings[bpoint] = binding;
+    m_Bindings[bpoint] = BindingInfo{binding, 0};
     return *this;
 }
 

@@ -31,11 +31,15 @@ class DescriptorSetLayout
         Builder &SetFlags(VkDescriptorSetLayoutCreateFlags flags);
 
       private:
-        ProxyDevice m_Device;
-        TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> m_Bindings;
+        struct BindingInfo
+        {
+            VkDescriptorSetLayoutBinding Binding;
 #if defined(VKIT_API_VERSION_1_2) || defined(VK_EXT_descriptor_indexing)
-        TKit::TierArray<VkDescriptorBindingFlagsEXT> m_BindFlags;
+            VkDescriptorBindingFlagsEXT Flags;
 #endif
+        };
+        ProxyDevice m_Device;
+        TKit::TierHashMap<u32, BindingInfo> m_Bindings;
         VkDescriptorSetLayoutCreateFlags m_Flags = 0;
     };
 
