@@ -14,20 +14,20 @@
 
 namespace VKit
 {
-using SwapChainBuilderFlags = u8;
-enum SwapChainBuilderFlagBit : SwapChainBuilderFlags
+using SwapchainBuilderFlags = u8;
+enum SwapchainBuilderFlagBit : SwapchainBuilderFlags
 {
-    SwapChainBuilderFlag_Clipped = 1U << 0,
-    SwapChainBuilderFlag_CreateImageViews = 1U << 1
+    SwapchainBuilderFlag_Clipped = 1U << 0,
+    SwapchainBuilderFlag_CreateImageViews = 1U << 1
 };
 
-using SwapChainFlags = u8;
-enum SwapChainFlagBit : SwapChainFlags
+using SwapchainFlags = u8;
+enum SwapchainFlagBit : SwapchainFlags
 {
-    SwapChainFlag_Clipped = 1U << 0,
-    SwapChainFlag_HasImageViews = 1U << 1
+    SwapchainFlag_Clipped = 1U << 0,
+    SwapchainFlag_HasImageViews = 1U << 1
 };
-class SwapChain
+class Swapchain
 {
   public:
     class Builder
@@ -37,7 +37,7 @@ class SwapChain
         {
         }
 
-        VKIT_NO_DISCARD Result<SwapChain> Build() const;
+        VKIT_NO_DISCARD Result<Swapchain> Build() const;
 
         Builder &RequestSurfaceFormat(VkSurfaceFormatKHR format);
         Builder &AllowSurfaceFormat(VkSurfaceFormatKHR format);
@@ -53,9 +53,9 @@ class SwapChain
 
         Builder &SetImageArrayLayers(u32 layers);
 
-        Builder &SetFlags(SwapChainBuilderFlags flags);
-        Builder &AddFlags(SwapChainBuilderFlags flags);
-        Builder &RemoveFlags(SwapChainBuilderFlags flags);
+        Builder &SetFlags(SwapchainBuilderFlags flags);
+        Builder &AddFlags(SwapchainBuilderFlags flags);
+        Builder &RemoveFlags(SwapchainBuilderFlags flags);
 
         Builder &SetCreateFlags(VkSwapchainCreateFlagsKHR flags);
         Builder &AddCreateFlags(VkSwapchainCreateFlagsKHR flags);
@@ -68,13 +68,13 @@ class SwapChain
         Builder &SetTransformBit(VkSurfaceTransformFlagBitsKHR transform);
         Builder &SetCompositeAlphaBit(VkCompositeAlphaFlagBitsKHR alpha);
 
-        Builder &SetOldSwapChain(VkSwapchainKHR oldSwapChain);
+        Builder &SetOldSwapchain(VkSwapchainKHR oldSwapchain);
 
       private:
         const LogicalDevice *m_Device;
         VkSurfaceKHR m_Surface;
 
-        VkSwapchainKHR m_OldSwapChain = VK_NULL_HANDLE;
+        VkSwapchainKHR m_OldSwapchain = VK_NULL_HANDLE;
 
         VkExtent2D m_Extent = {512, 512};
 
@@ -87,7 +87,7 @@ class SwapChain
 
         VkImageUsageFlags m_ImageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        SwapChainBuilderFlags m_Flags = 0;
+        SwapchainBuilderFlags m_Flags = 0;
         VkSwapchainCreateFlagsKHR m_CreateFlags = 0;
         VkSurfaceTransformFlagBitsKHR m_TransformBit = VkSurfaceTransformFlagBitsKHR(0);
         VkCompositeAlphaFlagBitsKHR m_CompositeAlphaFlags = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -101,21 +101,21 @@ class SwapChain
         VkExtent2D Extent;
         VkImageUsageFlags ImageUsage;
 
-        PhysicalDevice::SwapChainSupportDetails SupportDetails;
+        PhysicalDevice::SwapchainSupportDetails SupportDetails;
 
-        SwapChainFlags Flags;
+        SwapchainFlags Flags;
     };
 
-    SwapChain() = default;
-    SwapChain(const ProxyDevice &device, VkSwapchainKHR swapChain, const TKit::TierArray<DeviceImage> &images,
+    Swapchain() = default;
+    Swapchain(const ProxyDevice &device, VkSwapchainKHR swapChain, const TKit::TierArray<DeviceImage> &images,
               const Info &info)
-        : m_Device(device), m_SwapChain(swapChain), m_Images(images), m_Info(info)
+        : m_Device(device), m_Swapchain(swapChain), m_Images(images), m_Info(info)
     {
     }
 
     void Destroy();
 
-    VKIT_SET_DEBUG_NAME(m_SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR)
+    VKIT_SET_DEBUG_NAME(m_Swapchain, VK_OBJECT_TYPE_SWAPCHAIN_KHR)
 
     const ProxyDevice &GetDevice() const
     {
@@ -123,7 +123,7 @@ class SwapChain
     }
     VkSwapchainKHR GetHandle() const
     {
-        return m_SwapChain;
+        return m_Swapchain;
     }
 
     const DeviceImage &GetImage(const u32 index) const
@@ -145,16 +145,16 @@ class SwapChain
     }
     operator VkSwapchainKHR() const
     {
-        return m_SwapChain;
+        return m_Swapchain;
     }
     operator bool() const
     {
-        return m_SwapChain != VK_NULL_HANDLE;
+        return m_Swapchain != VK_NULL_HANDLE;
     }
 
   private:
     ProxyDevice m_Device{};
-    VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
+    VkSwapchainKHR m_Swapchain = VK_NULL_HANDLE;
     TKit::TierArray<DeviceImage> m_Images;
     Info m_Info;
 };

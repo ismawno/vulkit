@@ -66,7 +66,7 @@ class LogicalDevice
     }
 
 #ifdef VK_KHR_surface
-    VKIT_NO_DISCARD Result<PhysicalDevice::SwapChainSupportDetails> QuerySwapChainSupport(VkSurfaceKHR surface) const;
+    VKIT_NO_DISCARD Result<PhysicalDevice::SwapchainSupportDetails> QuerySwapchainSupport(VkSurfaceKHR surface) const;
 #endif
     VKIT_NO_DISCARD Result<VkFormat> FindSupportedFormat(TKit::Span<const VkFormat> candidates, VkImageTiling tiling,
                                                          VkFormatFeatureFlags features) const;

@@ -94,11 +94,11 @@ void RenderPass::Resources::Destroy()
     for (DeviceImage image : m_Images)
         image.Destroy();
 
-    for (const VkFramebuffer &frameBuffer : m_FrameBuffers)
+    for (const VkFramebuffer &frameBuffer : m_Framebuffers)
         m_Device.Table->DestroyFramebuffer(m_Device, frameBuffer, m_Device.AllocationCallbacks);
 
     m_Images.Clear();
-    m_FrameBuffers.Clear();
+    m_Framebuffers.Clear();
 }
 RenderPass::AttachmentBuilder &RenderPass::Builder::BeginAttachment(const DeviceImageFlags flags)
 {

@@ -256,11 +256,11 @@ static bool compareFeatures(const DeviceFeatures &supported, const DeviceFeature
 }
 
 #ifdef VK_KHR_surface
-static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(const Vulkan::InstanceTable *table,
+static Result<PhysicalDevice::SwapchainSupportDetails> querySwapchainSupport(const Vulkan::InstanceTable *table,
                                                                              const VkPhysicalDevice device,
                                                                              const VkSurfaceKHR surface)
 {
-    using Res = Result<PhysicalDevice::SwapChainSupportDetails>;
+    using Res = Result<PhysicalDevice::SwapchainSupportDetails>;
     u32 formatCount = 0;
     u32 modeCount = 0;
 
@@ -270,7 +270,7 @@ static Result<PhysicalDevice::SwapChainSupportDetails> querySwapChainSupport(con
     if (formatCount == 0 || modeCount == 0)
         return Res::Error(Error_NoSurfaceCapabilities);
 
-    PhysicalDevice::SwapChainSupportDetails details;
+    PhysicalDevice::SwapchainSupportDetails details;
     VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities), Res);
 
     details.Formats.Resize(formatCount);
@@ -617,7 +617,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
     {
-        TKIT_RETURN_IF_FAILED(querySwapChainSupport(table, device, m_Surface));
+        TKIT_RETURN_IF_FAILED(querySwapchainSupport(table, device, m_Surface));
     }
 #endif
 
@@ -902,10 +902,10 @@ bool PhysicalDevice::EnableExtension(const char *extension)
 }
 
 #ifdef VK_KHR_surface
-Result<PhysicalDevice::SwapChainSupportDetails> PhysicalDevice::QuerySwapChainSupport(const Instance::Proxy &instance,
+Result<PhysicalDevice::SwapchainSupportDetails> PhysicalDevice::QuerySwapchainSupport(const Instance::Proxy &instance,
                                                                                       const VkSurfaceKHR surface) const
 {
-    return querySwapChainSupport(instance.Table, m_Device, surface);
+    return querySwapchainSupport(instance.Table, m_Device, surface);
 }
 #endif
 

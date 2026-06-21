@@ -102,7 +102,7 @@ class DeviceImage
         u32 ArrayLayers;
         DeviceImageFlags Flags;
 
-        static Info FromSwapChain(TKit::Span<const VkFormat> formats, const VkExtent2D &extent,
+        static Info FromSwapchain(TKit::Span<const VkFormat> formats, const VkExtent2D &extent,
                                   DeviceImageFlags flags = DeviceImageFlag_ColorAttachment);
     };
 

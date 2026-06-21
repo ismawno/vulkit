@@ -130,7 +130,7 @@ VkImageAspectFlags DeviceImage::InferAspectMask() const
     return inferAspectMask(m_Info.Flags);
 }
 
-DeviceImage::Info DeviceImage::Info::FromSwapChain(const TKit::Span<const VkFormat> formats, const VkExtent2D &extent,
+DeviceImage::Info DeviceImage::Info::FromSwapchain(const TKit::Span<const VkFormat> formats, const VkExtent2D &extent,
                                                    DeviceImageFlags flags)
 {
     if (flags & DeviceImageFlag_ColorAttachment)

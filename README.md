@@ -94,12 +94,12 @@ The [swap_chain.hpp](https://github.com/ismawno/vulkit/blob/main/vulkit/vkit/pre
 
 ```cpp
 const auto result =
-    VKit::SwapChain::Builder(&device, window.GetSurface())
+    VKit::Swapchain::Builder(&device, window.GetSurface())
         .RequestSurfaceFormat({VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR})
         .RequestPresentMode(presentMode)
         .RequestExtent(windowExtent)
-        .SetOldSwapChain(swapChain)
-        .AddFlags(VKit::SwapChain::Builder::Flag_Clipped | VKit::SwapChain::Builder::Flag_CreateImageViews)
+        .SetOldSwapchain(swapChain)
+        .AddFlags(VKit::Swapchain::Builder::Flag_Clipped | VKit::Swapchain::Builder::Flag_CreateImageViews)
         .Build();
 
 VKIT_CHECK_RESULT(result);

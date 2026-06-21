@@ -218,9 +218,9 @@ Result<> LogicalDevice::WaitIdle() const
 }
 
 #ifdef VK_KHR_surface
-Result<PhysicalDevice::SwapChainSupportDetails> LogicalDevice::QuerySwapChainSupport(const VkSurfaceKHR surface) const
+Result<PhysicalDevice::SwapchainSupportDetails> LogicalDevice::QuerySwapchainSupport(const VkSurfaceKHR surface) const
 {
-    return m_Info.PhysicalDevice->QuerySwapChainSupport(*m_Info.Instance, surface);
+    return m_Info.PhysicalDevice->QuerySwapchainSupport(*m_Info.Instance, surface);
 }
 #endif
 

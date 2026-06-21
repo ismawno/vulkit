@@ -96,7 +96,7 @@ class PhysicalDevice
 {
   public:
 #ifdef VK_KHR_surface
-    struct SwapChainSupportDetails
+    struct SwapchainSupportDetails
     {
         VkSurfaceCapabilitiesKHR Capabilities;
         TKit::TierArray<VkSurfaceFormatKHR> Formats;
@@ -218,7 +218,7 @@ class PhysicalDevice
     }
 
 #ifdef VK_KHR_surface
-    VKIT_NO_DISCARD Result<SwapChainSupportDetails> QuerySwapChainSupport(const Instance::Proxy &instance,
+    VKIT_NO_DISCARD Result<SwapchainSupportDetails> QuerySwapchainSupport(const Instance::Proxy &instance,
                                                                           VkSurfaceKHR surface) const;
 #endif
 

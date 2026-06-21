@@ -145,18 +145,18 @@ class RenderPass
 
         VkImageView GetImageView(const u32 imageIndex, const u32 attachmentIndex) const
         {
-            const u32 attachmentCount = m_Images.GetSize() / m_FrameBuffers.GetSize();
+            const u32 attachmentCount = m_Images.GetSize() / m_Framebuffers.GetSize();
             return m_Images[imageIndex * attachmentCount + attachmentIndex].GetViews()[0];
         }
-        VkFramebuffer GetFrameBuffer(const u32 imageIndex) const
+        VkFramebuffer GetFramebuffer(const u32 imageIndex) const
         {
-            return m_FrameBuffers[imageIndex];
+            return m_Framebuffers[imageIndex];
         }
 
       private:
         ProxyDevice m_Device;
         TKit::TierArray<DeviceImage> m_Images;         // size: m_ImageCount * m_Attachments.GetSize()
-        TKit::TierArray<VkFramebuffer> m_FrameBuffers; // size: m_ImageCount
+        TKit::TierArray<VkFramebuffer> m_Framebuffers; // size: m_ImageCount
 
         friend class RenderPass;
     };
@@ -181,7 +181,7 @@ class RenderPass
      *
      * Populates frame buffers and associated images based on the provided extent and a user-defined image creation
      * callback. The `RenderPass` class provides many high-level options for `ImageData` struct creation, including the
-     * case where the underlying resource is directly provided by a `SwapChain` image. See the
+     * case where the underlying resource is directly provided by a `Swapchain` image. See the
      * `ImageFactory::CreateImage()` methods for more.
      *
      * @tparam F The type of the callback function used for creating image data.
@@ -229,7 +229,7 @@ class RenderPass
                                                                     m_Device.AllocationCallbacks, &frameBuffer),
                                   Result<Resources>, resources.Destroy());
 
-            resources.m_FrameBuffers.Append(frameBuffer);
+            resources.m_Framebuffers.Append(frameBuffer);
         }
 
         return resources;
