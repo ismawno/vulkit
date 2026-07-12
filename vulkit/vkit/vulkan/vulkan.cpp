@@ -123,7 +123,7 @@ const char *VulkanResultToString(VkResult result)
         return "VK_ERROR_FRAGMENTED_POOL";
     case VK_ERROR_UNKNOWN:
         return "VK_ERROR_UNKNOWN";
-    case VK_ERROR_VALIDATION_FAILED:
+    case VK_ERROR_VALIDATION_FAILED_EXT:
         return "VK_ERROR_VALIDATION_FAILED";
 #ifdef VKIT_API_VERSION_1_1
     case VK_ERROR_OUT_OF_POOL_MEMORY:
