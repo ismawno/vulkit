@@ -210,7 +210,7 @@ const char *VulkanResultToString(VkResult result)
         return "VK_ERROR_COMPRESSION_EXHAUSTED_EXT";
 #endif
 #ifdef VK_EXT_shader_object
-    case VK_INCOMPATIBLE_SHADER_BINARY_EXT:
+    case VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT:
         return "VK_INCOMPATIBLE_SHADER_BINARY_EXT";
 #endif
 #ifdef VK_KHR_pipeline_binary
