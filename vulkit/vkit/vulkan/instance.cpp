@@ -260,7 +260,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
         PRINT_DEBUG_INFO(TKIT_LOG_WARNING);
         return VK_FALSE;
 #endif
-#ifdef TKIT_ENABLE_ASSERTS
+#ifdef TKIT_ENABLE_ENSURE
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
         PRINT_DEBUG_INFO(TKIT_FATAL);
         return VK_FALSE;

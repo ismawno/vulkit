@@ -20,12 +20,6 @@ TKit::String Error::ToString() const
         str += TKit::String::Format(" - Message: '{}'", m_FormattedMessage);
     return str;
 }
-#ifdef TKIT_ENABLE_ASSERTS
-void CheckResult(const VkResult result)
-{
-    TKIT_ASSERT(result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(result));
-}
-#endif
 
 void DeletionQueue::Push(std::function<void()> &&deleter)
 {

@@ -9,7 +9,7 @@
 #include <vulkan/vulkan.h>
 #include <functional>
 
-#if !defined(VKIT_NO_DISCARD) && defined(TKIT_ENABLE_ASSERTS)
+#if !defined(VKIT_NO_DISCARD) && defined(TKIT_ENABLE_ENSURE)
 #    define VKIT_NO_DISCARD [[nodiscard]]
 #else
 #    define VKIT_NO_DISCARD
@@ -239,16 +239,13 @@ template <typename T> T CheckResult(Result<T> &&result)
         return *result;
 }
 
-#ifdef TKIT_ENABLE_ASSERTS
-void CheckResult(VkResult result);
-#else
-inline void CheckResult(const VkResult)
-{
-}
-#endif
-
 const char *VulkanResultToString(VkResult result);
 const char *ErrorCodeToString(ErrorCode code);
+
+inline void CheckResult([[maybe_unused]] const VkResult result)
+{
+    TKIT_ASSERT(result == VK_SUCCESS, "[VULKIT][RESULT] {}", VulkanResultToString(result));
+}
 
 template <typename T> bool IsSuccessful(const T &result)
 {
