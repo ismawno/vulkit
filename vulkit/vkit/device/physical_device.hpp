@@ -160,8 +160,8 @@ class PhysicalDevice
         VkDeviceSize m_RequiredMemory = 0;
         VkDeviceSize m_RequestedMemory = 0;
 
-        TKit::TierArray<TKit::String> m_RequiredExtensions;
-        TKit::TierArray<TKit::String> m_RequestedExtensions;
+        TKit::TierArray<TKit::TierString> m_RequiredExtensions;
+        TKit::TierArray<TKit::TierString> m_RequestedExtensions;
 
         DeviceFeatures m_RequiredFeatures{};
     };
@@ -176,8 +176,8 @@ class PhysicalDevice
         TKit::TierArray<VkQueueFamilyProperties> QueueFamilies;
 
         // std string because extension names are "locally" allocated
-        TKit::TierArray<TKit::String> EnabledExtensions;
-        TKit::TierArray<TKit::String> AvailableExtensions;
+        TKit::TierArray<TKit::TierString> EnabledExtensions;
+        TKit::TierArray<TKit::TierString> AvailableExtensions;
 
         DeviceFeatures EnabledFeatures{};
         DeviceFeatures AvailableFeatures{};

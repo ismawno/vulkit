@@ -4,8 +4,6 @@
 #include "tkit/utils/result.hpp"
 #include "tkit/container/tier_array.hpp"
 #include "tkit/preprocessor/utils.hpp"
-#define TKIT_DEFAULT_STRING_TIER
-#include "tkit/container/string.hpp"
 #include <vulkan/vulkan.h>
 #include <functional>
 
@@ -137,11 +135,11 @@
 
 #define VKIT_RETURN_ON_ERROR_FORMATTED(vkresult, rtype, ...)                                                           \
     if ((vkresult) != VK_SUCCESS)                                                                                      \
-    return rtype::Error((vkresult), TKit::String::Format(__VA_ARGS__))
+    return rtype::Error((vkresult), TKit::TierString::Format(__VA_ARGS__))
 
 #define VKIT_RETURN_IF_FAILED_FORMATTED(expression, rtype, ...)                                                        \
     if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
-    return rtype::Error(__vkit_result, TKit::String::Format(__VA_ARGS__))
+    return rtype::Error(__vkit_result, TKit::TierString::Format(__VA_ARGS__))
 
 #ifdef VK_EXT_debug_utils
 #    define VKIT_SET_DEBUG_NAME(handle, objType)                                                                       \
@@ -183,13 +181,13 @@ class Error
 {
   public:
     Error() = default;
-    Error(const ErrorCode code, const TKit::String &message) : m_FormattedMessage(message), m_ErrorCode(code)
+    Error(const ErrorCode code, const TKit::TierString &message) : m_FormattedMessage(message), m_ErrorCode(code)
     {
     }
     Error(const ErrorCode code, const char *message) : m_CheapMessage(message), m_ErrorCode(code)
     {
     }
-    Error(const VkResult result, const TKit::String &message)
+    Error(const VkResult result, const TKit::TierString &message)
         : m_FormattedMessage(message), m_ErrorCode(Error_VulkanError), m_VkResult(result)
     {
     }
@@ -204,8 +202,8 @@ class Error
     {
     }
 
-    TKit::String ToString() const;
-    TKit::String GetMessage() const
+    TKit::TierString ToString() const;
+    TKit::TierString GetMessage() const
     {
         return m_CheapMessage ? m_CheapMessage : m_FormattedMessage;
     }
@@ -225,7 +223,7 @@ class Error
     }
 
     const char *m_CheapMessage = nullptr;
-    TKit::String m_FormattedMessage{};
+    TKit::TierString m_FormattedMessage{};
     ErrorCode m_ErrorCode = Error_Unknown;
     VkResult m_VkResult = VK_SUCCESS;
 };

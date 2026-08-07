@@ -209,7 +209,7 @@ class TestContext
     }
 
     bool m_Valid = false;
-    TKit::String m_ErrorMessage;
+    TKit::TierString m_ErrorMessage;
     VKit::Instance *m_Instance = nullptr;
     VKit::PhysicalDevice *m_PhysicalDevice = nullptr;
     VKit::LogicalDevice *m_LogicalDevice = nullptr;
@@ -703,10 +703,10 @@ TEST_CASE("Queue - Basic Properties", "[queue][properties]")
 
 TEST_CASE("Queue - ToString", "[queue][utility]")
 {
-    CHECK(TKit::String(VKit::ToString(VKit::Queue_Graphics)) == "Graphics");
-    CHECK(TKit::String(VKit::ToString(VKit::Queue_Compute)) == "Compute");
-    CHECK(TKit::String(VKit::ToString(VKit::Queue_Transfer)) == "Transfer");
-    CHECK(TKit::String(VKit::ToString(VKit::Queue_Present)) == "Present");
+    CHECK(TKit::TierString(VKit::ToString(VKit::Queue_Graphics)) == "Graphics");
+    CHECK(TKit::TierString(VKit::ToString(VKit::Queue_Compute)) == "Compute");
+    CHECK(TKit::TierString(VKit::ToString(VKit::Queue_Transfer)) == "Transfer");
+    CHECK(TKit::TierString(VKit::ToString(VKit::Queue_Present)) == "Present");
 }
 
 // ============================================================================

@@ -4,20 +4,20 @@
 
 namespace VKit
 {
-template <typename T> static TKit::String formatMessage(const VkResult result, const T &message)
+template <typename T> static TKit::TierString formatMessage(const VkResult result, const T &message)
 {
-    return TKit::String::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
+    return TKit::TierString::Format("[VULKIT] VkResult: '{}' - Message: '{}'", VulkanResultToString(result), message);
 }
 
-TKit::String Error::ToString() const
+TKit::TierString Error::ToString() const
 {
-    TKit::String str = TKit::String::Format("[VULKIT] Error code: '{}'", ErrorCodeToString(m_ErrorCode));
+    TKit::TierString str = TKit::TierString::Format("[VULKIT] Error code: '{}'", ErrorCodeToString(m_ErrorCode));
     if (m_ErrorCode == Error_VulkanError)
-        str += TKit::String::Format(" - Vulkan result: '{}'", VulkanResultToString(m_VkResult));
+        str += TKit::TierString::Format(" - Vulkan result: '{}'", VulkanResultToString(m_VkResult));
     if (m_CheapMessage)
-        str += TKit::String::Format(" - Message: '{}'", m_CheapMessage);
+        str += TKit::TierString::Format(" - Message: '{}'", m_CheapMessage);
     else if (!m_FormattedMessage.IsEmpty())
-        str += TKit::String::Format(" - Message: '{}'", m_FormattedMessage);
+        str += TKit::TierString::Format(" - Message: '{}'", m_FormattedMessage);
     return str;
 }
 
