@@ -262,7 +262,16 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 #endif
 #ifdef TKIT_ENABLE_ENSURE
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        PRINT_DEBUG_INFO(TKIT_PANIC);
+        if (messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT)
+        {
+            PRINT_DEBUG_INFO(TKIT_PANIC);
+        }
+#    ifdef TKIT_ENABLE_ERROR_LOGS
+        else
+        {
+            PRINT_DEBUG_INFO(TKIT_LOG_ERROR);
+        }
+#    endif
         return VK_FALSE;
 #elif defined(TKIT_ENABLE_ERROR_LOGS)
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
