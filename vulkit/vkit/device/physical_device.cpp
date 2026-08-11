@@ -6,7 +6,6 @@
 
 namespace VKit
 {
-
 static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceFeatures::*, 55> s_CoreMembers = {
     &VkPhysicalDeviceFeatures::robustBufferAccess,
     &VkPhysicalDeviceFeatures::fullDrawIndexUint32,
@@ -379,19 +378,19 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         return JudgeResult::Error(
             Error_RejectedDevice,
             TKit::TierString::Format("[VULKIT][P-DEVICE] The device id '{}' does not match the requested ID '{}'",
-                                 quickProperties.deviceID, m_Id));
+                                     quickProperties.deviceID, m_Id));
 
     if (m_Index != TKIT_U32_MAX && m_Index != idx)
         return JudgeResult::Error(
             Error_RejectedDevice,
             TKit::TierString::Format("[VULKIT][P-DEVICE] The device index '{}' does not match the requested index '{}'",
-                                 idx, m_Index));
+                                     idx, m_Index));
 
     if (m_Name && strcmp(m_Name, name) != 0)
         return JudgeResult::Error(
             Error_RejectedDevice,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device name '{}' does not match the requested name '{}'", name,
-                                 m_Name));
+            TKit::TierString::Format("[VULKIT][P-DEVICE] The device name '{}' does not match the requested name '{}'",
+                                     name, m_Name));
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
                         "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
@@ -430,28 +429,31 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         if (!contains(availableExtensions, extension))
             return JudgeResult::Error(
                 Error_MissingExtension,
-                TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not support the required extension '{}'",
-                                     name, extension));
+                TKit::TierString::Format(
+                    "[VULKIT][P-DEVICE] The device '{}' does not support the required extension '{}'", name,
+                    extension));
         enabledExtensions.Append(extension);
     }
 
     for (const TKit::TierString &extension : m_RequestedExtensions)
-        if (contains(availableExtensions, extension))
-            enabledExtensions.Append(extension);
-        else
+        if (!contains(availableExtensions, extension))
         {
             TKIT_LOG_WARNING("[VULKIT][P-DEVICE] The device '{}' does not support the requested extension '{}'", name,
                              extension);
             fullySuitable = false;
         }
+        else if (!contains(enabledExtensions, extension))
+            enabledExtensions.Append(extension);
 
     DeviceSelectorFlags flags = m_Flags;
     const auto checkFlags = [&flags](const DeviceSelectorFlags pflags) -> bool { return pflags & flags; };
 
-    if (checkFlags(DeviceSelectorFlag_PortabilitySubset) && contains(availableExtensions, "VK_KHR_portability_subset"))
+    if (checkFlags(DeviceSelectorFlag_PortabilitySubset) &&
+        contains(availableExtensions, "VK_KHR_portability_subset") &&
+        !contains(enabledExtensions, "VK_KHR_portability_subset"))
         enabledExtensions.Append("VK_KHR_portability_subset");
 
-    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
+    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue) && !contains(enabledExtensions, "VK_KHR_swapchain"))
         enabledExtensions.Append("VK_KHR_swapchain");
 
     u32 familyCount;
@@ -600,19 +602,22 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated compute queue", name));
+            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated compute queue",
+                                     name));
     if (!compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated transfer queue", name));
+            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated transfer queue",
+                                     name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue))
         return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate compute queue", name));
+            Error_MissingQueue, TKit::TierString::Format(
+                                    "[VULKIT][P-DEVICE] The device '{}' does not have a separate compute queue", name));
     if (!compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue))
         return JudgeResult::Error(
             Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate transfer queue", name));
+            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate transfer queue",
+                                     name));
 
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
@@ -679,7 +684,8 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required core features", name));
+            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required core features",
+                                     name));
 
 #ifdef VKIT_API_VERSION_1_2
     if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
@@ -693,15 +699,15 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.3 features",
-                                 name));
+            TKit::TierString::Format(
+                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.3 features", name));
 #endif
 #ifdef VKIT_API_VERSION_1_4
     if (!compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14))
         return JudgeResult::Error(
             Error_MissingFeature,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features",
-                                 name));
+            TKit::TierString::Format(
+                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features", name));
 #endif
     if (m_PreferredType != fromVulkan(properties.Core.deviceType))
     {
@@ -746,8 +752,9 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     if (!hasRequiredMemory)
         return JudgeResult::Error(
             Error_InsufficientMemory,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes",
-                                 name, m_RequiredMemory));
+            TKit::TierString::Format(
+                "[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes", name,
+                m_RequiredMemory));
 
     fullySuitable &= hasRequestedMemory;
     if (fullySuitable)
@@ -953,12 +960,14 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 major,
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *extension)
 {
-    m_RequiredExtensions.Append(extension);
+    if (!contains(m_RequiredExtensions, extension))
+        m_RequiredExtensions.Append(extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *extension)
 {
-    m_RequestedExtensions.Append(extension);
+    if (!contains(m_RequestedExtensions, extension))
+        m_RequestedExtensions.Append(extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireMemory(const VkDeviceSize size)

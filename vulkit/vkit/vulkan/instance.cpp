@@ -277,7 +277,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL defaultDebugCallback(const VkDebugUtilsMes
 
 static bool contains(const TKit::Span<const char *const> elements, const char *element)
 {
-    return std::find(elements.begin(), elements.end(), element) != elements.end();
+    return std::find_if(elements.begin(), elements.end(),
+                        [element](const char *elem) { return std::strcmp(elem, element) == 0; }) != elements.end();
 }
 
 Instance::Builder::Builder()
@@ -302,8 +303,8 @@ Result<Instance> Instance::Builder::Build() const
             return Result<u32>::Error(
                 Error_VersionMismatch,
                 TKit::TierString::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
-                                     "not supported. The required version is {}.{}.{}",
-                                     VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
+                                         "not supported. The required version is {}.{}.{}",
+                                         VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
 
         return isRequested ? pversion : version;
     };
@@ -327,6 +328,7 @@ Result<Instance> Instance::Builder::Build() const
 
     TKit::StackArray<const char *> extensions;
     extensions.Reserve(m_RequiredExtensions.GetCapacity());
+
     for (const char *extension : m_RequiredExtensions)
         if (!IsExtensionSupported(extension))
             return Result<Instance>::Error(
