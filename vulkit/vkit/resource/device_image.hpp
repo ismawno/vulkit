@@ -115,7 +115,7 @@ class DeviceImage
         VkPipelineStageFlags SrcStage = 0;
         VkPipelineStageFlags DstStage = 0;
         // VK_IMAGE_ASPECT_NONE means one will be chosen automatically
-        VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
+        VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, VK_REMAINING_MIP_LEVELS, 0, VK_REMAINING_ARRAY_LAYERS};
     };
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
@@ -128,7 +128,7 @@ class DeviceImage
         VkPipelineStageFlags2KHR SrcStage = 0;
         VkPipelineStageFlags2KHR DstStage = 0;
         // VK_IMAGE_ASPECT_NONE means one will be chosen automatically
-        VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, 1, 0, 1};
+        VkImageSubresourceRange Range{VK_IMAGE_ASPECT_NONE, 0, VK_REMAINING_MIP_LEVELS, 0, VK_REMAINING_ARRAY_LAYERS};
     };
 #endif
 
