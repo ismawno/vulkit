@@ -1,0 +1,31 @@
+# .clang-tidy
+Checks: >
+  -*,
+  misc-const-correctness,
+  readability-non-const-parameter,
+  cppcoreguidelines-pro-type-const-cast,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  clang-analyzer-*,
+  performance-*,
+  -performance-avoid-endl,
+  cert-*,
+  -cert-err58-cpp,
+  readability-misleading-indentation,
+  readability-container-size-empty,
+  readability-redundant-*,
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+FormatStyle: none
+
+CheckOptions:
+  - key: misc-const-correctness.AnalyzeValues
+    value: true
+  - key: misc-const-correctness.AnalyzeReferences
+    value: true
+  - key: misc-const-correctness.WarnPointersAsValues
+    value: false
+  - key: misc-const-correctness.TransformValues
+    value: false   # don't auto-fix, just warn — safer for review
