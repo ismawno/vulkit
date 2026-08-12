@@ -542,7 +542,7 @@ Result<Instance> Instance::Builder::Build() const
     VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance), Result<Instance>);
 
     TKit::TierAllocator *tier = TKit::GetTier();
-    Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
+    const Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
 
 #ifdef VK_EXT_debug_utils
     VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;

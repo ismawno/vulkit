@@ -47,7 +47,7 @@ class LogicalDevice
     {
         Instance *Instance;
         PhysicalDevice *PhysicalDevice;
-        Vulkan::DeviceTable *Table;
+        const Vulkan::DeviceTable *Table;
         TKit::TierArray<Queue *> Queues;
         TKit::FixedArray<TKit::TierArray<Queue *>, Queue_Count> QueuesPerType;
     };

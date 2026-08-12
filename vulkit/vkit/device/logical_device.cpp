@@ -152,7 +152,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         Result<LogicalDevice>);
 
     TKit::TierAllocator *tier = TKit::GetTier();
-    Vulkan::DeviceTable *table =
+    const Vulkan::DeviceTable *table =
         tier->Create<Vulkan::DeviceTable>(Vulkan::DeviceTable::Create(device, *m_Instance->GetInfo().Table));
 
     Info info{};
