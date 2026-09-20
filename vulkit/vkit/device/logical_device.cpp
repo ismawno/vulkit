@@ -13,7 +13,7 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const QueueType typ
     return RequestQueue(m_PhysicalDevice->GetInfo().FamilyIndices[type], count, priority);
 }
 
-LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, u32 count, f32 priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, u32 count, const f32 priority)
 {
     QueuePriorities &priorities = m_Priorities[family];
     if (count <= priorities.RequiredPriorities.GetSize())
@@ -24,7 +24,7 @@ LogicalDevice::Builder &LogicalDevice::Builder::RequireQueue(const u32 family, u
         priorities.RequiredPriorities.Append(priority);
     return *this;
 }
-LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 family, u32 count, f32 priority)
+LogicalDevice::Builder &LogicalDevice::Builder::RequestQueue(const u32 family, u32 count, const f32 priority)
 {
     QueuePriorities &priorities = m_Priorities[family];
     const u32 rcount = priorities.RequestedPriorities.GetSize() + priorities.RequiredPriorities.GetSize();
