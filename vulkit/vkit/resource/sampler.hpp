@@ -31,7 +31,7 @@ class Sampler
         Builder &SetMaxLod(f32 max);
 
         Builder &SetAnisotropy(f32 maxAnisotropy);
-        Builder &EnableAnisotropy(VkBool32 enable);
+        Builder &EnableAnisotropy(VkBool32 enable = VK_TRUE);
 
         Builder &SetCompareOp(VkCompareOp op);
         Builder &EnableCompare(VkBool32 enable = VK_TRUE);
