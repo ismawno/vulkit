@@ -16,7 +16,7 @@ class Shader
 {
   public:
     VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, TKit::StringView spirvPath);
-    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, const u32 *spirv, size_t size);
+    VKIT_NO_DISCARD static Result<Shader> Create(const ProxyDevice &device, const u32 *spirv, usz size);
 
     Shader() = default;
     Shader(const ProxyDevice &device, VkShaderModule module) : m_Device(device), m_Module(module)

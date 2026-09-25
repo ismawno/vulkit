@@ -15,8 +15,8 @@ Result<Shader> Shader::Create(const ProxyDevice &device, const TKit::StringView 
     // NOTE(Isma): Not very nice that GetData() on a string view
     std::ifstream file{spirvPath.GetData(), std::ios::ate | std::ios::binary};
     if (!file.is_open())
-        return Result<Shader>::Error(Error_FileNotFound,
-                                     TKit::TierString::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
+        return Result<Shader>::Error(
+            Error_FileNotFound, TKit::TierString::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
 
     const auto fileSize = file.tellg();
 
@@ -29,7 +29,7 @@ Result<Shader> Shader::Create(const ProxyDevice &device, const TKit::StringView 
 
 TKIT_COMPILER_WARNING_IGNORE_POP()
 
-Result<Shader> Shader::Create(const ProxyDevice &device, const u32 *spirv, const size_t size)
+Result<Shader> Shader::Create(const ProxyDevice &device, const u32 *spirv, const usz size)
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
