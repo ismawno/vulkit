@@ -102,7 +102,7 @@ class GraphicsPipeline
         // Rasterization
         Builder &EnableRasterizerDiscard(VkBool32 enable = VK_TRUE);
         Builder &EnableDepthClamp(VkBool32 enable = VK_TRUE);
-        Builder &EnableDepthBiasEnable(VkBool32 enable = VK_TRUE);
+        Builder &EnableDepthBias(VkBool32 enable = VK_TRUE);
         Builder &SetPolygonMode(VkPolygonMode mode);
         Builder &SetLineWidth(f32 width);
         Builder &SetCullMode(VkCullModeFlags mode);

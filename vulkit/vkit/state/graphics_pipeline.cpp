@@ -225,7 +225,7 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthClamp(const VkB
     m_RasterizationInfo.depthClampEnable = enable;
     return *this;
 }
-GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBiasEnable(const VkBool32 enable)
+GraphicsPipeline::Builder &GraphicsPipeline::Builder::EnableDepthBias(const VkBool32 enable)
 {
     m_RasterizationInfo.depthBiasEnable = enable;
     return *this;
