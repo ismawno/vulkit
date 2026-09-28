@@ -443,12 +443,12 @@ GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddBindingDescription(cons
     return *this;
 }
 GraphicsPipeline::Builder &GraphicsPipeline::Builder::AddAttributeDescription(const u32 binding, const VkFormat format,
-                                                                              const u32 offset)
+                                                                              const u32 offset, const u32 location)
 {
     VkVertexInputAttributeDescription attribute{};
     attribute.binding = binding;
     attribute.format = format;
-    attribute.location = m_AttributeDescriptions.GetSize();
+    attribute.location = location == TKIT_U32_MAX ? m_AttributeDescriptions.GetSize() : location;
     attribute.offset = offset;
     m_AttributeDescriptions.Append(attribute);
     return *this;

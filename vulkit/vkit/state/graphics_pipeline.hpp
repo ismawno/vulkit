@@ -149,7 +149,8 @@ class GraphicsPipeline
             AddBindingDescription(sizeof(T), inputRate);
             return *this;
         }
-        Builder &AddAttributeDescription(u32 binding, VkFormat format, u32 offset);
+        // u32 max will default to current attribute count
+        Builder &AddAttributeDescription(u32 binding, VkFormat format, u32 offset, u32 location = TKIT_U32_MAX);
 
         // Shader Stages
         Builder &AddShaderStage(VkShaderModule module, VkShaderStageFlagBits stage,
