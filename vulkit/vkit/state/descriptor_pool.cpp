@@ -82,7 +82,8 @@ DescriptorPool::Builder &DescriptorPool::Builder::RemoveFlags(VkDescriptorPoolCr
 }
 DescriptorPool::Builder &DescriptorPool::Builder::AddPoolSize(VkDescriptorType type, u32 size)
 {
-    m_PoolSizes.Append(VkDescriptorPoolSize{type, size});
+    if (size != 0)
+        m_PoolSizes.Append(VkDescriptorPoolSize{type, size});
     return *this;
 }
 
