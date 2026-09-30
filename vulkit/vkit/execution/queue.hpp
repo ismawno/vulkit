@@ -6,7 +6,7 @@
 
 namespace VKit
 {
-enum QueueType : u32
+enum QueueType : u8
 {
     Queue_Graphics,
     Queue_Compute,
