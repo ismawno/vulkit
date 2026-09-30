@@ -49,6 +49,7 @@ class LogicalDevice
         PhysicalDevice *PhysicalDevice;
         const Vulkan::DeviceTable *Table;
         TKit::TierArray<Queue *> Queues;
+        // may not contain unique queues! Queue_Graphics and Queue_Transfer may map to the same queues
         TKit::FixedArray<TKit::TierArray<Queue *>, Queue_Count> QueuesPerType;
     };
 
