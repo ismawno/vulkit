@@ -121,7 +121,13 @@ class DeviceBuffer
     VKIT_NO_DISCARD Result<> Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
     VKIT_NO_DISCARD Result<> Invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
-    template <typename Index> void BindAsIndexBuffer(VkCommandBuffer commandBuffer, VkDeviceSize offset = 0) const
+    void BindAsIndexBuffer(const VkCommandBuffer commandBuffer, const VkIndexType indexType,
+                           const VkDeviceSize offset = 0) const
+    {
+        m_Device.Table->CmdBindIndexBuffer(commandBuffer, m_Buffer, offset, indexType);
+    }
+    template <typename Index>
+    void BindAsIndexBuffer(const VkCommandBuffer commandBuffer, const VkDeviceSize offset = 0) const
     {
         static_assert(std::is_same_v<Index, u8> || std::is_same_v<Index, u16> || std::is_same_v<Index, u32>,
                       "[VULKIT][DEVICE-BUFFER] Index type must be u8, u16 or u32");
