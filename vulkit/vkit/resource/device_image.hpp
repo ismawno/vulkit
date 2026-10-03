@@ -134,7 +134,7 @@ class DeviceImage
 
     DeviceImage() = default;
     DeviceImage(const ProxyDevice &device, const VkImage image, const VkImageLayout layout, const Info &info)
-        : m_Device(device), m_Image(image), m_Layout(layout), m_Info(info)
+        : Layout(layout), m_Device(device), m_Image(image), m_Info(info)
     {
     }
 
@@ -240,24 +240,17 @@ class DeviceImage
     {
         return m_Views[idx];
     }
-    VkImageLayout GetLayout() const
-    {
-        return m_Layout;
-    }
-    void SetLayout(const VkImageLayout layout)
-    {
-        m_Layout = layout;
-    }
     const Info &GetInfo() const
     {
         return m_Info;
     }
 
+    VkImageLayout Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+
   private:
     ProxyDevice m_Device{};
     VkImage m_Image = VK_NULL_HANDLE;
     TKit::TierArray<VkImageView> m_Views{};
-    VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
     Info m_Info;
 };
 } // namespace VKit

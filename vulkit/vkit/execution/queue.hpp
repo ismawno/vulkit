@@ -58,13 +58,24 @@ class Queue
         m_TimelineCounter = m_TimelineSubmissions;
     }
 
-    u64 GetTimelineCounter() const
+    u64 GetLastReservedTimelineValue() const
     {
         return m_TimelineCounter;
     }
-    u64 GetTimelineSubmissions() const
+    u64 GetSubmittedTimelineValues() const
     {
         return m_TimelineSubmissions;
+    }
+
+    VKIT_NO_DISCARD Result<u64> UpdateCompletedTimelineValues();
+
+    u64 GetCompletedTimelineValues() const
+    {
+        return m_CompletedTimeline;
+    }
+    u64 GetPendingTimelineValues() const
+    {
+        return m_TimelineCounter - m_CompletedTimeline;
     }
 
     u32 GetFamily() const
@@ -89,17 +100,6 @@ class Queue
                                  "is destroyed with DestroyTimelineSemaphore()");
         m_Timeline = timeline;
         m_TimelineCounter = initialSubmissionCount;
-    }
-
-    VKIT_NO_DISCARD Result<u64> UpdateCompletedTimeline();
-
-    u64 GetCompletedTimeline() const
-    {
-        return m_CompletedTimeline;
-    }
-    u64 GetPendingTimeline() const
-    {
-        return m_TimelineCounter - m_CompletedTimeline;
     }
 
     VkSemaphore GetTimelineSempahore() const

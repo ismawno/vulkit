@@ -21,7 +21,7 @@ const char *ToString(const QueueType type)
     return "Unknown";
 }
 
-Result<u64> Queue::UpdateCompletedTimeline()
+Result<u64> Queue::UpdateCompletedTimelineValues()
 {
     TKIT_ASSERT(m_Timeline, "[VULKIT][QUEUE] To query completed submissions of a queue it must have a "
                             "timeline semaphore assigned with TakeTimelineSemaphoreOwnership()");

@@ -173,7 +173,7 @@ void DeviceBuffer::CopyFromBuffer(const VkCommandBuffer commandBuffer, const Dev
 void DeviceBuffer::CopyFromImage(VkCommandBuffer commandBuffer, const DeviceImage &source,
                                  const TKit::Span<const VkBufferImageCopy> copy)
 {
-    m_Device.Table->CmdCopyImageToBuffer(commandBuffer, source, source.GetLayout(), m_Buffer, copy.GetSize(),
+    m_Device.Table->CmdCopyImageToBuffer(commandBuffer, source, source.Layout, m_Buffer, copy.GetSize(),
                                          copy.GetData());
 }
 
@@ -199,7 +199,7 @@ void DeviceBuffer::CopyFromImage2(VkCommandBuffer commandBuffer, const DeviceIma
     info.pNext = next;
     info.srcImage = source;
     info.dstBuffer = m_Buffer;
-    info.srcImageLayout = source.GetLayout();
+    info.srcImageLayout = source.Layout;
     info.pRegions = copy.GetData();
     info.regionCount = copy.GetSize();
     m_Device.Table->CmdCopyImageToBuffer2KHR(commandBuffer, &info);

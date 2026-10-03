@@ -255,7 +255,7 @@ VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLay
 {
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = m_Layout;
+    barrier.oldLayout = Layout;
     barrier.newLayout = layout;
     barrier.srcQueueFamilyIndex = info.SrcFamilyIndex;
     barrier.dstQueueFamilyIndex = info.DstFamilyIndex;
@@ -272,24 +272,23 @@ VkImageMemoryBarrier DeviceImage::CreateTransitionLayoutBarrier(const VkImageLay
 void DeviceImage::TransitionLayout(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
                                    const TransitionInfo &info, const void *barrierNext)
 {
-    if (m_Layout == layout)
+    if (Layout == layout)
         return;
     const VkImageMemoryBarrier barrier = CreateTransitionLayoutBarrier(layout, info, barrierNext);
     m_Device.Table->CmdPipelineBarrier(commandBuffer, info.SrcStage, info.DstStage, 0, 0, nullptr, 0, nullptr, 1,
                                        &barrier);
-    m_Layout = layout;
+    Layout = layout;
 }
 
 void DeviceImage::CopyFromImage(const VkCommandBuffer commandBuffer, const DeviceImage &source,
                                 const TKit::Span<const VkImageCopy> copy)
 {
-    m_Device.Table->CmdCopyImage(commandBuffer, source, source.GetLayout(), m_Image, m_Layout, copy.GetSize(),
-                                 copy.GetData());
+    m_Device.Table->CmdCopyImage(commandBuffer, source, source.Layout, m_Image, Layout, copy.GetSize(), copy.GetData());
 }
 void DeviceImage::CopyFromBuffer(const VkCommandBuffer commandBuffer, const DeviceBuffer &source,
                                  const TKit::Span<const VkBufferImageCopy> copy)
 {
-    m_Device.Table->CmdCopyBufferToImage(commandBuffer, source, m_Image, m_Layout, copy.GetSize(), copy.GetData());
+    m_Device.Table->CmdCopyBufferToImage(commandBuffer, source, m_Image, Layout, copy.GetSize(), copy.GetData());
 }
 
 #if defined(VKIT_API_VERSION_1_3) || defined(VK_KHR_synchronization2)
@@ -299,7 +298,7 @@ VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkIma
 {
     VkImageMemoryBarrier2KHR barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR;
-    barrier.oldLayout = m_Layout;
+    barrier.oldLayout = Layout;
     barrier.newLayout = layout;
     barrier.srcQueueFamilyIndex = info.SrcFamilyIndex;
     barrier.dstQueueFamilyIndex = info.DstFamilyIndex;
@@ -318,7 +317,7 @@ VkImageMemoryBarrier2KHR DeviceImage::CreateTransitionLayoutBarrier2(const VkIma
 void DeviceImage::TransitionLayout2(const VkCommandBuffer commandBuffer, const VkImageLayout layout,
                                     const TransitionInfo2 &info, VkDependencyFlags flags, const void *depNext)
 {
-    if (m_Layout == layout)
+    if (Layout == layout)
         return;
     const VkImageMemoryBarrier2KHR barrier = CreateTransitionLayoutBarrier2(layout, info);
 
@@ -330,7 +329,7 @@ void DeviceImage::TransitionLayout2(const VkCommandBuffer commandBuffer, const V
     dep.dependencyFlags = flags;
 
     m_Device.Table->CmdPipelineBarrier2KHR(commandBuffer, &dep);
-    m_Layout = layout;
+    Layout = layout;
 }
 void DeviceImage::CopyFromImage2(const VkCommandBuffer commandBuffer, const DeviceImage &source,
                                  const TKit::Span<const VkImageCopy2KHR> copy, const void *next)
@@ -339,9 +338,9 @@ void DeviceImage::CopyFromImage2(const VkCommandBuffer commandBuffer, const Devi
     info.sType = VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR;
     info.pNext = next;
     info.srcImage = m_Image;
-    info.srcImageLayout = m_Layout;
+    info.srcImageLayout = Layout;
     info.dstImage = source;
-    info.dstImageLayout = source.GetLayout();
+    info.dstImageLayout = source.Layout;
     info.pRegions = copy.GetData();
     info.regionCount = copy.GetSize();
     m_Device.Table->CmdCopyImage2KHR(commandBuffer, &info);
@@ -354,7 +353,7 @@ void DeviceImage::CopyFromBuffer2(const VkCommandBuffer commandBuffer, const Dev
     info.pNext = next;
     info.srcBuffer = source;
     info.dstImage = m_Image;
-    info.dstImageLayout = m_Layout;
+    info.dstImageLayout = Layout;
     info.pRegions = copy.GetData();
     info.regionCount = copy.GetSize();
     m_Device.Table->CmdCopyBufferToImage2KHR(commandBuffer, &info);
@@ -526,7 +525,7 @@ void DeviceImage::Destroy()
     if (m_Image && m_Info.Allocation)
         vmaDestroyImage(m_Info.Allocator, m_Image, m_Info.Allocation);
     m_Info = {};
-    m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+    Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 }
 void DeviceImage::DestroyImageViews()
 {
