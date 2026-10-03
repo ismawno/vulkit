@@ -742,7 +742,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
-        queue->NextTimelineValue();
+        queue->ReserveTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -773,7 +773,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
         submitInfo.commandBufferCount = count;
         submitInfo.pCommandBuffers = cmds.GetData();
 
-        queue->NextTimelineValue();
+        queue->ReserveTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -806,7 +806,7 @@ TEST_CASE("Queue::Submit - Basic Submission", "[queue][submit]")
             submit.pCommandBuffers = &cmds[i];
         }
 
-        queue->NextTimelineValue();
+        queue->ReserveTimelineValue();
         auto submitResult = queue->Submit(TKit::Span<const VkSubmitInfo>(submitInfos.GetData(), batchCount));
         REQUIRE(submitResult);
 
@@ -855,7 +855,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
-        queue->NextTimelineValue();
+        queue->ReserveTimelineValue();
         auto submitResult = queue->Submit(submitInfo, fence);
         REQUIRE(submitResult);
 
@@ -894,7 +894,7 @@ TEST_CASE("Queue::Submit - With Fence", "[queue][submit][fence]")
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &cmd;
 
-            queue->NextTimelineValue();
+            queue->ReserveTimelineValue();
             auto submitResult = queue->Submit(submitInfo, fence);
             REQUIRE(submitResult);
 
@@ -948,7 +948,7 @@ TEST_CASE("Queue::WaitIdle", "[queue][wait]")
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &cmd;
 
-        queue->NextTimelineValue();
+        queue->ReserveTimelineValue();
         auto submitResult = queue->Submit(submitInfo);
         REQUIRE(submitResult);
 
@@ -1025,7 +1025,7 @@ TEST_CASE("Integration - Pool and Queue Stress Test", "[integration][stress]")
             submitInfo.commandBufferCount = buffersPerBatch;
             submitInfo.pCommandBuffers = cmds.GetData();
 
-            queue->NextTimelineValue();
+            queue->ReserveTimelineValue();
             auto submitResult = queue->Submit(submitInfo);
             REQUIRE(submitResult);
 

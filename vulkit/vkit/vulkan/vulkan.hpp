@@ -266,27 +266,4 @@ template <typename T> auto ResultToString(const T &result)
     }
 }
 
-class DeletionQueue
-{
-    TKIT_NON_COPYABLE(DeletionQueue)
-  public:
-    DeletionQueue() = default;
-    ~DeletionQueue()
-    {
-        Flush();
-    }
-
-    void Push(std::function<void()> &&deleter);
-    void Flush();
-    void Dismiss();
-
-    template <typename VKitObject> void SubmitForDeletion(VKitObject object)
-    {
-        Push([=]() mutable { object.Destroy(); });
-    }
-
-  private:
-    TKit::TierArray<std::function<void()>> m_Deleters{};
-};
-
 } // namespace VKit

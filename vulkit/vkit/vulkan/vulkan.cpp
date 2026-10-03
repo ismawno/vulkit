@@ -21,21 +21,6 @@ TKit::TierString Error::ToString() const
     return str;
 }
 
-void DeletionQueue::Push(std::function<void()> &&deleter)
-{
-    m_Deleters.Append(std::move(deleter));
-}
-void DeletionQueue::Flush()
-{
-    for (u32 i = m_Deleters.GetSize(); i > 0; --i)
-        m_Deleters[i - 1]();
-    m_Deleters.Clear();
-}
-void DeletionQueue::Dismiss()
-{
-    m_Deleters.Clear();
-}
-
 const char *ErrorCodeToString(const ErrorCode code)
 {
     switch (code)

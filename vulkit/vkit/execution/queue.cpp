@@ -44,7 +44,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> info, const VkFence fence)
 {
     TKIT_ASSERT(
         m_TimelineCounter > m_TimelineSubmissions,
-        "[VULKIT][QUEUE] When submitting work from the submit queue methods, NextTimelineValue() must have been "
+        "[VULKIT][QUEUE] When submitting work from the submit queue methods, ReserveTimelineValue() must have been "
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
@@ -59,7 +59,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkF
 {
     TKIT_ASSERT(
         m_TimelineCounter > m_TimelineSubmissions,
-        "[VULKIT][QUEUE] When submitting work from the submit queue methods, NextTimelineValue() must have been "
+        "[VULKIT][QUEUE] When submitting work from the submit queue methods, ReserveTimelineValue() must have been "
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 

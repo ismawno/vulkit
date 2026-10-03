@@ -49,11 +49,11 @@ class Queue
         return m_Queue;
     }
 
-    u64 NextTimelineValue()
+    u64 ReserveTimelineValue()
     {
         return ++m_TimelineCounter;
     }
-    void RevokeUnsubmittedTimelineValues()
+    void RevokeUnsubmittedReservedTimelineValues()
     {
         m_TimelineCounter = m_TimelineSubmissions;
     }
