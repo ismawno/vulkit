@@ -24,10 +24,6 @@ if(VULKIT_ENABLE_DEVICE_BUFFER)
   list(APPEND SOURCES vkit/resource/device_buffer.cpp)
 endif()
 
-if(VULKIT_ENABLE_HOST_BUFFER)
-  list(APPEND SOURCES vkit/resource/host_buffer.cpp)
-endif()
-
 if(VULKIT_ENABLE_SAMPLER)
   list(APPEND SOURCES vkit/resource/sampler.cpp)
 endif()
@@ -90,10 +86,6 @@ endif()
 
 if(VULKIT_ENABLE_DEVICE_BUFFER)
   target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DEVICE_BUFFER)
-endif()
-
-if(VULKIT_ENABLE_HOST_BUFFER)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_HOST_BUFFER)
 endif()
 
 if(VULKIT_ENABLE_DESCRIPTORS)
