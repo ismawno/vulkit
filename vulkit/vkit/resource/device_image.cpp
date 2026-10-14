@@ -90,9 +90,6 @@ DeviceImage::Builder::Builder(const ProxyDevice &device, const VmaAllocator allo
 #ifndef VK_KHR_image_format_list
     TKIT_ASSERT(formats.GetSize() == 1, "[VULKIT][DEVICE-IMAGE] The extension VK_KHR_image_format_list is not "
                                         "supported. Only a single image format is allowed");
-    m_ImageInfo.flags = 0;
-#else
-    m_ImageInfo.flags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT * (formats.GetSize() != 1);
 #endif
     for (const VkFormat f : formats)
         m_Formats.Append(f);
@@ -173,6 +170,10 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     VmaAllocation allocation;
 
     VkImageCreateInfo iminfo = m_ImageInfo;
+#ifdef VK_KHR_image_format_list
+    iminfo.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT * (m_Formats.GetSize() != 1);
+#endif
+
 #ifdef VK_KHR_image_format_list
     VkImageFormatListCreateInfoKHR list{};
     if (m_Formats.GetSize() > 1)
