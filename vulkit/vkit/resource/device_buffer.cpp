@@ -8,6 +8,9 @@ namespace VKit
 DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator allocator, DeviceBufferFlags flags)
     : m_Device(device), m_Allocator(allocator)
 {
+    // memory type selection is left entirely to vma: it decides from the buffer usage (gpu access or transfer only)
+    // and the host access pattern. never force property flags here or the fallbacks (bar -> system ram, small
+    // device heap on apus, etc) stop working
     m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO;
     m_AllocationInfo.requiredFlags = 0;
     m_AllocationInfo.preferredFlags = 0;
@@ -18,23 +21,27 @@ DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator all
     m_BufferInfo.flags = 0;
     m_BufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if ((flags & DeviceBufferFlag_HostMapped) || (flags & DeviceBufferFlag_HostRandomAccess))
+    if (flags & DeviceBufferFlag_Staging)
+        flags |= DeviceBufferFlag_HostVisible | DeviceBufferFlag_Source;
+    if (flags & (DeviceBufferFlag_HostMapped | DeviceBufferFlag_HostRandomAccess))
         flags |= DeviceBufferFlag_HostVisible;
 
-    if (flags & DeviceBufferFlag_Staging)
-    {
-        flags |= DeviceBufferFlag_HostVisible;
-        flags |= DeviceBufferFlag_Source;
-    }
+    TKIT_ASSERT(!((flags & DeviceBufferFlag_DeviceLocal) && (flags & DeviceBufferFlag_HostVisible)),
+                "[VULKIT][DEVICE-BUFFER] DeviceLocal means no host access. For cpu-written, gpu-read buffers use "
+                "HostMapped alone and vma will place them in bar/rebar/unified memory when available");
+    TKIT_ASSERT(
+        !((flags & DeviceBufferFlag_Staging) && (flags & (DeviceBufferFlag_Vertex | DeviceBufferFlag_Index |
+                                                          DeviceBufferFlag_Storage | DeviceBufferFlag_Indirect))),
+        "[VULKIT][DEVICE-BUFFER] Staging buffers must be transfer-only, otherwise vma treats them as gpu-read "
+        "and prefers the bar heap for them");
+
     if (flags & DeviceBufferFlag_DeviceLocal)
     {
         flags |= DeviceBufferFlag_Destination;
         m_AllocationInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-        m_AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     }
     if (flags & DeviceBufferFlag_HostVisible)
     {
-        m_AllocationInfo.requiredFlags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
         if (flags & DeviceBufferFlag_HostRandomAccess)
             m_AllocationInfo.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
         else
