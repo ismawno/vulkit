@@ -38,7 +38,11 @@
         ];
         shellHook = ''
           export SHELL=${pkgs.zsh}/bin/zsh
-          export LD_LIBRARY_PATH=${pkgs.vulkan-loader}/lib:$LD_LIBRARY_PATH
+          export LD_LIBRARY_PATH=${
+            pkgs.lib.makeLibraryPath [
+              pkgs.vulkan-loader
+            ]
+          }:$LD_LIBRARY_PATH
 
           export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d
 
