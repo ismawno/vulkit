@@ -410,8 +410,10 @@ Result<Instance> Instance::Builder::Build() const
             return generateError("VK_KHR_display");
 
 #elif defined(TKIT_OS_LINUX)
-        if (!checkWindowingSupport("VK_KHR_xcb_surface") && !checkWindowingSupport("VK_KHR_xlib_surface") &&
-            !checkWindowingSupport("VK_KHR_wayland_surface"))
+        const bool xcb = checkWindowingSupport("VK_KHR_xcb_surface");
+        const bool xlib = checkWindowingSupport("VK_KHR_xlib_surface");
+        const bool wayland = checkWindowingSupport("VK_KHR_wayland_surface");
+        if (!xcb && !xlib && !wayland)
             return generateError("VK_KHR_[xcb|xlib|wayland]_surface");
 #endif
     }
