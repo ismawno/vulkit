@@ -22,11 +22,12 @@ enum DeviceImageFlagBit : DeviceImageFlags
     DeviceImageFlag_DepthAttachment = 1U << 4,
     DeviceImageFlag_StencilAttachment = 1U << 5,
     DeviceImageFlag_InputAttachment = 1U << 6,
-    DeviceImageFlag_Sampled = 1U << 7,
-    DeviceImageFlag_Storage = 1U << 8,
-    DeviceImageFlag_ForceHostVisible = 1U << 9,
-    DeviceImageFlag_Source = 1U << 10,
-    DeviceImageFlag_Destination = 1U << 11,
+    DeviceImageFlag_TransientAttachment = 1U << 7,
+    DeviceImageFlag_Sampled = 1U << 8,
+    DeviceImageFlag_Storage = 1U << 9,
+    DeviceImageFlag_ForceHostVisible = 1U << 10,
+    DeviceImageFlag_Source = 1U << 11,
+    DeviceImageFlag_Destination = 1U << 12,
 };
 
 } // namespace VKit
