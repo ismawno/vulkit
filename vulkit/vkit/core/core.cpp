@@ -3,6 +3,7 @@
 #include "vkit/vulkan/loader.hpp"
 #include "vkit/core/alias.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/container/arena_array.hpp"
 
 namespace VKit
 {
