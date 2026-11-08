@@ -84,8 +84,7 @@ Result<Swapchain> Swapchain::Builder::Build() const
         {
             imageCount = m_RequiredImages;
             const char *error = badImageCount(imageCount);
-            if (error)
-                return Result<Swapchain>::Error(Error_BadImageCount, error);
+            VKIT_EMIT_ERROR_IF(error, Error_BadImageCount, error);
         }
     }
 

@@ -41,6 +41,21 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 {
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
+    const char *deviceName = devInfo.Properties.Core.deviceName;
+
+#define EMIT_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                        \
+    VKIT_EMIT_ERROR_IF(cnd, err, "[VULKIT][L-DEVICE] Failed to create logical device for '{}': " msg,                  \
+                       deviceName __VA_OPT__(, ) __VA_ARGS__)
+
+    const auto describeFamily = [&devInfo](const u32 family) -> TKit::TierString {
+        TKit::TierString types{};
+        for (u32 i = 0; i < Queue_Count; ++i)
+            if (devInfo.FamilyIndices[i] == family)
+                types += types.IsEmpty() ? TKit::TierString{ToString(QueueType(i))}
+                                         : TKit::TierString::Format(", {}", ToString(QueueType(i)));
+        return types.IsEmpty() ? TKit::TierString::Format("queue family {}", family)
+                               : TKit::TierString::Format("queue family {} ({})", family, types);
+    };
 
     TKit::StackArray<VkDeviceQueueCreateInfo> queueCreateInfos;
     queueCreateInfos.Reserve(m_Priorities.GetSize());
@@ -60,12 +75,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
         const u32 requiredCount = priorities.RequiredPriorities.GetSize();
         const u32 requestedCount = priorities.RequestedPriorities.GetSize();
-        if (requiredCount > family.queueCount)
-            return Result<LogicalDevice>::Error(
-                Error_RejectedDevice,
-                TKit::TierString::Format(
-                    "The required queue count for the family index {} exceeds its queue count. {} >= {}", index,
-                    requiredCount, family.queueCount));
+        EMIT_BUILD_ERROR_IF(requiredCount > family.queueCount, Error_MissingQueue,
+                            "{} queues were required from {}, but that family only exposes {} queues", requiredCount,
+                            describeFamily(index), family.queueCount);
 
         TKit::TierArray<f32> &fp = finalPriorities.Append();
 
@@ -79,9 +91,10 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         const u32 count = std::min(family.queueCount, totalCount);
 
         TKIT_LOG_WARNING_IF(count < totalCount,
-                            "[VULKIT] Not all requested queues could be created for the family index {} as the "
-                            "combined queue count of {} surpasses the family's queue count of {}",
-                            index, totalCount, family.queueCount);
+                            "[VULKIT][L-DEVICE] {} queues were requested from {} of the device '{}' ({} required + {} "
+                            "requested), but the family only exposes {} queues. Only {} will be created",
+                            totalCount, describeFamily(index), deviceName, requiredCount, requestedCount,
+                            family.queueCount, count);
 
         if (!fp.IsEmpty())
         {
@@ -99,6 +112,11 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         }
     }
 
+    TKIT_LOG_WARNING_IF(queueCreateInfos.IsEmpty(),
+                        "[VULKIT][L-DEVICE] No queues were required or requested for the device '{}'. The logical "
+                        "device will be created without any queues",
+                        deviceName);
+
     TKit::StackArray<const char *> enabledExtensions;
     enabledExtensions.Reserve(devInfo.EnabledExtensions.GetSize());
     for (const TKit::TierString &extension : devInfo.EnabledExtensions)
@@ -111,16 +129,16 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 #endif
     const bool prop2 = m_Instance->IsExtensionEnabled("VK_KHR_get_physical_device_properties2");
 #ifndef VK_KHR_get_physical_device_properties2
-    if (prop2)
-        return Result<LogicalDevice>::Error(
-            Error_MissingExtension,
-            "[VULKIT][L-DEVICE] The 'VK_KHR_get_physical_device_properties2' extension is not supported");
+    EMIT_BUILD_ERROR_IF(prop2, Error_MissingExtension,
+                        "the instance enabled 'VK_KHR_get_physical_device_properties2', but vulkit was compiled "
+                        "against Vulkan headers that do not define it");
 #endif
 
-#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pEnabledFeatures = nullptr;
+
+#if defined(VKIT_API_VERSION_1_1) || defined(VK_KHR_get_physical_device_properties2)
     VkPhysicalDeviceFeatures2KHR fchain;
     if (v11 || prop2)
     {
@@ -147,8 +165,13 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const Vulkan::InstanceTable *itable = instanceInfo.Table;
 
     VkDevice device;
-    VKIT_RETURN_IF_FAILED(
-        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device));
+    VKIT_RETURN_IF_FAILED_FORMATTED(
+        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device),
+        "[VULKIT][L-DEVICE] Failed to create logical device for '{}': vkCreateDevice failed (Vulkan {}.{}.{}, {} "
+        "queue families, {} extensions enabled)",
+        deviceName, VKIT_EXPAND_VERSION(devInfo.ApiVersion), queueCreateInfos.GetSize(), enabledExtensions.GetSize());
+
+#undef EMIT_BUILD_ERROR_IF
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::DeviceTable *table =
