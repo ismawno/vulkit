@@ -1,5 +1,6 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/execution/command_pool.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -26,27 +27,27 @@ void CommandPool::Destroy()
     }
 }
 
-Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> commandBuffers, const VkCommandBufferLevel level) const
+Result<> CommandPool::Allocate(const TKit::Span<VkCommandBuffer> cmds, const VkCommandBufferLevel level) const
 {
     VkCommandBufferAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.commandPool = m_Pool;
     allocateInfo.level = level;
-    allocateInfo.commandBufferCount = commandBuffers.GetSize();
+    allocateInfo.commandBufferCount = cmds.GetSize();
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, commandBuffers.GetData()));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->AllocateCommandBuffers(m_Device, &allocateInfo, cmds.GetData()));
     return Result<>::Ok();
 }
 Result<VkCommandBuffer> CommandPool::Allocate(const VkCommandBufferLevel level) const
 {
-    VkCommandBuffer commandBuffer;
-    TKIT_RETURN_IF_FAILED(Allocate(commandBuffer, level));
-    return commandBuffer;
+    VkCommandBuffer cmd;
+    TKIT_RETURN_IF_FAILED(Allocate(cmd, level));
+    return cmd;
 }
 
-void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> commandBuffers) const
+void CommandPool::Deallocate(const TKit::Span<const VkCommandBuffer> cmds) const
 {
-    m_Device.Table->FreeCommandBuffers(m_Device, m_Pool, commandBuffers.GetSize(), commandBuffers.GetData());
+    m_Device.Table->FreeCommandBuffers(m_Device, m_Pool, cmds.GetSize(), cmds.GetData());
 }
 
 Result<> CommandPool::Reset(const VkCommandPoolResetFlags flags) const
@@ -57,32 +58,35 @@ Result<> CommandPool::Reset(const VkCommandPoolResetFlags flags) const
 
 Result<VkCommandBuffer> CommandPool::BeginSingleTimeCommands() const
 {
+    TKIT_ERROR_DEFER_SCOPE();
     const auto result = Allocate();
     TKIT_RETURN_ON_ERROR(result);
 
-    const VkCommandBuffer commandBuffer = *result;
+    const VkCommandBuffer cmd = *result;
+    TKIT_ERROR_DEFER(Deallocate(cmd));
+
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->BeginCommandBuffer(commandBuffer, &beginInfo), Deallocate(commandBuffer));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->BeginCommandBuffer(cmd, &beginInfo));
 
-    return commandBuffer;
+    TKIT_ERROR_DEFER_COMMIT();
+    return cmd;
 }
 
-Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer commandBuffer, const VkQueue queue) const
+Result<> CommandPool::EndSingleTimeCommands(const VkCommandBuffer cmd, const VkQueue queue) const
 {
-    VKIT_RETURN_IF_FAILED(m_Device.Table->EndCommandBuffer(commandBuffer), Deallocate(commandBuffer));
+    TKIT_DEFER(Deallocate(cmd));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->EndCommandBuffer(cmd));
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
+    submitInfo.pCommandBuffers = &cmd;
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE),
-                          Deallocate(commandBuffer));
-
-    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(queue), Deallocate(commandBuffer));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(queue));
 
     return Result<>::Ok();
 }

@@ -1,9 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/shader.hpp"
 #include "tkit/container/stack_array.hpp"
-
-#include <fstream>
-#include <cstdlib>
+#include "tkit/filesystem/file.hpp"
 
 namespace VKit
 {
@@ -12,19 +10,14 @@ TKIT_MSVC_WARNING_IGNORE(6262)
 
 Result<Shader> Shader::Create(const ProxyDevice &device, const TKit::StringView spirvPath)
 {
-    // NOTE(Isma): Not very nice that GetData() on a string view
-    std::ifstream file{spirvPath.GetData(), std::ios::ate | std::ios::binary};
-    if (!file.is_open())
-        return Result<Shader>::Error(
-            Error_FileNotFound, TKit::TierString::Format("[VULKIT][SHADER] File at path '{}' not found", spirvPath));
+    const TKit::StackPath path = spirvPath;
+    const auto res = TKit::ReadFile<TKit::StackString>(path);
+    VKIT_RETURN_ERROR_IF(!res, Error_FileNotFound, "[VULKIT][SHADER] Failed to load shader at '{}' with error: {}",
+                         path, TKit::ToString(res.GetError()));
 
-    const auto fileSize = file.tellg();
-
-    TKit::StackArray<char> code{u32(fileSize)};
-    file.seekg(0);
-    file.read(code.GetData(), fileSize);
+    const TKit::StackString &code = *res;
     const u32 *spv = rcast<const u32 *>(code.GetData());
-    return Create(device, spv, fileSize);
+    return Create(device, spv, code.GetBytes());
 }
 
 TKIT_COMPILER_WARNING_IGNORE_POP()

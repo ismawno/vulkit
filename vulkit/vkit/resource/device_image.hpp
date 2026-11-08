@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_DEVICE_IMAGE
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DEVICE_IMAGE"
-#endif
-
 #include "vkit/memory/allocator.hpp"
 
 namespace VKit

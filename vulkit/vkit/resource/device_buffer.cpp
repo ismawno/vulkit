@@ -2,6 +2,7 @@
 #include "vkit/resource/device_buffer.hpp"
 #include "vkit/execution/command_pool.hpp"
 #include "vkit/resource/device_image.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -244,9 +245,12 @@ Result<> DeviceBuffer::UploadFromHost(CommandPool &pool, const VkQueue queue, co
     TKIT_RETURN_ON_ERROR(bres);
 
     DeviceBuffer &staging = *bres;
+    TKIT_DEFER(staging.Destroy());
+
     staging.Write(data, {.srcOffset = pcopy.srcOffset, .dstOffset = 0, .size = pcopy.size});
+
     const auto result = staging.Flush();
-    TKIT_RETURN_ON_ERROR(result, staging.Destroy());
+    TKIT_RETURN_ON_ERROR(result);
 
     const VkBufferCopy copy{.srcOffset = 0, .dstOffset = pcopy.dstOffset, .size = pcopy.size};
     const auto cres = CopyFromBuffer(pool, queue, staging, copy);

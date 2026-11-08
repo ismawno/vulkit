@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/state/graphics_pipeline.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -104,12 +105,19 @@ Result<> GraphicsPipeline::Create(const ProxyDevice &device, const TKit::Span<co
     const u32 count = builders.GetSize();
     TKit::StackArray<VkPipeline> vkpipelines{count};
 
+    TKIT_ERROR_DEFER_SCOPE();
+    TKIT_ERROR_DEFER({
+        for (const VkPipeline pip : vkpipelines)
+            if (pip)
+                device.Table->DestroyPipeline(device, pip, device.AllocationCallbacks);
+    });
     VKIT_RETURN_IF_FAILED(device.Table->CreateGraphicsPipelines(device, cache, count, pipelineInfos.GetData(),
                                                                 device.AllocationCallbacks, vkpipelines.GetData()));
 
     for (u32 i = 0; i < count; ++i)
         pipelines[i] = GraphicsPipeline(device, vkpipelines[i]);
 
+    TKIT_ERROR_DEFER_COMMIT();
     return Result<>::Ok();
 }
 

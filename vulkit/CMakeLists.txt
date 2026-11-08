@@ -1,128 +1,32 @@
 cmake_minimum_required(VERSION 3.16)
 project(vulkit)
 
-set(SOURCES vkit/core/pch.cpp vkit/core/core.cpp vkit/vulkan/loader.cpp
-            vkit/vulkan/vulkan.cpp)
-
-if(VULKIT_ENABLE_INSTANCE)
-  list(APPEND SOURCES vkit/vulkan/instance.cpp)
-endif()
-
-if(VULKIT_ENABLE_PHYSICAL_DEVICE)
-  list(APPEND SOURCES vkit/device/physical_device.cpp)
-endif()
-
-if(VULKIT_ENABLE_LOGICAL_DEVICE)
-  list(APPEND SOURCES vkit/device/logical_device.cpp vkit/execution/queue.cpp)
-endif()
-
-if(VULKIT_ENABLE_ALLOCATOR)
-  list(APPEND SOURCES vkit/memory/allocator.cpp)
-endif()
-
-if(VULKIT_ENABLE_DEVICE_BUFFER)
-  list(APPEND SOURCES vkit/resource/device_buffer.cpp)
-endif()
-
-if(VULKIT_ENABLE_SAMPLER)
-  list(APPEND SOURCES vkit/resource/sampler.cpp)
-endif()
-
-if(VULKIT_ENABLE_DESCRIPTORS)
-  list(APPEND SOURCES vkit/state/descriptor_pool.cpp
-       vkit/state/descriptor_set_layout.cpp vkit/state/descriptor_set.cpp)
-endif()
-
-if(VULKIT_ENABLE_SHADERS)
-  list(APPEND SOURCES vkit/state/shader.cpp)
-endif()
-
-if(VULKIT_ENABLE_PIPELINE_LAYOUT)
-  list(APPEND SOURCES vkit/state/pipeline_layout.cpp)
-endif()
-
-if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
-  list(APPEND SOURCES vkit/state/graphics_pipeline.cpp)
-endif()
-
-if(VULKIT_ENABLE_COMPUTE_PIPELINE)
-  list(APPEND SOURCES vkit/state/compute_pipeline.cpp)
-endif()
-
-if(VULKIT_ENABLE_COMMAND_POOL)
-  list(APPEND SOURCES vkit/execution/command_pool.cpp)
-endif()
-
-if(VULKIT_ENABLE_DEVICE_IMAGE)
-  list(APPEND SOURCES vkit/resource/device_image.cpp)
-endif()
-
-if(VULKIT_ENABLE_RENDER_PASS)
-  list(APPEND SOURCES vkit/state/render_pass.cpp)
-endif()
-
-if(VULKIT_ENABLE_SWAP_CHAIN)
-  list(APPEND SOURCES vkit/presentation/swap_chain.cpp)
-endif()
+set(SOURCES
+    vkit/core/pch.cpp
+    vkit/core/core.cpp
+    vkit/vulkan/loader.cpp
+    vkit/vulkan/vulkan.cpp
+    vkit/vulkan/instance.cpp
+    vkit/device/physical_device.cpp
+    vkit/device/logical_device.cpp
+    vkit/execution/queue.cpp
+    vkit/memory/allocator.cpp
+    vkit/resource/device_buffer.cpp
+    vkit/resource/sampler.cpp
+    vkit/state/descriptor_pool.cpp
+    vkit/state/descriptor_set_layout.cpp
+    vkit/state/descriptor_set.cpp
+    vkit/state/shader.cpp
+    vkit/state/pipeline_layout.cpp
+    vkit/state/graphics_pipeline.cpp
+    vkit/state/compute_pipeline.cpp
+    vkit/execution/command_pool.cpp
+    vkit/resource/device_image.cpp
+    vkit/state/render_pass.cpp
+    vkit/presentation/swap_chain.cpp)
 
 add_library(vulkit STATIC ${SOURCES})
 target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.12.x\")
-
-if(VULKIT_ENABLE_INSTANCE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_INSTANCE)
-endif()
-
-if(VULKIT_ENABLE_PHYSICAL_DEVICE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_PHYSICAL_DEVICE)
-endif()
-
-if(VULKIT_ENABLE_LOGICAL_DEVICE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_LOGICAL_DEVICE)
-endif()
-
-if(VULKIT_ENABLE_ALLOCATOR)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_ALLOCATOR)
-endif()
-
-if(VULKIT_ENABLE_DEVICE_BUFFER)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DEVICE_BUFFER)
-endif()
-
-if(VULKIT_ENABLE_DESCRIPTORS)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DESCRIPTORS)
-endif()
-
-if(VULKIT_ENABLE_SHADERS)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_SHADERS)
-endif()
-
-if(VULKIT_ENABLE_PIPELINE_LAYOUT)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_PIPELINE_LAYOUT)
-endif()
-
-if(VULKIT_ENABLE_GRAPHICS_PIPELINE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_GRAPHICS_PIPELINE)
-endif()
-
-if(VULKIT_ENABLE_COMPUTE_PIPELINE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_COMPUTE_PIPELINE)
-endif()
-
-if(VULKIT_ENABLE_COMMAND_POOL)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_COMMAND_POOL)
-endif()
-
-if(VULKIT_ENABLE_DEVICE_IMAGE)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_DEVICE_IMAGE)
-endif()
-
-if(VULKIT_ENABLE_RENDER_PASS)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_RENDER_PASS)
-endif()
-
-if(VULKIT_ENABLE_SWAP_CHAIN)
-  target_compile_definitions(vulkit PUBLIC VKIT_ENABLE_SWAP_CHAIN)
-endif()
 
 include(FetchContent)
 FetchContent_Declare(

@@ -3,6 +3,7 @@
 #include "vkit/resource/device_buffer.hpp"
 #include "vkit/execution/command_pool.hpp"
 #include "tkit/math/math.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -202,6 +203,8 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     info.Flags = m_Flags;
 
     DeviceImage img{m_Device, image, m_ImageInfo.initialLayout, info};
+    TKIT_ERROR_DEFER_SCOPE();
+    TKIT_ERROR_DEFER(img.Destroy());
 
     TKit::TierArray<VkImageViewCreateInfo> vinfos = m_ViewInfos;
     for (VkImageViewCreateInfo &vinfo : vinfos)
@@ -209,6 +212,7 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
         vinfo.image = image;
         TKIT_RETURN_IF_FAILED(img.AddImageView(vinfo));
     }
+    TKIT_ERROR_DEFER_COMMIT();
     return img;
 }
 
@@ -234,9 +238,9 @@ Result<VkImageView> DeviceImage::AddImageView(const VkImageViewCreateInfo &info)
     TKIT_ASSERT(
         info.image == m_Image,
         "[VULKIT][DEVICE-IMAGE] The image view must target the same image as the one AddImageView is called on");
-    VkImageView &view = m_Views.Append();
+    VkImageView view;
     VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view));
-    return view;
+    return m_Views.Append(view);
 }
 
 VkDescriptorImageInfo DeviceImage::CreateDescriptorInfo(const VkImageLayout layout, const u32 viewIndex,

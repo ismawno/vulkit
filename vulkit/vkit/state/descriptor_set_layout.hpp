@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_DESCRIPTORS
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_DESCRIPTORS"
-#endif
-
 #include "vkit/device/proxy_device.hpp"
 #include "tkit/container/hash_map.hpp"
 #include <vulkan/vulkan.h>

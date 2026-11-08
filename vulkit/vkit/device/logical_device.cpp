@@ -1,6 +1,7 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/device/logical_device.hpp"
 #include "tkit/container/stack_array.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -43,9 +44,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     PhysicalDevice::Info devInfo = m_PhysicalDevice->GetInfo();
     const char *deviceName = devInfo.Properties.Core.deviceName;
 
-#define EMIT_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                        \
-    VKIT_EMIT_ERROR_IF(cnd, err, "[VULKIT][L-DEVICE] Failed to create logical device for '{}': " msg,                  \
-                       deviceName __VA_OPT__(, ) __VA_ARGS__)
+#define RETURN_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                      \
+    VKIT_RETURN_ERROR_IF(cnd, err, "[VULKIT][L-DEVICE] Failed to create logical device for '{}': " msg,                \
+                         deviceName __VA_OPT__(, ) __VA_ARGS__)
 
     const auto describeFamily = [&devInfo](const u32 family) -> TKit::TierString {
         TKit::TierString types{};
@@ -75,9 +76,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
         const u32 requiredCount = priorities.RequiredPriorities.GetSize();
         const u32 requestedCount = priorities.RequestedPriorities.GetSize();
-        EMIT_BUILD_ERROR_IF(requiredCount > family.queueCount, Error_MissingQueue,
-                            "{} queues were required from {}, but that family only exposes {} queues", requiredCount,
-                            describeFamily(index), family.queueCount);
+        RETURN_BUILD_ERROR_IF(requiredCount > family.queueCount, Error_MissingQueue,
+                              "{} queues were required from {}, but that family only exposes {} queues", requiredCount,
+                              describeFamily(index), family.queueCount);
 
         TKit::TierArray<f32> &fp = finalPriorities.Append();
 
@@ -129,9 +130,9 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 #endif
     const bool prop2 = m_Instance->IsExtensionEnabled("VK_KHR_get_physical_device_properties2");
 #ifndef VK_KHR_get_physical_device_properties2
-    EMIT_BUILD_ERROR_IF(prop2, Error_MissingExtension,
-                        "the instance enabled 'VK_KHR_get_physical_device_properties2', but vulkit was compiled "
-                        "against Vulkan headers that do not define it");
+    RETURN_BUILD_ERROR_IF(prop2, Error_MissingExtension,
+                          "the instance enabled 'VK_KHR_get_physical_device_properties2', but vulkit was compiled "
+                          "against Vulkan headers that do not define it");
 #endif
 
     VkDeviceCreateInfo createInfo{};
@@ -165,13 +166,13 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
     const Vulkan::InstanceTable *itable = instanceInfo.Table;
 
     VkDevice device;
-    VKIT_RETURN_IF_FAILED_FORMATTED(
+    VKIT_RETURN_IF_FAILED(
         itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device),
         "[VULKIT][L-DEVICE] Failed to create logical device for '{}': vkCreateDevice failed (Vulkan {}.{}.{}, {} "
         "queue families, {} extensions enabled)",
         deviceName, VKIT_EXPAND_VERSION(devInfo.ApiVersion), queueCreateInfos.GetSize(), enabledExtensions.GetSize());
 
-#undef EMIT_BUILD_ERROR_IF
+#undef RETURN_BUILD_ERROR_IF
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::DeviceTable *table =
@@ -192,11 +193,14 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         return info.Queues.Append(tier->Create<Queue>(pdevice, q, family));
     };
 
-    const auto cleanup = [&] {
+    TKIT_ERROR_DEFER_SCOPE();
+    TKIT_ERROR_DEFER({
         for (VKit::Queue *queue : info.Queues)
             tier->Destroy(queue);
+
         table->DestroyDevice(device, instanceInfo.AllocationCallbacks);
-    };
+        tier->Destroy(table);
+    });
 
     for (u32 i = 0; i < queueCounts.GetSize(); ++i)
     {
@@ -205,11 +209,12 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
         for (u32 j = 0; j < count; ++j)
         {
             const auto result = createQueue(findex, j);
-            TKIT_RETURN_ON_ERROR(result, cleanup());
+            TKIT_RETURN_ON_ERROR(result);
             info.QueuesPerType[i].Append(*result);
         }
     }
 
+    TKIT_ERROR_DEFER_COMMIT();
     return Result<LogicalDevice>::Ok(device, info);
 }
 

@@ -2,6 +2,7 @@
 #include "vkit/presentation/swap_chain.hpp"
 #include "tkit/container/stack_array.hpp"
 #include "tkit/utils/limits.hpp"
+#include "tkit/utils/defer.hpp"
 
 #ifndef VK_KHR_surface
 #    error "[VULKIT] To use the swap chain abstraction, the vulkan headers must support the surface extension"
@@ -33,8 +34,10 @@ Result<Swapchain> Swapchain::Builder::Build() const
 {
     const ProxyDevice proxy = m_Device->CreateProxy();
     const PhysicalDevice::Info &devInfo = m_Device->GetInfo().PhysicalDevice->GetInfo();
-    if (devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX || devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX)
-        return Result<Swapchain>::Error(Error_MissingQueue);
+
+    VKIT_RETURN_ERROR_IF(devInfo.FamilyIndices[Queue_Graphics] == TKIT_U32_MAX ||
+                             devInfo.FamilyIndices[Queue_Present] == TKIT_U32_MAX,
+                         Error_MissingQueue);
 
     const auto checkFlags = [this](const SwapchainBuilderFlags flags) -> bool { return m_Flags & flags; };
 
@@ -84,7 +87,7 @@ Result<Swapchain> Swapchain::Builder::Build() const
         {
             imageCount = m_RequiredImages;
             const char *error = badImageCount(imageCount);
-            VKIT_EMIT_ERROR_IF(error, Error_BadImageCount, error);
+            VKIT_RETURN_ERROR_IF(error, Error_BadImageCount, error);
         }
     }
 
@@ -153,21 +156,21 @@ Result<Swapchain> Swapchain::Builder::Build() const
     info.Flags = m_Flags;
     info.SupportDetails = support;
 
-    const auto cleanup = [proxy, swapChain, &checkFlags, &finalImages] {
+    TKIT_ERROR_DEFER_SCOPE();
+    TKIT_ERROR_DEFER({
         if (checkFlags(SwapchainBuilderFlag_CreateImageViews))
             for (DeviceImage &image : finalImages)
                 image.DestroyImageViews();
 
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
-    };
+    });
 
-    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr), cleanup());
+    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr));
 
     TKit::StackArray<VkImage> images;
     images.Resize(imageCount);
 
-    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData()),
-                          cleanup());
+    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData()));
 
     finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)
@@ -175,9 +178,10 @@ Result<Swapchain> Swapchain::Builder::Build() const
         DeviceImage::Info iminfo = DeviceImage::Info::FromSwapchain(surfaceFormat.format, extent);
         finalImages[i] = DeviceImage{*m_Device, images[i], VK_IMAGE_LAYOUT_UNDEFINED, iminfo};
         if (checkFlags(SwapchainBuilderFlag_CreateImageViews))
-            TKIT_RETURN_IF_FAILED(finalImages[i].AddImageView(), cleanup());
+            TKIT_RETURN_IF_FAILED(finalImages[i].AddImageView());
     }
 
+    TKIT_ERROR_DEFER_COMMIT();
     return Result<Swapchain>::Ok(proxy, swapChain, finalImages, info);
 }
 

@@ -4,6 +4,7 @@
 #include "tkit/utils/debug.hpp"
 #include "tkit/container/stack_array.hpp"
 #include "tkit/container/span.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -301,8 +302,8 @@ Instance::Builder::Builder()
 
 Result<Instance> Instance::Builder::Build() const
 {
-#define EMIT_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                        \
-    VKIT_EMIT_ERROR_IF(cnd, err, "[VULKIT][INSTANCE] Failed to create instance: " msg __VA_OPT__(, ) __VA_ARGS__)
+#define RETURN_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                      \
+    VKIT_RETURN_ERROR_IF(cnd, err, "[VULKIT][INSTANCE] Failed to create instance: " msg __VA_OPT__(, ) __VA_ARGS__)
 
     TKIT_ASSERT(
         m_RequestedApiVersion >= m_RequiredApiVersion,
@@ -312,7 +313,7 @@ Result<Instance> Instance::Builder::Build() const
 
 #ifdef VKIT_API_VERSION_1_1
     u32 loaderVersion;
-    VKIT_RETURN_IF_FAILED_FORMATTED(
+    VKIT_RETURN_IF_FAILED(
         Vulkan::EnumerateInstanceVersion(&loaderVersion),
         "[VULKIT][INSTANCE] Failed to create instance: could not query the instance version supported by the Vulkan "
         "loader");
@@ -320,7 +321,7 @@ Result<Instance> Instance::Builder::Build() const
     const u32 loaderVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
 
-    EMIT_BUILD_ERROR_IF(
+    RETURN_BUILD_ERROR_IF(
         loaderVersion < m_RequiredApiVersion, Error_VersionMismatch,
         "the Vulkan loader supports up to version {}.{}.{}, but at least {}.{}.{} is required. Updating "
         "your GPU drivers or the Vulkan runtime may fix this",
@@ -350,7 +351,7 @@ Result<Instance> Instance::Builder::Build() const
         if (!contains(extensions, extension))
             extensions.Append(extension);
     }
-    EMIT_BUILD_ERROR_IF(
+    RETURN_BUILD_ERROR_IF(
         missingExtensionCount != 0, Error_MissingExtension,
         "{} of the required instance extensions are not supported: {} ({} instance extensions available)",
         missingExtensionCount, missingExtensions, GetExtensionCount());
@@ -382,11 +383,11 @@ Result<Instance> Instance::Builder::Build() const
         if (!contains(layers, layer))
             layers.Append(layer);
     }
-    EMIT_BUILD_ERROR_IF(missingLayerCount != 0, Error_MissingLayer,
-                        "{} of the required layers are not available: {} ({} layers available). Layers such as "
-                        "'VK_LAYER_KHRONOS_validation' are usually provided by the Vulkan SDK, so make sure it is "
-                        "installed and visible to the loader",
-                        missingLayerCount, missingLayers, GetLayerCount());
+    RETURN_BUILD_ERROR_IF(missingLayerCount != 0, Error_MissingLayer,
+                          "{} of the required layers are not available: {} ({} layers available). Layers such as "
+                          "'VK_LAYER_KHRONOS_validation' are usually provided by the Vulkan SDK, so make sure it is "
+                          "installed and visible to the loader",
+                          missingLayerCount, missingLayers, GetLayerCount());
 
     for (const char *layer : m_RequestedLayers)
     {
@@ -408,7 +409,7 @@ Result<Instance> Instance::Builder::Build() const
         };
 
 #define WINDOWING_ERROR_IF(cnd, extension)                                                                             \
-    EMIT_BUILD_ERROR_IF(                                                                                               \
+    RETURN_BUILD_ERROR_IF(                                                                                             \
         cnd, Error_MissingExtension,                                                                                   \
         "windowing requires the instance extension {}, which is not supported. If no window is needed, "               \
         "build the instance with SetHeadless(true)",                                                                   \
@@ -560,13 +561,13 @@ Result<Instance> Instance::Builder::Build() const
 #endif
 
     VkInstance vkinstance;
-    VKIT_RETURN_IF_FAILED_FORMATTED(
+    VKIT_RETURN_IF_FAILED(
         Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance),
         "[VULKIT][INSTANCE] Failed to create instance: vkCreateInstance failed (Vulkan {}.{}.{}, {} extensions, {} "
         "layers enabled)",
         VKIT_EXPAND_VERSION(apiVersion), extensions.GetSize(), layers.GetSize());
 
-#undef EMIT_BUILD_ERROR_IF
+#undef RETURN_BUILD_ERROR_IF
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
@@ -578,14 +579,15 @@ Result<Instance> Instance::Builder::Build() const
 #ifdef VK_EXT_debug_utils
     if (hasDebugUtils)
     {
-        const auto cleanup = [&] {
+        TKIT_ERROR_DEFER_SCOPE();
+        TKIT_ERROR_DEFER({
             table->DestroyDebugUtilsMessengerEXT(vkinstance, debugMessenger, m_AllocationCallbacks);
             table->DestroyInstance(vkinstance, m_AllocationCallbacks);
             tier->Destroy(table);
-        };
+        });
         VKIT_RETURN_IF_FAILED(
-            table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, m_AllocationCallbacks, &debugMessenger),
-            cleanup());
+            table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, m_AllocationCallbacks, &debugMessenger));
+        TKIT_ERROR_DEFER_COMMIT();
     }
 #endif
 

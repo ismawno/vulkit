@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_COMMAND_POOL
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_COMMAND_POOL"
-#endif
-
 #include "vkit/device/proxy_device.hpp"
 #include "tkit/container/span.hpp"
 
@@ -26,13 +21,13 @@ class CommandPool
     VKIT_NO_DISCARD Result<VkCommandBuffer> Allocate(
         VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    VKIT_NO_DISCARD Result<> Allocate(TKit::Span<VkCommandBuffer> commandBuffers,
+    VKIT_NO_DISCARD Result<> Allocate(TKit::Span<VkCommandBuffer> cmds,
                                       VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
 
-    void Deallocate(TKit::Span<const VkCommandBuffer> commandBuffers) const;
+    void Deallocate(TKit::Span<const VkCommandBuffer> cmds) const;
     VKIT_NO_DISCARD Result<> Reset(VkCommandPoolResetFlags flags = 0) const;
     VKIT_NO_DISCARD Result<VkCommandBuffer> BeginSingleTimeCommands() const;
-    VKIT_NO_DISCARD Result<> EndSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue queue) const;
+    VKIT_NO_DISCARD Result<> EndSingleTimeCommands(VkCommandBuffer cmd, VkQueue queue) const;
 
     template <typename F> VKIT_NO_DISCARD Result<> ImmediateSubmission(const VkQueue queue, F &&fun) const
     {

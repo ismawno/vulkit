@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_PIPELINE_LAYOUT
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_PIPELINE_LAYOUT"
-#endif
-
 #include "vkit/device/proxy_device.hpp"
 
 namespace VKit

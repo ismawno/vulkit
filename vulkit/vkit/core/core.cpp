@@ -1,9 +1,9 @@
 #include "vkit/core/pch.hpp"
 #include "vkit/core/core.hpp"
 #include "vkit/vulkan/loader.hpp"
-#include "vkit/core/alias.hpp"
 #include "tkit/container/stack_array.hpp"
 #include "tkit/container/arena_array.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -100,7 +100,6 @@ Result<> Initialize(const Specs &specs)
 {
     if (s_Library)
         return Result<>::Ok();
-    s_Capabilities.Construct();
 
     if (specs.LoaderPath)
         attempt(specs.LoaderPath);
@@ -127,12 +126,16 @@ Result<> Initialize(const Specs &specs)
     attempt("vulkan-1.dll");
     attempt("vulkan.dll");
 #endif
-    VKIT_EMIT_ERROR_IF(
+    VKIT_RETURN_ERROR_IF(
         !s_Library, Error_VulkanLibraryNotFound,
         "[VULKIT][LOADER] Failed to load the vulkan library. All attempts have been exhausted. You may try "
         "specifying a custom path for it");
 
+    TKIT_ERROR_DEFER_SCOPE();
+    TKIT_ERROR_DEFER(Terminate(0));
+
     Vulkan::Load(s_Library);
+    s_Capabilities.Construct();
 
     // these are purposefully leaked
     if (specs.Allocators.Arena)
@@ -204,6 +207,7 @@ Result<> Initialize(const Specs &specs)
         if (!IsExtensionSupported(extensions[i].extensionName))
             s_Capabilities->AvailableExtensions.Append(extensions[i]);
 
+    TKIT_ERROR_DEFER_COMMIT();
     return Result<>::Ok();
 }
 void Terminate(const TerminationFlags flags)

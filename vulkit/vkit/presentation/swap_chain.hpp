@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_SWAP_CHAIN
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_SWAP_CHAIN"
-#endif
-
 #include "vkit/device/logical_device.hpp"
 #include "vkit/resource/device_image.hpp"
 

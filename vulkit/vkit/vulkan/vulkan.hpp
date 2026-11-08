@@ -105,21 +105,16 @@
 
 #define VKIT_CHECK_RESULT(expression) VKit::CheckResult(expression)
 
-#define VKIT_EMIT_ERROR(err, msg, ...)                                                                                 \
-    VKit::Result<>::Error(err, __VA_OPT__(TKit::TierString::Format)(msg __VA_OPT__(, ) __VA_ARGS__))
+#define __VKIT_ERROR_FMT_ARGS(msg, ...) __VA_OPT__(TKit::TierString::Format)(msg __VA_OPT__(, ) __VA_ARGS__)
 
-#define VKIT_EMIT_ERROR_IF(cnd, err, msg, ...)                                                                         \
+#define VKIT_EMIT_ERROR(err, ...)                                                                                      \
+    VKit::Result<>::Error(err __VA_OPT__(, ) __VA_OPT__(__VKIT_ERROR_FMT_ARGS(__VA_ARGS__)))
+
+#define VKIT_RETURN_ERROR_IF(cnd, err, ...)                                                                            \
     if (cnd)                                                                                                           \
-    return VKIT_EMIT_ERROR(err, msg __VA_OPT__(, ) __VA_ARGS__)
+    return VKIT_EMIT_ERROR(err __VA_OPT__(, ) __VA_ARGS__)
 
 #define VKIT_RETURN_IF_FAILED(expression, ...)                                                                         \
-    if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
-    {                                                                                                                  \
-        __VA_ARGS__;                                                                                                   \
-        return VKit::Result<>::Error(__vkit_result);                                                                   \
-    }
-
-#define VKIT_RETURN_IF_FAILED_FORMATTED(expression, ...)                                                               \
     if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
     return VKIT_EMIT_ERROR(__vkit_result, __VA_ARGS__)
 
@@ -130,7 +125,7 @@
             return m_Device.SetObjectName(handle, objType, name);                                                      \
         }
 #else
-#    define VKIT_SET_DEBUG_NAME(...)
+#    define VKIT_SET_DEBUG_NAME(handle, objType)
 #endif
 
 namespace VKit

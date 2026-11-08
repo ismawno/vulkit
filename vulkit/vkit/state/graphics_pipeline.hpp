@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_GRAPHICS_PIPELINE
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_GRAPHICS_PIPELINE"
-#endif
-
 #include "vkit/device/proxy_device.hpp"
 #include "tkit/container/span.hpp"
 #include <vulkan/vulkan.h>

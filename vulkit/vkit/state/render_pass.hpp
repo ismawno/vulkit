@@ -1,12 +1,8 @@
 #pragma once
 
-#ifndef VKIT_ENABLE_RENDER_PASS
-#    error                                                                                                             \
-        "[VULKIT] To include this file, the corresponding feature must be enabled in CMake with VULKIT_ENABLE_RENDER_PASS"
-#endif
-
 #include "vkit/resource/device_image.hpp"
 #include "tkit/utils/limits.hpp"
+#include "tkit/utils/defer.hpp"
 
 namespace VKit
 {
@@ -192,24 +188,21 @@ class RenderPass
      * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
-    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, F &&createImageData,
+    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, const F createImageData,
                                                       const u32 frameBufferLayers = 1)
     {
+        TKIT_ERROR_DEFER_SCOPE();
         Resources resources;
         resources.m_Device = m_Device;
+        TKIT_ERROR_DEFER(resources.Destroy());
 
         TKit::TierArray<VkImageView> attachments{m_Info.Attachments.GetSize()};
         for (u32 i = 0; i < m_Info.ImageCount; ++i)
         {
             for (u32 j = 0; j < attachments.GetSize(); ++j)
             {
-                const auto imresult = std::forward<F>(createImageData)(i, j);
-                if (!imresult)
-                {
-                    resources.Destroy();
-                    attachments[j] = VK_NULL_HANDLE;
-                    return imresult;
-                }
+                const auto imresult = createImageData(i, j);
+                TKIT_RETURN_ON_ERROR(imresult);
 
                 const DeviceImage &imageData = *imresult;
                 resources.m_Images.Append(imageData);
@@ -226,12 +219,12 @@ class RenderPass
 
             VkFramebuffer frameBuffer;
             VKIT_RETURN_IF_FAILED(m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
-                                                                    m_Device.AllocationCallbacks, &frameBuffer),
-                                  resources.Destroy());
+                                                                    m_Device.AllocationCallbacks, &frameBuffer));
 
             resources.m_Framebuffers.Append(frameBuffer);
         }
 
+        TKIT_ERROR_DEFER_COMMIT();
         return resources;
     }
 
