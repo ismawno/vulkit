@@ -148,8 +148,7 @@ Result<LogicalDevice> LogicalDevice::Builder::Build() const
 
     VkDevice device;
     VKIT_RETURN_IF_FAILED(
-        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device),
-        Result<LogicalDevice>);
+        itable->CreateDevice(*m_PhysicalDevice, &createInfo, instanceInfo.AllocationCallbacks, &device));
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::DeviceTable *table =
@@ -209,7 +208,7 @@ void LogicalDevice::Destroy()
 
 Result<> LogicalDevice::WaitIdle(const ProxyDevice &device)
 {
-    VKIT_RETURN_IF_FAILED(device.Table->DeviceWaitIdle(device), Result<>);
+    VKIT_RETURN_IF_FAILED(device.Table->DeviceWaitIdle(device));
     return Result<>::Ok();
 }
 Result<> LogicalDevice::WaitIdle() const

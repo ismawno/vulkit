@@ -187,8 +187,7 @@ Result<DeviceImage> DeviceImage::Builder::Build() const
     }
 #endif
 
-    VKIT_RETURN_IF_FAILED(vmaCreateImage(m_Allocator, &iminfo, &allocInfo, &image, &allocation, nullptr),
-                          Result<DeviceImage>);
+    VKIT_RETURN_IF_FAILED(vmaCreateImage(m_Allocator, &iminfo, &allocInfo, &image, &allocation, nullptr));
 
     Info info;
     info.Allocator = m_Allocator;
@@ -236,8 +235,7 @@ Result<VkImageView> DeviceImage::AddImageView(const VkImageViewCreateInfo &info)
         info.image == m_Image,
         "[VULKIT][DEVICE-IMAGE] The image view must target the same image as the one AddImageView is called on");
     VkImageView &view = m_Views.Append();
-    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view),
-                          Result<VkImageView>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateImageView(m_Device, &info, m_Device.AllocationCallbacks, &view));
     return view;
 }
 

@@ -304,7 +304,7 @@ Result<Instance> Instance::Builder::Build() const
     const auto checkApiVersion = [](const u32 pversion, const bool isRequested) -> Result<u32> {
 #ifdef VKIT_API_VERSION_1_1
         u32 version;
-        VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceVersion(&version), Result<u32>);
+        VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceVersion(&version));
 #else
         const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
 #endif
@@ -383,11 +383,10 @@ Result<Instance> Instance::Builder::Build() const
         };
 
         const auto generateError = [](const char *extension) -> Result<Instance> {
-            return Result<Instance>::Error(
+            return VKIT_EMIT_ERROR(
                 Error_MissingExtension,
-                TKit::TierString::Format(
-                    "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
-                    extension));
+                "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
+                extension);
         };
 
         if (!checkWindowingSupport("VK_KHR_surface"))
@@ -541,7 +540,7 @@ Result<Instance> Instance::Builder::Build() const
 #endif
 
     VkInstance vkinstance;
-    VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance), Result<Instance>);
+    VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance));
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));
@@ -560,7 +559,7 @@ Result<Instance> Instance::Builder::Build() const
         };
         VKIT_RETURN_IF_FAILED(
             table->CreateDebugUtilsMessengerEXT(vkinstance, &msgInfo, m_AllocationCallbacks, &debugMessenger),
-            Result<Instance>, cleanup());
+            cleanup());
     }
 #endif
 

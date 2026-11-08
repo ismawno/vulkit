@@ -170,38 +170,34 @@ Result<> Initialize(const Specs &specs)
     }
 
     u32 layerCount;
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr), Result<>);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceLayerProperties(&layerCount, nullptr));
 
     s_Capabilities->AvailableLayers.Resize(layerCount);
     VKIT_RETURN_IF_FAILED(
-        Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities->AvailableLayers.GetData()), Result<>);
+        Vulkan::EnumerateInstanceLayerProperties(&layerCount, s_Capabilities->AvailableLayers.GetData()));
 
     TKit::StackArray<u32> counts{};
     counts.Resize(1 + layerCount);
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], nullptr), Result<>);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], nullptr));
 
     u32 extensionCount = counts[0];
     for (u32 i = 0; i < layerCount; ++i)
     {
         VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(s_Capabilities->AvailableLayers[i].layerName,
-                                                                           &counts[i + 1], nullptr),
-                              Result<>);
+                                                                           &counts[i + 1], nullptr));
         extensionCount += counts[i + 1];
     }
 
     TKit::StackArray<VkExtensionProperties> extensions{};
     extensions.Resize(extensionCount);
-    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], extensions.GetData()),
-                          Result<>);
+    VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(nullptr, &counts[0], extensions.GetData()));
 
     u32 count = counts[0];
     for (u32 i = 0; i < layerCount; ++i)
         if (counts[i + 1] != 0)
         {
-            VKIT_RETURN_IF_FAILED(
-                Vulkan::EnumerateInstanceExtensionProperties(s_Capabilities->AvailableLayers[i].layerName,
-                                                             &counts[i + 1], extensions.GetData() + count),
-                Result<>);
+            VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceExtensionProperties(
+                s_Capabilities->AvailableLayers[i].layerName, &counts[i + 1], extensions.GetData() + count));
             count += counts[i + 1];
         }
     s_Capabilities->AvailableExtensions.Reserve(extensionCount);

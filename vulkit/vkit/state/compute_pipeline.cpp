@@ -27,8 +27,7 @@ Result<ComputePipeline> ComputePipeline::Create(const ProxyDevice &device, const
 
     VkPipeline pipeline;
     VKIT_RETURN_IF_FAILED(device.Table->CreateComputePipelines(device, specs.Cache, 1, &pipelineInfo,
-                                                               device.AllocationCallbacks, &pipeline),
-                          Result<ComputePipeline>);
+                                                               device.AllocationCallbacks, &pipeline));
 
     return Result<ComputePipeline>::Ok(device, pipeline);
 }
@@ -44,8 +43,7 @@ Result<> ComputePipeline::Create(const ProxyDevice &device, const TKit::Span<con
     TKit::StackArray<VkPipeline> vkpipelines{count};
 
     VKIT_RETURN_IF_FAILED(device.Table->CreateComputePipelines(device, cache, count, pipelineInfos.GetData(),
-                                                               device.AllocationCallbacks, vkpipelines.GetData()),
-                          Result<>);
+                                                               device.AllocationCallbacks, vkpipelines.GetData()));
 
     for (u32 i = 0; i < count; ++i)
         pipelines[i] = ComputePipeline(device, vkpipelines[i]);

@@ -89,8 +89,7 @@ Result<DeviceBuffer> DeviceBuffer::Builder::Build() const
     VmaAllocationInfo allocationInfo;
 
     VKIT_RETURN_IF_FAILED(
-        vmaCreateBuffer(m_Allocator, &bufferInfo, &m_AllocationInfo, &buffer, &info.Allocation, &allocationInfo),
-        Result<DeviceBuffer>);
+        vmaCreateBuffer(m_Allocator, &bufferInfo, &m_AllocationInfo, &buffer, &info.Allocation, &allocationInfo));
 
     void *data = nullptr;
     if (m_AllocationInfo.flags & VMA_ALLOCATION_CREATE_MAPPED_BIT)
@@ -147,7 +146,7 @@ void DeviceBuffer::Destroy()
 Result<> DeviceBuffer::Map()
 {
     TKIT_ASSERT(!m_Data, "[VULKIT][DEVICE-BUFFER] Buffer is already mapped");
-    VKIT_RETURN_IF_FAILED(vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data), Result<>);
+    VKIT_RETURN_IF_FAILED(vmaMapMemory(m_Info.Allocator, m_Info.Allocation, &m_Data));
     return Result<>::Ok();
 }
 
@@ -258,14 +257,14 @@ Result<> DeviceBuffer::UploadFromHost(CommandPool &pool, const VkQueue queue, co
 Result<> DeviceBuffer::Flush(const VkDeviceSize size, const VkDeviceSize offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot flush unmapped buffer");
-    VKIT_RETURN_IF_FAILED(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, offset, size), Result<>);
+    VKIT_RETURN_IF_FAILED(vmaFlushAllocation(m_Info.Allocator, m_Info.Allocation, offset, size));
     return Result<>::Ok();
 }
 
 Result<> DeviceBuffer::Invalidate(const VkDeviceSize size, const VkDeviceSize offset)
 {
     TKIT_ASSERT(m_Data, "[VULKIT][DEVICE-BUFFER] Cannot invalidate unmapped buffer");
-    VKIT_RETURN_IF_FAILED(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, offset, size), Result<>);
+    VKIT_RETURN_IF_FAILED(vmaInvalidateAllocation(m_Info.Allocator, m_Info.Allocation, offset, size));
     return Result<>::Ok();
 }
 

@@ -26,8 +26,7 @@ Sampler::Builder::Builder(const ProxyDevice &device) : m_Device(device)
 Result<Sampler> Sampler::Builder::Build() const
 {
     VkSampler sampler;
-    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateSampler(m_Device, &m_Info, m_Device.AllocationCallbacks, &sampler),
-                          Result<Sampler>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->CreateSampler(m_Device, &m_Info, m_Device.AllocationCallbacks, &sampler));
 
     return Result<Sampler>::Ok(m_Device, sampler);
 }

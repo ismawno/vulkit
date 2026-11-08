@@ -36,8 +36,7 @@ Result<DescriptorSetLayout> DescriptorSetLayout::Builder::Build() const
 
     VkDescriptorSetLayout layout;
     VKIT_RETURN_IF_FAILED(
-        m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout),
-        Result<DescriptorSetLayout>);
+        m_Device.Table->CreateDescriptorSetLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout));
 
     TKit::TierHashMap<u32, VkDescriptorSetLayoutBinding> bindingMap{};
     for (const VkDescriptorSetLayoutBinding &b : bindings)

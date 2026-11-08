@@ -259,28 +259,26 @@ static Result<PhysicalDevice::SwapchainSupportDetails> querySwapchainSupport(con
                                                                              const VkPhysicalDevice device,
                                                                              const VkSurfaceKHR surface)
 {
-    using Res = Result<PhysicalDevice::SwapchainSupportDetails>;
     u32 formatCount = 0;
     u32 modeCount = 0;
 
-    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr), Res);
-    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, nullptr), Res);
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr));
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, nullptr));
 
-    if (formatCount == 0 || modeCount == 0)
-        return Res::Error(Error_NoSurfaceCapabilities);
+    VKIT_EMIT_ERROR_IF(formatCount == 0 || modeCount == 0, Error_NoSurfaceCapabilities,
+                       "[VULKIT][P-DEVICE] Format count: {}, Mode count: {}", formatCount, modeCount);
 
     PhysicalDevice::SwapchainSupportDetails details;
-    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities), Res);
+    VKIT_RETURN_IF_FAILED(table->GetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.Capabilities));
 
     details.Formats.Resize(formatCount);
     details.PresentModes.Resize(modeCount);
 
     VKIT_RETURN_IF_FAILED(
-        table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.GetData()), Res);
+        table->GetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.Formats.GetData()));
 
     VKIT_RETURN_IF_FAILED(
-        table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, details.PresentModes.GetData()),
-        Res);
+        table->GetPhysicalDeviceSurfacePresentModesKHR(device, surface, &modeCount, details.PresentModes.GetData()));
 
     return details;
 }
@@ -408,14 +406,14 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     u32 extensionCount;
 
     VKIT_RETURN_IF_FAILED_FORMATTED(
-        table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr), JudgeResult,
+        table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr),
         "[VULKIT][P-DEVICE] Failed to get the number of device extensions for the device: {}", name);
 
     TKit::StackArray<VkExtensionProperties> extensionsProps{extensionCount};
 
     VKIT_RETURN_IF_FAILED_FORMATTED(
         table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData()),
-        JudgeResult, "[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name);
+        "[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name);
 
     TKit::StackArray<TKit::TierString> availableExtensions;
     availableExtensions.Reserve(extensionsProps.GetSize());
@@ -835,12 +833,10 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
     const Vulkan::InstanceTable *table = m_Instance->GetInfo().Table;
 
     u32 deviceCount = 0;
-    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr),
-                          EnumerateResult);
+    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, nullptr));
 
     vkdevices.Resize(deviceCount);
-    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData()),
-                          EnumerateResult);
+    VKIT_RETURN_IF_FAILED(table->EnumeratePhysicalDevices(m_Instance->GetHandle(), &deviceCount, vkdevices.GetData()));
 
     if (vkdevices.IsEmpty())
         return EnumerateResult::Error(Error_NoDeviceFound);

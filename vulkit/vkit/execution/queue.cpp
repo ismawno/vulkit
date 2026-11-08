@@ -26,8 +26,7 @@ Result<u64> Queue::UpdateCompletedTimelineValues()
     TKIT_ASSERT(m_Timeline, "[VULKIT][QUEUE] To query completed submissions of a queue it must have a "
                             "timeline semaphore assigned with TakeTimelineSemaphoreOwnership()");
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &m_CompletedTimeline),
-                          Result<u64>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->GetSemaphoreCounterValueKHR(m_Device, m_Timeline, &m_CompletedTimeline));
     return m_CompletedTimeline;
 }
 
@@ -48,7 +47,7 @@ Result<> Queue::Submit(TKit::Span<const VkSubmitInfo> info, const VkFence fence)
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(m_Queue, info.GetSize(), info.GetData(), fence), Result<>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit(m_Queue, info.GetSize(), info.GetData(), fence));
 
     m_TimelineSubmissions = m_TimelineCounter;
     return Result<>::Ok();
@@ -63,7 +62,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkF
         "called prior to that and the value returned must be used as a signal semaphore value "
         "for the next submission (this last part is not checked)");
 
-    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit2KHR(m_Queue, info.GetSize(), info.GetData(), fence), Result<>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueSubmit2KHR(m_Queue, info.GetSize(), info.GetData(), fence));
 
     m_TimelineSubmissions = m_TimelineCounter;
     return Result<>::Ok();
@@ -72,7 +71,7 @@ Result<> Queue::Submit2(const TKit::Span<const VkSubmitInfo2KHR> info, const VkF
 
 Result<> Queue::WaitIdle() const
 {
-    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(m_Queue), Result<>);
+    VKIT_RETURN_IF_FAILED(m_Device.Table->QueueWaitIdle(m_Queue));
     return Result<>::Ok();
 }
 } // namespace VKit

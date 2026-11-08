@@ -227,7 +227,7 @@ class RenderPass
             VkFramebuffer frameBuffer;
             VKIT_RETURN_IF_FAILED(m_Device.Table->CreateFramebuffer(m_Device, &frameBufferInfo,
                                                                     m_Device.AllocationCallbacks, &frameBuffer),
-                                  Result<Resources>, resources.Destroy());
+                                  resources.Destroy());
 
             resources.m_Framebuffers.Append(frameBuffer);
         }

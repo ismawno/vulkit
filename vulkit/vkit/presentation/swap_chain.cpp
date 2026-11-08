@@ -143,8 +143,7 @@ Result<Swapchain> Swapchain::Builder::Build() const
     createInfo.flags = m_CreateFlags;
 
     VkSwapchainKHR swapChain;
-    VKIT_RETURN_IF_FAILED(proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain),
-                          Result<Swapchain>);
+    VKIT_RETURN_IF_FAILED(proxy.Table->CreateSwapchainKHR(proxy, &createInfo, proxy.AllocationCallbacks, &swapChain));
 
     TKit::TierArray<DeviceImage> finalImages;
     Swapchain::Info info{};
@@ -163,14 +162,13 @@ Result<Swapchain> Swapchain::Builder::Build() const
         proxy.Table->DestroySwapchainKHR(proxy, swapChain, proxy.AllocationCallbacks);
     };
 
-    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr), Result<Swapchain>,
-                          cleanup());
+    VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, nullptr), cleanup());
 
     TKit::StackArray<VkImage> images;
     images.Resize(imageCount);
 
     VKIT_RETURN_IF_FAILED(proxy.Table->GetSwapchainImagesKHR(proxy, swapChain, &imageCount, images.GetData()),
-                          Result<Swapchain>, cleanup());
+                          cleanup());
 
     finalImages.Resize(imageCount);
     for (u32 i = 0; i < imageCount; ++i)

@@ -14,7 +14,7 @@ VKIT_NO_DISCARD Result<> SetObjectName(const VkDevice device, const Vulkan::Devi
     info.objectType = objType;
     info.pObjectName = name;
     info.objectHandle = rcast<u64>(handle);
-    VKIT_RETURN_IF_FAILED(table->SetDebugUtilsObjectNameEXT(device, &info), Result<>);
+    VKIT_RETURN_IF_FAILED(table->SetDebugUtilsObjectNameEXT(device, &info));
     return Result<>::Ok();
 }
 #endif

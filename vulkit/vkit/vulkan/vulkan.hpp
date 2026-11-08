@@ -105,41 +105,23 @@
 
 #define VKIT_CHECK_RESULT(expression) VKit::CheckResult(expression)
 
-#define VKIT_RETURN_ON_ERROR(vkresult, rtype, ...)                                                                     \
-    if ((vkresult) != VK_SUCCESS)                                                                                      \
-    {                                                                                                                  \
-        __VA_ARGS__;                                                                                                   \
-        return rtype::Error((vkresult));                                                                               \
-    }
+#define VKIT_EMIT_ERROR(err, msg, ...)                                                                                 \
+    VKit::Result<>::Error(err, __VA_OPT__(TKit::TierString::Format)(msg __VA_OPT__(, ) __VA_ARGS__))
 
-#define VKIT_RETURN_IF_FAILED(expression, rtype, ...)                                                                  \
+#define VKIT_EMIT_ERROR_IF(cnd, err, msg, ...)                                                                         \
+    if (cnd)                                                                                                           \
+    return VKIT_EMIT_ERROR(err, msg __VA_OPT__(, ) __VA_ARGS__)
+
+#define VKIT_RETURN_IF_FAILED(expression, ...)                                                                         \
     if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
     {                                                                                                                  \
         __VA_ARGS__;                                                                                                   \
-        return rtype::Error(__vkit_result);                                                                            \
+        return VKit::Result<>::Error(__vkit_result);                                                                   \
     }
 
-#define VKIT_RETURN_ON_ERROR_WITH_MESSAGE(vkresult, rtype, msg, ...)                                                   \
-    if ((vkresult) != VK_SUCCESS)                                                                                      \
-    {                                                                                                                  \
-        __VA_ARGS__;                                                                                                   \
-        return rtype::Error((vkresult), (msg));                                                                        \
-    }
-
-#define VKIT_RETURN_IF_FAILED_WITH_MESSAGE(expression, rtype, msg, ...)                                                \
+#define VKIT_RETURN_IF_FAILED_FORMATTED(expression, ...)                                                               \
     if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
-    {                                                                                                                  \
-        __VA_ARGS__;                                                                                                   \
-        return rtype::Error(__vkit_result, (msg));                                                                     \
-    }
-
-#define VKIT_RETURN_ON_ERROR_FORMATTED(vkresult, rtype, ...)                                                           \
-    if ((vkresult) != VK_SUCCESS)                                                                                      \
-    return rtype::Error((vkresult), TKit::TierString::Format(__VA_ARGS__))
-
-#define VKIT_RETURN_IF_FAILED_FORMATTED(expression, rtype, ...)                                                        \
-    if (const VkResult __vkit_result = (expression); __vkit_result != VK_SUCCESS)                                      \
-    return rtype::Error(__vkit_result, TKit::TierString::Format(__VA_ARGS__))
+    return VKIT_EMIT_ERROR(__vkit_result, __VA_ARGS__)
 
 #ifdef VK_EXT_debug_utils
 #    define VKIT_SET_DEBUG_NAME(handle, objType)                                                                       \

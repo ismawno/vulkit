@@ -70,8 +70,7 @@ Result<RenderPass> RenderPass::Builder::Build() const
     createInfo.flags = m_Flags;
 
     VkRenderPass renderPass;
-    VKIT_RETURN_IF_FAILED(proxy.Table->CreateRenderPass(proxy, &createInfo, proxy.AllocationCallbacks, &renderPass),
-                          Result<RenderPass>);
+    VKIT_RETURN_IF_FAILED(proxy.Table->CreateRenderPass(proxy, &createInfo, proxy.AllocationCallbacks, &renderPass));
 
     RenderPass::Info info{};
     info.Allocator = m_Allocator;

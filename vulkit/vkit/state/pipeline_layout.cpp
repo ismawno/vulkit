@@ -16,8 +16,7 @@ Result<PipelineLayout> PipelineLayout::Builder::Build() const
 
     VkPipelineLayout layout;
     VKIT_RETURN_IF_FAILED(
-        m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout),
-        Result<PipelineLayout>);
+        m_Device.Table->CreatePipelineLayout(m_Device, &layoutInfo, m_Device.AllocationCallbacks, &layout));
 
     PipelineLayout::Info info;
     info.DescriptorSetLayouts = m_DescriptorSetLayouts;
