@@ -301,22 +301,8 @@ Instance::Builder::Builder()
 
 Result<Instance> Instance::Builder::Build() const
 {
-    const auto checkApiVersion = [](const u32 pversion, const bool isRequested) -> Result<u32> {
-#ifdef VKIT_API_VERSION_1_1
-        u32 version;
-        VKIT_RETURN_IF_FAILED(Vulkan::EnumerateInstanceVersion(&version));
-#else
-        const u32 version = VKIT_MAKE_VERSION(0, 1, 0, 0);
-#endif
-        if (version < pversion)
-            return Result<u32>::Error(
-                Error_VersionMismatch,
-                TKit::TierString::Format("[VULKIT][INSTANCE] The vulkan instance version {}.{}.{} found is "
-                                         "not supported. The required version is {}.{}.{}",
-                                         VKIT_EXPAND_VERSION(version), VKIT_EXPAND_VERSION(version)));
-
-        return isRequested ? pversion : version;
-    };
+#define EMIT_BUILD_ERROR_IF(cnd, err, msg, ...)                                                                        \
+    VKIT_EMIT_ERROR_IF(cnd, err, "[VULKIT][INSTANCE] Failed to create instance: " msg __VA_OPT__(, ) __VA_ARGS__)
 
     TKIT_ASSERT(
         m_RequestedApiVersion >= m_RequiredApiVersion,
@@ -324,50 +310,89 @@ Result<Instance> Instance::Builder::Build() const
         "version ({}.{}.{})",
         VKIT_EXPAND_VERSION(m_RequestedApiVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
 
-    Result<u32> vresult = checkApiVersion(m_RequestedApiVersion, true);
-    if (!vresult)
-    {
-        TKIT_LOG_WARNING("[VULKIT][INSTANCE] The requested version {}.{}.{} is not available. Trying {}.{}.{}",
-                         VKIT_EXPAND_VERSION(m_RequestedApiVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
+#ifdef VKIT_API_VERSION_1_1
+    u32 loaderVersion;
+    VKIT_RETURN_IF_FAILED_FORMATTED(
+        Vulkan::EnumerateInstanceVersion(&loaderVersion),
+        "[VULKIT][INSTANCE] Failed to create instance: could not query the instance version supported by the Vulkan "
+        "loader");
+#else
+    const u32 loaderVersion = VKIT_MAKE_VERSION(0, 1, 0, 0);
+#endif
 
-        vresult = checkApiVersion(m_RequiredApiVersion, false);
-        TKIT_RETURN_ON_ERROR(vresult);
-    }
-    const u32 apiVersion = *vresult;
+    EMIT_BUILD_ERROR_IF(
+        loaderVersion < m_RequiredApiVersion, Error_VersionMismatch,
+        "the Vulkan loader supports up to version {}.{}.{}, but at least {}.{}.{} is required. Updating "
+        "your GPU drivers or the Vulkan runtime may fix this",
+        VKIT_EXPAND_VERSION(loaderVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
+
+    TKIT_LOG_WARNING_IF(loaderVersion < m_RequestedApiVersion,
+                        "[VULKIT][INSTANCE] The requested Vulkan version {}.{}.{} is not available: the loader "
+                        "supports up to {}.{}.{}. Falling back to {}.{}.{}",
+                        VKIT_EXPAND_VERSION(m_RequestedApiVersion), VKIT_EXPAND_VERSION(loaderVersion),
+                        VKIT_EXPAND_VERSION(loaderVersion));
+
+    const u32 apiVersion = loaderVersion >= m_RequestedApiVersion ? m_RequestedApiVersion : loaderVersion;
 
     TKit::StackArray<const char *> extensions;
     extensions.Reserve(m_RequiredExtensions.GetCapacity());
 
+    TKit::TierString missingExtensions{};
+    u32 missingExtensionCount = 0;
     for (const char *extension : m_RequiredExtensions)
+    {
         if (!IsExtensionSupported(extension))
-            return Result<Instance>::Error(
-                Error_MissingExtension,
-                TKit::TierString::Format("[VULKIT][INSTANCE] The required extension '{}' is not suported", extension));
-        else if (!contains(extensions, extension))
+        {
+            missingExtensions += missingExtensionCount++ == 0 ? TKit::TierString::Format("'{}'", extension)
+                                                              : TKit::TierString::Format(", '{}'", extension);
+            continue;
+        }
+        if (!contains(extensions, extension))
             extensions.Append(extension);
+    }
+    EMIT_BUILD_ERROR_IF(
+        missingExtensionCount != 0, Error_MissingExtension,
+        "{} of the required instance extensions are not supported: {} ({} instance extensions available)",
+        missingExtensionCount, missingExtensions, GetExtensionCount());
 
     for (const char *extension : m_RequestedExtensions)
     {
         const bool supported = IsExtensionSupported(extension);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested extension '{}' is not suported", extension);
+        TKIT_LOG_WARNING_IF(!supported,
+                            "[VULKIT][INSTANCE] The requested instance extension '{}' is not supported and will not "
+                            "be enabled",
+                            extension);
         if (supported && !contains(extensions, extension))
             extensions.Append(extension);
     }
 
     TKit::StackArray<const char *> layers;
     layers.Reserve(m_RequiredLayers.GetCapacity());
+
+    TKit::TierString missingLayers{};
+    u32 missingLayerCount = 0;
     for (const char *layer : m_RequiredLayers)
+    {
         if (!IsLayerSupported(layer))
-            return Result<Instance>::Error(
-                Error_MissingLayer,
-                TKit::TierString::Format("[VULKIT][INSTANCE] The required layer '{}' is not suported", layer));
-        else if (!contains(layers, layer))
+        {
+            missingLayers += missingLayerCount++ == 0 ? TKit::TierString::Format("'{}'", layer)
+                                                      : TKit::TierString::Format(", '{}'", layer);
+            continue;
+        }
+        if (!contains(layers, layer))
             layers.Append(layer);
+    }
+    EMIT_BUILD_ERROR_IF(missingLayerCount != 0, Error_MissingLayer,
+                        "{} of the required layers are not available: {} ({} layers available). Layers such as "
+                        "'VK_LAYER_KHRONOS_validation' are usually provided by the Vulkan SDK, so make sure it is "
+                        "installed and visible to the loader",
+                        missingLayerCount, missingLayers, GetLayerCount());
 
     for (const char *layer : m_RequestedLayers)
     {
         const bool supported = IsLayerSupported(layer);
-        TKIT_LOG_WARNING_IF(!supported, "[VULKIT][INSTANCE] The requested layer '{}' is not suported", layer);
+        TKIT_LOG_WARNING_IF(
+            !supported, "[VULKIT][INSTANCE] The requested layer '{}' is not available and will not be enabled", layer);
         if (supported && !contains(layers, layer))
             layers.Append(layer);
     }
@@ -382,39 +407,31 @@ Result<Instance> Instance::Builder::Build() const
             return true;
         };
 
-        const auto generateError = [](const char *extension) -> Result<Instance> {
-            return VKIT_EMIT_ERROR(
-                Error_MissingExtension,
-                "[VULKIT][INSTANCE] The extension '{}', required for windowing capabilities, is not suported",
-                extension);
-        };
+#define WINDOWING_ERROR_IF(cnd, extension)                                                                             \
+    EMIT_BUILD_ERROR_IF(                                                                                               \
+        cnd, Error_MissingExtension,                                                                                   \
+        "windowing requires the instance extension {}, which is not supported. If no window is needed, "               \
+        "build the instance with SetHeadless(true)",                                                                   \
+        extension)
 
-        if (!checkWindowingSupport("VK_KHR_surface"))
-            return generateError("VK_KHR_surface");
+        WINDOWING_ERROR_IF(!checkWindowingSupport("VK_KHR_surface"), "'VK_KHR_surface'");
 
 #ifdef TKIT_OS_WINDOWS
-        if (!checkWindowingSupport("VK_KHR_win32_surface"))
-            return generateError("VK_KHR_win32_surface");
-
+        WINDOWING_ERROR_IF(!checkWindowingSupport("VK_KHR_win32_surface"), "'VK_KHR_win32_surface'");
 #elif defined(TKIT_OS_APPLE)
-        if (!checkWindowingSupport("VK_EXT_metal_surface"))
-            return generateError("VK_EXT_metal_surface");
-
+        WINDOWING_ERROR_IF(!checkWindowingSupport("VK_EXT_metal_surface"), "'VK_EXT_metal_surface'");
 #elif defined(TKIT_OS_ANDROID)
-        if (!checkWindowingSupport("VK_KHR_android_surface"))
-            return generateError("VK_KHR_android_surface");
-
+        WINDOWING_ERROR_IF(!checkWindowingSupport("VK_KHR_android_surface"), "'VK_KHR_android_surface'");
 #elif defined(_DIRECT2DISPLAY)
-        if (!checkWindowingSupport("VK_KHR_display"))
-            return generateError("VK_KHR_display");
-
+        WINDOWING_ERROR_IF(!checkWindowingSupport("VK_KHR_display"), "'VK_KHR_display'");
 #elif defined(TKIT_OS_LINUX)
         const bool xcb = checkWindowingSupport("VK_KHR_xcb_surface");
         const bool xlib = checkWindowingSupport("VK_KHR_xlib_surface");
         const bool wayland = checkWindowingSupport("VK_KHR_wayland_surface");
-        if (!xcb && !xlib && !wayland)
-            return generateError("VK_KHR_[xcb|xlib|wayland]_surface");
+        WINDOWING_ERROR_IF(!xcb && !xlib && !wayland,
+                           "'VK_KHR_xcb_surface', 'VK_KHR_xlib_surface' or 'VK_KHR_wayland_surface' (at least one)");
 #endif
+#undef WINDOWING_ERROR_IF
     }
 
     const void *pNext = nullptr;
@@ -477,12 +494,14 @@ Result<Instance> Instance::Builder::Build() const
                         "were requested to be enabled or disabled");
     TKIT_LOG_WARNING_IF(
         !hasValFeatures && !m_EnabledValFeatures.IsEmpty(),
-        "[VULKIT][INSTANCE] Validation features were requested to be enabled but the 'VK_EXT_validation_features' "
-        "extension was not enabled or supported. Request will be ignored");
+        "[VULKIT][INSTANCE] {} validation features were requested to be enabled but the 'VK_EXT_validation_features' "
+        "extension was not enabled or supported. Request will be ignored",
+        m_EnabledValFeatures.GetSize());
     TKIT_LOG_WARNING_IF(
         !hasValFeatures && !m_DisabledValFeatures.IsEmpty(),
-        "[VULKIT][INSTANCE] Validation features were requested to be disabled but the 'VK_EXT_validation_features' "
-        "extension was not enabled or supported. Request will be ignored");
+        "[VULKIT][INSTANCE] {} validation features were requested to be disabled but the 'VK_EXT_validation_features' "
+        "extension was not enabled or supported. Request will be ignored",
+        m_DisabledValFeatures.GetSize());
 
     hasValFeatures &= !m_EnabledValFeatures.IsEmpty() || !m_DisabledValFeatures.IsEmpty();
 #endif
@@ -514,8 +533,9 @@ Result<Instance> Instance::Builder::Build() const
                         "[VULKIT][INSTANCE] The extension 'VK_EXT_layer_settings' was enabled, but no settings "
                         "were requested");
     TKIT_LOG_WARNING_IF(!hasSettings && !m_LayerSettings.IsEmpty(),
-                        "[VULKAN][INSTANCE] Layer settings were requested but the extension 'VK_EXT_layer_settings' "
-                        "was not enabled or supported. The settings will be ignored");
+                        "[VULKIT][INSTANCE] {} layer settings were requested but the extension "
+                        "'VK_EXT_layer_settings' was not enabled or supported. The settings will be ignored",
+                        m_LayerSettings.GetSize());
 #endif
 
     VkApplicationInfo appInfo{};
@@ -540,7 +560,13 @@ Result<Instance> Instance::Builder::Build() const
 #endif
 
     VkInstance vkinstance;
-    VKIT_RETURN_IF_FAILED(Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance));
+    VKIT_RETURN_IF_FAILED_FORMATTED(
+        Vulkan::CreateInstance(&instanceInfo, m_AllocationCallbacks, &vkinstance),
+        "[VULKIT][INSTANCE] Failed to create instance: vkCreateInstance failed (Vulkan {}.{}.{}, {} extensions, {} "
+        "layers enabled)",
+        VKIT_EXPAND_VERSION(apiVersion), extensions.GetSize(), layers.GetSize());
+
+#undef EMIT_BUILD_ERROR_IF
 
     TKit::TierAllocator *tier = TKit::GetTier();
     const Vulkan::InstanceTable *table = tier->Create<Vulkan::InstanceTable>(Vulkan::InstanceTable::Create(vkinstance));

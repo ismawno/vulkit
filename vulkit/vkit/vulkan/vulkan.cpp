@@ -29,8 +29,6 @@ const char *ErrorCodeToString(const ErrorCode code)
         return "VulkanError";
     case Error_VulkanLibraryNotFound:
         return "VulkanLibraryNotFound";
-    case Error_BadInput:
-        return "BadInput";
     case Error_VersionMismatch:
         return "VersionMismatch";
     case Error_NoSurfaceCapabilities:

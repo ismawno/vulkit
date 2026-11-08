@@ -127,11 +127,10 @@ Result<> Initialize(const Specs &specs)
     attempt("vulkan-1.dll");
     attempt("vulkan.dll");
 #endif
-    if (!s_Library)
-        return Result<>::Error(
-            Error_VulkanLibraryNotFound,
-            "[VULKIT][LOADER] Failed to load the vulkan library. All attempts have been exhausted. You may try "
-            "specifying a custom path for it");
+    VKIT_EMIT_ERROR_IF(
+        !s_Library, Error_VulkanLibraryNotFound,
+        "[VULKIT][LOADER] Failed to load the vulkan library. All attempts have been exhausted. You may try "
+        "specifying a custom path for it");
 
     Vulkan::Load(s_Library);
 

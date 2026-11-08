@@ -362,7 +362,6 @@ static DeviceType fromVulkan(VkPhysicalDeviceType type) noexcept
 
 Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDevice device, const u32 idx) const
 {
-    using JudgeResult = Result<PhysicalDevice>;
     const Instance::Info &instanceInfo = m_Instance->GetInfo();
     const Vulkan::InstanceTable *table = instanceInfo.Table;
 
@@ -372,34 +371,28 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     TKIT_LOG_INFO("[VULKIT][P-DEVICE] Found physical device ID={} [{}]: {}", quickProperties.deviceID, idx, name);
 
-    if (m_Id != TKIT_U32_MAX && m_Id != quickProperties.deviceID)
-        return JudgeResult::Error(
-            Error_RejectedDevice,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device id '{}' does not match the requested ID '{}'",
-                                     quickProperties.deviceID, m_Id));
+#define EMIT_SELECTION_ERROR_IF(cnd, err, msg, ...)                                                                    \
+    VKIT_EMIT_ERROR_IF(cnd, err, "[VULKIT][P-DEVICE] Failed to select device '{}' [index {}]: " msg, name,             \
+                       idx __VA_OPT__(, ) __VA_ARGS__)
 
-    if (m_Index != TKIT_U32_MAX && m_Index != idx)
-        return JudgeResult::Error(
-            Error_RejectedDevice,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device index '{}' does not match the requested index '{}'",
-                                     idx, m_Index));
+    EMIT_SELECTION_ERROR_IF(m_Id != TKIT_U32_MAX && m_Id != quickProperties.deviceID, Error_RejectedDevice,
+                            "its device ID ({}) does not match the requested ID ({})", quickProperties.deviceID, m_Id);
 
-    if (m_Name && strcmp(m_Name, name) != 0)
-        return JudgeResult::Error(
-            Error_RejectedDevice,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device name '{}' does not match the requested name '{}'",
-                                     name, m_Name));
+    EMIT_SELECTION_ERROR_IF(m_Index != TKIT_U32_MAX && m_Index != idx, Error_RejectedDevice,
+                            "its index does not match the requested index ({})", m_Index);
+
+    EMIT_SELECTION_ERROR_IF(m_Name && strcmp(m_Name, name) != 0, Error_RejectedDevice,
+                            "its name does not match the requested name '{}'", m_Name);
 
     TKIT_LOG_WARNING_IF(quickProperties.apiVersion < m_RequestedApiVersion,
-                        "[VULKIT][P-DEVICE] The device '{}' does not support the requested API version {}.{}.{}", name,
+                        "[VULKIT][P-DEVICE] The device '{}' supports Vulkan {}.{}.{}, which is lower than the "
+                        "requested {}.{}.{}. It may still be selected, but will not be considered optimal",
+                        name, VKIT_EXPAND_VERSION(quickProperties.apiVersion),
                         VKIT_EXPAND_VERSION(m_RequestedApiVersion));
 
-    if (quickProperties.apiVersion < m_RequiredApiVersion)
-        return JudgeResult::Error(
-            Error_VersionMismatch,
-            TKit::TierString::Format(
-                "[VULKIT][P-DEVICE] The device '{}' does not support the required API version {}.{}.{}", name,
-                VKIT_EXPAND_VERSION(m_RequiredApiVersion)));
+    EMIT_SELECTION_ERROR_IF(quickProperties.apiVersion < m_RequiredApiVersion, Error_VersionMismatch,
+                            "it supports Vulkan {}.{}.{}, but at least {}.{}.{} is required",
+                            VKIT_EXPAND_VERSION(quickProperties.apiVersion), VKIT_EXPAND_VERSION(m_RequiredApiVersion));
 
     bool fullySuitable = quickProperties.apiVersion >= m_RequestedApiVersion;
 
@@ -407,13 +400,14 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     VKIT_RETURN_IF_FAILED_FORMATTED(
         table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr),
-        "[VULKIT][P-DEVICE] Failed to get the number of device extensions for the device: {}", name);
+        "[VULKIT][P-DEVICE] Failed to select device '{}' [index {}]: could not query its extension count", name, idx);
 
     TKit::StackArray<VkExtensionProperties> extensionsProps{extensionCount};
 
     VKIT_RETURN_IF_FAILED_FORMATTED(
         table->EnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensionsProps.GetData()),
-        "[VULKIT][P-DEVICE] Failed to get the device extensions for the device: {}", name);
+        "[VULKIT][P-DEVICE] Failed to select device '{}' [index {}]: could not query its {} extensions", name, idx,
+        extensionCount);
 
     TKit::StackArray<TKit::TierString> availableExtensions;
     availableExtensions.Reserve(extensionsProps.GetSize());
@@ -422,22 +416,29 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
 
     TKit::StackArray<TKit::TierString> enabledExtensions;
     enabledExtensions.Reserve(m_RequestedExtensions.GetCapacity());
+
+    TKit::TierString missingExtensions{};
+    u32 missingCount = 0;
     for (const TKit::TierString &extension : m_RequiredExtensions)
     {
         if (!contains(availableExtensions, extension))
-            return JudgeResult::Error(
-                Error_MissingExtension,
-                TKit::TierString::Format(
-                    "[VULKIT][P-DEVICE] The device '{}' does not support the required extension '{}'", name,
-                    extension));
+        {
+            missingExtensions += missingCount++ == 0 ? TKit::TierString::Format("'{}'", extension)
+                                                     : TKit::TierString::Format(", '{}'", extension);
+            continue;
+        }
         enabledExtensions.Append(extension);
     }
+    EMIT_SELECTION_ERROR_IF(missingCount != 0, Error_MissingExtension,
+                            "it does not support {} of the required extensions: {} ({} extensions available)",
+                            missingCount, missingExtensions, availableExtensions.GetSize());
 
     for (const TKit::TierString &extension : m_RequestedExtensions)
         if (!contains(availableExtensions, extension))
         {
-            TKIT_LOG_WARNING("[VULKIT][P-DEVICE] The device '{}' does not support the requested extension '{}'", name,
-                             extension);
+            TKIT_LOG_WARNING("[VULKIT][P-DEVICE] The device '{}' does not support the requested extension '{}'. It "
+                             "may still be selected, but will not be considered optimal",
+                             name, extension);
             fullySuitable = false;
         }
         else if (!contains(enabledExtensions, extension))
@@ -580,42 +581,39 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
         return !(flags & selectorFlag) || (deviceFlags & deviceFlag);
     };
 
-    if (!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a graphics queue", name));
-    if (!compareFlags(DeviceSelectorFlag_RequireComputeQueue, DeviceFlag_HasComputeQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a compute queue", name));
-    if (!compareFlags(DeviceSelectorFlag_RequireTransferQueue, DeviceFlag_HasTransferQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a transfer queue", name));
-    if (!compareFlags(DeviceSelectorFlag_RequirePresentQueue, DeviceFlag_HasPresentQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a present queue", name));
+    EMIT_SELECTION_ERROR_IF(!compareFlags(DeviceSelectorFlag_RequireGraphicsQueue, DeviceFlag_HasGraphicsQueue),
+                            Error_MissingQueue, "none of its {} queue families supports graphics", familyCount);
+    EMIT_SELECTION_ERROR_IF(!compareFlags(DeviceSelectorFlag_RequireComputeQueue, DeviceFlag_HasComputeQueue),
+                            Error_MissingQueue, "none of its {} queue families supports compute", familyCount);
+    EMIT_SELECTION_ERROR_IF(!compareFlags(DeviceSelectorFlag_RequireTransferQueue, DeviceFlag_HasTransferQueue),
+                            Error_MissingQueue, "none of its {} queue families supports transfer", familyCount);
+    EMIT_SELECTION_ERROR_IF(!compareFlags(DeviceSelectorFlag_RequirePresentQueue, DeviceFlag_HasPresentQueue),
+                            Error_MissingQueue, "none of its {} queue families can present to the given surface{}",
+                            familyCount, m_Surface ? "" : " (no surface was provided to the selector)");
 
-    if (!compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated compute queue",
-                                     name));
-    if (!compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a dedicated transfer queue",
-                                     name));
-    if (!compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue, TKit::TierString::Format(
-                                    "[VULKIT][P-DEVICE] The device '{}' does not have a separate compute queue", name));
-    if (!compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue))
-        return JudgeResult::Error(
-            Error_MissingQueue,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have a separate transfer queue",
-                                     name));
+    EMIT_SELECTION_ERROR_IF(
+        !compareFlags(DeviceSelectorFlag_RequireDedicatedComputeQueue, DeviceFlag_HasDedicatedComputeQueue),
+        Error_MissingQueue,
+        "a dedicated compute queue (compute without graphics or transfer) is required, but none of its {} queue "
+        "families qualifies",
+        familyCount);
+    EMIT_SELECTION_ERROR_IF(
+        !compareFlags(DeviceSelectorFlag_RequireDedicatedTransferQueue, DeviceFlag_HasDedicatedTransferQueue),
+        Error_MissingQueue,
+        "a dedicated transfer queue (transfer without graphics or compute) is required, but none of its {} queue "
+        "families qualifies",
+        familyCount);
+    EMIT_SELECTION_ERROR_IF(
+        !compareFlags(DeviceSelectorFlag_RequireSeparateComputeQueue, DeviceFlag_HasSeparateComputeQueue),
+        Error_MissingQueue,
+        "a separate compute queue (compute without graphics) is required, but none of its {} queue families qualifies",
+        familyCount);
+    EMIT_SELECTION_ERROR_IF(
+        !compareFlags(DeviceSelectorFlag_RequireSeparateTransferQueue, DeviceFlag_HasSeparateTransferQueue),
+        Error_MissingQueue,
+        "a separate transfer queue (transfer without graphics) is required, but none of its {} queue families "
+        "qualifies",
+        familyCount);
 
 #ifdef VK_KHR_surface
     if (checkFlags(DeviceSelectorFlag_RequirePresentQueue))
@@ -679,40 +677,54 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     table->GetPhysicalDeviceProperties(device, &properties.Core);
 #endif
 
-    if (!compareFeatureStructs(features.Core, m_RequiredFeatures.Core))
-        return JudgeResult::Error(
-            Error_MissingFeature,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have the required core features",
-                                     name));
+    EMIT_SELECTION_ERROR_IF(!compareFeatureStructs(features.Core, m_RequiredFeatures.Core), Error_MissingFeature,
+                            "it does not support all of the required core (Vulkan 1.0) features");
 
 #ifdef VKIT_API_VERSION_1_2
-    if (!compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11) ||
-        !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12))
-        return JudgeResult::Error(
-            Error_MissingFeature,
-            TKit::TierString::Format(
-                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.1 or 1.2 features", name));
+    EMIT_SELECTION_ERROR_IF(
+        !compareFeatureStructs(features.Vulkan11, m_RequiredFeatures.Vulkan11), Error_MissingFeature,
+        "it does not support all of the required Vulkan 1.1 features (device supports Vulkan {}.{}.{})",
+        VKIT_EXPAND_VERSION(quickProperties.apiVersion));
+    EMIT_SELECTION_ERROR_IF(
+        !compareFeatureStructs(features.Vulkan12, m_RequiredFeatures.Vulkan12), Error_MissingFeature,
+        "it does not support all of the required Vulkan 1.2 features (device supports Vulkan {}.{}.{})",
+        VKIT_EXPAND_VERSION(quickProperties.apiVersion));
 #endif
 #ifdef VKIT_API_VERSION_1_3
-    if (!compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13))
-        return JudgeResult::Error(
-            Error_MissingFeature,
-            TKit::TierString::Format(
-                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.3 features", name));
+    EMIT_SELECTION_ERROR_IF(
+        !compareFeatureStructs(features.Vulkan13, m_RequiredFeatures.Vulkan13), Error_MissingFeature,
+        "it does not support all of the required Vulkan 1.3 features (device supports Vulkan {}.{}.{})",
+        VKIT_EXPAND_VERSION(quickProperties.apiVersion));
 #endif
 #ifdef VKIT_API_VERSION_1_4
-    if (!compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14))
-        return JudgeResult::Error(
-            Error_MissingFeature,
-            TKit::TierString::Format(
-                "[VULKIT][P-DEVICE] The device '{}' does not have the required Vulkan 1.4 features", name));
+    EMIT_SELECTION_ERROR_IF(
+        !compareFeatureStructs(features.Vulkan14, m_RequiredFeatures.Vulkan14), Error_MissingFeature,
+        "it does not support all of the required Vulkan 1.4 features (device supports Vulkan {}.{}.{})",
+        VKIT_EXPAND_VERSION(quickProperties.apiVersion));
 #endif
+
     if (m_PreferredType != fromVulkan(properties.Core.deviceType))
     {
-        if (!checkFlags(DeviceSelectorFlag_AnyType))
-            return JudgeResult::Error(
-                Error_RejectedDevice,
-                TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' is not of the preferred type", name));
+        const auto typeName = [](const VkPhysicalDeviceType type) -> const char * {
+            switch (type)
+            {
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+                return "an integrated GPU";
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+                return "a discrete GPU";
+            case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+                return "a virtual GPU";
+            case VK_PHYSICAL_DEVICE_TYPE_CPU:
+                return "a CPU";
+            default:
+                return "of an unknown type";
+            }
+        };
+        EMIT_SELECTION_ERROR_IF(
+            !checkFlags(DeviceSelectorFlag_AnyType), Error_RejectedDevice,
+            "it is {}, which is not the preferred device type, and 'DeviceSelectorFlag_AnyType' is not "
+            "set",
+            typeName(properties.Core.deviceType));
         fullySuitable = false;
     }
 
@@ -723,36 +735,31 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
                 m_RequestedMemory, m_RequiredMemory);
 
     bool hasDeviceLocalMemory = false;
-    bool hasRequestedMemory = m_RequestedMemory == 0;
-    bool hasRequiredMemory = m_RequiredMemory == 0;
-
+    VkDeviceSize largestLocalHeap = 0;
     for (u32 i = 0; i < properties.Memory.memoryHeapCount; ++i)
-    {
-        if (!(properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
-            continue;
-        hasDeviceLocalMemory = true;
-        if (hasRequestedMemory)
-            break;
+        if (properties.Memory.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+        {
+            hasDeviceLocalMemory = true;
+            largestLocalHeap = std::max(largestLocalHeap, properties.Memory.memoryHeaps[i].size);
+        }
 
-        const VkDeviceSize size = properties.Memory.memoryHeaps[i].size;
-        if (size >= m_RequestedMemory)
-            hasRequestedMemory = true;
-        if (size >= m_RequiredMemory)
-            hasRequiredMemory = true;
-    }
-    if (!hasDeviceLocalMemory)
-        return JudgeResult::Error(
-            Error_InsufficientMemory,
-            TKit::TierString::Format("[VULKIT][P-DEVICE] The device '{}' does not have device local memory", name));
+    const bool hasRequestedMemory = largestLocalHeap >= m_RequestedMemory;
+    const bool hasRequiredMemory = largestLocalHeap >= m_RequiredMemory;
+
+    EMIT_SELECTION_ERROR_IF(!hasDeviceLocalMemory, Error_InsufficientMemory,
+                            "none of its {} memory heaps is device local", properties.Memory.memoryHeapCount);
+
     TKIT_LOG_WARNING_IF(!hasRequestedMemory,
-                        "[VULKIT][P-DEVICE] The device '{}' does not have the requested memory of {:L} bytes", name,
-                        m_RequestedMemory);
-    if (!hasRequiredMemory)
-        return JudgeResult::Error(
-            Error_InsufficientMemory,
-            TKit::TierString::Format(
-                "[VULKIT][P-DEVICE] The device '{}' does not have the required memory of {:L} bytes", name,
-                m_RequiredMemory));
+                        "[VULKIT][P-DEVICE] The device '{}' has a largest device local heap of {:L} bytes, which is "
+                        "less than the requested {:L} bytes. It may still be selected, but will not be considered "
+                        "optimal",
+                        name, largestLocalHeap, m_RequestedMemory);
+
+    EMIT_SELECTION_ERROR_IF(!hasRequiredMemory, Error_InsufficientMemory,
+                            "its largest device local heap has {:L} bytes, but {:L} bytes are required",
+                            largestLocalHeap, m_RequiredMemory);
+
+#undef EMIT_SELECTION_ERROR_IF
 
     fullySuitable &= hasRequestedMemory;
     if (fullySuitable)
@@ -788,7 +795,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     deviceInfo.EnabledFeatures = m_RequiredFeatures;
     deviceInfo.Properties = properties;
 
-    return JudgeResult::Ok(device, deviceInfo);
+    return Result<PhysicalDevice>::Ok(device, deviceInfo);
 }
 
 PhysicalDevice::Selector::Selector(const Instance *instance, const u32 maxExtensions) : m_Instance(instance)
@@ -816,16 +823,12 @@ Result<TKit::TierArray<Result<PhysicalDevice>>> PhysicalDevice::Selector::Enumer
     using EnumerateResult = Result<TKit::TierArray<Result<PhysicalDevice>>>;
 
 #ifdef VK_KHR_surface
-    if ((m_Flags & DeviceSelectorFlag_RequirePresentQueue) && !m_Surface)
-        return EnumerateResult::Error(
-            Error_BadInput,
-            "[VULKIT][P-DEVICE] The surface must be set if the instance is not headless (requires present queue)");
+    TKIT_ASSERT(m_Surface || !(m_Flags & DeviceSelectorFlag_RequirePresentQueue),
+                "[VULKIT][P-DEVICE] The surface must be set if the instance is not headless (requires present queue)");
 #else
-    if (m_Flags & DeviceSelectorFlag_RequirePresentQueue)
-        return EnumerateResult::Error(
-            Error_MissingExtension,
-            "[VULKIT][P-DEVICE] The current version of the vulkan headers does not provide the compile-time "
-            "capabilities to enable surface creation. The instance must be headless");
+    TKIT_ASSERT(!(m_Flags & DeviceSelectorFlag_RequirePresentQueue),
+                "[VULKIT][P-DEVICE] The current version of the vulkan headers does not provide the compile-time "
+                "capabilities to enable surface creation. The instance must be headless");
 #endif
 
     TKit::StackArray<VkPhysicalDevice> vkdevices;
