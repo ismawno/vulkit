@@ -188,7 +188,7 @@ class RenderPass
      * @return A `Result` containing the created `Resources` or an error.
      */
     template <typename F>
-    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, const F createImageData,
+    VKIT_NO_DISCARD Result<Resources> CreateResources(const VkExtent2D &extent, F createImageData,
                                                       const u32 frameBufferLayers = 1)
     {
         TKIT_ERROR_DEFER_SCOPE();
