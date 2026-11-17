@@ -26,7 +26,7 @@ set(SOURCES
     vkit/presentation/swap_chain.cpp)
 
 add_library(vulkit STATIC ${SOURCES})
-target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.12.x\")
+target_compile_definitions(vulkit PUBLIC VKIT_VERSION=\"v0.13.x\")
 
 include(FetchContent)
 FetchContent_Declare(
