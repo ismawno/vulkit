@@ -30,11 +30,11 @@ DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator all
     TKIT_ASSERT(!((flags & DeviceBufferFlag_DeviceLocal) && (flags & DeviceBufferFlag_HostVisible)),
                 "[VULKIT][DEVICE-BUFFER] DeviceLocal means no host access. For cpu-written, gpu-read buffers use "
                 "HostMapped alone and vma will place them in bar/rebar/unified memory when available");
-    TKIT_ASSERT(
-        !((flags & DeviceBufferFlag_Staging) && (flags & (DeviceBufferFlag_Vertex | DeviceBufferFlag_Index |
-                                                          DeviceBufferFlag_Storage | DeviceBufferFlag_Indirect))),
-        "[VULKIT][DEVICE-BUFFER] Staging buffers must be transfer-only, otherwise vma treats them as gpu-read "
-        "and prefers the bar heap for them");
+    TKIT_ASSERT(!((flags & DeviceBufferFlag_Staging) &&
+                  (flags & (DeviceBufferFlag_Vertex | DeviceBufferFlag_Index | DeviceBufferFlag_Storage |
+                            DeviceBufferFlag_Uniform | DeviceBufferFlag_Indirect))),
+                "[VULKIT][DEVICE-BUFFER] Staging buffers must be transfer-only, otherwise vma treats them as gpu-read "
+                "and prefers the bar heap for them");
 
     if (flags & DeviceBufferFlag_DeviceLocal)
     {
@@ -58,6 +58,8 @@ DeviceBuffer::Builder::Builder(const ProxyDevice &device, const VmaAllocator all
         m_BufferInfo.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     if (flags & DeviceBufferFlag_Index)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    if (flags & DeviceBufferFlag_Uniform)
+        m_BufferInfo.usage |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     if (flags & DeviceBufferFlag_Storage)
         m_BufferInfo.usage |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     if (flags & DeviceBufferFlag_Indirect)
