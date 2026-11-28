@@ -172,11 +172,6 @@ static constexpr TKit::FixedArray<VkBool32 VkPhysicalDeviceVulkan14Features::*, 
     &VkPhysicalDeviceVulkan14Features::pushDescriptor};
 #endif
 
-template <typename C, typename T> static bool contains(const C &container, const T &value)
-{
-    return std::find(container.begin(), container.end(), value) != container.end();
-}
-
 template <typename T> const auto &getMembers()
 {
 #ifdef VKIT_API_VERSION_1_2
@@ -423,7 +418,7 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
     u32 missingCount = 0;
     for (const TKit::TierString &extension : m_RequiredExtensions)
     {
-        if (!contains(availableExtensions, extension))
+        if (!availableExtensions.Contains(extension))
         {
             missingExtensions += missingCount++ == 0 ? TKit::TierString::Format("'{}'", extension)
                                                      : TKit::TierString::Format(", '{}'", extension);
@@ -436,25 +431,24 @@ Result<PhysicalDevice> PhysicalDevice::Selector::judgeDevice(const VkPhysicalDev
                               missingCount, missingExtensions, availableExtensions.GetSize());
 
     for (const TKit::TierString &extension : m_RequestedExtensions)
-        if (!contains(availableExtensions, extension))
+        if (!availableExtensions.Contains(extension))
         {
             TKIT_LOG_WARNING("[VULKIT][P-DEVICE] The device '{}' does not support the requested extension '{}'. It "
                              "may still be selected, but will not be considered optimal",
                              name, extension);
             fullySuitable = false;
         }
-        else if (!contains(enabledExtensions, extension))
+        else if (!enabledExtensions.Contains(extension))
             enabledExtensions.Append(extension);
 
     DeviceSelectorFlags flags = m_Flags;
     const auto checkFlags = [&flags](const DeviceSelectorFlags pflags) -> bool { return pflags & flags; };
 
-    if (checkFlags(DeviceSelectorFlag_PortabilitySubset) &&
-        contains(availableExtensions, "VK_KHR_portability_subset") &&
-        !contains(enabledExtensions, "VK_KHR_portability_subset"))
+    if (checkFlags(DeviceSelectorFlag_PortabilitySubset) && availableExtensions.Contains("VK_KHR_portability_subset") &&
+        !enabledExtensions.Contains("VK_KHR_portability_subset"))
         enabledExtensions.Append("VK_KHR_portability_subset");
 
-    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue) && !contains(enabledExtensions, "VK_KHR_swapchain"))
+    if (checkFlags(DeviceSelectorFlag_RequirePresentQueue) && !enabledExtensions.Contains("VK_KHR_swapchain"))
         enabledExtensions.Append("VK_KHR_swapchain");
 
     u32 familyCount;
@@ -891,11 +885,11 @@ bool PhysicalDevice::EnableFeatures(const DeviceFeatures &features)
 
 bool PhysicalDevice::IsExtensionSupported(const char *extension) const
 {
-    return contains(m_Info.AvailableExtensions, extension);
+    return m_Info.AvailableExtensions.Contains(extension);
 }
 bool PhysicalDevice::IsExtensionEnabled(const char *extension) const
 {
-    return contains(m_Info.EnabledExtensions, extension);
+    return m_Info.EnabledExtensions.Contains(extension);
 }
 bool PhysicalDevice::EnableExtension(const char *extension)
 {
@@ -959,13 +953,13 @@ PhysicalDevice::Selector &PhysicalDevice::Selector::RequestApiVersion(u32 major,
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequireExtension(const char *extension)
 {
-    if (!contains(m_RequiredExtensions, extension))
+    if (!m_RequiredExtensions.Contains(extension))
         m_RequiredExtensions.Append(extension);
     return *this;
 }
 PhysicalDevice::Selector &PhysicalDevice::Selector::RequestExtension(const char *extension)
 {
-    if (!contains(m_RequestedExtensions, extension))
+    if (!m_RequestedExtensions.Contains(extension))
         m_RequestedExtensions.Append(extension);
     return *this;
 }
